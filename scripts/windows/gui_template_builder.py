@@ -89,6 +89,60 @@ def explorer_select_file(path_str: str, file_name: str) -> dict[str, Any]:
 
 
 def blender_focus() -> dict[str, Any]:
+    # Source 1: bridge-captured windows persisted from WSL side.
+    bridge_windows = Path(r'D:\Administrator\Documents\Playground\openclaw-upstream\artifacts\gui-template-calibration\desktop-windows.json')
+    if bridge_windows.exists():
+        try:
+            items = json.loads(bridge_windows.read_text(encoding='utf-8'))
+            for item in items:
+                title = str(item.get('title', ''))
+                if 'Blender' in title and item.get('class_name') == 'GHOST_WindowClass':
+                    return {
+                        'template': 'blender_focus',
+                        'window_title': title,
+                        'window_rect': {
+                            'left': item['left'], 'top': item['top'], 'right': item['right'], 'bottom': item['bottom'],
+                            'width': item['right'] - item['left'], 'height': item['bottom'] - item['top'],
+                            'center_x': (item['left'] + item['right']) // 2,
+                            'center_y': (item['top'] + item['bottom']) // 2,
+                        },
+                    }
+        except Exception:
+            pass
+    # Source 2: native blender process main window.
+    try:
+        import subprocess
+        ps_script = r'C:\Users\Administrator\.openclaw\workspace\scripts\windows\list_blender_windows.ps1'
+        raw_bytes = subprocess.check_output([
+            'powershell.exe','-NoProfile','-ExecutionPolicy','Bypass','-File', ps_script
+        ], timeout=10)
+        raw = None
+        for enc in ('utf-8', 'utf-16le', 'gbk', 'cp936'):
+            try:
+                raw = raw_bytes.decode(enc).strip()
+                break
+            except Exception:
+                pass
+        if raw is None:
+            raw = raw_bytes.decode('utf-8', errors='replace').strip()
+        if raw and raw != 'null':
+            data = json.loads(raw)
+            items = data if isinstance(data, list) else [data]
+            for item in items:
+                title = str(item.get('MainWindowTitle', ''))
+                if 'Blender' in title:
+                    return {
+                        'template': 'blender_focus',
+                        'window_title': title,
+                        'window_rect': {
+                            'left': 0, 'top': 0, 'right': 2560, 'bottom': 1440,
+                            'width': 2560, 'height': 1440,
+                            'center_x': 1280, 'center_y': 720,
+                        },
+                    }
+    except Exception:
+        pass
+    # Source 3: UIA desktop windows.
     desktop = Desktop(backend='uia')
     candidates = []
     for w in desktop.windows():
