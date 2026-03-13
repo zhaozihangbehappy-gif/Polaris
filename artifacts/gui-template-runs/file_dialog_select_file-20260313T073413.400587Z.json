@@ -1,0 +1,33 @@
+{
+  "run_id": "20260313T073413.400587Z",
+  "template": "file_dialog_select_file",
+  "started_at_utc": "2026-03-13T07:34:13.400608+00:00",
+  "status": "pass",
+  "plan_path": "/home/administrator/.openclaw/workspace/artifacts/gui-macros/file_dialog_select_file-20260313T073413.400587Z.json",
+  "calibration": {
+    "template": "file_dialog_select_file",
+    "window_title": "打开",
+    "window_rect": {
+      "left": 732,
+      "top": 347,
+      "right": 1932,
+      "bottom": 1067,
+      "width": 1200,
+      "height": 720,
+      "center_x": 1332,
+      "center_y": 707
+    },
+    "file_name": "cabinet-12cell-concept.blend",
+    "filename_edit_rect": {
+      "left": 902,
+      "top": 397,
+      "right": 1583,
+      "bottom": 414,
+      "width": 681,
+      "height": 17,
+      "center_x": 1242,
+      "center_y": 405
+    }
+  },
+  "finished_at_utc": "2026-03-13T07:34:16.580404+00:00"
+}

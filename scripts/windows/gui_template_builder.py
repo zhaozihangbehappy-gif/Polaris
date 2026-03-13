@@ -109,33 +109,50 @@ def blender_focus() -> dict[str, Any]:
 
 
 def file_dialog_select_file(file_name: str) -> dict[str, Any]:
-    desktop = Desktop(backend='uia')
+    desktop = Desktop(backend='win32')
     dlg = None
+    candidates = []
     for w in desktop.windows():
         try:
             title = w.window_text()
             cls = w.class_name()
-            if cls == '#32770' or '打开' in title or 'Open' in title or '保存' in title or 'Save' in title:
+            if cls == '#32770' and title in ('打开', 'Open', '保存', 'Save'):
+                candidates.append(w)
+                continue
+            if cls == '#32770' and title:
+                candidates.append(w)
+        except Exception:
+            continue
+    if not candidates:
+        raise RuntimeError('No file dialog found')
+    for w in candidates:
+        try:
+            if w.has_focus():
                 dlg = w
                 break
         except Exception:
             continue
     if dlg is None:
-        raise RuntimeError('No file dialog found')
+        dlg = candidates[0]
     data = {
         'template': 'file_dialog_select_file',
         'window_title': dlg.window_text(),
         'window_rect': rect_dict(dlg.rectangle()),
         'file_name': file_name,
     }
-    edits = dlg.descendants(control_type='Edit')
+    edits = []
+    try:
+        edits = dlg.descendants(class_name='Edit')
+    except Exception:
+        pass
     if edits:
         data['filename_edit_rect'] = rect_dict(edits[-1].rectangle())
     button = None
-    for ctrl in dlg.descendants(control_type='Button'):
+    for ctrl in dlg.descendants():
         try:
             text = ctrl.window_text()
-            if text in ('打开(O)', '打开', 'Open', '保存(S)', '保存', 'Save'):
+            cls = ctrl.class_name()
+            if cls == 'Button' and text in ('打开(O)', '打开', 'Open', '保存(S)', '保存', 'Save'):
                 button = ctrl
                 break
         except Exception:
