@@ -1,0 +1,49 @@
+{
+  "template": "blender_focus",
+  "calibration": {
+    "template": "blender_focus",
+    "window_title": "C:\\Program Files\\Blender Foundation\\Blender 5.0\\blender.exe",
+    "window_rect": {
+      "left": 0,
+      "top": 0,
+      "right": 0,
+      "bottom": 0,
+      "width": 0,
+      "height": 0,
+      "center_x": 0,
+      "center_y": 0
+    }
+  },
+  "steps": [
+    {
+      "kind": "movePath",
+      "points": [
+        {
+          "x": 120,
+          "y": 90,
+          "steps": 8,
+          "delayMs": 12
+        },
+        {
+          "x": 0,
+          "y": 70,
+          "steps": 8,
+          "delayMs": 12
+        },
+        {
+          "x": 0,
+          "y": 120,
+          "steps": 8,
+          "delayMs": 12
+        }
+      ]
+    },
+    {
+      "kind": "click"
+    },
+    {
+      "kind": "wait",
+      "ms": 250
+    }
+  ]
+}

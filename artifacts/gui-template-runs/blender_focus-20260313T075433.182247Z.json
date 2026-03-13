@@ -1,0 +1,39 @@
+{
+  "run_id": "20260313T075433.182247Z",
+  "template": "blender_focus",
+  "started_at_utc": "2026-03-13T07:54:33.182269+00:00",
+  "status": "pass",
+  "plan_path": "/home/administrator/.openclaw/workspace/artifacts/gui-macros/blender_focus-20260313T075433.182247Z.json",
+  "calibration": {
+    "template": "blender_focus",
+    "window_title": "C:\\Program Files\\Blender Foundation\\Blender 5.0\\blender.exe",
+    "window_rect": {
+      "left": 0,
+      "top": 0,
+      "right": 0,
+      "bottom": 0,
+      "width": 0,
+      "height": 0,
+      "center_x": 0,
+      "center_y": 0
+    }
+  },
+  "bridge_verify": [
+    {
+      "hwnd": 1509304,
+      "title": "* cabinet-12cell-concept [D:\\Administrator\\Documents\\Playground\\openclaw-upstream\\artifacts\\delivery\\cabinet-12cell-concept.blend] - Blender 5.0.1",
+      "class_name": "GHOST_WindowClass",
+      "rect": {
+        "left": -32000,
+        "top": -32000,
+        "right": -31840,
+        "bottom": -31972,
+        "width": 160,
+        "height": 28
+      },
+      "visible": true,
+      "foreground": false
+    }
+  ],
+  "finished_at_utc": "2026-03-13T07:54:36.653817+00:00"
+}

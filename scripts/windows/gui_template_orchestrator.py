@@ -38,10 +38,10 @@ def run_calibration(kind: str, *args: str) -> dict:
     ps_args = ' '.join([f'"{a}"' for a in (kind, *args)])
     cmd = ['/mnt/c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe', '-NoProfile', '-Command', f'py "{winpath}" {ps_args}']
     start_ts = time.time()
-    subprocess.run(cmd, check=True, capture_output=True, text=True)
+    proc = subprocess.run(cmd, check=False, capture_output=True)
     cal_path = newest_calibration(kind, start_ts)
     data = json.loads(cal_path.read_text(encoding='utf-8'))
-    if data.get('status') != 'pass':
+    if proc.returncode != 0 or data.get('status') != 'pass':
         raise RuntimeError(data.get('error', f'Calibration failed for {kind}'))
     return data['payload']
 
