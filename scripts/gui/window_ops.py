@@ -42,32 +42,6 @@ $ok = [Win32]::MoveWindow([IntPtr]{hwnd}, {left}, {top}, {width}, {height}, $tru
     return json.loads(out) if out else {'ok': False}
 
 
-def activate_window_by_title_fragment(title_fragment: str) -> dict[str, Any]:
-    escaped = title_fragment.replace("'", "''")
-    ps = rf"""
-Add-Type @"
-using System;
-using System.Runtime.InteropServices;
-public static class Win32 {{
-  [DllImport("user32.dll", SetLastError=true)]
-  public static extern bool SetForegroundWindow(IntPtr hWnd);
-  [DllImport("user32.dll", SetLastError=true)]
-  public static extern bool ShowWindowAsync(IntPtr hWnd, int nCmdShow);
-}}
-"@
-$p = Get-Process | Where-Object {{ $_.MainWindowTitle -like '*{escaped}*' -and $_.MainWindowHandle -ne 0 }} | Select-Object -First 1
-if (-not $p) {{
-  [PSCustomObject]@{{ ok = $false; reason = 'not_found'; titleFragment = '{escaped}' }} | ConvertTo-Json -Compress
-  exit 0
-}}
-[Win32]::ShowWindowAsync($p.MainWindowHandle, 5) | Out-Null
-$ok = [Win32]::SetForegroundWindow($p.MainWindowHandle)
-[PSCustomObject]@{{ ok = $ok; hwnd = $p.MainWindowHandle; title = $p.MainWindowTitle }} | ConvertTo-Json -Compress
-"""
-    out = _run_powershell(ps)
-    return json.loads(out) if out else {'ok': False}
-
-
 def steal_focus_with_notepad() -> dict[str, Any]:
     ps = r"""
 Add-Type @"
@@ -113,3 +87,33 @@ try {{
 """
     out = _run_powershell(ps)
     return json.loads(out) if out else {'ok': False, 'pid': pid}
+
+
+def get_display_metrics() -> dict[str, Any]:
+    ps = r"""
+Add-Type @"
+using System;
+using System.Runtime.InteropServices;
+public static class Native {
+  [DllImport("user32.dll")] public static extern IntPtr GetDC(IntPtr hWnd);
+  [DllImport("user32.dll")] public static extern int ReleaseDC(IntPtr hWnd, IntPtr hDC);
+  [DllImport("gdi32.dll")] public static extern int GetDeviceCaps(IntPtr hdc, int nIndex);
+}
+"@
+$hdc = [Native]::GetDC([IntPtr]::Zero)
+$logPixelsX = [Native]::GetDeviceCaps($hdc, 88)
+$logPixelsY = [Native]::GetDeviceCaps($hdc, 90)
+[void][Native]::ReleaseDC([IntPtr]::Zero, $hdc)
+Add-Type -AssemblyName System.Windows.Forms
+$bounds = [System.Windows.Forms.Screen]::PrimaryScreen.Bounds
+$scalePercent = [math]::Round(($logPixelsX / 96.0) * 100, 0)
+[PSCustomObject]@{
+  logPixelsX = $logPixelsX
+  logPixelsY = $logPixelsY
+  scalePercent = $scalePercent
+  primaryWidth = $bounds.Width
+  primaryHeight = $bounds.Height
+} | ConvertTo-Json -Compress
+"""
+    out = _run_powershell(ps)
+    return json.loads(out) if out else {'ok': False}

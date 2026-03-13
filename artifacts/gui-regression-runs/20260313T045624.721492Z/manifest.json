@@ -1,0 +1,101 @@
+{
+  "run_id": "20260313T045624.721492Z",
+  "started_at_utc": "2026-03-13T04:56:24.721726+00:00",
+  "title_pattern": "*Blender*",
+  "class_name": "GHOST_WindowClass",
+  "scenarios_requested": [
+    "G6"
+  ],
+  "repeats": 3,
+  "results": [
+    {
+      "scenario_id": "G6",
+      "status": "partial",
+      "detail": "Current environment is at 100% scaling; baseline passed but non-default DPI is not yet exercised",
+      "evidence": {
+        "display_metrics": {
+          "logPixelsX": 96,
+          "logPixelsY": 96,
+          "scalePercent": 100,
+          "primaryWidth": 2560,
+          "primaryHeight": 1440
+        },
+        "baseline_under_current_scaling": {
+          "hwnd": 133010,
+          "title": "(未保存) - Blender 5.0.1",
+          "class_name": "GHOST_WindowClass",
+          "rect": {
+            "left": 55,
+            "top": 55,
+            "right": 2144,
+            "bottom": 1297,
+            "width": 2089,
+            "height": 1242
+          },
+          "activation": {
+            "ok": true,
+            "data": {
+              "activated": true,
+              "hwnd": 133010
+            }
+          },
+          "capture": {
+            "ok": true,
+            "data": {
+              "imagePath": "D:\\Administrator\\Documents\\Playground\\openclaw-upstream\\artifacts\\captures\\capture-20260313T045625008747.png",
+              "width": 2089,
+              "height": 1242,
+              "target": "window",
+              "rect": {
+                "left": 55,
+                "top": 55,
+                "right": 2144,
+                "bottom": 1297,
+                "width": 2089,
+                "height": 1242
+              }
+            }
+          },
+          "move": {
+            "ok": true,
+            "data": {
+              "performed": {
+                "action": "move",
+                "x": 1099,
+                "y": 676
+              },
+              "windowRef": {
+                "hwnd": 133010,
+                "title": "(未保存) - Blender 5.0.1",
+                "class_name": "GHOST_WindowClass",
+                "rect": {
+                  "left": 55,
+                  "top": 55,
+                  "right": 2144,
+                  "bottom": 1297,
+                  "width": 2089,
+                  "height": 1242
+                },
+                "visible": true,
+                "foreground": true
+              },
+              "foregroundVerified": true,
+              "abortKey": "esc",
+              "artifacts": [
+                {
+                  "stage": "before",
+                  "kind": "screenshot",
+                  "imagePath": "D:\\Administrator\\Documents\\Playground\\openclaw-upstream\\artifacts\\captures\\capture-20260313T045625142133.png",
+                  "target": "window",
+                  "action": "move"
+                }
+              ]
+            }
+          }
+        }
+      }
+    }
+  ],
+  "status": "partial",
+  "finished_at_utc": "2026-03-13T04:56:25.269779+00:00"
+}

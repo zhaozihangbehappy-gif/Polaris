@@ -10,7 +10,7 @@ from pathlib import Path
 from typing import Any
 
 from bridge_client import BridgeClient, BridgeError
-from window_ops import close_process, set_window_rect, steal_focus_with_notepad
+from window_ops import close_process, get_display_metrics, set_window_rect, steal_focus_with_notepad
 
 
 @dataclass
@@ -133,6 +133,19 @@ def scenario_g5_repeated_runs(client: BridgeClient, win: dict[str, Any], run_dir
     return ScenarioResult('G5', 'pass', f'Repeated baseline path passed {repeats} times', evidence)
 
 
+def scenario_g6_dpi_scaling(client: BridgeClient, win: dict[str, Any], run_dir: Path) -> ScenarioResult:
+    metrics = get_display_metrics()
+    evidence = {
+        'display_metrics': metrics,
+        'baseline_under_current_scaling': baseline_step(client, win, 'g6-dpi-scaling'),
+    }
+    (run_dir / 'g6-dpi-scaling.json').write_text(json.dumps(evidence, indent=2, ensure_ascii=False))
+    scale = int(metrics.get('scalePercent', 100)) if isinstance(metrics, dict) else 100
+    if scale == 100:
+        return ScenarioResult('G6', 'partial', 'Current environment is at 100% scaling; baseline passed but non-default DPI is not yet exercised', evidence)
+    return ScenarioResult('G6', 'pass', f'Current environment scaling is {scale}% and baseline path succeeded', evidence)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description='Run GUI regression smoke scenarios against the desktop bridge.')
     parser.add_argument('--output-dir', default='artifacts/gui-regression-runs', help='Directory where evidence files are stored')
@@ -179,6 +192,8 @@ def main() -> int:
                 win = result.evidence['refreshed_window']
             elif scenario == 'G5':
                 result = scenario_g5_repeated_runs(client, win, run_dir, args.repeats)
+            elif scenario == 'G6':
+                result = scenario_g6_dpi_scaling(client, win, run_dir)
             else:
                 result = ScenarioResult(scenario, 'skipped', 'Scenario not implemented yet', {})
             manifest['results'].append(asdict(result))
