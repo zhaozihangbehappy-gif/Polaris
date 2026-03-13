@@ -1,0 +1,21 @@
+# OpenClaw runtime state
+.openclaw/
+
+# Personal / private workspace context
+MEMORY.md
+USER.md
+TOOLS.md
+SOUL.md
+AGENTS.md
+IDENTITY.md
+HEARTBEAT.md
+memory/
+
+# Local scratch / odd Windows placeholder files
+NUL
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+*.swp
+*.tmp

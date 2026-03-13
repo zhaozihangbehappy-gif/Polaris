@@ -1,0 +1,106 @@
+You are GPT-5.3 Codex acting as a senior Windows automation engineer and Blender integration engineer.
+
+Goal:
+Build a production-grade, Windows-first, FREE desktop agent stack for Blender that supports route B (desktop vision + input automation), while using Blender's built-in Python API for operations that should not be done through fragile UI automation.
+
+Hard constraints:
+1. All major components must be free to obtain and usable locally.
+2. Do not propose paid APIs, SaaS-only tools, or proprietary cloud services.
+3. Prefer robust, production-grade choices over simple beginner choices.
+4. Complexity is acceptable. Learning cost is acceptable.
+5. The result should be something the local assistant can reuse, extend, and optimize over time.
+6. Target environment is Windows, with Blender already installed.
+7. Build for reliability, observability, recoverability, and future self-optimization.
+
+Required architecture:
+A. Screen capture layer
+- Use free local capabilities suitable for production use.
+- Prefer Windows-native or high-performance local capture.
+- Must support full-screen and window-region capture.
+- Must support DPI/scaling awareness and multi-monitor setups.
+
+B. Input injection layer
+- Use free local capabilities suitable for production use.
+- Prefer Win32-native input injection over toy wrappers when possible.
+- Must support mouse move/click/double-click/right-click/drag/wheel.
+- Must support keyboard text input, hotkeys, modifiers, and timing control.
+- Must support safe abort / emergency stop.
+
+C. Window management layer
+- Must identify Blender window reliably.
+- Must bring Blender to foreground, inspect window rect, detect focus loss, and reject accidental cross-app input.
+- Use free local Windows APIs/libraries.
+
+D. Vision and OCR layer
+- Use free local OCR.
+- Use free local computer-vision tooling.
+- OCR should be used only where text is relevant.
+- Computer vision should handle region detection, template matching, state validation, and popup recognition.
+
+E. State machine / agent runtime
+- Design a formal finite-state or hierarchical-state runtime.
+- Include fast path and slow path.
+- Include precondition checks, action execution, result validation, retry, fallback, and recovery.
+- Include logs, screenshots, structured traces, and failure artifacts.
+
+F. Blender bridge layer
+- Use Blender's built-in Python API for operations that should be scripted rather than clicked.
+- Create a local bridge for sending commands/scripts into Blender and retrieving structured results.
+- Distinguish clearly between:
+  1) actions that should remain desktop-driven,
+  2) actions that must be scripted via Blender API.
+
+G. Safety and control layer
+- White-list allowed windows/processes.
+- Emergency stop.
+- Per-action timeout.
+- Human takeover mode.
+- Audit log.
+
+H. Self-optimization / local memory layer
+- Persist reusable knowledge locally.
+- Store selectors, templates, window signatures, failure cases, recovery strategies, and successful workflows.
+- Propose a local knowledge file/folder layout.
+- The assistant must be able to improve speed and reliability over time without external paid services.
+
+What I want from you:
+1. Propose the final formal tech stack using only free/local components.
+2. Explain exactly why each component is chosen over alternatives.
+3. Separate MVP choices from production-grade choices where appropriate.
+4. List concrete Windows libraries, APIs, tools, Python packages, and Blender-side pieces.
+5. Explicitly identify which Blender tasks must be scripted and should NOT rely on raw desktop automation.
+6. Design the state model in detail.
+7. Design the on-disk project structure.
+8. Design the logging, replay, debugging, and recovery strategy.
+9. Design the prompt/command protocol between the local assistant and the automation runtime.
+10. Provide an implementation plan in phases.
+11. Provide a risk list with mitigations for fragility, slowness, focus loss, DPI issues, modal dialogs, and UI drift.
+12. Provide acceptance tests and benchmarks.
+13. Prefer concrete engineering decisions. Avoid generic handwaving.
+
+Strong preferences:
+- Favor Win32 APIs / ctypes / pywin32 / UI Automation / OpenCV / Tesseract / MSS / DXGI / Windows Graphics Capture / SendInput / Blender Python where appropriate.
+- If a simpler library is not robust enough, say so clearly.
+- If a component should be wrapped behind an internal abstraction, define the abstraction.
+- Suggest how the assistant can cache regions, templates, OCR zones, and window layouts to reduce latency.
+- Suggest how to combine system-level window info with vision-based validation for speed.
+- Suggest how to keep Blender layout stable to reduce brittleness.
+
+Deliverables format:
+1. Executive summary
+2. Final recommended stack
+3. Architecture diagram in text
+4. Detailed module-by-module design
+5. State machine design
+6. Blender-scripted vs desktop-driven task boundary
+7. Filesystem layout
+8. Implementation phases
+9. Test plan
+10. Optimization roadmap
+11. Example pseudo-interfaces / Python module boundaries
+
+Important:
+- Be opinionated.
+- Optimize for long-term maintainability and production reliability, not beginner convenience.
+- Use only free/local tools.
+- Assume the receiving engineer will actually implement this.
