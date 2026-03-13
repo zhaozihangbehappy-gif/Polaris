@@ -1,0 +1,1 @@
+BridgeError: HTTP 502 calling window.inspect: 

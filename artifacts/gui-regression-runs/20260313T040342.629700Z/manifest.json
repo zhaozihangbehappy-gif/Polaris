@@ -1,0 +1,221 @@
+{
+  "run_id": "20260313T040342.629700Z",
+  "started_at_utc": "2026-03-13T04:03:42.629913+00:00",
+  "title_pattern": "*Blender*",
+  "class_name": "GHOST_WindowClass",
+  "scenarios_requested": [
+    "G2",
+    "G3"
+  ],
+  "repeats": 3,
+  "results": [
+    {
+      "scenario_id": "G2",
+      "status": "pass",
+      "detail": "Moved-window scenario succeeded",
+      "evidence": {
+        "window_move": {
+          "ok": true,
+          "hwnd": 329524,
+          "left": 160,
+          "top": 120,
+          "width": 2576,
+          "height": 1456
+        },
+        "refreshed_window": {
+          "hwnd": 329524,
+          "title": "(未保存) - Blender 5.0.1",
+          "class_name": "GHOST_WindowClass",
+          "rect": {
+            "left": 160,
+            "top": 120,
+            "right": 2736,
+            "bottom": 1576,
+            "width": 2576,
+            "height": 1456
+          },
+          "visible": true,
+          "foreground": true
+        },
+        "baseline_after_move": {
+          "hwnd": 329524,
+          "title": "(未保存) - Blender 5.0.1",
+          "class_name": "GHOST_WindowClass",
+          "rect": {
+            "left": 160,
+            "top": 120,
+            "right": 2736,
+            "bottom": 1576,
+            "width": 2576,
+            "height": 1456
+          },
+          "activation": {
+            "ok": true,
+            "data": {
+              "activated": true,
+              "hwnd": 329524
+            }
+          },
+          "capture": {
+            "ok": true,
+            "data": {
+              "imagePath": "D:\\Administrator\\Documents\\Playground\\openclaw-upstream\\artifacts\\captures\\capture-20260313T040342941452.png",
+              "width": 2576,
+              "height": 1456,
+              "target": "window",
+              "rect": {
+                "left": 160,
+                "top": 120,
+                "right": 2736,
+                "bottom": 1576,
+                "width": 2576,
+                "height": 1456
+              }
+            }
+          },
+          "move": {
+            "ok": true,
+            "data": {
+              "performed": {
+                "action": "move",
+                "x": 1448,
+                "y": 848
+              },
+              "windowRef": {
+                "hwnd": 329524,
+                "title": "(未保存) - Blender 5.0.1",
+                "class_name": "GHOST_WindowClass",
+                "rect": {
+                  "left": 160,
+                  "top": 120,
+                  "right": 2736,
+                  "bottom": 1576,
+                  "width": 2576,
+                  "height": 1456
+                },
+                "visible": true,
+                "foreground": true
+              },
+              "foregroundVerified": true,
+              "abortKey": "esc",
+              "artifacts": [
+                {
+                  "stage": "before",
+                  "kind": "screenshot",
+                  "imagePath": "D:\\Administrator\\Documents\\Playground\\openclaw-upstream\\artifacts\\captures\\capture-20260313T040343113122.png",
+                  "target": "window",
+                  "action": "move"
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "scenario_id": "G3",
+      "status": "pass",
+      "detail": "Resized-window scenario succeeded",
+      "evidence": {
+        "window_resize": {
+          "ok": true,
+          "hwnd": 329524,
+          "left": 160,
+          "top": 120,
+          "width": 2176,
+          "height": 1206
+        },
+        "refreshed_window": {
+          "hwnd": 329524,
+          "title": "(未保存) - Blender 5.0.1",
+          "class_name": "GHOST_WindowClass",
+          "rect": {
+            "left": 160,
+            "top": 120,
+            "right": 2336,
+            "bottom": 1326,
+            "width": 2176,
+            "height": 1206
+          },
+          "visible": true,
+          "foreground": true
+        },
+        "baseline_after_resize": {
+          "hwnd": 329524,
+          "title": "(未保存) - Blender 5.0.1",
+          "class_name": "GHOST_WindowClass",
+          "rect": {
+            "left": 160,
+            "top": 120,
+            "right": 2336,
+            "bottom": 1326,
+            "width": 2176,
+            "height": 1206
+          },
+          "activation": {
+            "ok": true,
+            "data": {
+              "activated": true,
+              "hwnd": 329524
+            }
+          },
+          "capture": {
+            "ok": true,
+            "data": {
+              "imagePath": "D:\\Administrator\\Documents\\Playground\\openclaw-upstream\\artifacts\\captures\\capture-20260313T040343543272.png",
+              "width": 2176,
+              "height": 1206,
+              "target": "window",
+              "rect": {
+                "left": 160,
+                "top": 120,
+                "right": 2336,
+                "bottom": 1326,
+                "width": 2176,
+                "height": 1206
+              }
+            }
+          },
+          "move": {
+            "ok": true,
+            "data": {
+              "performed": {
+                "action": "move",
+                "x": 1248,
+                "y": 723
+              },
+              "windowRef": {
+                "hwnd": 329524,
+                "title": "(未保存) - Blender 5.0.1",
+                "class_name": "GHOST_WindowClass",
+                "rect": {
+                  "left": 160,
+                  "top": 120,
+                  "right": 2336,
+                  "bottom": 1326,
+                  "width": 2176,
+                  "height": 1206
+                },
+                "visible": true,
+                "foreground": true
+              },
+              "foregroundVerified": true,
+              "abortKey": "esc",
+              "artifacts": [
+                {
+                  "stage": "before",
+                  "kind": "screenshot",
+                  "imagePath": "D:\\Administrator\\Documents\\Playground\\openclaw-upstream\\artifacts\\captures\\capture-20260313T040343700790.png",
+                  "target": "window",
+                  "action": "move"
+                }
+              ]
+            }
+          }
+        }
+      }
+    }
+  ],
+  "status": "pass",
+  "finished_at_utc": "2026-03-13T04:03:43.856876+00:00"
+}

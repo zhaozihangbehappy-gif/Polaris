@@ -1,0 +1,217 @@
+{
+  "ok": true,
+  "data": {
+    "windows": [
+      {
+        "hwnd": 66352,
+        "title": "NVIDIA GeForce Overlay DT",
+        "class_name": "CEF-OSC-WIDGET",
+        "rect": {
+          "left": 0,
+          "top": 0,
+          "right": 2560,
+          "bottom": 1440,
+          "width": 2560,
+          "height": 1440
+        },
+        "visible": true,
+        "foreground": false
+      },
+      {
+        "hwnd": 329524,
+        "title": "(未保存) - Blender 5.0.1",
+        "class_name": "GHOST_WindowClass",
+        "rect": {
+          "left": -8,
+          "top": -8,
+          "right": 2568,
+          "bottom": 1448,
+          "width": 2576,
+          "height": 1456
+        },
+        "visible": true,
+        "foreground": true
+      },
+      {
+        "hwnd": 197906,
+        "title": "OpenClaw Control - Google Chrome",
+        "class_name": "Chrome_WidgetWin_1",
+        "rect": {
+          "left": 1163,
+          "top": 82,
+          "right": 2481,
+          "bottom": 1366,
+          "width": 1318,
+          "height": 1284
+        },
+        "visible": true,
+        "foreground": false
+      },
+      {
+        "hwnd": 198144,
+        "title": "OpenClaw 配置评判标准 - 用户配置 1 - Microsoft​ Edge",
+        "class_name": "Chrome_WidgetWin_1",
+        "rect": {
+          "left": 289,
+          "top": 24,
+          "right": 1431,
+          "bottom": 1375,
+          "width": 1142,
+          "height": 1351
+        },
+        "visible": true,
+        "foreground": false
+      },
+      {
+        "hwnd": 67254,
+        "title": "微信",
+        "class_name": "Qt51514QWindowIcon",
+        "rect": {
+          "left": 401,
+          "top": 390,
+          "right": 1570,
+          "bottom": 1192,
+          "width": 1169,
+          "height": 802
+        },
+        "visible": true,
+        "foreground": false
+      },
+      {
+        "hwnd": 132722,
+        "title": "设置",
+        "class_name": "Windows.UI.Core.CoreWindow",
+        "rect": {
+          "left": 0,
+          "top": 1,
+          "right": 1609,
+          "bottom": 1139,
+          "width": 1609,
+          "height": 1138
+        },
+        "visible": true,
+        "foreground": false
+      },
+      {
+        "hwnd": 460084,
+        "title": "设置",
+        "class_name": "ApplicationFrameWindow",
+        "rect": {
+          "left": 677,
+          "top": 157,
+          "right": 2302,
+          "bottom": 1304,
+          "width": 1625,
+          "height": 1147
+        },
+        "visible": true,
+        "foreground": false
+      },
+      {
+        "hwnd": 197508,
+        "title": "Windows 输入体验",
+        "class_name": "Windows.UI.Core.CoreWindow",
+        "rect": {
+          "left": 0,
+          "top": 0,
+          "right": 2560,
+          "bottom": 1440,
+          "width": 2560,
+          "height": 1440
+        },
+        "visible": true,
+        "foreground": false
+      },
+      {
+        "hwnd": 66348,
+        "title": "NVIDIA GeForce Overlay",
+        "class_name": "CEF-OSC-WIDGET",
+        "rect": {
+          "left": 0,
+          "top": 0,
+          "right": 2560,
+          "bottom": 1440,
+          "width": 2560,
+          "height": 1440
+        },
+        "visible": true,
+        "foreground": false
+      },
+      {
+        "hwnd": 262822,
+        "title": "administrator@DESKTOP-10GTQIA: /mnt/c/Users/Administrator",
+        "class_name": "CASCADIA_HOSTING_WINDOW_CLASS",
+        "rect": {
+          "left": -32000,
+          "top": -32000,
+          "right": -31840,
+          "bottom": -31972,
+          "width": 160,
+          "height": 28
+        },
+        "visible": true,
+        "foreground": false
+      },
+      {
+        "hwnd": 66724,
+        "title": "Clash Verge",
+        "class_name": "Tauri Window",
+        "rect": {
+          "left": -32000,
+          "top": -32000,
+          "right": -31840,
+          "bottom": -31972,
+          "width": 160,
+          "height": 28
+        },
+        "visible": true,
+        "foreground": false
+      },
+      {
+        "hwnd": 263638,
+        "title": "zhaozihangbehappy-gif/Northern-Lights - Google Chrome",
+        "class_name": "Chrome_WidgetWin_1",
+        "rect": {
+          "left": -32000,
+          "top": -32000,
+          "right": -31840,
+          "bottom": -31972,
+          "width": 160,
+          "height": 28
+        },
+        "visible": true,
+        "foreground": false
+      },
+      {
+        "hwnd": 853752,
+        "title": "C:\\Program Files\\Blender Foundation\\Blender 5.0\\blender.exe",
+        "class_name": "CASCADIA_HOSTING_WINDOW_CLASS",
+        "rect": {
+          "left": -32000,
+          "top": -32000,
+          "right": -31840,
+          "bottom": -31972,
+          "width": 160,
+          "height": 28
+        },
+        "visible": true,
+        "foreground": false
+      },
+      {
+        "hwnd": 65808,
+        "title": "Program Manager",
+        "class_name": "Progman",
+        "rect": {
+          "left": 0,
+          "top": 0,
+          "right": 2560,
+          "bottom": 1440,
+          "width": 2560,
+          "height": 1440
+        },
+        "visible": true,
+        "foreground": false
+      }
+    ]
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "run_id": "20260313T035056Z",
+  "started_at_utc": "2026-03-13T03:50:56.062750+00:00",
+  "title_pattern": "*Blender*",
+  "class_name": "GHOST_WindowClass",
+  "scenarios_requested": [
+    "G1"
+  ],
+  "repeats": 3,
+  "results": [],
+  "status": "fail",
+  "error": "BridgeError: Network error calling window.inspect: <urlopen error timed out>",
+  "finished_at_utc": "2026-03-13T03:51:11.094404+00:00"
+}

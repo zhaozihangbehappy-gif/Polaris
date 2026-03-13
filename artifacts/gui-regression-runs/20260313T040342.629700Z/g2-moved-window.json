@@ -1,0 +1,98 @@
+{
+  "window_move": {
+    "ok": true,
+    "hwnd": 329524,
+    "left": 160,
+    "top": 120,
+    "width": 2576,
+    "height": 1456
+  },
+  "refreshed_window": {
+    "hwnd": 329524,
+    "title": "(未保存) - Blender 5.0.1",
+    "class_name": "GHOST_WindowClass",
+    "rect": {
+      "left": 160,
+      "top": 120,
+      "right": 2736,
+      "bottom": 1576,
+      "width": 2576,
+      "height": 1456
+    },
+    "visible": true,
+    "foreground": true
+  },
+  "baseline_after_move": {
+    "hwnd": 329524,
+    "title": "(未保存) - Blender 5.0.1",
+    "class_name": "GHOST_WindowClass",
+    "rect": {
+      "left": 160,
+      "top": 120,
+      "right": 2736,
+      "bottom": 1576,
+      "width": 2576,
+      "height": 1456
+    },
+    "activation": {
+      "ok": true,
+      "data": {
+        "activated": true,
+        "hwnd": 329524
+      }
+    },
+    "capture": {
+      "ok": true,
+      "data": {
+        "imagePath": "D:\\Administrator\\Documents\\Playground\\openclaw-upstream\\artifacts\\captures\\capture-20260313T040342941452.png",
+        "width": 2576,
+        "height": 1456,
+        "target": "window",
+        "rect": {
+          "left": 160,
+          "top": 120,
+          "right": 2736,
+          "bottom": 1576,
+          "width": 2576,
+          "height": 1456
+        }
+      }
+    },
+    "move": {
+      "ok": true,
+      "data": {
+        "performed": {
+          "action": "move",
+          "x": 1448,
+          "y": 848
+        },
+        "windowRef": {
+          "hwnd": 329524,
+          "title": "(未保存) - Blender 5.0.1",
+          "class_name": "GHOST_WindowClass",
+          "rect": {
+            "left": 160,
+            "top": 120,
+            "right": 2736,
+            "bottom": 1576,
+            "width": 2576,
+            "height": 1456
+          },
+          "visible": true,
+          "foreground": true
+        },
+        "foregroundVerified": true,
+        "abortKey": "esc",
+        "artifacts": [
+          {
+            "stage": "before",
+            "kind": "screenshot",
+            "imagePath": "D:\\Administrator\\Documents\\Playground\\openclaw-upstream\\artifacts\\captures\\capture-20260313T040343113122.png",
+            "target": "window",
+            "action": "move"
+          }
+        ]
+      }
+    }
+  }
+}

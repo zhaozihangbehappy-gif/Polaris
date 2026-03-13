@@ -10,6 +10,7 @@ from pathlib import Path
 from typing import Any
 
 from bridge_client import BridgeClient, BridgeError
+from window_ops import set_window_rect
 
 
 @dataclass
@@ -39,6 +40,11 @@ def pick_blender_window(windows_payload: Any, title_pattern: str, class_name: st
     return None
 
 
+def refresh_window(client: BridgeClient, title_pattern: str, class_name: str) -> dict[str, Any]:
+    windows_payload = client.list_windows()
+    return pick_blender_window(windows_payload, title_pattern, class_name) or {}
+
+
 def baseline_step(client: BridgeClient, win: dict[str, Any], purpose_prefix: str) -> dict[str, Any]:
     hwnd = int(win['hwnd'])
     rect = win['rect']
@@ -59,6 +65,40 @@ def scenario_g1_baseline(client: BridgeClient, win: dict[str, Any], run_dir: Pat
     evidence = baseline_step(client, win, 'g1-baseline')
     (run_dir / 'g1-baseline.json').write_text(json.dumps(evidence, indent=2, ensure_ascii=False))
     return ScenarioResult('G1', 'pass', 'Baseline activation/capture/move succeeded', evidence)
+
+
+def scenario_g2_moved_window(client: BridgeClient, win: dict[str, Any], run_dir: Path, title_pattern: str, class_name: str) -> ScenarioResult:
+    rect = win['rect']
+    new_left = 160
+    new_top = 120
+    move_window = set_window_rect(int(win['hwnd']), new_left, new_top, int(rect['width']), int(rect['height']))
+    refreshed = refresh_window(client, title_pattern, class_name)
+    if not refreshed:
+        raise BridgeError('Blender window not found after moved-window operation')
+    evidence = {
+        'window_move': move_window,
+        'refreshed_window': refreshed,
+        'baseline_after_move': baseline_step(client, refreshed, 'g2-moved-window'),
+    }
+    (run_dir / 'g2-moved-window.json').write_text(json.dumps(evidence, indent=2, ensure_ascii=False))
+    return ScenarioResult('G2', 'pass', 'Moved-window scenario succeeded', evidence)
+
+
+def scenario_g3_resized_window(client: BridgeClient, win: dict[str, Any], run_dir: Path, title_pattern: str, class_name: str) -> ScenarioResult:
+    rect = win['rect']
+    new_width = max(1280, int(rect['width']) - 400)
+    new_height = max(900, int(rect['height']) - 250)
+    resize_window = set_window_rect(int(win['hwnd']), int(rect['left']), int(rect['top']), new_width, new_height)
+    refreshed = refresh_window(client, title_pattern, class_name)
+    if not refreshed:
+        raise BridgeError('Blender window not found after resized-window operation')
+    evidence = {
+        'window_resize': resize_window,
+        'refreshed_window': refreshed,
+        'baseline_after_resize': baseline_step(client, refreshed, 'g3-resized-window'),
+    }
+    (run_dir / 'g3-resized-window.json').write_text(json.dumps(evidence, indent=2, ensure_ascii=False))
+    return ScenarioResult('G3', 'pass', 'Resized-window scenario succeeded', evidence)
 
 
 def scenario_g5_repeated_runs(client: BridgeClient, win: dict[str, Any], run_dir: Path, repeats: int) -> ScenarioResult:
@@ -111,6 +151,12 @@ def main() -> int:
         for scenario in requested:
             if scenario == 'G1':
                 result = scenario_g1_baseline(client, win, run_dir)
+            elif scenario == 'G2':
+                result = scenario_g2_moved_window(client, win, run_dir, args.title_pattern, args.class_name)
+                win = result.evidence['refreshed_window']
+            elif scenario == 'G3':
+                result = scenario_g3_resized_window(client, win, run_dir, args.title_pattern, args.class_name)
+                win = result.evidence['refreshed_window']
             elif scenario == 'G5':
                 result = scenario_g5_repeated_runs(client, win, run_dir, args.repeats)
             else:

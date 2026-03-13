@@ -23,3 +23,6 @@ __pycache__/
 Thumbs.db
 *.swp
 *.tmp
+
+# Local ad-hoc debug scripts
+tmp-*.ps1

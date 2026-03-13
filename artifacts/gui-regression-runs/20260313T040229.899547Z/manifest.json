@@ -1,0 +1,15 @@
+{
+  "run_id": "20260313T040229.899547Z",
+  "started_at_utc": "2026-03-13T04:02:29.899763+00:00",
+  "title_pattern": "*Blender*",
+  "class_name": "GHOST_WindowClass",
+  "scenarios_requested": [
+    "G2",
+    "G3"
+  ],
+  "repeats": 3,
+  "results": [],
+  "status": "fail",
+  "error": "BridgeError: No matching Blender window found for requested signature",
+  "finished_at_utc": "2026-03-13T04:02:29.922471+00:00"
+}
