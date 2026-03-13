@@ -1,0 +1,67 @@
+{
+  "action_tree": {
+    "children": [
+      {
+        "command": "python3 --version",
+        "kind": "shell",
+        "label": "Capture interpreter version",
+        "node_id": "python-version",
+        "reversible": true
+      },
+      {
+        "command": "python3 -c 'import sys; print(sys.executable)'",
+        "kind": "shell",
+        "label": "Capture interpreter path",
+        "node_id": "python-exec",
+        "reversible": true
+      },
+      {
+        "command": "python3 -c 'import sys, json; print(json.dumps(sys.path[:6]))'",
+        "kind": "shell",
+        "label": "Capture sys.path head",
+        "node_id": "sys-path",
+        "reversible": true
+      },
+      {
+        "command": "python3 -m pip --version",
+        "kind": "shell",
+        "label": "Capture pip presence",
+        "node_id": "pip-version",
+        "reversible": true
+      },
+      {
+        "command": "python3 -m pip list --format=columns | sed -n '1,8p'",
+        "kind": "shell",
+        "label": "Sample installed packages",
+        "node_id": "pip-list-head",
+        "reversible": true
+      },
+      {
+        "command": "find . -maxdepth 2 \\( -name pyvenv.cfg -o -name '.venv' -o -name 'venv' \\) | sed -n '1,8p'",
+        "kind": "shell",
+        "label": "Detect local virtualenv markers",
+        "node_id": "venv-detect",
+        "reversible": true
+      }
+    ],
+    "kind": "decision",
+    "label": "Probe local Python environment before any fix",
+    "node_id": "dependency-root"
+  },
+  "created_at": "2026-03-13T12:02:46.183059+00:00",
+  "error": "ModuleNotFoundError: No module named pywinauto",
+  "execution_order": [
+    "python-version",
+    "python-exec",
+    "sys-path",
+    "pip-version",
+    "pip-list-head",
+    "venv-detect"
+  ],
+  "failure_type": "missing_dependency",
+  "notes": "Local-only probes first; installation stays outside automatic repair.",
+  "policy": "local-only reversible probes or explicit stop",
+  "probe_budget": 6,
+  "repair_depth": "deep",
+  "safe_to_execute": true
+}

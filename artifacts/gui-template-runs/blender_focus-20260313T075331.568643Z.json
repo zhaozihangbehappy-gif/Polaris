@@ -1,0 +1,8 @@
+{
+  "run_id": "20260313T075331.568643Z",
+  "template": "blender_focus",
+  "started_at_utc": "2026-03-13T07:53:31.568663+00:00",
+  "status": "fail",
+  "error": "UnicodeDecodeError: 'utf-8' codec can't decode byte 0xd0 in position 6: invalid continuation byte",
+  "finished_at_utc": "2026-03-13T07:53:33.931990+00:00"
+}

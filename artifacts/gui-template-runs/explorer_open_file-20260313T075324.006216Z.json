@@ -1,0 +1,60 @@
+{
+  "run_id": "20260313T075324.006216Z",
+  "template": "explorer_open_file",
+  "started_at_utc": "2026-03-13T07:53:24.006238+00:00",
+  "status": "pass",
+  "plan_path": "/home/administrator/.openclaw/workspace/artifacts/gui-macros/explorer_open_file-20260313T075324.006216Z.json",
+  "calibration": {
+    "template": "explorer_open_file",
+    "window_title": "D:\\Administrator\\Documents\\Playground\\openclaw-upstream\\artifacts\\delivery",
+    "window_rect": {
+      "left": 448,
+      "top": 179,
+      "right": 2166,
+      "bottom": 1282,
+      "width": 1718,
+      "height": 1103,
+      "center_x": 1307,
+      "center_y": 730
+    },
+    "file_name": "cabinet-12cell-concept.blend",
+    "search_rect": {
+      "left": 1714,
+      "top": 227,
+      "right": 2147,
+      "bottom": 259,
+      "width": 433,
+      "height": 32,
+      "center_x": 1930,
+      "center_y": 243
+    },
+    "item_rect": {
+      "left": 1020,
+      "top": 328,
+      "right": 1125,
+      "bottom": 463,
+      "width": 105,
+      "height": 135,
+      "center_x": 1072,
+      "center_y": 395
+    }
+  },
+  "bridge_verify": [
+    {
+      "hwnd": 1509304,
+      "title": "* cabinet-12cell-concept [D:\\Administrator\\Documents\\Playground\\openclaw-upstream\\artifacts\\delivery\\cabinet-12cell-concept.blend] - Blender 5.0.1",
+      "class_name": "GHOST_WindowClass",
+      "rect": {
+        "left": -8,
+        "top": -8,
+        "right": 2568,
+        "bottom": 1448,
+        "width": 2576,
+        "height": 1456
+      },
+      "visible": true,
+      "foreground": true
+    }
+  ],
+  "finished_at_utc": "2026-03-13T07:53:31.516894+00:00"
+}

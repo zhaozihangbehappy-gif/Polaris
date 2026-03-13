@@ -1,0 +1,84 @@
+{
+  "run_id": "20260313T074850.471790Z",
+  "scenario": "delivery_open_and_focus",
+  "started_at_utc": "2026-03-13T07:48:50.471812+00:00",
+  "status": "fail",
+  "steps": [
+    {
+      "name": "explorer_open_file",
+      "status": "pass",
+      "detail": "open file from Explorer via calibrated template",
+      "payload": {
+        "returncode": 0,
+        "stdout": "/home/administrator/.openclaw/workspace/artifacts/gui-template-runs/explorer_open_file-20260313T074850.518052Z.json\n",
+        "stderr": "",
+        "result_path": "/home/administrator/.openclaw/workspace/artifacts/gui-template-runs/explorer_open_file-20260313T074850.518052Z.json",
+        "result": {
+          "run_id": "20260313T074850.518052Z",
+          "template": "explorer_open_file",
+          "started_at_utc": "2026-03-13T07:48:50.518073+00:00",
+          "status": "pass",
+          "plan_path": "/home/administrator/.openclaw/workspace/artifacts/gui-macros/explorer_open_file-20260313T074850.518052Z.json",
+          "calibration": {
+            "template": "explorer_open_file",
+            "window_title": "D:\\Administrator\\Documents\\Playground\\openclaw-upstream\\artifacts\\delivery",
+            "window_rect": {
+              "left": 448,
+              "top": 179,
+              "right": 2166,
+              "bottom": 1282,
+              "width": 1718,
+              "height": 1103,
+              "center_x": 1307,
+              "center_y": 730
+            },
+            "file_name": "cabinet-12cell-concept.blend",
+            "search_rect": {
+              "left": 1714,
+              "top": 227,
+              "right": 2147,
+              "bottom": 259,
+              "width": 433,
+              "height": 32,
+              "center_x": 1930,
+              "center_y": 243
+            },
+            "item_rect": {
+              "left": 1020,
+              "top": 328,
+              "right": 1125,
+              "bottom": 463,
+              "width": 105,
+              "height": 135,
+              "center_x": 1072,
+              "center_y": 395
+            }
+          },
+          "bridge_verify": [],
+          "finished_at_utc": "2026-03-13T07:48:56.057649+00:00"
+        }
+      }
+    },
+    {
+      "name": "blender_focus",
+      "status": "fail",
+      "detail": "focus Blender via calibrated template",
+      "payload": {
+        "returncode": 1,
+        "stdout": "/home/administrator/.openclaw/workspace/artifacts/gui-template-runs/blender_focus-20260313T074856.108142Z.json\n",
+        "stderr": "",
+        "result_path": "/home/administrator/.openclaw/workspace/artifacts/gui-template-runs/blender_focus-20260313T074856.108142Z.json",
+        "result": {
+          "run_id": "20260313T074856.108142Z",
+          "template": "blender_focus",
+          "started_at_utc": "2026-03-13T07:48:56.108163+00:00",
+          "status": "fail",
+          "error": "CalledProcessError: Command '['/mnt/c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe', '-NoProfile', '-Command', 'py \"\\\\\\\\wsl.localhost\\\\Ubuntu\\\\home\\\\administrator\\\\.openclaw\\\\workspace\\\\scripts\\\\windows\\\\gui_template_builder.py\" \"blender_focus\"']' returned non-zero exit status 1.",
+          "finished_at_utc": "2026-03-13T07:48:56.655329+00:00"
+        }
+      }
+    }
+  ],
+  "error": "RuntimeError: blender_focus failed",
+  "finished_at_utc": "2026-03-13T07:48:56.662955+00:00"
+}

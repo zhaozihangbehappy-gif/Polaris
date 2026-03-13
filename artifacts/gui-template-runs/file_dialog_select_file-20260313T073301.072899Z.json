@@ -1,0 +1,8 @@
+{
+  "run_id": "20260313T073301.072899Z",
+  "template": "file_dialog_select_file",
+  "started_at_utc": "2026-03-13T07:33:01.072923+00:00",
+  "status": "fail",
+  "error": "CalledProcessError: Command '['/mnt/c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe', '-NoProfile', '-Command', 'py \"\\\\\\\\wsl.localhost\\\\Ubuntu\\\\home\\\\administrator\\\\.openclaw\\\\workspace\\\\scripts\\\\windows\\\\gui_template_builder.py\" \"file_dialog_select_file\" \"cabinet-12cell-concept.blend\"']' returned non-zero exit status 1.",
+  "finished_at_utc": "2026-03-13T07:33:03.391296+00:00"
+}

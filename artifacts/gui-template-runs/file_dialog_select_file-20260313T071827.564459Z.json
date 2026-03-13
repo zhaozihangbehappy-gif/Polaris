@@ -1,0 +1,35 @@
+{
+  "run_id": "20260313T071827.564459Z",
+  "template": "file_dialog_select_file",
+  "started_at_utc": "2026-03-13T07:18:27.564481+00:00",
+  "status": "fail",
+  "dialog_detect": [
+    {
+      "ProcessName": "blender",
+      "Id": 22980,
+      "MainWindowTitle": "cabinet-12cell-concept [D:\\Administrator\\Documents\\Playground\\openclaw-upstream\\artifacts\\delivery\\cabinet-12cell-concept.blend] - Blender 5.0.1"
+    },
+    {
+      "ProcessName": "chrome",
+      "Id": 2940,
+      "MainWindowTitle": "OpenClaw Control - Google Chrome"
+    },
+    {
+      "ProcessName": "explorer",
+      "Id": 16420,
+      "MainWindowTitle": "D:\\Administrator\\Documents\\Playground\\openclaw-upstream\\artifacts\\delivery"
+    },
+    {
+      "ProcessName": "explorer",
+      "Id": 17708,
+      "MainWindowTitle": "D:\\Administrator\\Documents\\Playground\\openclaw-upstream\\artifacts\\delivery"
+    },
+    {
+      "ProcessName": "explorer",
+      "Id": 20044,
+      "MainWindowTitle": "D:\\Administrator\\Documents\\Playground\\openclaw-upstream\\artifacts\\delivery"
+    }
+  ],
+  "error": "CalledProcessError: Command '['python3', '/home/administrator/.openclaw/workspace/scripts/windows/gui_template_orchestrator.py', 'file_dialog_select_file', 'cabinet-12cell-concept.blend']' returned non-zero exit status 1.",
+  "finished_at_utc": "2026-03-13T07:18:32.119257+00:00"
+}

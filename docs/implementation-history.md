@@ -133,6 +133,54 @@ Actions completed:
 - GitHub SSH over port 443 configured due to blocked port 22
 - repository README, architecture docs, runbooks, config examples, and artifact index were added and pushed
 
+### 2026-03-13 — Windows GUI generalization advanced beyond isolated scripts
+
+The Windows GUI direction became much more formalized and honest.
+
+Newly landed and/or archived in this phase:
+
+- visible-execution expectations were made explicit and treated as default operating rules
+- GUI regression runs and evidence were expanded
+- template-based local execution and state-machine-backed scenarios were documented more clearly
+- a dedicated status evaluation captured the current real score and remaining bottlenecks
+
+Most important conclusion:
+
+- the main remaining bottleneck is not cursor movement itself
+- it is still insufficient localization of long-chain state progression and recovery
+
+### 2026-03-13 — Polaris skill built from scratch and matured through multiple passes
+
+A separate temporary Polaris project was created and iteratively upgraded into a much stronger local-first orchestration skill.
+
+The work moved through several stages:
+
+- initial modular scaffold
+- stronger repair and orchestration shape
+- success-pattern lifecycle stabilization
+- Phase 1 agility refactor (`micro` / `standard` / `deep`, state-density control, event budgets)
+- Phase 2 agility refactor (sticky adapter reuse, repair-depth escalation)
+
+This was an important architectural shift because it pushed Polaris away from “always use the full heavy stack” and toward “deep in reserve, light in motion.”
+
+### 2026-03-13 — source-level comparison completed: Polaris vs self-improving-agent
+
+A real source comparison was performed instead of relying on registry descriptions.
+
+Result:
+
+- `self-improving-agent` is useful as a learning/error capture system
+- Polaris is the stronger execution/evolution runtime
+- the best future direction is to absorb low-friction learning capture ideas into Polaris without collapsing its execution architecture into markdown-only logging
+
+### 2026-03-13 — Polaris imported into the main repository for continuation
+
+Because the work originally lived under `/tmp/polaris-skill`, it was imported into the main repository under:
+
+- `projects/polaris-skill/`
+
+This was done specifically so the project can resume cleanly tomorrow without depending on temporary directories, tmux history, or live terminal state.
+
 ## Current state summary
 
 The repository now serves as a clean engineering record for:
@@ -144,6 +192,7 @@ The repository now serves as a clean engineering record for:
 - operational runbooks
 - example config structures
 - external artifact indexing
+- imported Polaris skill source and status snapshots
 
 ## Recommended next history updates
 

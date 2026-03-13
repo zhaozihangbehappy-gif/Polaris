@@ -1,0 +1,8 @@
+{
+  "run_id": "20260313T074804.826064Z",
+  "template": "blender_focus",
+  "started_at_utc": "2026-03-13T07:48:04.826087+00:00",
+  "status": "fail",
+  "error": "CalledProcessError: Command '['/mnt/c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe', '-NoProfile', '-Command', 'py \"\\\\\\\\wsl.localhost\\\\Ubuntu\\\\home\\\\administrator\\\\.openclaw\\\\workspace\\\\scripts\\\\windows\\\\gui_template_builder.py\" \"blender_focus\"']' returned non-zero exit status 1.",
+  "finished_at_utc": "2026-03-13T07:48:05.406675+00:00"
+}

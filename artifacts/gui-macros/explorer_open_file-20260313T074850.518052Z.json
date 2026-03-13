@@ -1,0 +1,120 @@
+{
+  "template": "explorer_open_file",
+  "calibration": {
+    "template": "explorer_open_file",
+    "window_title": "D:\\Administrator\\Documents\\Playground\\openclaw-upstream\\artifacts\\delivery",
+    "window_rect": {
+      "left": 448,
+      "top": 179,
+      "right": 2166,
+      "bottom": 1282,
+      "width": 1718,
+      "height": 1103,
+      "center_x": 1307,
+      "center_y": 730
+    },
+    "file_name": "cabinet-12cell-concept.blend",
+    "search_rect": {
+      "left": 1714,
+      "top": 227,
+      "right": 2147,
+      "bottom": 259,
+      "width": 433,
+      "height": 32,
+      "center_x": 1930,
+      "center_y": 243
+    },
+    "item_rect": {
+      "left": 1020,
+      "top": 328,
+      "right": 1125,
+      "bottom": 463,
+      "width": 105,
+      "height": 135,
+      "center_x": 1072,
+      "center_y": 395
+    }
+  },
+  "steps": [
+    {
+      "kind": "activateExplorerPath",
+      "path": "D:\\Administrator\\Documents\\Playground\\openclaw-upstream\\artifacts\\delivery",
+      "waitMs": 1400
+    },
+    {
+      "kind": "movePath",
+      "points": [
+        {
+          "x": 628,
+          "y": 269,
+          "steps": 8,
+          "delayMs": 12
+        },
+        {
+          "x": 1307,
+          "y": 255,
+          "steps": 8,
+          "delayMs": 12
+        },
+        {
+          "x": 1930,
+          "y": 243,
+          "steps": 8,
+          "delayMs": 12
+        }
+      ]
+    },
+    {
+      "kind": "click"
+    },
+    {
+      "kind": "sendKeys",
+      "text": "cabinet-12cell-concept.blend",
+      "preDelayMs": 100
+    },
+    {
+      "kind": "wait",
+      "ms": 120
+    },
+    {
+      "kind": "sendKeys",
+      "text": "{ENTER}",
+      "preDelayMs": 30
+    },
+    {
+      "kind": "wait",
+      "ms": 1500
+    },
+    {
+      "kind": "movePath",
+      "points": [
+        {
+          "x": 1906,
+          "y": 319,
+          "steps": 8,
+          "delayMs": 12
+        },
+        {
+          "x": 1307,
+          "y": 369,
+          "steps": 8,
+          "delayMs": 12
+        },
+        {
+          "x": 1072,
+          "y": 395,
+          "steps": 8,
+          "delayMs": 12
+        }
+      ]
+    },
+    {
+      "kind": "doubleClick",
+      "intervalMs": 110
+    },
+    {
+      "kind": "wait",
+      "ms": 1000
+    }
+  ]
+}

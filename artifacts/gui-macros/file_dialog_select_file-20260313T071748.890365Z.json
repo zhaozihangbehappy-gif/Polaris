@@ -1,0 +1,83 @@
+{
+  "template": "file_dialog_select_file",
+  "calibration": {
+    "template": "file_dialog_select_file",
+    "window_title": "OpenClaw Control - Google Chrome",
+    "window_rect": {
+      "left": 1163,
+      "top": 82,
+      "right": 2481,
+      "bottom": 1366,
+      "width": 1318,
+      "height": 1284,
+      "center_x": 1822,
+      "center_y": 724
+    },
+    "file_name": "cabinet-12cell-concept.blend",
+    "filename_edit_rect": {
+      "left": 1431,
+      "top": 1275,
+      "right": 2260,
+      "bottom": 1334,
+      "width": 829,
+      "height": 59,
+      "center_x": 1845,
+      "center_y": 1304
+    }
+  },
+  "steps": [
+    {
+      "kind": "movePath",
+      "points": [
+        {
+          "x": 1283,
+          "y": 172,
+          "steps": 8,
+          "delayMs": 12
+        },
+        {
+          "x": 1845,
+          "y": 1304,
+          "steps": 8,
+          "delayMs": 12
+        }
+      ]
+    },
+    {
+      "kind": "click"
+    },
+    {
+      "kind": "sendKeys",
+      "text": "cabinet-12cell-concept.blend",
+      "preDelayMs": 100
+    },
+    {
+      "kind": "wait",
+      "ms": 100
+    },
+    {
+      "kind": "movePath",
+      "points": [
+        {
+          "x": 2271,
+          "y": 1310,
+          "steps": 8,
+          "delayMs": 12
+        },
+        {
+          "x": 2391,
+          "y": 1330,
+          "steps": 8,
+          "delayMs": 12
+        }
+      ]
+    },
+    {
+      "kind": "click"
+    },
+    {
+      "kind": "wait",
+      "ms": 350
+    }
+  ]
+}

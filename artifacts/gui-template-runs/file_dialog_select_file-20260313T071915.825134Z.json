@@ -1,0 +1,8 @@
+{
+  "run_id": "20260313T071915.825134Z",
+  "template": "file_dialog_select_file",
+  "started_at_utc": "2026-03-13T07:19:15.825154+00:00",
+  "status": "fail",
+  "error": "RuntimeError: Open file dialog did not appear",
+  "finished_at_utc": "2026-03-13T07:19:32.596139+00:00"
+}

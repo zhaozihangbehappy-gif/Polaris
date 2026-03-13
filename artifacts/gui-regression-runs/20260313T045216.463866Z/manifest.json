@@ -1,0 +1,14 @@
+{
+  "run_id": "20260313T045216.463866Z",
+  "started_at_utc": "2026-03-13T04:52:16.464119+00:00",
+  "title_pattern": "*Blender*",
+  "class_name": "GHOST_WindowClass",
+  "scenarios_requested": [
+    "G4"
+  ],
+  "repeats": 3,
+  "results": [],
+  "status": "fail",
+  "error": "UnicodeDecodeError: 'utf-8' codec can't decode byte 0xce in position 0: invalid continuation byte",
+  "finished_at_utc": "2026-03-13T04:52:18.026946+00:00"
+}
