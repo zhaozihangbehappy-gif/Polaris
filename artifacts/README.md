@@ -28,12 +28,19 @@ The canonical delivery payload currently lives outside this repository on the Wi
 - some assets are large binaries or generated outputs
 - this repo currently acts as an index and planning surface for the broader local workflow
 
+## Included index files
+
+- `cabinet-12cell-manifest.md`
+  - per-file manifest for the 12-cell cabinet delivery set
+  - records purpose, output type, and current status for each known artifact
+
 ## Recommended next step
 
-Add per-artifact manifests later, for example:
+Add richer second-layer manifests later, for example:
 
 - source file
 - generated date
 - producing script or workflow
 - validation status
 - whether a smaller public-safe copy should live in Git
+- file size / checksum / provenance details
