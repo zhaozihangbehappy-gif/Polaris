@@ -1,0 +1,102 @@
+{
+  "focus_theft": {
+    "ok": false,
+    "pid": 13636,
+    "hwnd": 0,
+    "title": ""
+  },
+  "blocked_safely": true,
+  "first_error": "BridgeError: HTTP 400 calling desktop.input: {\"ok\": false, \"error\": {\"code\": \"foreground_mismatch\", \"message\": \"Target window is not in the foreground.\", \"retryable\": false, \"details\": {\"selector\": {\"hwnd\": 133010}, \"resolvedWindow\": {\"hwnd\": 133010, \"title\": \"(\\u672a\\u4fdd\\u5b58) - Blender 5.0.1\", \"class_name\": \"GHOST_WindowClass\", \"rect\": {\"left\": 55, \"top\": 55, \"right\": 2144, \"bottom\": 1297, \"width\": 2089, \"height\": 1242}, \"visible\": true, \"foreground\": false}}}}",
+  "focus_cleanup": {
+    "ok": true,
+    "pid": 13636
+  },
+  "refreshed_window": {
+    "hwnd": 133010,
+    "title": "(未保存) - Blender 5.0.1",
+    "class_name": "GHOST_WindowClass",
+    "rect": {
+      "left": 55,
+      "top": 55,
+      "right": 2144,
+      "bottom": 1297,
+      "width": 2089,
+      "height": 1242
+    },
+    "visible": true,
+    "foreground": false
+  },
+  "recovery": {
+    "hwnd": 133010,
+    "title": "(未保存) - Blender 5.0.1",
+    "class_name": "GHOST_WindowClass",
+    "rect": {
+      "left": 55,
+      "top": 55,
+      "right": 2144,
+      "bottom": 1297,
+      "width": 2089,
+      "height": 1242
+    },
+    "activation": {
+      "ok": true,
+      "data": {
+        "activated": true,
+        "hwnd": 133010
+      }
+    },
+    "capture": {
+      "ok": true,
+      "data": {
+        "imagePath": "D:\\Administrator\\Documents\\Playground\\openclaw-upstream\\artifacts\\captures\\capture-20260313T045239203572.png",
+        "width": 2089,
+        "height": 1242,
+        "target": "window",
+        "rect": {
+          "left": 55,
+          "top": 55,
+          "right": 2144,
+          "bottom": 1297,
+          "width": 2089,
+          "height": 1242
+        }
+      }
+    },
+    "move": {
+      "ok": true,
+      "data": {
+        "performed": {
+          "action": "move",
+          "x": 1099,
+          "y": 676
+        },
+        "windowRef": {
+          "hwnd": 133010,
+          "title": "(未保存) - Blender 5.0.1",
+          "class_name": "GHOST_WindowClass",
+          "rect": {
+            "left": 55,
+            "top": 55,
+            "right": 2144,
+            "bottom": 1297,
+            "width": 2089,
+            "height": 1242
+          },
+          "visible": true,
+          "foreground": true
+        },
+        "foregroundVerified": true,
+        "abortKey": "esc",
+        "artifacts": [
+          {
+            "stage": "before",
+            "kind": "screenshot",
+            "imagePath": "D:\\Administrator\\Documents\\Playground\\openclaw-upstream\\artifacts\\captures\\capture-20260313T045239310851.png",
+            "target": "window",
+            "action": "move"
+          }
+        ]
+      }
+    }
+  }
+}

@@ -10,7 +10,7 @@ from pathlib import Path
 from typing import Any
 
 from bridge_client import BridgeClient, BridgeError
-from window_ops import activate_window_by_title_fragment, set_window_rect
+from window_ops import close_process, set_window_rect, steal_focus_with_notepad
 
 
 @dataclass
@@ -73,11 +73,7 @@ def scenario_g2_moved_window(client: BridgeClient, win: dict[str, Any], run_dir:
     refreshed = refresh_window(client, title_pattern, class_name)
     if not refreshed:
         raise BridgeError('Blender window not found after moved-window operation')
-    evidence = {
-        'window_move': move_window,
-        'refreshed_window': refreshed,
-        'baseline_after_move': baseline_step(client, refreshed, 'g2-moved-window'),
-    }
+    evidence = {'window_move': move_window, 'refreshed_window': refreshed, 'baseline_after_move': baseline_step(client, refreshed, 'g2-moved-window')}
     (run_dir / 'g2-moved-window.json').write_text(json.dumps(evidence, indent=2, ensure_ascii=False))
     return ScenarioResult('G2', 'pass', 'Moved-window scenario succeeded', evidence)
 
@@ -90,17 +86,13 @@ def scenario_g3_resized_window(client: BridgeClient, win: dict[str, Any], run_di
     refreshed = refresh_window(client, title_pattern, class_name)
     if not refreshed:
         raise BridgeError('Blender window not found after resized-window operation')
-    evidence = {
-        'window_resize': resize_window,
-        'refreshed_window': refreshed,
-        'baseline_after_resize': baseline_step(client, refreshed, 'g3-resized-window'),
-    }
+    evidence = {'window_resize': resize_window, 'refreshed_window': refreshed, 'baseline_after_resize': baseline_step(client, refreshed, 'g3-resized-window')}
     (run_dir / 'g3-resized-window.json').write_text(json.dumps(evidence, indent=2, ensure_ascii=False))
     return ScenarioResult('G3', 'pass', 'Resized-window scenario succeeded', evidence)
 
 
 def scenario_g4_focus_loss(client: BridgeClient, win: dict[str, Any], run_dir: Path, title_pattern: str, class_name: str) -> ScenarioResult:
-    theft = activate_window_by_title_fragment('OpenClaw Control')
+    theft = steal_focus_with_notepad()
     rect = win['rect']
     center_x = int(rect['left'] + rect['width'] / 2)
     center_y = int(rect['top'] + rect['height'] / 2)
@@ -111,6 +103,7 @@ def scenario_g4_focus_loss(client: BridgeClient, win: dict[str, Any], run_dir: P
     except Exception as exc:  # noqa: BLE001
         first_error = f'{type(exc).__name__}: {exc}'
         blocked_safely = True
+    cleanup = close_process(int(theft['pid'])) if theft.get('pid') else {'ok': False, 'reason': 'no_pid'}
     refreshed = refresh_window(client, title_pattern, class_name)
     if not refreshed:
         raise BridgeError('Blender window not found after focus-loss theft')
@@ -119,13 +112,14 @@ def scenario_g4_focus_loss(client: BridgeClient, win: dict[str, Any], run_dir: P
         'focus_theft': theft,
         'blocked_safely': blocked_safely,
         'first_error': first_error,
+        'focus_cleanup': cleanup,
         'refreshed_window': refreshed,
         'recovery': recovery,
     }
     (run_dir / 'g4-focus-loss.json').write_text(json.dumps(evidence, indent=2, ensure_ascii=False))
-    if not blocked_safely:
-        return ScenarioResult('G4', 'partial', 'Focus theft did not block first move, but recovery path succeeded', evidence)
-    return ScenarioResult('G4', 'pass', 'Focus theft blocked unsafe action and recovery path succeeded', evidence)
+    if blocked_safely:
+        return ScenarioResult('G4', 'pass', 'Focus theft blocked unsafe action and recovery path succeeded', evidence)
+    return ScenarioResult('G4', 'partial', 'Focus theft did not block first move, but recovery path succeeded', evidence)
 
 
 def scenario_g5_repeated_runs(client: BridgeClient, win: dict[str, Any], run_dir: Path, repeats: int) -> ScenarioResult:
@@ -134,11 +128,7 @@ def scenario_g5_repeated_runs(client: BridgeClient, win: dict[str, Any], run_dir
         attempt = baseline_step(client, win, f'g5-run-{index}')
         attempt['attempt'] = index
         attempts.append(attempt)
-    evidence = {
-        'repeats_requested': repeats,
-        'repeats_completed': len(attempts),
-        'attempts': attempts,
-    }
+    evidence = {'repeats_requested': repeats, 'repeats_completed': len(attempts), 'attempts': attempts}
     (run_dir / 'g5-repeated-runs.json').write_text(json.dumps(evidence, indent=2, ensure_ascii=False))
     return ScenarioResult('G5', 'pass', f'Repeated baseline path passed {repeats} times', evidence)
 
