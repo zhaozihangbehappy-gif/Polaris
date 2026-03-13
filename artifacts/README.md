@@ -34,6 +34,13 @@ The canonical delivery payload currently lives outside this repository on the Wi
   - per-file manifest for the 12-cell cabinet delivery set
   - records purpose, output type, and current status for each known artifact
 
+## Related external artifact folders
+
+The broader local workflow also now writes evidence outside this repo under the Windows-side upstream tree, for example:
+
+- `D:\Administrator\Documents\Playground\openclaw-upstream\artifacts\captures\`
+- `D:\Administrator\Documents\Playground\openclaw-upstream\artifacts\pywinauto-runs\`
+
 ## Recommended next step
 
 Add richer second-layer manifests later, for example:
