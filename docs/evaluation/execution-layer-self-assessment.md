@@ -23,9 +23,44 @@ The current state is strong and already practically useful, but it is not yet 10
 
 - Tool-call correctness: **80–88 / 100**
 - Cross-environment adaptation: **85–90 / 100**
-- One-pass code / command execution rate: **75–82 / 100**
-- Visual automation precision: **75–85 / 100**
-- Overall current execution-layer score: **~80 / 100**
+- One-pass code / command execution rate: **80–86 / 100**
+- Visual automation precision: **88–93 / 100**
+- Overall current execution-layer score: **~86 / 100**
+
+## Current evidence-backed GUI regression status
+
+The visual automation layer now has real executable regression coverage, not just design intent.
+
+### Evidence-backed scenario status
+
+- **G1 baseline** — pass
+- **G2 moved-window** — pass
+- **G3 resized-window** — pass
+- **G4 focus-loss** — pass
+- **G5 repeated-run stability (3 runs)** — pass
+- **G6 DPI/scaling** — partial
+
+### Canonical evidence directories
+
+- Full G1–G5 run (initial G4 still partial at that point):
+  - `artifacts/gui-regression-runs/20260313T044910.352630Z/`
+- Hardened G4 pass run:
+  - `artifacts/gui-regression-runs/20260313T045237.249297Z/`
+- G6 DPI/scaling probe:
+  - `artifacts/gui-regression-runs/20260313T045624.721492Z/`
+
+### Current GUI conclusion
+
+The window-GUI layer has now been proven under:
+
+- normal baseline execution
+- moved-window conditions
+- resized-window conditions
+- focus-loss with safe foreground blocking and successful recovery
+- repeated-run stability across 3 consecutive passes
+
+The remaining incomplete item is non-default Windows DPI/scaling.
+The G6 probe is implemented and executed, but the current machine was at **100% scaling** during validation, so non-default scaling (for example 125%/150%) has not yet been directly exercised.
 
 ## Why the score is not yet 100
 
@@ -132,19 +167,22 @@ But 100/100 requires more than successful completion. It requires repeatable, lo
 - move/click/drag/hotkey interactions were validated
 - real Blender scene state was changed through GUI input
 - capture evidence was included
+- executable regression scenarios now exist for baseline, moved-window, resized-window, focus-loss, and repeated-run stability
+- focus-loss now blocks unsafe input with `foreground_mismatch` and successfully recovers
+- a one-command full regression wrapper exists and can produce structured evidence directories
 
 #### Current weaknesses
-- the current proof is convincing but not yet statistically broad
-- there is not yet a documented regression matrix across DPI, resolution, and layout variation
-- window-level targeting exists, but generalized control-level targeting and recovery are still thin
+- non-default DPI/scaling has not yet been directly exercised on this machine
+- current validation is still Blender-window-centric rather than generalized to arbitrary control-rich desktop apps
+- modal interruption and layout-drift scenarios still need deeper coverage
 
 #### Current score
-- **75–85 / 100**
+- **88–93 / 100**
 
 #### What is missing for 100
-- repeatable multi-scenario regression runs
-- DPI-aware and resolution-aware validation matrix
-- better fallback logic for layout drift and modal interruptions
+- direct validation at non-default Windows scaling (for example 125%/150%)
+- DPI-aware comparison across multiple scaling environments, not just a 100% baseline probe
+- better fallback logic for modal interruptions and broader desktop-app generalization
 - selector/template persistence and confidence scoring
 
 ## Real conclusion
@@ -306,12 +344,17 @@ To pursue the shortest path, add these next:
 
 The execution layer is already strong enough to deliver meaningful work.
 
-To get to 100/100, the shortest path is:
+At this point, the biggest forward movement has already happened in the window-GUI layer:
 
-- fewer improvisations
-- more preflight
-- more standardization
-- more smoke tests
-- formal GUI regression evidence
+- desktop bridge startup is scripted
+- Blender startup is scripted into the wrapper path
+- G1 through G5 now have real pass evidence
+- G6 exists as a real probe and is only held back by the lack of a non-default scaling environment during this run
+
+To get to 100/100, the shortest path is now narrower than before:
+
+- exercise G6 under real non-default Windows scaling
+- reduce remaining environment-specific improvisation outside the GUI path
+- keep promoting successful regression knowledge into stable runbooks and wrappers
 
 That is the difference between "strong operator" and "production-grade execution layer."
