@@ -1,0 +1,15 @@
+{
+  "targetApp": "Blender",
+  "windowClass": "GHOST_WindowClass",
+  "windowTitlePattern": "*Blender 5.0*",
+  "transport": "local-bridge",
+  "mode": "hybrid",
+  "desktopBridgeRequired": true,
+  "scriptedOperationsPreferred": true,
+  "startupChecks": [
+    "desktop-bridge-online",
+    "blender-window-visible",
+    "blender-bridge-online"
+  ],
+  "notes": "Example non-secret config shape showing intended runtime boundary between desktop automation and Blender scripting."
+}

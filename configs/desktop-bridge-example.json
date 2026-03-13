@@ -1,0 +1,12 @@
+{
+  "baseUrl": "http://127.0.0.1:7788",
+  "authHeader": "x-openclaw-desktop-key",
+  "authKeyEnv": "OPENCLAW_DESKTOP_KEY",
+  "allowedWindowClasses": ["GHOST_WindowClass"],
+  "allowedWindowTitlePatterns": ["*Blender*"],
+  "verifyForeground": true,
+  "abortKey": "esc",
+  "captureFormat": "png",
+  "requestTimeoutMs": 30000,
+  "notes": "Example local config shape for desktop bridge calls; secrets should come from environment, not from committed files."
+}

@@ -10,6 +10,14 @@ A local-first engineering workspace for building a production-grade Windows desk
   - formal implementation prompt for a production-grade Blender desktop agent stack
 - `trajectory-proof.ps1`
   - PowerShell proof script for validating desktop input trajectory and Blender window interaction
+- `docs/architecture/`
+  - architecture notes, including the desktop-vs-Blender-API boundary
+- `docs/runbooks/`
+  - setup, repository, and validation runbooks
+- `configs/`
+  - committed non-secret example config shapes for desktop bridge / Blender bridge setup
+- `artifacts/README.md`
+  - index of external Windows-side delivery artifacts
 - `.gitignore`
   - excludes private memory, local runtime state, and machine-specific workspace context
 
