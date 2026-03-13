@@ -21,7 +21,7 @@ class ScenarioResult:
 
 
 def utc_stamp() -> str:
-    return datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')
+    return datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%S.%fZ')
 
 
 def ensure_dir(path: Path) -> None:
