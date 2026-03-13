@@ -19,7 +19,7 @@ Environment variables expected:
 - optional `OPENCLAW_DESKTOP_AUTH_HEADER`
 - optional `OPENCLAW_DESKTOP_TIMEOUT_SECONDS`
 
-## Current implemented scenario
+## Current implemented scenarios
 
 ### G1 — baseline fixed layout
 The runner currently implements:
@@ -30,12 +30,19 @@ The runner currently implements:
 - foreground-verified center move
 - evidence persistence to `artifacts/gui-regression-runs/<run-id>/`
 
+### G5 — repeated-run stability
+The runner also implements a first repeated-run scenario:
+- repeats the bounded baseline path multiple times
+- stores per-attempt evidence
+- defaults to `--repeats 3`
+
 ## Output files
 
 Each run writes:
 - `manifest.json`
 - `windows.json`
 - `g1-baseline.json` when G1 executes successfully
+- `g5-repeated-runs.json` when G5 executes successfully
 - `error.txt` when the run fails
 
 ## Shortest path forward

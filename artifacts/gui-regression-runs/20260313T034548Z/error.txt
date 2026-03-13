@@ -1,0 +1,1 @@
+BridgeError: OPENCLAW_DESKTOP_KEY is not set

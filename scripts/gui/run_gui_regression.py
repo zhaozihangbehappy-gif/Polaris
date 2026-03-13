@@ -39,25 +39,41 @@ def pick_blender_window(windows_payload: Any, title_pattern: str, class_name: st
     return None
 
 
-def scenario_g1_baseline(client: BridgeClient, win: dict[str, Any], run_dir: Path) -> ScenarioResult:
+def baseline_step(client: BridgeClient, win: dict[str, Any], purpose_prefix: str) -> dict[str, Any]:
     hwnd = int(win['hwnd'])
     rect = win['rect']
     center_x = int(rect['left'] + rect['width'] / 2)
     center_y = int(rect['top'] + rect['height'] / 2)
-    activation = client.activate(hwnd)
-    capture = client.capture_window(hwnd, 'g1-baseline-capture')
-    move = client.move_mouse(hwnd, center_x, center_y, 'g1-baseline-center-move')
-    evidence = {
+    return {
         'hwnd': hwnd,
         'title': win.get('title'),
         'class_name': win.get('class_name'),
         'rect': rect,
-        'activation': activation,
-        'capture': capture,
-        'move': move,
+        'activation': client.activate(hwnd),
+        'capture': client.capture_window(hwnd, f'{purpose_prefix}-capture'),
+        'move': client.move_mouse(hwnd, center_x, center_y, f'{purpose_prefix}-center-move'),
     }
+
+
+def scenario_g1_baseline(client: BridgeClient, win: dict[str, Any], run_dir: Path) -> ScenarioResult:
+    evidence = baseline_step(client, win, 'g1-baseline')
     (run_dir / 'g1-baseline.json').write_text(json.dumps(evidence, indent=2, ensure_ascii=False))
     return ScenarioResult('G1', 'pass', 'Baseline activation/capture/move succeeded', evidence)
+
+
+def scenario_g5_repeated_runs(client: BridgeClient, win: dict[str, Any], run_dir: Path, repeats: int) -> ScenarioResult:
+    attempts: list[dict[str, Any]] = []
+    for index in range(1, repeats + 1):
+        attempt = baseline_step(client, win, f'g5-run-{index}')
+        attempt['attempt'] = index
+        attempts.append(attempt)
+    evidence = {
+        'repeats_requested': repeats,
+        'repeats_completed': len(attempts),
+        'attempts': attempts,
+    }
+    (run_dir / 'g5-repeated-runs.json').write_text(json.dumps(evidence, indent=2, ensure_ascii=False))
+    return ScenarioResult('G5', 'pass', f'Repeated baseline path passed {repeats} times', evidence)
 
 
 def main() -> int:
@@ -66,6 +82,7 @@ def main() -> int:
     parser.add_argument('--title-pattern', default='*Blender*')
     parser.add_argument('--class-name', default='GHOST_WindowClass')
     parser.add_argument('--scenario', action='append', dest='scenarios', help='Scenario id to run (default: G1)')
+    parser.add_argument('--repeats', type=int, default=3, help='Repeat count for G5 repeated-run scenario')
     args = parser.parse_args()
 
     run_id = utc_stamp()
@@ -78,6 +95,7 @@ def main() -> int:
         'title_pattern': args.title_pattern,
         'class_name': args.class_name,
         'scenarios_requested': args.scenarios or ['G1'],
+        'repeats': args.repeats,
         'results': [],
     }
 
@@ -89,12 +107,14 @@ def main() -> int:
         if not win:
             raise BridgeError('No matching Blender window found for requested signature')
 
-        requested = args.scenarios or ['G1']
+        requested = [s.upper() for s in (args.scenarios or ['G1'])]
         for scenario in requested:
-            if scenario.upper() == 'G1':
+            if scenario == 'G1':
                 result = scenario_g1_baseline(client, win, run_dir)
+            elif scenario == 'G5':
+                result = scenario_g5_repeated_runs(client, win, run_dir, args.repeats)
             else:
-                result = ScenarioResult(scenario.upper(), 'skipped', 'Scenario not implemented yet', {})
+                result = ScenarioResult(scenario, 'skipped', 'Scenario not implemented yet', {})
             manifest['results'].append(asdict(result))
 
         manifest['status'] = 'pass' if all(r['status'] == 'pass' for r in manifest['results']) else 'partial'

@@ -1,0 +1,14 @@
+{
+  "run_id": "20260313T034548Z",
+  "started_at_utc": "2026-03-13T03:45:48.491401+00:00",
+  "title_pattern": "*Blender*",
+  "class_name": "GHOST_WindowClass",
+  "scenarios_requested": [
+    "G5"
+  ],
+  "repeats": 3,
+  "results": [],
+  "status": "fail",
+  "error": "BridgeError: OPENCLAW_DESKTOP_KEY is not set",
+  "finished_at_utc": "2026-03-13T03:45:48.491566+00:00"
+}
