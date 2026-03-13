@@ -1,0 +1,13 @@
+{
+  "run_id": "20260313T053238.653Z",
+  "started_at_utc": "2026-03-13T05:32:38.653Z",
+  "target_url": "https://example.com",
+  "status": "pass",
+  "evidence": {
+    "title": "Example Domain",
+    "url": "https://example.com/",
+    "h1": "Example Domain",
+    "screenshot": "artifacts/browser-runs/20260313T053238.653Z/page.png"
+  },
+  "finished_at_utc": "2026-03-13T05:32:43.521Z"
+}
