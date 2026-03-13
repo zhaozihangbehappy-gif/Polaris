@@ -1,0 +1,32 @@
+{
+  "steps": [
+    {
+      "kind": "activateExplorerPath",
+      "path": "D:\\Administrator\\Documents\\Playground\\openclaw-upstream\\artifacts\\delivery",
+      "waitMs": 2000
+    },
+    {
+      "kind": "movePath",
+      "points": [
+        { "x": 900, "y": 240, "steps": 10, "delayMs": 12 },
+        { "x": 1450, "y": 220, "steps": 10, "delayMs": 12 },
+        { "x": 1960, "y": 201, "steps": 12, "delayMs": 12 }
+      ]
+    },
+    { "kind": "click" },
+    { "kind": "sendKeys", "text": "cabinet-12cell-concept.blend", "preDelayMs": 180 },
+    { "kind": "wait", "ms": 160 },
+    { "kind": "sendKeys", "text": "{ENTER}", "preDelayMs": 60 },
+    { "kind": "wait", "ms": 2200 },
+    {
+      "kind": "movePath",
+      "points": [
+        { "x": 1700, "y": 280, "steps": 8, "delayMs": 12 },
+        { "x": 1200, "y": 330, "steps": 8, "delayMs": 12 },
+        { "x": 790, "y": 365, "steps": 10, "delayMs": 12 }
+      ]
+    },
+    { "kind": "doubleClick", "intervalMs": 110 },
+    { "kind": "wait", "ms": 1000 }
+  ]
+}

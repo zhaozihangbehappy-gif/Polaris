@@ -42,8 +42,9 @@ class BridgeClient:
                 'Content-Type': 'application/json',
             },
         )
+        opener = urllib.request.build_opener(urllib.request.ProxyHandler({}))
         try:
-            with urllib.request.urlopen(req, timeout=self.timeout_seconds) as resp:
+            with opener.open(req, timeout=self.timeout_seconds) as resp:
                 data = resp.read().decode('utf-8')
         except urllib.error.HTTPError as exc:
             detail = exc.read().decode('utf-8', errors='replace')

@@ -1,0 +1,49 @@
+{
+  "template": "blender_focus",
+  "calibration": {
+    "template": "blender_focus",
+    "window_title": "cabinet-12cell-concept [D:\\Administrator\\Documents\\Playground\\openclaw-upstream\\artifacts\\delivery\\cabinet-12cell-concept.blend] - Blender 5.0.1",
+    "window_rect": {
+      "left": -8,
+      "top": -8,
+      "right": 2568,
+      "bottom": 1448,
+      "width": 2576,
+      "height": 1456,
+      "center_x": 1280,
+      "center_y": 720
+    }
+  },
+  "steps": [
+    {
+      "kind": "movePath",
+      "points": [
+        {
+          "x": 112,
+          "y": 82,
+          "steps": 8,
+          "delayMs": 12
+        },
+        {
+          "x": 1280,
+          "y": 62,
+          "steps": 8,
+          "delayMs": 12
+        },
+        {
+          "x": 1280,
+          "y": 112,
+          "steps": 8,
+          "delayMs": 12
+        }
+      ]
+    },
+    {
+      "kind": "click"
+    },
+    {
+      "kind": "wait",
+      "ms": 250
+    }
+  ]
+}

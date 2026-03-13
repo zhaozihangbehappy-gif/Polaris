@@ -1,0 +1,23 @@
+{
+  "run_id": "20260313T070531.961439Z",
+  "template": "blender_focus",
+  "started_at_utc": "2026-03-13T07:05:31.961458+00:00",
+  "status": "pass",
+  "plan_path": "/home/administrator/.openclaw/workspace/artifacts/gui-macros/blender_focus-20260313T070531.961439Z.json",
+  "calibration": {
+    "template": "blender_focus",
+    "window_title": "cabinet-12cell-concept [D:\\Administrator\\Documents\\Playground\\openclaw-upstream\\artifacts\\delivery\\cabinet-12cell-concept.blend] - Blender 5.0.1",
+    "window_rect": {
+      "left": -8,
+      "top": -8,
+      "right": 2568,
+      "bottom": 1448,
+      "width": 2576,
+      "height": 1456,
+      "center_x": 1280,
+      "center_y": 720
+    }
+  },
+  "bridge_verify_error": "BridgeError: HTTP 502 calling window.inspect: ",
+  "finished_at_utc": "2026-03-13T07:05:38.218480+00:00"
+}
