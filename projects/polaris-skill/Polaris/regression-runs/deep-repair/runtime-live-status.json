@@ -1,0 +1,108 @@
+{
+  "active_branch": null,
+  "blocked_reason": null,
+  "completed_at": "2026-03-14T12:10:16.202856+00:00",
+  "current_step": "Completed",
+  "durable_status_surfaces": {
+    "live_status": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/deep-repair/runtime-live-status.json"
+  },
+  "event_budget": "deep",
+  "event_log": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/deep-repair/runtime-events.jsonl",
+  "execution_profile": "deep",
+  "goal": "Demonstrate Polaris local orchestration flow",
+  "history_summary": [
+    {
+      "by_branch": {
+        "none": 1
+      },
+      "by_node": {
+        "planning": 1
+      },
+      "compacted_at": "2026-03-14T12:10:15.844327+00:00",
+      "entry_count": 1,
+      "first_summary": "Run initialized and routed to the deep profile",
+      "from_ts": "2026-03-14T12:10:13.843205+00:00",
+      "last_summary": "Run initialized and routed to the deep profile",
+      "to_ts": "2026-03-14T12:10:13.843205+00:00"
+    },
+    {
+      "by_branch": {
+        "none": 1
+      },
+      "by_node": {
+        "ready": 1
+      },
+      "compacted_at": "2026-03-14T12:10:16.202983+00:00",
+      "entry_count": 1,
+      "first_summary": "Plan and adapter routing completed",
+      "from_ts": "2026-03-14T12:10:14.265978+00:00",
+      "last_summary": "Plan and adapter routing completed",
+      "to_ts": "2026-03-14T12:10:14.265978+00:00"
+    }
+  ],
+  "last_event": {
+    "active_branch": "execution-main",
+    "active_rule_layers": [
+      "hard",
+      "soft",
+      "experimental"
+    ],
+    "blocked_reason": null,
+    "completed_at": null,
+    "current_step": "Verify outcomes and inspect failures",
+    "event_budget": "deep",
+    "execution_profile": "deep",
+    "last_heartbeat_at": "2026-03-14T12:10:15.844292+00:00",
+    "lifecycle_stage": "validating",
+    "next_action": "Record reusable lessons and next actions",
+    "phase": "validating",
+    "progress_pct": 0,
+    "references": [
+      {
+        "kind": "rules",
+        "label": "layered rules store",
+        "ts": "2026-03-14T12:10:13.757058+00:00",
+        "value": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/deep-repair/rules.json"
+      },
+      {
+        "kind": "patterns",
+        "label": "success pattern store",
+        "ts": "2026-03-14T12:10:13.784400+00:00",
+        "value": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/deep-repair/success-patterns.json"
+      },
+      {
+        "kind": "adapters",
+        "label": "adapter registry",
+        "ts": "2026-03-14T12:10:13.812763+00:00",
+        "value": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/deep-repair/adapters.json"
+      }
+    ],
+    "run_id": "polaris-orchestrated-run",
+    "selected_adapter": "python-runtime-local",
+    "selected_pattern": "bounded-local-repair",
+    "started_at": "2026-03-14T12:10:13.729394+00:00",
+    "state_density": "full",
+    "state_node": "validating",
+    "status": "in_progress",
+    "summary": "Validating outputs and finalizing state",
+    "summary_outcome": "Repair branch queued deferred local recovery learning",
+    "ts": "2026-03-14T12:10:15.900799+00:00"
+  },
+  "last_heartbeat_at": "2026-03-14T12:10:16.428433+00:00",
+  "lifecycle_stage": "completed",
+  "mode": "long",
+  "next_action": "Review outputs",
+  "phase": "completed",
+  "progress_pct": 100,
+  "run_id": "polaris-orchestrated-run",
+  "selected_adapter": "python-runtime-local",
+  "selected_pattern": "bounded-local-repair",
+  "started_at": "2026-03-14T12:10:13.729394+00:00",
+  "state_density": "full",
+  "state_node": "completed",
+  "state_path": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/deep-repair/execution-state.json",
+  "status": "completed",
+  "summary_outcome": "Run finished cleanly",
+  "surface_kind": "completed",
+  "updated_at": "2026-03-14T12:10:16.458669+00:00"
+}

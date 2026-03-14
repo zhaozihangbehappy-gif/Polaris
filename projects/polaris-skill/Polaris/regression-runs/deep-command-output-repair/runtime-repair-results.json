@@ -1,0 +1,67 @@
+{
+  "executed_at": "2026-03-14T12:10:12.082365+00:00",
+  "failure_type": "unknown",
+  "results": [
+    {
+      "action": {
+        "command": "pwd",
+        "kind": "shell",
+        "label": "Capture working directory",
+        "node_id": "pwd",
+        "reversible": true
+      },
+      "outcome": {
+        "command": "pwd",
+        "returncode": 0,
+        "stderr": "",
+        "stdout": "/home/administrator/.openclaw/workspace/projects/polaris-skill\n"
+      }
+    },
+    {
+      "action": {
+        "command": "ls -la",
+        "kind": "shell",
+        "label": "List current directory",
+        "node_id": "ls-root",
+        "reversible": true
+      },
+      "outcome": {
+        "command": "ls -la",
+        "returncode": 0,
+        "stderr": "",
+        "stdout": "total 28\ndrwxrwxr-x  4 administrator administrator 4096 Mar 13 20:07 .\ndrwxrwxr-x  4 administrator administrator 4096 Mar 13 20:07 ..\ndrwxrwxr-x 54 administrator administrator 4096 Mar 14 20:09 Polaris\n-rw-rw-r--  1 administrator administrator 9878 Mar 14 14:08 README.md\ndrwxrwxr-x  2 administrator administrator 4096 Mar 13 16:33 specs\n"
+      }
+    },
+    {
+      "action": {
+        "command": "python3 --version || true",
+        "kind": "shell",
+        "label": "Capture interpreter version",
+        "node_id": "python-version",
+        "reversible": true
+      },
+      "outcome": {
+        "command": "python3 --version || true",
+        "returncode": 0,
+        "stderr": "",
+        "stdout": "Python 3.12.3\n"
+      }
+    },
+    {
+      "action": {
+        "command": "git status --short || true",
+        "kind": "shell",
+        "label": "Inspect local repo status",
+        "node_id": "git-status",
+        "reversible": true
+      },
+      "outcome": {
+        "command": "git status --short || true",
+        "returncode": 0,
+        "stderr": "",
+        "stdout": " M Polaris/SKILL.md\n M Polaris/assets/examples/adapters.json\n M Polaris/assets/examples/execution-state-micro.json\n M Polaris/assets/examples/execution-state-standard.json\n M Polaris/assets/examples/execution-state.json\n M Polaris/assets/examples/repair-report.json\n M Polaris/assets/examples/rules.json\n M Polaris/assets/examples/runtime-live-status-deep.json\n M Polaris/assets/examples/runtime-live-status-micro.json\n M Polaris/assets/examples/runtime-live-status-standard.json\n M Polaris/assets/examples/runtime-live-status.json\n M Polaris/assets/examples/runtime-status-deep.json\n M Polaris/assets/examples/runtime-status-micro.json\n M Polaris/assets/examples/runtime-status-standard.json\n M Polaris/assets/examples/runtime-status.json\n M Polaris/assets/examples/success-patterns.json\n M Polaris/references/adapters.md\n M Polaris/references/agility.md\n M Polaris/references/architecture.md\n M Polaris/references/iterative-excellence.md\n M Polaris/references/orchestrator.md\n M Polaris/references/repair-actions.md\n D Polaris/references/safety-boundaries.md\n M Polaris/references/state-and-rules.md\n M Polaris/runtime-demo-micro/rules.json\n M Polaris/runtime-demo-standard/rules.json\n M Polaris/runtime-demo/rules.json\n M Polaris/runtime-events.jsonl\n M Polaris/runtime-live-status.json\n M Polaris/runtime-repair-plan.json\n M Polaris/runtime-repair-report.json\n M Polaris/runtime-repair-results.json\n M Polaris/runtime-status.json\n M Polaris/scripts/polaris_orchestrator.py\n M Polaris/scripts/polaris_repair.py\n M Polaris/scripts/polaris_repair_actions.py\n M Polaris/scripts/polaris_rules.py\n M Polaris/scripts/polaris_runtime_demo.sh\n M Polaris/scripts/polaris_state.py\n M Polaris/scripts/polaris_success_patterns.py\n M README.md\n?? Polaris/phase4-final-regression-v2/\n?? Polaris/phase4-final-regression/\n?? Polaris/phase4-hardening-regression/\n?? Polaris/references/stop-classifications.md\n?? Polaris/regression-runs/\n?? Polaris/runtime-boundary-approval/\n?? Polaris/runtime-boundary-permission/\n?? Polaris/runtime-budget-deep/\n?? Polaris/runtime-budget-micro/\n?? Polaris/runtime-budget-standard/\n?? Polaris/runtime-command-output-audit/\n?? Polaris/runtime-command-output-failure-check/\n?? Polaris/runtime-command-output-success-check/\n?? Polaris/runtime-deep-file-transform-check/\n?? Polaris/runtime-deep-repair/\n?? Polaris/runtime-demo-deep-phase3/\n?? Polaris/runtime-demo-deep-phase4-repair/\n?? Polaris/runtime-demo-deep-phase4/\n?? Polaris/runtime-demo-micro-phase3/\n?? Polaris/runtime-demo-micro-phase4/\n?? Polaris/runtime-demo-standard-phase3/\n?? Polaris/runtime-demo-standard-phase4-repair-clean/\n?? Polaris/runtime-demo-standard-phase4-repair/\n?? Polaris/runtime-demo-standard-phase4/\n?? Polaris/runtime-exec-deep/\n?? Polaris/runtime-exec-micro/\n?? Polaris/runtime-exec-standard/\n?? Polaris/runtime-execution-result.json\n?? Polaris/runtime-permission-stop-check/\n?? Polaris/runtime-phase5a-cut1-standard/\n?? Polaris/runtime-phase5a-cut3-audit/\n?? Polaris/runtime-phase5a-cut4-transform/\n?? Polaris/runtime-review-standard-success/\n?? Polaris/runtime-standard-repair/\n?? Polaris/runtime-step2-diff-check/\n?? Polaris/runtime-step2-final-check/\n?? Polaris/runtime-step2-repair-repeat/\n?? Polaris/runtime-step2-repeat/\n?? Polaris/runtime-step2-repeat2/\n?? Polaris/runtime-step2-repeat3/\n?? Polaris/runtime-step2-strategy-shell/\n?? Polaris/runtime-step3-deep-repeat/\n?? Polaris/runtime-step3-smoke/\n?? Polaris/runtime-step3-std-repeat/\n?? Polaris/runtime-step3-transfer-source/\n?? Polaris/runtime-step3-transfer-target/\n?? Polaris/runtime-stop-rename-check/\n?? Polaris/scripts/polaris_contract_planner.py\n?? Polaris/scripts/polaris_emit_text.py\n?? Polaris/scripts/polaris_executor.py\n?? Polaris/scripts/polaris_file_transform.py\n?? Polaris/scripts/polaris_regression.sh\n?? Polaris/scripts/polaris_task_runner.py\n?? Polaris/scripts/polaris_validator.py\n?? Polaris/step1-command-output-fail-detail.txt\n?? Polaris/step1-command-output-fail-token.txt\n?? Polaris/step1-exit-code.txt\n?? Polaris/step1-first-fail-case.txt\n?? Polaris/step1-first-failure-line.txt\n?? Polaris/step1-first-failure.txt\n?? Polaris/step1-status.txt\n"
+      }
+    }
+  ],
+  "safe_to_execute": true
+}

@@ -32,10 +32,10 @@ Adapters let Polaris add or swap local tools without rewriting the planner or or
 
 - Require capabilities instead of matching by tool name.
 - Filter out adapters that exceed the allowed trust or cost envelope.
-- Rank by capability fit, retry safety, selectors, mode preference, trust cost, latency, and fallback coverage.
+- Rank by capability fit, retry reliability, selectors, mode preference, trust cost, latency, and fallback coverage.
 - Reuse a recent successful adapter directly when the same scenario fingerprint still matches and prerequisites still pass.
 - Return ranked candidates plus a selected adapter instead of a bare registry hit.
-- Do not register adapters that imply bypassing approvals, policies, or sandbox limits.
+- Keep adapter contracts explicit enough that stop classifications and fallback routing remain inspectable.
 
 ## Sticky Reuse
 

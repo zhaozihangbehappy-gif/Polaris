@@ -1,0 +1,2 @@
+Polaris input for goal: Demonstrate Polaris file transform flow
+POLARIS_TRANSFORM::STANDARD::file-transform-local

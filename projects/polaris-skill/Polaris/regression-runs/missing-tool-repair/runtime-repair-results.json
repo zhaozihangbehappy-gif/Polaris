@@ -1,0 +1,37 @@
+{
+  "executed_at": "2026-03-14T12:10:29.794359+00:00",
+  "failure_type": "missing_tool",
+  "results": [
+    {
+      "action": {
+        "command": "printf \"%s\n\" \"$PATH\"",
+        "kind": "shell",
+        "label": "Capture PATH",
+        "node_id": "path-value",
+        "reversible": true
+      },
+      "outcome": {
+        "command": "printf \"%s\n\" \"$PATH\"",
+        "returncode": 0,
+        "stderr": "",
+        "stdout": "/usr/bin:/usr/local/bin:/home/administrator/.local/bin:/home/administrator/.local/share/pnpm:/bin:/home/administrator/.npm-global/bin:/home/administrator/bin:/home/administrator/.volta/bin:/home/administrator/.asdf/shims:/home/administrator/.bun/bin:/home/administrator/.nvm/current/bin:/home/administrator/.fnm/current/bin\n"
+      }
+    },
+    {
+      "action": {
+        "command": "command -v python3 || which python3 || true",
+        "kind": "shell",
+        "label": "Resolve likely substitute tool",
+        "node_id": "python-resolution",
+        "reversible": true
+      },
+      "outcome": {
+        "command": "command -v python3 || which python3 || true",
+        "returncode": 0,
+        "stderr": "",
+        "stdout": "/usr/bin/python3\n"
+      }
+    }
+  ],
+  "safe_to_execute": true
+}

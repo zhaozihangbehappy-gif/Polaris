@@ -1,5 +1,6 @@
 {
   "artifacts": {
+    "learning_summary": "{\"failed_patterns\": [], \"failed_rules\": [], \"merged_patterns\": [\"micro-local-success-marker-success-bd86c0400b38\"], \"merged_rules\": [], \"processed_items\": 1, \"promoted_patterns\": [], \"promoted_rules\": [], \"queued_items\": 1, \"retained_items\": 0, \"rule_candidates\": 0, \"success_markers\": 1}",
     "selected_adapter": "python-local"
   },
   "current_step": "Completed",
@@ -39,18 +40,32 @@
       "soft",
       "experimental"
     ],
-    "applied_rules": []
+    "applied_rules": [
+      {
+        "action": "Stop and reduce scope instead of retrying the blocked path",
+        "layer": "hard",
+        "priority": 100,
+        "rule_id": "stop-on-nonrepair-denial",
+        "scope": "all Polaris runs",
+        "tags": [
+          "safety",
+          "boundary",
+          "local"
+        ],
+        "trigger": "an explicit non-repair denial appears"
+      }
+    ]
   },
   "run_id": "polaris-orchestrated-run",
   "runtime": {
-    "completed_at": "2026-03-13T11:57:20.539326+00:00",
+    "completed_at": "2026-03-14T04:03:27.895629+00:00",
     "durable_status_surfaces": {
-      "live_status": "/tmp/polaris-skill/Polaris/runtime-live-status.json"
+      "live_status": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/micro-success/runtime-live-status.json"
     },
-    "last_heartbeat_at": "2026-03-13T11:57:20.567904+00:00",
+    "last_heartbeat_at": "2026-03-14T04:03:28.053540+00:00",
     "last_heartbeat_summary": "run completed",
     "lifecycle_stage": "completed",
-    "started_at": "2026-03-13T11:57:19.903228+00:00"
+    "started_at": "2026-03-14T04:03:27.022985+00:00"
   },
   "schema_version": 5,
   "state_density": "minimal",
@@ -104,19 +119,19 @@
         "from": "executing",
         "summary": "Execution outputs ready for validation",
         "to": "validating",
-        "ts": "2026-03-13T11:57:20.329792+00:00"
+        "ts": "2026-03-14T04:03:27.630730+00:00"
       },
       {
         "branch_id": "execution-main",
         "from": "validating",
         "summary": "Run finished cleanly",
         "to": "completed",
-        "ts": "2026-03-13T11:57:20.539322+00:00"
+        "ts": "2026-03-14T04:03:27.895625+00:00"
       }
     ],
     "node": "completed"
   },
   "status": "completed",
   "summary_outcome": "Run finished cleanly",
-  "updated_at": "2026-03-13T11:57:20.567906+00:00"
+  "updated_at": "2026-03-14T04:03:28.053543+00:00"
 }

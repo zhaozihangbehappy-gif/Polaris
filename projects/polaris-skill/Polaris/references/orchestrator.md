@@ -2,7 +2,7 @@
 
 ## Purpose
 
-`scripts/polaris_orchestrator.py` turns the modules into a runnable local flow. It remains thin on purpose: the planner plans, the rule store decides guidance, the adapter registry chooses tools, and the state machine records what happened.
+`scripts/polaris_orchestrator.py` turns the modules into a runnable local flow. It remains thin on purpose: the planner plans, the rule store decides guidance, the adapter registry chooses tools, the orchestrator materializes an execution contract, the selected adapter invokes that contract, and the state machine records what happened.
 
 ## Responsibilities
 
@@ -16,6 +16,8 @@
 - emit progress events and runtime surfaces according to the profile budget
 - route repair through `shallow`, `medium`, or `deep` depth and record recovery references explicitly
 - preserve the full repair and learning path in `deep` mode
+- validate real execution outputs from per-run runtime artifacts before marking a run successful
+- re-execute after deep repair before allowing the run to move on to validation
 
 ## Profile Behavior
 
@@ -33,8 +35,9 @@
 6. `rank adapters`
 7. optional `select patterns`
 8. `transition -> executing` directly for `micro`, or `transition -> ready -> branch execution -> executing` for `standard/deep`
-9. optional bounded repair pass in `micro` or `standard`, or `branch repair -> transition -> repairing -> recover -> ready -> executing` in `deep`
-10. `transition -> validating -> completed`
+9. build an execution contract, invoke the selected adapter, and validate the produced runtime output file
+10. optional bounded repair pass in `micro` or `standard`, or `branch repair -> transition -> repairing -> recover -> ready -> executing -> re-execute` in `deep`
+11. `transition -> validating -> completed`
 
 ## Example
 

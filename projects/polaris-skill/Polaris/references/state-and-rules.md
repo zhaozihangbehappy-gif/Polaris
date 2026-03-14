@@ -86,13 +86,22 @@
   },
   "rule_context": {
     "active_layers": ["hard", "soft"],
-    "applied_rules": []
+    "applied_rules": [
+      {
+        "rule_id": "stop-on-nonrepair-denial",
+        "layer": "hard",
+        "action": "Stop and adjust the request or environment instead of retrying the same blocked path",
+        "scope": "all Polaris runs",
+        "tags": ["stop", "runtime", "local"]
+      }
+    ]
   },
   "artifacts": {
-    "rules": "rules.json",
-    "patterns": "success-patterns.json",
-    "events": "events.jsonl",
-    "selected_adapter": "python-local"
+    "selected_adapter": "python-runtime-local",
+    "selected_pattern": "bounded-local-repair",
+    "execution_contract": "{...}",
+    "execution_result": "runtime-execution-result.json",
+    "learning_summary": "{...}"
   }
 }
 ```
@@ -104,14 +113,14 @@
   "schema_version": 3,
   "rules": [
     {
-      "rule_id": "never-treat-approvals-as-bugs",
+      "rule_id": "stop-on-nonrepair-denial",
       "layer": "hard",
-      "trigger": "approval or safeguard denial appears",
-      "action": "stop and reduce the task scope instead of retrying the blocked path",
-      "evidence": "policy boundary hit during local execution",
+      "trigger": "an explicit non-repair denial appears",
+      "action": "stop and adjust the task scope or environment instead of retrying the blocked path",
+      "evidence": "explicit runtime stop classification during local execution",
       "scope": "all Polaris runs",
-      "tags": ["safety", "boundary"],
-      "validation": "explicit platform boundary",
+      "tags": ["stop", "runtime"],
+      "validation": "explicit runtime stop classification",
       "priority": 100,
       "created_at": "2026-03-13T00:00:00Z"
     }
@@ -144,7 +153,7 @@
 
 ## Layer Meanings
 
-- `hard`: boundaries, invariants, and prohibitions
+- `hard`: stop/route rules and invariants
 - `soft`: validated practices that should usually be applied
 - `experimental`: narrow candidate improvements that still need repeated proof
 
@@ -157,6 +166,13 @@ Defaults:
 - `micro -> minimal`
 - `standard -> minimal`
 - `deep -> full`
+
+## Execution Contract Notes
+
+- `artifacts.execution_contract` stores the concrete adapter invocation plan used for the run.
+- `artifacts.execution_result` points at the per-run runtime output file that must validate before success is recorded.
+- `rule_context.applied_rules` is no longer empty bookkeeping; it is the rule payload forwarded into the execution contract.
+- `selected_pattern` is forwarded into the execution contract and can guide validation and follow-up execution choices.
 
 ## Promotion Guidance
 

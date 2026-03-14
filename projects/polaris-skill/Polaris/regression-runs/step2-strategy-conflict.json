@@ -1,0 +1,179 @@
+{
+  "execution_ordering": [
+    "precheck",
+    "execute",
+    "validate"
+  ],
+  "fallback_choice": "sticky-adapter-first",
+  "retry_policy": "bounded-repair-with-evidence",
+  "strategy_trace": {
+    "execution_kind": "runner",
+    "execution_profile": "standard",
+    "experimental_rules": [
+      "experimental-order-attempt"
+    ],
+    "hard_rules": [],
+    "selected_pattern": "pattern-ordering-wins",
+    "slot_permissions": {
+      "experimental": [
+        "fallback_choice",
+        "validation_strategy"
+      ],
+      "hard": [
+        "retry_policy"
+      ],
+      "pattern": [
+        "execution_ordering",
+        "fallback_choice",
+        "validation_strategy"
+      ],
+      "soft": [
+        "execution_ordering",
+        "fallback_choice",
+        "retry_policy",
+        "validation_strategy"
+      ]
+    },
+    "slot_resolution": {
+      "execution_ordering": {
+        "candidates": [
+          {
+            "confidence": 80,
+            "layer": "pattern",
+            "priority": 0,
+            "reason": "pattern:pattern-ordering-wins",
+            "source_id": "pattern-ordering-wins",
+            "value": [
+              "precheck",
+              "execute",
+              "validate"
+            ]
+          }
+        ],
+        "default": [
+          "execute",
+          "validate"
+        ],
+        "ignored": [
+          {
+            "layer": "experimental",
+            "reason": "rule:experimental-order-attempt",
+            "source_id": "experimental-order-attempt",
+            "value": [
+              "should",
+              "be",
+              "ignored"
+            ]
+          }
+        ],
+        "winner": {
+          "layer": "pattern",
+          "reason": "pattern:pattern-ordering-wins",
+          "source_id": "pattern-ordering-wins",
+          "value": [
+            "precheck",
+            "execute",
+            "validate"
+          ]
+        }
+      },
+      "fallback_choice": {
+        "candidates": [
+          {
+            "confidence": 3,
+            "layer": "soft",
+            "priority": 90,
+            "reason": "rule:soft-high-fallback",
+            "source_id": "soft-high-fallback",
+            "value": "sticky-adapter-first"
+          },
+          {
+            "confidence": 1,
+            "layer": "soft",
+            "priority": 10,
+            "reason": "rule:soft-low-fallback",
+            "source_id": "soft-low-fallback",
+            "value": "selected-adapter-only"
+          },
+          {
+            "confidence": 80,
+            "layer": "pattern",
+            "priority": 0,
+            "reason": "pattern:pattern-ordering-wins",
+            "source_id": "pattern-ordering-wins",
+            "value": "sticky-adapter-first"
+          }
+        ],
+        "default": "selected-adapter-only",
+        "ignored": [],
+        "winner": {
+          "layer": "soft",
+          "reason": "rule:soft-high-fallback",
+          "source_id": "soft-high-fallback",
+          "value": "sticky-adapter-first"
+        }
+      },
+      "retry_policy": {
+        "candidates": [
+          {
+            "confidence": 3,
+            "layer": "soft",
+            "priority": 90,
+            "reason": "rule:soft-high-fallback",
+            "source_id": "soft-high-fallback",
+            "value": "bounded-repair-with-evidence"
+          },
+          {
+            "confidence": 1,
+            "layer": "soft",
+            "priority": 10,
+            "reason": "rule:soft-low-fallback",
+            "source_id": "soft-low-fallback",
+            "value": "bounded-repair"
+          }
+        ],
+        "default": "bounded-repair",
+        "ignored": [],
+        "winner": {
+          "layer": "soft",
+          "reason": "rule:soft-high-fallback",
+          "source_id": "soft-high-fallback",
+          "value": "bounded-repair-with-evidence"
+        }
+      },
+      "validation_strategy": {
+        "candidates": [
+          {
+            "confidence": 80,
+            "layer": "pattern",
+            "priority": 0,
+            "reason": "pattern:pattern-ordering-wins",
+            "source_id": "pattern-ordering-wins",
+            "value": "runner-contract-strict"
+          },
+          {
+            "confidence": 9,
+            "layer": "experimental",
+            "priority": 99,
+            "reason": "rule:experimental-order-attempt",
+            "source_id": "experimental-order-attempt",
+            "value": "runner-contract-strict"
+          }
+        ],
+        "default": "runner-contract-match",
+        "ignored": [],
+        "winner": {
+          "layer": "pattern",
+          "reason": "pattern:pattern-ordering-wins",
+          "source_id": "pattern-ordering-wins",
+          "value": "runner-contract-strict"
+        }
+      }
+    },
+    "soft_rules": [
+      "soft-low-fallback",
+      "soft-high-fallback"
+    ]
+  },
+  "validation_strategy": "runner-contract-strict"
+}

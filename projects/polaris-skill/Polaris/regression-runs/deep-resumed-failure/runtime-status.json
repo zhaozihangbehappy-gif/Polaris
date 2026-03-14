@@ -1,0 +1,48 @@
+{
+  "active_branch": "repair-local",
+  "active_rule_layers": [
+    "hard",
+    "soft",
+    "experimental"
+  ],
+  "blocked_reason": null,
+  "completed_at": null,
+  "current_step": "Execute the next local step",
+  "event_budget": "deep",
+  "execution_profile": "deep",
+  "last_heartbeat_at": "2026-03-14T12:10:32.081395+00:00",
+  "lifecycle_stage": "repairing",
+  "next_action": "Verify outcomes and inspect failures",
+  "phase": "repairing",
+  "progress_pct": 0,
+  "references": [
+    {
+      "kind": "rules",
+      "label": "layered rules store",
+      "ts": "2026-03-14T12:10:30.550238+00:00",
+      "value": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/deep-resumed-failure/rules.json"
+    },
+    {
+      "kind": "patterns",
+      "label": "success pattern store",
+      "ts": "2026-03-14T12:10:30.577736+00:00",
+      "value": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/deep-resumed-failure/success-patterns.json"
+    },
+    {
+      "kind": "adapters",
+      "label": "adapter registry",
+      "ts": "2026-03-14T12:10:30.605736+00:00",
+      "value": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/deep-resumed-failure/adapters.json"
+    }
+  ],
+  "run_id": "polaris-orchestrated-run",
+  "selected_adapter": "python-runtime-local",
+  "selected_pattern": "bounded-local-repair",
+  "started_at": "2026-03-14T12:10:30.522263+00:00",
+  "state_density": "full",
+  "state_node": "repairing",
+  "status": "in_progress",
+  "summary": "Failure classified and routed through the deep local repair tree",
+  "summary_outcome": null,
+  "ts": "2026-03-14T12:10:32.105779+00:00"
+}

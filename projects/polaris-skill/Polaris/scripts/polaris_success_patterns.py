@@ -120,6 +120,17 @@ def merge_confidence(existing: dict | None, new_confidence: int, validation_delt
     return min(95, max(base, base + bounded_gain))
 
 
+def find_existing_pattern(store: dict, pattern_id: str | None, fingerprint: str | None) -> dict | None:
+    for item in store["patterns"]:
+        if pattern_id and item.get("pattern_id") == pattern_id:
+            return item
+    if fingerprint:
+        for item in store["patterns"]:
+            if item.get("fingerprint") == fingerprint:
+                return item
+    return None
+
+
 def merge_pattern(existing: dict | None, incoming: dict) -> dict:
     if not existing:
         incoming["evidence"] = unique(incoming.get("evidence", []))
@@ -127,6 +138,8 @@ def merge_pattern(existing: dict | None, incoming: dict) -> dict:
         incoming["validation_count"] = 1
         incoming["confidence"] = min(95, max(0, int(incoming.get("confidence", 0))))
         incoming["best_lifecycle_state"] = infer_best_lifecycle(incoming)
+        incoming.setdefault("fingerprint", incoming.get("pattern_id"))
+        incoming.setdefault("strategy_hints", incoming.get("strategy_hints", {}))
         incoming.setdefault("history", []).append({"ts": now(), "event": "captured", "reason": "new_pattern"})
         return incoming
 
@@ -136,6 +149,7 @@ def merge_pattern(existing: dict | None, incoming: dict) -> dict:
     merged["sequence"] = incoming["sequence"]
     merged["outcome"] = incoming["outcome"]
     merged["adapter"] = incoming["adapter"] or existing.get("adapter")
+    merged["fingerprint"] = incoming.get("fingerprint") or existing.get("fingerprint") or existing.get("pattern_id")
     merged["tags"] = unique(existing.get("tags", []) + incoming.get("tags", []))
     merged["modes"] = unique(existing.get("modes", []) + incoming.get("modes", []))
     merged["evidence"] = unique(existing.get("evidence", []) + incoming.get("evidence", []))
@@ -149,6 +163,7 @@ def merge_pattern(existing: dict | None, incoming: dict) -> dict:
     else:
         merged["lifecycle_state"] = merged["best_lifecycle_state"]
     merged["reusable"] = incoming["reusable"]
+    merged["strategy_hints"] = incoming.get("strategy_hints", existing.get("strategy_hints", {}))
     merged["expires_at"] = incoming.get("expires_at") or existing.get("expires_at")
     merged["updated_at"] = now()
     merged["last_validated_at"] = now()
@@ -248,12 +263,17 @@ def main() -> None:
     promote_auto.add_argument("--patterns", required=True)
     promote_auto.add_argument("--pattern-id", required=True)
 
+    consolidate = sub.add_parser("consolidate-marker")
+    consolidate.add_argument("--patterns", required=True)
+    consolidate.add_argument("--marker", required=True)
+    consolidate.add_argument("--promote-auto", choices=["yes", "no"], default="yes")
+
     args = parser.parse_args()
     path = Path(getattr(args, "patterns"))
     store = load_store(path)
 
     if args.command == "capture":
-        existing = next((item for item in store["patterns"] if item.get("pattern_id") == args.pattern_id), None)
+        existing = find_existing_pattern(store, args.pattern_id, None)
         incoming = {
             "pattern_id": args.pattern_id,
             "summary": args.summary,
@@ -262,6 +282,7 @@ def main() -> None:
             "outcome": args.outcome,
             "evidence": parse_csv(args.evidence),
             "adapter": args.adapter or None,
+            "fingerprint": args.pattern_id,
             "tags": parse_csv(args.tags),
             "modes": parse_csv(args.modes),
             "confidence": args.confidence,
@@ -270,13 +291,17 @@ def main() -> None:
             "demotion_count": 0,
             "selection_count": 0,
             "reusable": args.reusable == "yes",
+            "strategy_hints": {},
             "expires_at": args.expires_at,
             "created_at": now(),
             "updated_at": now(),
             "last_validated_at": now(),
         }
         pattern = merge_pattern(existing, incoming)
-        store["patterns"] = [item for item in store["patterns"] if item.get("pattern_id") != args.pattern_id]
+        store["patterns"] = [
+            item for item in store["patterns"]
+            if item is not existing and item.get("pattern_id") != args.pattern_id and item.get("fingerprint") != incoming.get("fingerprint")
+        ]
         store["patterns"].append(pattern)
         store["patterns"].sort(key=lambda item: (LIFECYCLE_ORDER.get(item.get("lifecycle_state"), 99), -item.get("confidence", 0), item.get("pattern_id", "")))
         write_store(path, store)
@@ -324,6 +349,47 @@ def main() -> None:
             print(json.dumps({"pattern": item, "promoted": promoted, "new_state": target}, sort_keys=True))
             return
         raise SystemExit(f"pattern not found: {args.pattern_id}")
+
+    if args.command == "consolidate-marker":
+        marker = json.loads(args.marker)
+        existing = find_existing_pattern(store, marker.get("pattern_id"), marker.get("fingerprint"))
+        incoming = {
+            "pattern_id": marker["pattern_id"],
+            "summary": marker["summary"],
+            "trigger": marker["trigger"],
+            "sequence": marker.get("sequence", []),
+            "outcome": marker["outcome"],
+            "evidence": marker.get("evidence", []),
+            "adapter": marker.get("adapter") or None,
+            "fingerprint": marker.get("fingerprint") or marker.get("pattern_id"),
+            "tags": marker.get("tags", []),
+            "modes": marker.get("modes", ["long"]),
+            "confidence": int(marker.get("confidence", 60)),
+            "lifecycle_state": marker.get("lifecycle_state", "experimental"),
+            "promotion_count": 0,
+            "demotion_count": 0,
+            "selection_count": 0,
+            "reusable": bool(marker.get("reusable", True)),
+            "strategy_hints": marker.get("strategy_hints", {}),
+            "expires_at": marker.get("expires_at"),
+            "created_at": now(),
+            "updated_at": now(),
+            "last_validated_at": now(),
+        }
+        pattern = merge_pattern(existing, incoming)
+        store["patterns"] = [
+            item for item in store["patterns"]
+            if item is not existing and item.get("pattern_id") != marker.get("pattern_id") and item.get("fingerprint") != marker.get("fingerprint")
+        ]
+        store["patterns"].append(pattern)
+        promoted = False
+        target = None
+        if args.promote_auto == "yes":
+            promoted, target = maybe_promote(pattern)
+        store["patterns"].sort(key=lambda item: (LIFECYCLE_ORDER.get(item.get("lifecycle_state"), 99), -item.get("confidence", 0), item.get("pattern_id", "")))
+        write_store(path, store)
+        print(json.dumps({"pattern": pattern, "promoted": promoted, "new_state": target}, sort_keys=True))
+        return
 
     for item in store["patterns"]:
         if item.get("pattern_id") != args.pattern_id:

@@ -1,0 +1,149 @@
+{
+  "artifacts": {
+    "repair_plan": "runtime-repair-plan.json",
+    "repair_report": "runtime-repair-report.json",
+    "repair_results": "runtime-repair-results.json",
+    "selected_adapter": "python-local",
+    "selected_pattern": "repair-pattern-81e70e8942b3"
+  },
+  "current_step": "Blocked after bounded repair",
+  "event_budget": "standard",
+  "execution_profile": "standard",
+  "goal": "Demonstrate Polaris local orchestration flow",
+  "learning_backlog": [],
+  "mode": "short",
+  "next_action": "Retry or escalate to deep if the same failure repeats",
+  "phase": "blocked",
+  "plan": [
+    {
+      "index": 1,
+      "phase": "planning",
+      "status": "completed",
+      "step": "Clarify scope and choose a safe local path"
+    },
+    {
+      "index": 2,
+      "phase": "ready",
+      "status": "completed",
+      "step": "Select the primary adapter and fallback"
+    },
+    {
+      "index": 3,
+      "phase": "executing",
+      "status": "in_progress",
+      "step": "Run the next local step"
+    },
+    {
+      "index": 4,
+      "phase": "validating",
+      "status": "pending",
+      "step": "Verify outcomes and inspect failures"
+    }
+  ],
+  "progress_pct": 60,
+  "references": [
+    {
+      "kind": "patterns",
+      "label": "success pattern store",
+      "ts": "2026-03-14T02:44:47.857008+00:00",
+      "value": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/phase4-final-regression/repeated-standard-repair/success-patterns.json"
+    },
+    {
+      "kind": "adapters",
+      "label": "adapter registry",
+      "ts": "2026-03-14T02:44:47.886079+00:00",
+      "value": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/phase4-final-regression/repeated-standard-repair/adapters.json"
+    }
+  ],
+  "repair_depth": "medium",
+  "rule_context": {
+    "active_layers": [
+      "hard",
+      "soft",
+      "experimental"
+    ],
+    "applied_rules": []
+  },
+  "run_id": "polaris-orchestrated-run",
+  "runtime": {
+    "completed_at": null,
+    "durable_status_surfaces": {
+      "live_status": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/runtime-live-status.json"
+    },
+    "last_heartbeat_at": "2026-03-14T02:44:48.979236+00:00",
+    "last_heartbeat_summary": "deferred repair learning consolidated: 2 item(s) processed",
+    "lifecycle_stage": "blocked",
+    "started_at": "2026-03-14T02:44:47.803342+00:00"
+  },
+  "schema_version": 5,
+  "state_density": "minimal",
+  "state_machine": {
+    "active_branch": "execution-main",
+    "allowed_transitions": {
+      "blocked": [
+        "planning",
+        "ready",
+        "executing",
+        "completed"
+      ],
+      "completed": [],
+      "executing": [
+        "validating",
+        "repairing",
+        "blocked"
+      ],
+      "intake": [
+        "planning",
+        "blocked"
+      ],
+      "planning": [
+        "ready",
+        "executing",
+        "blocked"
+      ],
+      "ready": [
+        "executing",
+        "blocked"
+      ],
+      "repairing": [
+        "ready",
+        "executing",
+        "blocked"
+      ],
+      "validating": [
+        "completed",
+        "repairing",
+        "blocked"
+      ]
+    },
+    "blocked": {
+      "is_blocked": true,
+      "reason": "Standard profile stopped after medium repair; escalate to deep only if failure repeats",
+      "references": [
+        "runtime-repair-report.json",
+        "runtime-repair-plan.json",
+        "runtime-repair-results.json"
+      ]
+    },
+    "history": [
+      {
+        "branch_id": "execution-main",
+        "from": "executing",
+        "summary": "Standard profile opened a medium repair pass",
+        "to": "repairing",
+        "ts": "2026-03-14T02:44:48.795537+00:00"
+      },
+      {
+        "branch_id": "execution-main",
+        "from": "repairing",
+        "summary": "Standard profile stopped after medium repair; escalate to deep only if failure repeats",
+        "to": "blocked",
+        "ts": "2026-03-14T02:44:48.845764+00:00"
+      }
+    ],
+    "node": "blocked"
+  },
+  "status": "blocked",
+  "summary_outcome": "ModuleNotFoundError: No module named pywinauto",
+  "updated_at": "2026-03-14T02:44:48.979238+00:00"
+}

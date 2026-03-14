@@ -1,0 +1,26 @@
+{
+  "candidate_fixes": [
+    "verify the command exists locally and is spelled correctly",
+    "use an equivalent local tool already available in the environment"
+  ],
+  "confidence": "high",
+  "depth_reason": "first_failure",
+  "escalate": false,
+  "evidence": [
+    "command not found: polaris-missing-tool"
+  ],
+  "failure_type": "missing_tool",
+  "next_depth": "medium",
+  "nonrepair_stop": false,
+  "probe_budget": 2,
+  "recommended_tree": "tool_probe_tree",
+  "references": [
+    "Polaris/references/repair-actions.md",
+    "Polaris/references/stop-classifications.md"
+  ],
+  "repair_class": "tool_probe_tree",
+  "repair_depth": "shallow",
+  "retry_guidance": "retry after confirming the command resolves from the working directory or PATH",
+  "should_deepen": true,
+  "suggested_rule_layer": "soft"
+}

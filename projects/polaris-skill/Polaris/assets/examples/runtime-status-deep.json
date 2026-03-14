@@ -6,11 +6,11 @@
     "experimental"
   ],
   "blocked_reason": null,
-  "completed_at": "2026-03-13T11:57:06.059146+00:00",
+  "completed_at": "2026-03-14T04:03:31.379892+00:00",
   "current_step": "Completed",
   "event_budget": "deep",
   "execution_profile": "deep",
-  "last_heartbeat_at": "2026-03-13T11:57:06.117520+00:00",
+  "last_heartbeat_at": "2026-03-14T04:03:31.570408+00:00",
   "lifecycle_stage": "completed",
   "next_action": "Review outputs",
   "phase": "completed",
@@ -19,30 +19,30 @@
     {
       "kind": "rules",
       "label": "layered rules store",
-      "ts": "2026-03-13T11:57:04.338485+00:00",
-      "value": "/tmp/polaris-skill/Polaris/runtime-demo/rules.json"
+      "ts": "2026-03-14T04:03:30.078650+00:00",
+      "value": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/deep-success/rules.json"
     },
     {
       "kind": "patterns",
       "label": "success pattern store",
-      "ts": "2026-03-13T11:57:04.366691+00:00",
-      "value": "/tmp/polaris-skill/Polaris/runtime-demo/success-patterns.json"
+      "ts": "2026-03-14T04:03:30.109474+00:00",
+      "value": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/deep-success/success-patterns.json"
     },
     {
       "kind": "adapters",
       "label": "adapter registry",
-      "ts": "2026-03-13T11:57:04.395050+00:00",
-      "value": "/tmp/polaris-skill/Polaris/runtime-demo/adapters.json"
+      "ts": "2026-03-14T04:03:30.142743+00:00",
+      "value": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/deep-success/adapters.json"
     }
   ],
   "run_id": "polaris-orchestrated-run",
   "selected_adapter": "python-runtime-local",
-  "selected_pattern": "layered-local-orchestration",
-  "started_at": "2026-03-13T11:57:04.309114+00:00",
+  "selected_pattern": "bounded-local-repair",
+  "started_at": "2026-03-14T04:03:30.048442+00:00",
   "state_density": "full",
   "state_node": "completed",
   "status": "completed",
-  "summary": "Deep profile completed after rich repair and recovery",
+  "summary": "Polaris orchestration demo completed",
   "summary_outcome": "Run finished cleanly",
-  "ts": "2026-03-13T11:59:45.456041+00:00"
+  "ts": "2026-03-14T04:03:31.622985+00:00"
 }

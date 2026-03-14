@@ -42,13 +42,13 @@ def trim_tree(root: dict, allowed_ids: set[str]) -> dict:
 
 
 def action_tree_for(failure_type: str) -> dict:
-    if failure_type == "safeguard_boundary":
+    if failure_type in {"approval_denial", "permission_denial"}:
         return {
             "root": {
-                "node_id": "boundary-stop",
+                "node_id": "nonrepair-stop",
                 "kind": "stop",
-                "label": "Stop at safety boundary",
-                "reason": "Safeguards, approvals, and policy limits are not repair targets.",
+                "label": "Stop at non-repair denial",
+                "reason": "This denial is an explicit nonrepair stop, not a repair target.",
                 "children": [],
             },
             "execution_order": [],
@@ -150,21 +150,6 @@ def action_tree_for(failure_type: str) -> dict:
             "execution_order": ["pwd", "ls-root", "ls-parent", "find-targets"],
             "safe_to_execute": True,
         }
-    if failure_type == "permission_boundary":
-        return {
-            "root": {
-                "node_id": "permission-stop",
-                "kind": "decision",
-                "label": "Collect non-privileged evidence only",
-                "children": [
-                    leaf("pwd", "Capture working directory", "pwd"),
-                    leaf("ls-root", "List current directory", "ls -la"),
-                    leaf("writable-check", "Check writable directories under current tree", "find . -maxdepth 2 -type d -writable | sed -n '1,12p'"),
-                ],
-            },
-            "execution_order": ["pwd", "ls-root", "writable-check"],
-            "safe_to_execute": True,
-        }
     return {
         "root": {
             "node_id": "generic-root",
@@ -185,24 +170,61 @@ def action_tree_for(failure_type: str) -> dict:
 def build_plan(error_text: str, repair_depth: str = "deep") -> dict:
     text = error_text.lower()
     if "approval" in text or "policy" in text or "sandbox" in text:
-        failure_type = "safeguard_boundary"
-        notes = "Stop. Safeguards and approvals are hard boundaries, not repair targets."
+        failure_type = "approval_denial"
+        notes = "Stop. This is an explicit nonrepair stop, not a repair target."
+        nonrepair_stop = True
+        recommended_tree = "nonrepair_stop"
     elif "no module named" in text or "module not found" in text:
         failure_type = "missing_dependency"
         notes = "Local-only probes first; installation stays outside automatic repair."
+        nonrepair_stop = False
+        recommended_tree = "dependency_probe_tree"
     elif "command not found" in text:
         failure_type = "missing_tool"
         notes = "Probe resolution and PATH before suggesting substitution."
+        nonrepair_stop = False
+        recommended_tree = "tool_probe_tree"
     elif "permission denied" in text or "operation not permitted" in text:
-        failure_type = "permission_boundary"
-        notes = "Collect only non-privileged evidence and reduce scope."
+        failure_type = "permission_denial"
+        notes = "Stop. This is an explicit nonrepair stop, not a repair target."
+        nonrepair_stop = True
+        recommended_tree = "nonrepair_stop"
     elif "no such file or directory" in text or "cannot find the file" in text:
         failure_type = "path_or_missing_file"
         notes = "Verify workdir and nearby files before creating or changing anything."
+        nonrepair_stop = False
+        recommended_tree = "path_probe_tree"
     else:
         failure_type = "unknown"
         notes = "Collect bounded local evidence before retrying."
+        nonrepair_stop = False
+        recommended_tree = "generic_probe_tree"
+    diagnosis = {
+        "failure_type": failure_type,
+        "repair_depth": repair_depth,
+        "retry_guidance": notes,
+        "recommended_tree": recommended_tree,
+        "nonrepair_stop": nonrepair_stop,
+    }
+    return build_plan_from_diagnosis(diagnosis)
+
+
+def build_plan_from_diagnosis(diagnosis: dict) -> dict:
+    failure_type = diagnosis.get("failure_type", "unknown")
+    repair_depth = diagnosis.get("repair_depth", "deep")
     tree = action_tree_for(failure_type)
+    if diagnosis.get("nonrepair_stop"):
+        tree = {
+            "root": {
+                "node_id": "nonrepair-stop",
+                "kind": "stop",
+                "label": "Stop at nonrepair stop",
+                "reason": diagnosis.get("retry_guidance") or "This failure is not a repair target.",
+                "children": [],
+            },
+            "execution_order": [],
+            "safe_to_execute": False,
+        }
     if tree["safe_to_execute"]:
         budget = {"shallow": 2, "medium": 4, "deep": len(tree["execution_order"])}[repair_depth]
         execution_order = tree["execution_order"][:budget]
@@ -213,12 +235,14 @@ def build_plan(error_text: str, repair_depth: str = "deep") -> dict:
     return {
         "failure_type": failure_type,
         "repair_depth": repair_depth,
-        "notes": notes,
+        "notes": diagnosis.get("retry_guidance") or "Collect bounded local evidence before retrying.",
         "safe_to_execute": tree["safe_to_execute"],
         "action_tree": action_tree,
         "execution_order": execution_order,
         "probe_budget": len(execution_order),
         "policy": "local-only reversible probes or explicit stop",
+        "recommended_tree": diagnosis.get("recommended_tree"),
+        "nonrepair_stop": diagnosis.get("nonrepair_stop", False),
     }
 
 
@@ -234,7 +258,8 @@ def main() -> None:
     sub = parser.add_subparsers(dest="command", required=True)
 
     plan = sub.add_parser("plan")
-    plan.add_argument("--error", required=True)
+    plan.add_argument("--error")
+    plan.add_argument("--diagnosis-json")
     plan.add_argument("--write-plan")
     plan.add_argument("--repair-depth", choices=["shallow", "medium", "deep"], default="deep")
 
@@ -245,9 +270,14 @@ def main() -> None:
     args = parser.parse_args()
 
     if args.command == "plan":
-        payload = build_plan(args.error, args.repair_depth)
+        if args.diagnosis_json:
+            diagnosis = json.loads(args.diagnosis_json)
+            payload = build_plan_from_diagnosis(diagnosis)
+            payload["error"] = diagnosis.get("evidence", [None])[0]
+        else:
+            payload = build_plan(args.error or "", args.repair_depth)
+            payload["error"] = args.error
         payload["created_at"] = now()
-        payload["error"] = args.error
         if args.write_plan:
             Path(args.write_plan).write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
         print(json.dumps(payload, sort_keys=True))

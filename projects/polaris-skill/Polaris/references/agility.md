@@ -149,7 +149,7 @@ Do not open a full repair tree on first contact.
 
 #### `shallow`
 - classify failure
-- boundary check
+- distinguish repairable vs explicit stop conditions
 - retry or switch fallback if obvious
 - at most a few probes
 
@@ -253,10 +253,10 @@ Avoid de-escalating mid-run unless resuming from a new invocation.
 - adapter reuse works for repeated similar local scenarios
 - shallow failures do not immediately trigger full repair trees
 
-### Safety
-- no bypass, evasion, privilege escalation, or approval workarounds
-- safety boundary failures still stop immediately
-- deeper automation only activates inside existing safety limits
+### Runtime Stop Semantics
+- explicit stop classifications are preserved instead of being collapsed into repair
+- non-repair denials still stop immediately
+- deeper automation only activates when the current run remains repairable
 
 ### Learning Quality
 - success-pattern quality does not regress
@@ -292,7 +292,7 @@ Do not:
 - remove repair capability entirely
 - remove success-pattern learning entirely
 - make deep mode impossible
-- trade safety for speed
+- trade explicit stop semantics for speed
 
 The target is not a weaker Polaris.
 The target is a Polaris that stays sharp by default and unfolds depth only when needed.

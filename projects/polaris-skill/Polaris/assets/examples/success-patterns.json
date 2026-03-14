@@ -3,298 +3,40 @@
     {
       "adapter": "python-runtime-local",
       "best_lifecycle_state": "validated",
-      "confidence": 95,
-      "created_at": "2026-03-13T09:46:26.964853+00:00",
+      "confidence": 88,
+      "created_at": "2026-03-14T04:03:31.409722+00:00",
       "demotion_count": 0,
       "evidence": [
-        "runtime-repair-results.json",
-        "runtime-repair-plan.json",
-        "runtime-repair-report.json"
-      ],
-      "evidence_count": 3,
-      "expires_at": null,
-      "history": [
-        {
-          "event": "auto_promoted",
-          "reason": "evidence_threshold_met",
-          "to": "validated",
-          "ts": "2026-03-13T10:03:03.797897+00:00"
-        },
-        {
-          "event": "auto_promoted",
-          "reason": "evidence_threshold_met",
-          "to": "validated",
-          "ts": "2026-03-13T10:11:00.734261+00:00"
-        },
-        {
-          "best_lifecycle_state": "validated",
-          "confidence": 82,
-          "event": "merged_validation",
-          "evidence_count": 3,
-          "reason": "rerun_capture",
-          "retained_lifecycle": "validated",
-          "ts": "2026-03-13T10:16:40.966555+00:00",
-          "validation_count": 3
-        },
-        {
-          "best_lifecycle_state": "validated",
-          "confidence": 86,
-          "event": "merged_validation",
-          "evidence_count": 3,
-          "reason": "rerun_capture",
-          "retained_lifecycle": "validated",
-          "ts": "2026-03-13T10:17:09.074967+00:00",
-          "validation_count": 4
-        },
-        {
-          "best_lifecycle_state": "validated",
-          "confidence": 90,
-          "event": "merged_validation",
-          "evidence_count": 3,
-          "reason": "rerun_capture",
-          "retained_lifecycle": "validated",
-          "ts": "2026-03-13T11:25:38.175748+00:00",
-          "validation_count": 5
-        },
-        {
-          "best_lifecycle_state": "validated",
-          "confidence": 94,
-          "event": "merged_validation",
-          "evidence_count": 3,
-          "reason": "rerun_capture",
-          "retained_lifecycle": "validated",
-          "ts": "2026-03-13T11:44:44.707716+00:00",
-          "validation_count": 6
-        },
-        {
-          "best_lifecycle_state": "validated",
-          "confidence": 95,
-          "event": "merged_validation",
-          "evidence_count": 3,
-          "reason": "rerun_capture",
-          "retained_lifecycle": "validated",
-          "ts": "2026-03-13T11:57:05.445997+00:00",
-          "validation_count": 7
-        }
-      ],
-      "last_validated_at": "2026-03-13T11:57:05.445996+00:00",
-      "lifecycle_state": "validated",
-      "modes": [
-        "long"
-      ],
-      "outcome": "repair path documented without crossing safeguards",
-      "pattern_id": "missing-dependency-repair-loop",
-      "promotion_count": 2,
-      "reusable": true,
-      "selection_count": 0,
-      "sequence": [
-        "diagnose",
-        "plan-repair-tree",
-        "run-probes",
-        "record-rule",
-        "recover"
-      ],
-      "summary": "Dependency failures improve when diagnosis is followed by a bounded local environment probe tree",
-      "tags": [
-        "repair",
-        "python",
-        "orchestration"
-      ],
-      "trigger": "ModuleNotFoundError",
-      "updated_at": "2026-03-13T11:57:05.445995+00:00",
-      "validation_count": 7
-    },
-    {
-      "adapter": null,
-      "best_lifecycle_state": "validated",
-      "confidence": 82,
-      "created_at": "2026-03-13T09:46:26.123838+00:00",
-      "demotion_count": 0,
-      "evidence": [
-        "/tmp/polaris-skill/Polaris/references/repair-actions.md"
-      ],
-      "evidence_count": 1,
-      "expires_at": null,
-      "history": [
-        {
-          "best_lifecycle_state": "validated",
-          "confidence": 74,
-          "event": "merged_validation",
-          "evidence_count": 1,
-          "reason": "rerun_capture",
-          "retained_lifecycle": "validated",
-          "ts": "2026-03-13T10:16:39.770550+00:00",
-          "validation_count": 3
-        },
-        {
-          "best_lifecycle_state": "validated",
-          "confidence": 76,
-          "event": "merged_validation",
-          "evidence_count": 1,
-          "reason": "rerun_capture",
-          "retained_lifecycle": "validated",
-          "ts": "2026-03-13T10:17:07.879937+00:00",
-          "validation_count": 4
-        },
-        {
-          "best_lifecycle_state": "validated",
-          "confidence": 78,
-          "event": "merged_validation",
-          "evidence_count": 1,
-          "reason": "rerun_capture",
-          "retained_lifecycle": "validated",
-          "ts": "2026-03-13T11:25:36.882511+00:00",
-          "validation_count": 5
-        },
-        {
-          "best_lifecycle_state": "validated",
-          "confidence": 80,
-          "event": "merged_validation",
-          "evidence_count": 1,
-          "reason": "rerun_capture",
-          "retained_lifecycle": "validated",
-          "ts": "2026-03-13T11:44:43.494687+00:00",
-          "validation_count": 6
-        },
-        {
-          "best_lifecycle_state": "validated",
-          "confidence": 82,
-          "event": "merged_validation",
-          "evidence_count": 1,
-          "reason": "rerun_capture",
-          "retained_lifecycle": "validated",
-          "ts": "2026-03-13T11:57:04.254400+00:00",
-          "validation_count": 7
-        }
-      ],
-      "last_selected_at": "2026-03-13T10:10:59.772621+00:00",
-      "last_validated_at": "2026-03-13T11:57:04.254399+00:00",
-      "lifecycle_state": "validated",
-      "modes": [
-        "long"
-      ],
-      "outcome": "bounded recovery without crossing safeguards",
-      "pattern_id": "bounded-local-repair",
-      "promotion_count": 0,
-      "reusable": true,
-      "selection_count": 2,
-      "sequence": [
-        "detect",
-        "branch",
-        "probe",
-        "recover",
-        "record"
-      ],
-      "summary": "Local repair branches should stay probe-only and feed explicit recovery references",
-      "tags": [
-        "repair",
-        "local",
-        "orchestration"
-      ],
-      "trigger": "repairable local runtime failure",
-      "updated_at": "2026-03-13T11:57:04.254398+00:00",
-      "validation_count": 7
-    },
-    {
-      "adapter": "python-runtime-local",
-      "best_lifecycle_state": "preferred",
-      "confidence": 95,
-      "created_at": "2026-03-13T09:46:27.162438+00:00",
-      "demotion_count": 0,
-      "evidence": [
-        "/tmp/polaris-skill/Polaris/runtime-demo/execution-state.json",
+        "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/deep-success/execution-state.json",
         "runtime-status.json",
-        "Polaris/runtime-events.jsonl"
+        "runtime-events.jsonl"
       ],
       "evidence_count": 3,
       "expires_at": null,
+      "fingerprint": "deep-success-ed35232108db",
       "history": [
         {
-          "event": "promoted",
-          "reason": "Validated in runtime demo with explicit state, branch, and repair references",
-          "to": "preferred",
-          "ts": "2026-03-13T09:48:42.797944+00:00"
+          "event": "captured",
+          "reason": "new_pattern",
+          "ts": "2026-03-14T04:03:31.409743+00:00"
         },
         {
           "event": "auto_promoted",
           "reason": "evidence_threshold_met",
           "to": "validated",
-          "ts": "2026-03-13T10:03:04.080021+00:00"
-        },
-        {
-          "event": "auto_promoted",
-          "reason": "evidence_threshold_met",
-          "to": "validated",
-          "ts": "2026-03-13T10:11:01.077903+00:00"
-        },
-        {
-          "best_lifecycle_state": "validated",
-          "confidence": 92,
-          "event": "merged_validation",
-          "evidence_count": 3,
-          "reason": "rerun_capture",
-          "retained_lifecycle": "validated",
-          "ts": "2026-03-13T10:16:41.310611+00:00",
-          "validation_count": 3
-        },
-        {
-          "event": "auto_promoted",
-          "reason": "evidence_threshold_met",
-          "to": "preferred",
-          "ts": "2026-03-13T10:16:41.337328+00:00"
-        },
-        {
-          "best_lifecycle_state": "preferred",
-          "confidence": 95,
-          "event": "merged_validation",
-          "evidence_count": 3,
-          "reason": "rerun_capture",
-          "retained_lifecycle": "preferred",
-          "ts": "2026-03-13T10:17:09.420766+00:00",
-          "validation_count": 4
-        },
-        {
-          "best_lifecycle_state": "preferred",
-          "confidence": 95,
-          "event": "merged_validation",
-          "evidence_count": 3,
-          "reason": "rerun_capture",
-          "retained_lifecycle": "preferred",
-          "ts": "2026-03-13T11:25:38.567091+00:00",
-          "validation_count": 5
-        },
-        {
-          "best_lifecycle_state": "preferred",
-          "confidence": 95,
-          "event": "merged_validation",
-          "evidence_count": 3,
-          "reason": "rerun_capture",
-          "retained_lifecycle": "preferred",
-          "ts": "2026-03-13T11:44:45.120578+00:00",
-          "validation_count": 6
-        },
-        {
-          "best_lifecycle_state": "preferred",
-          "confidence": 95,
-          "event": "merged_validation",
-          "evidence_count": 3,
-          "reason": "rerun_capture",
-          "retained_lifecycle": "preferred",
-          "ts": "2026-03-13T11:57:05.830424+00:00",
-          "validation_count": 7
+          "ts": "2026-03-14T04:03:31.409749+00:00"
         }
       ],
-      "last_selected_at": "2026-03-13T11:57:04.541914+00:00",
-      "last_validated_at": "2026-03-13T11:57:05.830423+00:00",
-      "lifecycle_state": "preferred",
+      "last_validated_at": "2026-03-14T04:03:31.409750+00:00",
+      "lifecycle_state": "validated",
       "modes": [
         "long"
       ],
       "outcome": "resumable orchestration with reviewable state and references",
       "pattern_id": "layered-local-orchestration",
-      "promotion_count": 5,
+      "promotion_count": 1,
       "reusable": true,
-      "selection_count": 7,
+      "selection_count": 0,
       "sequence": [
         "init",
         "plan",
@@ -311,8 +53,55 @@
         "success"
       ],
       "trigger": "long local task",
-      "updated_at": "2026-03-13T11:57:05.830422+00:00",
-      "validation_count": 7
+      "updated_at": "2026-03-14T04:03:31.409734+00:00",
+      "validation_count": 1
+    },
+    {
+      "adapter": null,
+      "best_lifecycle_state": "validated",
+      "confidence": 72,
+      "created_at": "2026-03-14T04:03:29.979338+00:00",
+      "demotion_count": 0,
+      "evidence": [
+        "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/references/repair-actions.md"
+      ],
+      "evidence_count": 1,
+      "expires_at": null,
+      "fingerprint": "bounded-local-repair",
+      "history": [
+        {
+          "event": "captured",
+          "reason": "new_pattern",
+          "ts": "2026-03-14T04:03:29.979366+00:00"
+        }
+      ],
+      "last_selected_at": "2026-03-14T04:03:30.294467+00:00",
+      "last_validated_at": "2026-03-14T04:03:29.979357+00:00",
+      "lifecycle_state": "validated",
+      "modes": [
+        "long"
+      ],
+      "outcome": "bounded recovery without crossing safeguards",
+      "pattern_id": "bounded-local-repair",
+      "promotion_count": 0,
+      "reusable": true,
+      "selection_count": 1,
+      "sequence": [
+        "detect",
+        "branch",
+        "probe",
+        "recover",
+        "record"
+      ],
+      "summary": "Local repair branches should stay probe-only and feed explicit recovery references",
+      "tags": [
+        "repair",
+        "local",
+        "orchestration"
+      ],
+      "trigger": "repairable local runtime failure",
+      "updated_at": "2026-03-14T04:03:29.979355+00:00",
+      "validation_count": 1
     }
   ],
   "schema_version": 1

@@ -1,0 +1,37 @@
+{
+  "entries": {
+    "3488d7870378db65": {
+      "failure_count": 0,
+      "last_failure_at": "2026-03-14T12:10:12.556375+00:00",
+      "last_score": 95,
+      "last_status": "success",
+      "last_success_at": "2026-03-14T12:10:13.123547+00:00",
+      "prerequisite_snapshot": {
+        "checks": [
+          {
+            "available": true,
+            "name": "bash"
+          }
+        ],
+        "ready": true
+      },
+      "scenario": {
+        "execution_profile": "deep",
+        "failure_type": "long_running_local_task",
+        "max_cost": 5,
+        "max_trust": "workspace",
+        "mode": "long",
+        "require_durable_status": true,
+        "required_capabilities": [
+          "command-output",
+          "durable-status",
+          "local-exec",
+          "reporting"
+        ]
+      },
+      "selected_adapter": "shell-local",
+      "updated_at": "2026-03-14T12:10:13.123534+00:00"
+    }
+  },
+  "schema_version": 1
+}

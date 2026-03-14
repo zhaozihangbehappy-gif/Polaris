@@ -46,7 +46,7 @@
       ],
       "tool": "python-local",
       "trust_level": "workspace",
-      "updated_at": "2026-03-13T11:57:04.162595+00:00"
+      "updated_at": "2026-03-14T04:03:29.890612+00:00"
     },
     {
       "avoid_failures": [],
@@ -97,7 +97,7 @@
       ],
       "tool": "python-runtime-local",
       "trust_level": "workspace",
-      "updated_at": "2026-03-13T11:57:04.131052+00:00"
+      "updated_at": "2026-03-14T04:03:29.858910+00:00"
     },
     {
       "avoid_failures": [],
@@ -139,8 +139,8 @@
       ],
       "tool": "shell-local",
       "trust_level": "workspace",
-      "updated_at": "2026-03-13T11:57:04.193861+00:00"
+      "updated_at": "2026-03-14T04:03:29.923575+00:00"
     }
   ],
-  "schema_version": 2
+  "schema_version": 3
 }

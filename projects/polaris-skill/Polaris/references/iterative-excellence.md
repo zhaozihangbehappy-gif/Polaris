@@ -27,5 +27,5 @@ Polaris should improve by tightening local evidence loops, not by becoming more 
 
 - concise enough to read quickly
 - explicit enough to resume without guesswork
-- safe enough that boundaries are never framed as repair targets
+- precise enough that explicit stop classifications are never framed as repair targets
 - modular enough that adapters, rules, and patterns can evolve independently

@@ -1,0 +1,126 @@
+{
+  "artifacts": {
+    "learning_summary": "{\"failed_patterns\": [\"step3-consolidation-smoke\"], \"failed_rules\": [], \"merged_patterns\": [], \"merged_rules\": [], \"processed_items\": 0, \"promoted_patterns\": [], \"promoted_rules\": [], \"queued_items\": 1, \"retained_items\": 1, \"rule_candidates\": 0, \"success_markers\": 1}"
+  },
+  "current_step": null,
+  "event_budget": "standard",
+  "execution_profile": "standard",
+  "goal": null,
+  "learning_backlog": [
+    {
+      "kind": "success_marker",
+      "payload": {
+        "adapter": "shell-local",
+        "confidence": 70,
+        "evidence": [
+          "smoke"
+        ],
+        "fingerprint": "step3-consolidation-smoke",
+        "lifecycle_state": "experimental",
+        "modes": [
+          "short"
+        ],
+        "outcome": "retained on consolidation failure",
+        "pattern_id": "step3-consolidation-smoke",
+        "reusable": true,
+        "sequence": [
+          "execute",
+          "validate"
+        ],
+        "strategy_hints": {
+          "execution_ordering": [
+            "execute",
+            "validate"
+          ]
+        },
+        "summary": "consolidation failure smoke",
+        "tags": [
+          "orchestration",
+          "local",
+          "standard"
+        ],
+        "trigger": "step3 consolidation failure"
+      },
+      "queued_at": "2026-03-14T00:00:00+00:00"
+    }
+  ],
+  "mode": "long",
+  "next_action": null,
+  "phase": "intake",
+  "plan": [],
+  "progress_pct": 0,
+  "references": [],
+  "repair_depth": "shallow",
+  "rule_context": {
+    "active_layers": [
+      "hard",
+      "soft"
+    ],
+    "applied_rules": []
+  },
+  "run_id": null,
+  "runtime": {
+    "completed_at": null,
+    "durable_status_surfaces": {},
+    "last_heartbeat_at": "2026-03-14T12:10:36.963132+00:00",
+    "last_heartbeat_summary": null,
+    "lifecycle_stage": "initialized",
+    "metrics": {
+      "learning_hot_path_ops": 0,
+      "state_write_count": 2
+    },
+    "started_at": "2026-03-14T12:10:36.963123+00:00"
+  },
+  "schema_version": 5,
+  "state_density": "minimal",
+  "state_machine": {
+    "active_branch": null,
+    "allowed_transitions": {
+      "blocked": [
+        "planning",
+        "ready",
+        "executing",
+        "completed"
+      ],
+      "completed": [],
+      "executing": [
+        "validating",
+        "repairing",
+        "blocked"
+      ],
+      "intake": [
+        "planning",
+        "blocked"
+      ],
+      "planning": [
+        "ready",
+        "executing",
+        "blocked"
+      ],
+      "ready": [
+        "executing",
+        "blocked"
+      ],
+      "repairing": [
+        "ready",
+        "executing",
+        "blocked"
+      ],
+      "validating": [
+        "completed",
+        "repairing",
+        "blocked"
+      ]
+    },
+    "blocked": {
+      "is_blocked": false,
+      "reason": null,
+      "references": []
+    },
+    "history": [],
+    "node": "intake"
+  },
+  "status": "not_started",
+  "summary_outcome": null,
+  "updated_at": "2026-03-14T12:10:37.119990+00:00"
+}

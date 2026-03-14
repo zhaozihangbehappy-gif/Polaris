@@ -29,14 +29,14 @@ Polaris is a local-first orchestration pattern for long or failure-prone work. I
 ### Repair Engine
 
 - Classifies local failures
-- Marks safeguard or approval denials as hard stops
+- Marks explicit non-repair denials as stop classifications
 - Suggests a rule layer for future capture when relevant
 
 ### Repair Action Layer
 
 - Converts diagnosis into bounded local action trees
 - Executes only reversible, auditable actions
-- Refuses automatic execution when the failure is a boundary condition
+- Refuses automatic execution when the failure is already classified as a stop condition
 
 ### Rule Store
 
@@ -68,6 +68,6 @@ Polaris is a local-first orchestration pattern for long or failure-prone work. I
 
 - Local-first: all runtime artifacts are local files
 - Modular: each script owns a single concern
-- Layered: hard boundaries and soft heuristics stay separate
+- Layered: hard route/stop rules and soft heuristics stay separate
 - Extensible: new adapters and rules do not require orchestrator rewrites
 - Auditable: every significant decision lands in JSON

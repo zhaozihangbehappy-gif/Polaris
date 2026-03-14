@@ -1,26 +1,26 @@
 {
-  "boundary_stop": false,
+  "nonrepair_stop": true,
   "candidate_fixes": [
-    "install or enable the missing dependency in the active local environment",
-    "switch to an existing local environment that already provides the dependency"
+    "move the operation to a writable local location",
+    "reduce the action to a local alternative that fits the current environment"
   ],
-  "confidence": "high",
-  "depth_reason": "deep_profile",
-  "escalate": false,
+  "confidence": "medium",
+  "depth_reason": "nonrepair_stop",
+  "escalate": true,
   "evidence": [
-    "ModuleNotFoundError: No module named pywinauto"
+    "Permission denied while writing file"
   ],
-  "failure_type": "missing_dependency",
+  "failure_type": "permission_denial",
   "next_depth": null,
-  "probe_budget": 999,
-  "recommended_tree": "dependency_probe_tree",
+  "probe_budget": 0,
+  "recommended_tree": "nonrepair_stop",
   "references": [
     "Polaris/references/repair-actions.md",
-    "Polaris/references/safety-boundaries.md"
+    "Polaris/references/stop-classifications.md"
   ],
-  "repair_class": "env_probe_tree",
-  "repair_depth": "deep",
-  "retry_guidance": "retry after confirming the dependency resolves in the current interpreter or PATH",
+  "repair_class": "nonrepair_stop",
+  "repair_depth": "shallow",
+  "retry_guidance": "do not retry the same blocked action until the scope is reduced or the user changes the request",
   "should_deepen": false,
-  "suggested_rule_layer": "soft"
+  "suggested_rule_layer": "hard"
 }

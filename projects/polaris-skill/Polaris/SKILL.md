@@ -1,6 +1,6 @@
 ---
 name: polaris
-description: Local-first modular execution skill for long or failure-prone tasks that need explicit planning, layered rules, success-pattern capture, bounded self-repair, richer adapter selection, and resumable state. Use when Codex needs auditable orchestration for multi-step local work, especially when planner/repair/reporter/adapters/rule-store coordination must stay concise, reviewable, and inside safety and approval boundaries.
+description: Local-first modular execution skill for long or failure-prone tasks that need explicit planning, layered rules, success-pattern capture, bounded self-repair, richer adapter selection, and resumable state. Use when Codex needs auditable orchestration for multi-step local work, especially when planner/repair/reporter/adapters/rule-store coordination must stay concise, reviewable, and preserve explicit runtime stop/retry semantics.
 ---
 
 # Polaris
@@ -12,17 +12,19 @@ Use Polaris to turn complex local work into a small auditable runtime with expli
 1. Initialize run state with `scripts/polaris_state.py init`.
 2. Build or refresh the plan with `scripts/polaris_planner.py`.
 3. Select active rule layers and candidate adapters before execution.
-4. Emit compact progress events with `scripts/polaris_report.py`.
-5. On failure, diagnose with `scripts/polaris_repair.py`, then generate only bounded local repair action trees with `scripts/polaris_repair_actions.py`.
-6. Capture validated rules with `scripts/polaris_rules.py` and success patterns with `scripts/polaris_success_patterns.py`.
-7. Advance the state machine explicitly so another agent can resume from files, not memory.
+4. Materialize an execution contract, invoke the selected adapter, and validate the produced runtime artifact.
+5. Emit compact progress events with `scripts/polaris_report.py`.
+6. On failure, diagnose with `scripts/polaris_repair.py`, then generate only bounded local repair action trees with `scripts/polaris_repair_actions.py`.
+7. Capture validated rules with `scripts/polaris_rules.py` and success patterns with `scripts/polaris_success_patterns.py`.
+8. Advance the state machine explicitly so another agent can resume from files, not memory.
 
 ## Modules
 
 - `planner`: produces short ordered steps with phase, active rule layers, and success signals
 - `state-machine`: tracks `intake -> planning -> ready -> executing -> validating -> completed`, with `repairing` and `blocked` branches
 - `reporter`: emits JSON events and a current-status snapshot
-- `repair-engine`: classifies failures without treating safeguards or approvals as repair targets
+- `task-runner`: executes the current local contract and writes a concrete runtime result artifact for validation
+- `repair-engine`: classifies failures into repairable paths versus explicit stop classifications
 - `repair-action-layer`: turns diagnosis into controlled local action trees or explicit stops
 - `rule-store`: stores `hard`, `soft`, and `experimental` rules
 - `success-pattern-store`: captures reusable sequences with confidence, promotion, demotion, expiry, and adapter linkage
@@ -30,7 +32,7 @@ Use Polaris to turn complex local work into a small auditable runtime with expli
 
 ## Rule Layering
 
-- `hard`: boundaries and invariants; do not override
+- `hard`: deterministic stop/route rules and invariants
 - `soft`: validated heuristics that usually improve outcomes
 - `experimental`: narrow trial guidance that must remain easy to remove
 
@@ -51,7 +53,7 @@ Only capture success patterns that are concise, local, and inspectable.
 - `references/state-and-rules.md`: state schema, rule layering, success-pattern schema
 - `references/adapters.md`: adapter registration and selection
 - `references/orchestrator.md`: orchestration flow and examples
-- `references/safety-boundaries.md`: non-goals and required stops
+- `references/stop-classifications.md`: runtime stop classifications and operator guidance semantics
 - `references/repair-actions.md`: repair-plan scope and execution limits
 - `references/usage-patterns.md`: short-task, long-task, and resume patterns
 - `references/iterative-excellence.md`: how Polaris should improve without becoming opaque
@@ -60,12 +62,13 @@ Only capture success patterns that are concise, local, and inspectable.
 ## Operating Rules
 
 - Keep everything local-first and plain-text or JSON.
-- Never implement bypass, evasion, approval-workaround, privilege escalation, covert persistence, or hidden memory patterns.
-- Treat safeguard denials, approvals, and sandbox limits as hard boundaries, not bugs.
-- Prefer the lightest execution profile that still preserves correctness and safety.
+- Preserve explicit stop classifications instead of collapsing every failure into repair.
+- Do not learn from non-repair stop classifications; keep them as audit facts only.
+- Prefer the lightest execution profile that still preserves correctness and clear runtime semantics.
 - Keep hot-path execution thin; push heavier learning/consolidation work to phase end or deferred cold paths when possible.
 - Make state transitions explicit before pausing or retrying.
 - Use adapter selection instead of hard-coding tool-specific logic into the orchestrator.
+- Validate execution through concrete output artifacts, not only subprocess return codes.
 - Capture lessons only after observed local evidence.
 - Keep experimental guidance narrow and easy to delete.
 

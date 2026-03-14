@@ -1,0 +1,48 @@
+{
+  "active_branch": null,
+  "active_rule_layers": [
+    "hard",
+    "soft",
+    "experimental"
+  ],
+  "blocked_reason": null,
+  "completed_at": "2026-03-14T12:10:02.288477+00:00",
+  "current_step": "Completed",
+  "event_budget": "deep",
+  "execution_profile": "deep",
+  "last_heartbeat_at": "2026-03-14T12:10:02.458951+00:00",
+  "lifecycle_stage": "completed",
+  "next_action": "Review outputs",
+  "phase": "completed",
+  "progress_pct": 100,
+  "references": [
+    {
+      "kind": "rules",
+      "label": "layered rules store",
+      "ts": "2026-03-14T12:10:00.720640+00:00",
+      "value": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/deep-file-transform-success/rules.json"
+    },
+    {
+      "kind": "patterns",
+      "label": "success pattern store",
+      "ts": "2026-03-14T12:10:00.748025+00:00",
+      "value": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/deep-file-transform-success/success-patterns.json"
+    },
+    {
+      "kind": "adapters",
+      "label": "adapter registry",
+      "ts": "2026-03-14T12:10:00.776247+00:00",
+      "value": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/deep-file-transform-success/adapters.json"
+    }
+  ],
+  "run_id": "polaris-orchestrated-run",
+  "selected_adapter": "file-transform-local",
+  "selected_pattern": "bounded-local-repair",
+  "started_at": "2026-03-14T12:10:00.692997+00:00",
+  "state_density": "full",
+  "state_node": "completed",
+  "status": "completed",
+  "summary": "Polaris orchestration demo completed",
+  "summary_outcome": "Run finished cleanly",
+  "ts": "2026-03-14T12:10:02.537052+00:00"
+}

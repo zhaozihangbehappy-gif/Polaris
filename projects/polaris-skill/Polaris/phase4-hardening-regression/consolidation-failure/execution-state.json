@@ -1,0 +1,178 @@
+{
+  "artifacts": {
+    "learning_summary": "{\"failed_patterns\": [\"standard-local-success-marker-success-cbb278485261\"], \"failed_rules\": [], \"merged_patterns\": [], \"merged_rules\": [], \"processed_items\": 0, \"promoted_patterns\": [], \"promoted_rules\": [], \"queued_items\": 1, \"retained_items\": 1, \"rule_candidates\": 0, \"success_markers\": 1}",
+    "selected_adapter": "python-local"
+  },
+  "current_step": "Completed",
+  "event_budget": "standard",
+  "execution_profile": "standard",
+  "goal": "consolidation failure scenario",
+  "learning_backlog": [
+    {
+      "kind": "success_marker",
+      "payload": {
+        "adapter": "python-local",
+        "confidence": 76,
+        "evidence": [
+          "Polaris/phase4-hardening-regression/consolidation-failure/execution-state.json",
+          "runtime-status.json"
+        ],
+        "fingerprint": "success-cbb278485261",
+        "lifecycle_state": "experimental",
+        "modes": [
+          "short"
+        ],
+        "outcome": "task completed locally while keeping heavier learning work off the hot path",
+        "pattern_id": "standard-local-success-marker-success-cbb278485261",
+        "reusable": true,
+        "sequence": [
+          "init",
+          "plan",
+          "select-adapter",
+          "execute",
+          "validate"
+        ],
+        "summary": "Standard profile finished with light foreground orchestration and deferred learning consolidation",
+        "tags": [
+          "orchestration",
+          "local",
+          "standard",
+          "deferred-learning"
+        ],
+        "trigger": "standard local task"
+      },
+      "queued_at": "2026-03-14T03:03:29.997772+00:00"
+    }
+  ],
+  "mode": "short",
+  "next_action": "Review outputs",
+  "phase": "completed",
+  "plan": [
+    {
+      "index": 1,
+      "phase": "planning",
+      "status": "completed",
+      "step": "Clarify scope and choose a safe local path"
+    },
+    {
+      "index": 2,
+      "phase": "ready",
+      "status": "completed",
+      "step": "Select the primary adapter and fallback"
+    },
+    {
+      "index": 3,
+      "phase": "executing",
+      "status": "completed",
+      "step": "Run the next local step"
+    },
+    {
+      "index": 4,
+      "phase": "validating",
+      "status": "completed",
+      "step": "Verify outcomes and inspect failures"
+    }
+  ],
+  "progress_pct": 100,
+  "references": [
+    {
+      "kind": "patterns",
+      "label": "success pattern store",
+      "ts": "2026-03-14T03:03:29.158982+00:00",
+      "value": "Polaris/phase4-hardening-regression/consolidation-failure/bad-patterns-store"
+    },
+    {
+      "kind": "adapters",
+      "label": "adapter registry",
+      "ts": "2026-03-14T03:03:29.187894+00:00",
+      "value": "Polaris/phase4-hardening-regression/consolidation-failure/adapters.json"
+    }
+  ],
+  "repair_depth": "shallow",
+  "rule_context": {
+    "active_layers": [
+      "hard",
+      "soft",
+      "experimental"
+    ],
+    "applied_rules": []
+  },
+  "run_id": "polaris-orchestrated-run",
+  "runtime": {
+    "completed_at": "2026-03-14T03:03:30.220043+00:00",
+    "durable_status_surfaces": {
+      "live_status": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/runtime-live-status.json"
+    },
+    "last_heartbeat_at": "2026-03-14T03:03:30.423699+00:00",
+    "last_heartbeat_summary": "run completed",
+    "lifecycle_stage": "completed",
+    "started_at": "2026-03-14T03:03:29.095792+00:00"
+  },
+  "schema_version": 5,
+  "state_density": "minimal",
+  "state_machine": {
+    "active_branch": null,
+    "allowed_transitions": {
+      "blocked": [
+        "planning",
+        "ready",
+        "executing",
+        "completed"
+      ],
+      "completed": [],
+      "executing": [
+        "validating",
+        "repairing",
+        "blocked"
+      ],
+      "intake": [
+        "planning",
+        "blocked"
+      ],
+      "planning": [
+        "ready",
+        "executing",
+        "blocked"
+      ],
+      "ready": [
+        "executing",
+        "blocked"
+      ],
+      "repairing": [
+        "ready",
+        "executing",
+        "blocked"
+      ],
+      "validating": [
+        "completed",
+        "repairing",
+        "blocked"
+      ]
+    },
+    "blocked": {
+      "is_blocked": false,
+      "reason": null,
+      "references": []
+    },
+    "history": [
+      {
+        "branch_id": "execution-main",
+        "from": "executing",
+        "summary": "Execution outputs ready for validation",
+        "to": "validating",
+        "ts": "2026-03-14T03:03:29.857778+00:00"
+      },
+      {
+        "branch_id": "execution-main",
+        "from": "validating",
+        "summary": "Run finished cleanly",
+        "to": "completed",
+        "ts": "2026-03-14T03:03:30.220040+00:00"
+      }
+    ],
+    "node": "completed"
+  },
+  "status": "completed",
+  "summary_outcome": "Run finished cleanly",
+  "updated_at": "2026-03-14T03:03:30.423702+00:00"
+}

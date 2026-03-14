@@ -56,6 +56,17 @@ def evidence_count(value: str) -> int:
     return len(parse_csv(value)) or 1
 
 
+def find_existing_rule(store: dict, rule_id: str | None, fingerprint: str | None) -> dict | None:
+    for item in store["rules"]:
+        if rule_id and item.get("rule_id") == rule_id:
+            return item
+    if fingerprint:
+        for item in store["rules"]:
+            if item.get("fingerprint") == fingerprint:
+                return item
+    return None
+
+
 def maybe_promote(rule: dict) -> tuple[bool, str | None]:
     if rule.get("layer") != "experimental":
         return False, None
@@ -98,6 +109,11 @@ def main() -> None:
     promote_parser.add_argument("--rules", required=True)
     promote_parser.add_argument("--rule-id", required=True)
 
+    consolidate_parser = subparsers.add_parser("consolidate-candidate")
+    consolidate_parser.add_argument("--rules", required=True)
+    consolidate_parser.add_argument("--candidate", required=True)
+    consolidate_parser.add_argument("--promote-auto", choices=["yes", "no"], default="yes")
+
     args = parser.parse_args()
     rules_path = Path(args.rules)
     store = load_store(rules_path)
@@ -110,15 +126,17 @@ def main() -> None:
             "action": args.action,
             "evidence": args.evidence,
             "scope": args.scope,
+            "fingerprint": args.rule_id,
             "tags": parse_csv(args.tags),
             "validation": args.validation,
             "priority": args.priority,
+            "strategy_overrides": {},
             "evidence_count": evidence_count(args.evidence),
             "validation_count": 1,
             "last_validated_at": now(),
             "created_at": now(),
         }
-        existing = next((item for item in store["rules"] if item.get("rule_id") == args.rule_id), None)
+        existing = find_existing_rule(store, args.rule_id, None)
         if existing:
             rule["created_at"] = existing.get("created_at", rule["created_at"])
             rule["evidence_count"] += int(existing.get("evidence_count", 0))
@@ -140,6 +158,45 @@ def main() -> None:
             print(json.dumps({"rule": rule, "promoted": promoted, "new_layer": new_layer}, sort_keys=True))
             return
         raise SystemExit(f"rule not found: {args.rule_id}")
+
+    if args.command == "consolidate-candidate":
+        candidate = json.loads(args.candidate)
+        existing = find_existing_rule(store, candidate.get("rule_id"), candidate.get("fingerprint"))
+        rule = {
+            "rule_id": candidate["rule_id"],
+            "layer": candidate.get("layer", "experimental"),
+            "trigger": candidate["trigger"],
+            "action": candidate["action"],
+            "evidence": ",".join(candidate.get("evidence", [])),
+            "scope": candidate["scope"],
+            "fingerprint": candidate.get("fingerprint") or candidate.get("rule_id"),
+            "tags": candidate.get("tags", []),
+            "validation": candidate.get("validation", "observed local evidence"),
+            "priority": int(candidate.get("priority", 50)),
+            "strategy_overrides": candidate.get("strategy_overrides", {}),
+            "evidence_count": len(candidate.get("evidence", [])) or 1,
+            "validation_count": 1,
+            "last_validated_at": now(),
+            "created_at": now(),
+        }
+        if existing:
+            rule["created_at"] = existing.get("created_at", rule["created_at"])
+            rule["evidence_count"] += int(existing.get("evidence_count", 0))
+            rule["validation_count"] += int(existing.get("validation_count", 0))
+            rule["history"] = existing.get("history", [])
+        store["rules"] = [
+            item for item in store["rules"]
+            if item is not existing and item.get("rule_id") != candidate.get("rule_id") and item.get("fingerprint") != candidate.get("fingerprint")
+        ]
+        store["rules"].append(rule)
+        promoted = False
+        new_layer = None
+        if args.promote_auto == "yes":
+            promoted, new_layer = maybe_promote(rule)
+        store["rules"].sort(key=lambda item: (LAYER_ORDER.get(item.get("layer"), 9), -item.get("priority", 0), item.get("rule_id", "")))
+        write_store(rules_path, store)
+        print(json.dumps({"rule": rule, "promoted": promoted, "new_layer": new_layer}, sort_keys=True))
+        return
 
     if args.command == "list":
         rules = store["rules"]

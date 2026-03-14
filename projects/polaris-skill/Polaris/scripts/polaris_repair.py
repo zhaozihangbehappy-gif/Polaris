@@ -9,18 +9,18 @@ def classify(error_text: str) -> dict:
 
     if "approval" in text or "policy" in text or "sandbox" in text:
         return {
-            "failure_type": "safeguard_boundary",
-            "repair_class": "boundary_stop",
+            "failure_type": "approval_denial",
+            "repair_class": "nonrepair_stop",
             "confidence": "high",
             "candidate_fixes": [
                 "reduce the task to an allowed local action",
                 "stop and ask the user to change scope instead of retrying the blocked path",
             ],
-            "retry_guidance": "do not treat safeguards or approvals as repair targets",
+            "retry_guidance": "treat this as a non-repair stop, not a repair target",
             "escalate": True,
             "suggested_rule_layer": "hard",
-            "recommended_tree": "boundary_stop",
-            "boundary_stop": True,
+            "recommended_tree": "nonrepair_stop",
+            "nonrepair_stop": True,
         }
     if "no module named" in text or "module not found" in text:
         return {
@@ -35,7 +35,7 @@ def classify(error_text: str) -> dict:
             "escalate": False,
             "suggested_rule_layer": "soft",
             "recommended_tree": "dependency_probe_tree",
-            "boundary_stop": False,
+            "nonrepair_stop": False,
         }
     if "command not found" in text or "not recognized as an internal or external command" in text:
         return {
@@ -50,22 +50,22 @@ def classify(error_text: str) -> dict:
             "escalate": False,
             "suggested_rule_layer": "soft",
             "recommended_tree": "tool_probe_tree",
-            "boundary_stop": False,
+            "nonrepair_stop": False,
         }
     if "permission denied" in text or "operation not permitted" in text:
         return {
-            "failure_type": "permission_boundary",
-            "repair_class": "boundary_stop",
+            "failure_type": "permission_denial",
+            "repair_class": "nonrepair_stop",
             "confidence": "medium",
             "candidate_fixes": [
-                "move the operation to an allowed writable location",
-                "reduce the action to a non-privileged local alternative",
+                "move the operation to a writable local location",
+                "reduce the action to a local alternative that fits the current environment",
             ],
             "retry_guidance": "do not retry the same blocked action until the scope is reduced or the user changes the request",
             "escalate": True,
             "suggested_rule_layer": "hard",
-            "recommended_tree": "boundary_stop",
-            "boundary_stop": True,
+            "recommended_tree": "nonrepair_stop",
+            "nonrepair_stop": True,
         }
     if "importerror" in text or "cannot import name" in text:
         return {
@@ -80,7 +80,7 @@ def classify(error_text: str) -> dict:
             "escalate": False,
             "suggested_rule_layer": "soft",
             "recommended_tree": "import_probe_tree",
-            "boundary_stop": False,
+            "nonrepair_stop": False,
         }
     if "jsondecodeerror" in text or "toml" in text or "yaml" in text and "error" in text:
         return {
@@ -95,7 +95,7 @@ def classify(error_text: str) -> dict:
             "escalate": False,
             "suggested_rule_layer": "soft",
             "recommended_tree": "config_probe_tree",
-            "boundary_stop": False,
+            "nonrepair_stop": False,
         }
     if "assertionerror" in text or "test failed" in text or "failed:" in text:
         return {
@@ -110,7 +110,7 @@ def classify(error_text: str) -> dict:
             "escalate": False,
             "suggested_rule_layer": "experimental",
             "recommended_tree": "test_probe_tree",
-            "boundary_stop": False,
+            "nonrepair_stop": False,
         }
     if "no such file or directory" in text or "cannot find the file" in text:
         return {
@@ -125,7 +125,7 @@ def classify(error_text: str) -> dict:
             "escalate": False,
             "suggested_rule_layer": "soft",
             "recommended_tree": "path_probe_tree",
-            "boundary_stop": False,
+            "nonrepair_stop": False,
         }
 
     return {
@@ -140,15 +140,15 @@ def classify(error_text: str) -> dict:
         "escalate": False,
         "suggested_rule_layer": "experimental",
         "recommended_tree": "generic_probe_tree",
-        "boundary_stop": False,
+        "nonrepair_stop": False,
     }
 
 
 def route_depth(base: dict, requested_depth: str | None, execution_profile: str | None, attempt_count: int, blocked_progress: bool) -> dict:
-    if base.get("boundary_stop"):
+    if base.get("nonrepair_stop"):
         return {
             "repair_depth": "shallow",
-            "depth_reason": "boundary_stop",
+            "depth_reason": "nonrepair_stop",
             "should_deepen": False,
             "next_depth": None,
             "probe_budget": 0,
@@ -203,7 +203,7 @@ def main() -> None:
     )
     report.update(route)
     report["evidence"] = [args.error]
-    report["references"] = ["Polaris/references/repair-actions.md", "Polaris/references/safety-boundaries.md"]
+    report["references"] = ["Polaris/references/repair-actions.md", "Polaris/references/stop-classifications.md"]
     if args.write_report:
         Path(args.write_report).write_text(json.dumps(report, indent=2, sort_keys=True) + "\n")
     print(json.dumps(report, sort_keys=True))

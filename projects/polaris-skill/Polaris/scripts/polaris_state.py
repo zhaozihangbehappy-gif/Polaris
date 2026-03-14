@@ -67,6 +67,10 @@ def default_state() -> dict:
             "last_heartbeat_at": now(),
             "completed_at": None,
             "durable_status_surfaces": {},
+            "metrics": {
+                "state_write_count": 0,
+                "learning_hot_path_ops": 0,
+            },
         },
         "state_machine": {
             "node": "intake",
@@ -103,12 +107,19 @@ def load_state(path: Path) -> dict:
         state.setdefault("learning_backlog", [])
         state.setdefault("summary_outcome", None)
         state.setdefault("references", [])
+        state.setdefault("plan", [])
+        state.setdefault("checkpoints", [])
+        state.setdefault("attempts", [])
+        state.setdefault("artifacts", {})
+        state.setdefault("lessons", [])
+        state.setdefault("success_patterns", [])
         runtime = state.setdefault("runtime", {})
         runtime.setdefault("lifecycle_stage", "initialized")
         runtime.setdefault("started_at", now())
         runtime.setdefault("last_heartbeat_at", now())
         runtime.setdefault("completed_at", None)
         runtime.setdefault("durable_status_surfaces", {})
+        runtime.setdefault("metrics", {"state_write_count": 0, "learning_hot_path_ops": 0})
         machine = state.setdefault("state_machine", {})
         machine.setdefault("active_branch", None)
         machine.setdefault("branches", [])
@@ -131,6 +142,7 @@ def load_state(path: Path) -> dict:
     upgraded["references"] = state.get("references", [])
     upgraded["state_machine"]["history"] = state.get("state_machine", {}).get("history", [])
     upgraded["state_machine"]["history_summary"] = state.get("state_machine", {}).get("history_summary", [])
+    upgraded.setdefault("runtime", {}).setdefault("metrics", {"state_write_count": 0, "learning_hot_path_ops": 0})
     upgraded["updated_at"] = now()
     return upgraded
 
@@ -164,6 +176,10 @@ def compact_history(payload: dict, keep_last: int = 6) -> None:
 
 
 def write_json(path: Path, payload: dict) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    runtime = payload.setdefault("runtime", {})
+    metrics = runtime.setdefault("metrics", {"state_write_count": 0, "learning_hot_path_ops": 0})
+    metrics["state_write_count"] = int(metrics.get("state_write_count", 0)) + 1
     compact_history(payload)
     payload["updated_at"] = now()
     persisted = payload
@@ -202,6 +218,7 @@ def write_json(path: Path, payload: dict) -> None:
                 "completed_at": payload.get("runtime", {}).get("completed_at"),
                 "durable_status_surfaces": payload.get("runtime", {}).get("durable_status_surfaces", {}),
                 "last_heartbeat_summary": payload.get("runtime", {}).get("last_heartbeat_summary"),
+                "metrics": payload.get("runtime", {}).get("metrics", {}),
             },
             "state_machine": {
                 "node": payload.get("state_machine", {}).get("node"),
@@ -217,7 +234,7 @@ def write_json(path: Path, payload: dict) -> None:
             "artifacts": {
                 key: value
                 for key, value in payload.get("artifacts", {}).items()
-                if key in {"selected_adapter", "selected_pattern", "repair_report", "repair_plan", "repair_results"}
+                if key in {"selected_adapter", "selected_pattern", "execution_kind", "baseline_execution_contract", "execution_contract_diff", "baseline_validator", "validator_diff", "execution_contract", "execution_result", "executor_result", "validation_result", "resumed_execution_contract", "resumed_executor_result", "resumed_validation_result", "repair_report", "repair_plan", "repair_results", "learning_summary", "efficiency_metrics", "family_transfer_applied", "transfer_key", "transfer_source_pattern", "transfer_reason", "transfer_contract_diff"}
             },
             "references": payload.get("references", [])[-2:],
             "updated_at": payload.get("updated_at"),
@@ -348,6 +365,10 @@ def main() -> None:
     artifact_parser.add_argument("--key", required=True)
     artifact_parser.add_argument("--value", required=True)
 
+    apply_rules_parser = subparsers.add_parser("apply-rules")
+    apply_rules_parser.add_argument("--state", required=True)
+    apply_rules_parser.add_argument("--rules-json", required=True)
+
     reference_parser = subparsers.add_parser("reference")
     reference_parser.add_argument("--state", required=True)
     reference_parser.add_argument("--kind", required=True)
@@ -361,6 +382,18 @@ def main() -> None:
     success_parser.add_argument("--evidence", required=True)
     success_parser.add_argument("--confidence", type=int, default=60)
     success_parser.add_argument("--reusable", choices=["yes", "no"], default="yes")
+
+    backlog_add_parser = subparsers.add_parser("backlog-add")
+    backlog_add_parser.add_argument("--state", required=True)
+    backlog_add_parser.add_argument("--kind", choices=["success_marker", "rule_candidate"], required=True)
+    backlog_add_parser.add_argument("--payload", required=True)
+
+    backlog_clear_parser = subparsers.add_parser("backlog-clear")
+    backlog_clear_parser.add_argument("--state", required=True)
+
+    backlog_replace_parser = subparsers.add_parser("backlog-replace")
+    backlog_replace_parser.add_argument("--state", required=True)
+    backlog_replace_parser.add_argument("--payload", required=True)
 
     compact_parser = subparsers.add_parser("compact-history")
     compact_parser.add_argument("--state", required=True)
@@ -489,6 +522,8 @@ def main() -> None:
         append_history(state, "blocked", args.reason, state["state_machine"].get("active_branch"))
     elif args.command == "artifact":
         state.setdefault("artifacts", {})[args.key] = args.value
+    elif args.command == "apply-rules":
+        state.setdefault("rule_context", {})["applied_rules"] = json.loads(args.rules_json)
     elif args.command == "reference":
         state.setdefault("references", []).append(
             {"ts": now(), "kind": args.kind, "value": args.value, "label": args.label or None}
@@ -505,6 +540,22 @@ def main() -> None:
             }
         )
         state["summary_outcome"] = args.summary
+    elif args.command == "backlog-add":
+        payload = json.loads(args.payload)
+        state.setdefault("learning_backlog", []).append(
+            {
+                "queued_at": now(),
+                "kind": args.kind,
+                "payload": payload,
+            }
+        )
+        runtime = state.setdefault("runtime", {})
+        metrics = runtime.setdefault("metrics", {"state_write_count": 0, "learning_hot_path_ops": 0})
+        metrics["learning_hot_path_ops"] = int(metrics.get("learning_hot_path_ops", 0)) + 1
+    elif args.command == "backlog-clear":
+        state["learning_backlog"] = []
+    elif args.command == "backlog-replace":
+        state["learning_backlog"] = json.loads(args.payload)
     elif args.command == "compact-history":
         compact_history(state)
     elif args.command == "heartbeat":

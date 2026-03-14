@@ -1,0 +1,37 @@
+{
+  "action_tree": {
+    "children": [
+      {
+        "command": "pwd",
+        "kind": "shell",
+        "label": "Capture working directory",
+        "node_id": "pwd",
+        "reversible": true
+      },
+      {
+        "command": "ls -la",
+        "kind": "shell",
+        "label": "List current directory",
+        "node_id": "ls-root",
+        "reversible": true
+      }
+    ],
+    "kind": "decision",
+    "label": "Collect minimal local evidence",
+    "node_id": "generic-root"
+  },
+  "created_at": "2026-03-14T12:10:08.011846+00:00",
+  "error": "POLARIS_COMMAND_OUTPUT::STANDARD::shell-local",
+  "execution_order": [
+    "pwd",
+    "ls-root"
+  ],
+  "failure_type": "unknown",
+  "nonrepair_stop": false,
+  "notes": "retry only after collecting clearer local evidence",
+  "policy": "local-only reversible probes or explicit stop",
+  "probe_budget": 2,
+  "recommended_tree": "generic_probe_tree",
+  "repair_depth": "shallow",
+  "safe_to_execute": true
+}

@@ -5,25 +5,32 @@ RUNTIME_DIR="${POLARIS_RUNTIME_DIR:-$ROOT/runtime-demo}"
 EXECUTION_PROFILE="${POLARIS_EXECUTION_PROFILE:-deep}"
 MODE="${POLARIS_MODE:-long}"
 SIMULATE_ERROR="${POLARIS_SIMULATE_ERROR-ModuleNotFoundError: No module named pywinauto}"
+RESUMED_SIMULATE_ERROR="${POLARIS_RESUMED_SIMULATE_ERROR:-}"
+EXECUTION_KIND="${POLARIS_EXECUTION_KIND:-auto}"
+GOAL="${POLARIS_GOAL:-Demonstrate Polaris local orchestration flow}"
 mkdir -p "$RUNTIME_DIR"
 ORCH_ARGS=(
   --state "$RUNTIME_DIR/execution-state.json"
-  --goal "Demonstrate Polaris local orchestration flow"
+  --goal "$GOAL"
   --adapters "$RUNTIME_DIR/adapters.json"
   --rules "$RUNTIME_DIR/rules.json"
   --patterns "$RUNTIME_DIR/success-patterns.json"
   --mode "$MODE"
   --execution-profile "$EXECUTION_PROFILE"
+  --execution-kind "$EXECUTION_KIND"
 )
 if [[ -n "$SIMULATE_ERROR" ]]; then
   ORCH_ARGS+=(--simulate-error "$SIMULATE_ERROR")
+fi
+if [[ -n "$RESUMED_SIMULATE_ERROR" ]]; then
+  ORCH_ARGS+=(--resumed-simulate-error "$RESUMED_SIMULATE_ERROR")
 fi
 python3 "$ROOT/scripts/polaris_adapters.py" add \
   --registry "$RUNTIME_DIR/adapters.json" \
   --tool "python-runtime-local" \
   --tool-command "python3 <script>.py" \
   --inputs "script_path,args" \
-  --capabilities "local-exec,reporting,repair-probes,durable-status,long-run" \
+  --capabilities "local-exec,reporting,repair-probes,durable-status,long-run,generic-runner" \
   --modes "long" \
   --prerequisites "python3" \
   --selectors "prefer for long-running local orchestration,prefer when durable status surfaces are required" \
@@ -42,7 +49,7 @@ python3 "$ROOT/scripts/polaris_adapters.py" add \
   --tool "python-local" \
   --tool-command "python3 <script>.py" \
   --inputs "script_path,args" \
-  --capabilities "local-exec,reporting,repair-probes" \
+  --capabilities "local-exec,reporting,repair-probes,generic-runner" \
   --modes "short,long" \
   --prerequisites "python3" \
   --selectors "prefer for local JSON tooling,good default for bounded probes" \
@@ -58,10 +65,29 @@ python3 "$ROOT/scripts/polaris_adapters.py" add \
   --notes "Default local execution adapter"
 python3 "$ROOT/scripts/polaris_adapters.py" add \
   --registry "$RUNTIME_DIR/adapters.json" \
+  --tool "file-transform-local" \
+  --tool-command "python3 <script>.py" \
+  --inputs "script_path,args" \
+  --capabilities "local-exec,reporting,validation,file-transform,durable-status,long-run" \
+  --modes "short,long" \
+  --prerequisites "python3" \
+  --selectors "prefer for local file transform contracts,prefer when validator reads transformed files" \
+  --failure-notes "Transform contracts still depend on local filesystem writes" \
+  --fallbacks "python-local,shell-local" \
+  --fallback-notes "Fall back to python-local or shell-local when transform-specific execution is unavailable" \
+  --mode-preferences "long:3,short:5" \
+  --trust-level "workspace" \
+  --cost-hint 1 \
+  --latency-hint 1 \
+  --preferred-failures "path_or_missing_file" \
+  --safe-retry yes \
+  --notes "Preferred adapter for local file transform execution contracts"
+python3 "$ROOT/scripts/polaris_adapters.py" add \
+  --registry "$RUNTIME_DIR/adapters.json" \
   --tool "shell-local" \
   --tool-command "bash -lc <command>" \
   --inputs "command" \
-  --capabilities "local-exec,reporting,validation,repo-inspection" \
+  --capabilities "local-exec,reporting,validation,repo-inspection,generic-runner,command-output,durable-status,long-run" \
   --modes "short,long" \
   --prerequisites "bash" \
   --selectors "prefer for generic shell inspection,use as broad fallback" \
@@ -74,14 +100,14 @@ python3 "$ROOT/scripts/polaris_adapters.py" add \
   --notes "Generic shell fallback adapter"
 python3 "$ROOT/scripts/polaris_rules.py" add \
   --rules "$RUNTIME_DIR/rules.json" \
-  --rule-id "never-treat-approvals-as-bugs" \
+  --rule-id "stop-on-nonrepair-denial" \
   --layer hard \
-  --trigger "approval or safeguard denial appears" \
+  --trigger "an explicit non-repair denial appears" \
   --action "Stop and reduce scope instead of retrying the blocked path" \
-  --evidence "explicit platform boundary" \
+  --evidence "explicit runtime stop classification" \
   --scope "all Polaris runs" \
-  --tags "safety,boundary,local" \
-  --validation "explicit platform boundary" \
+  --tags "stop,runtime,local" \
+  --validation "explicit runtime stop classification" \
   --priority 100
 python3 "$ROOT/scripts/polaris_success_patterns.py" capture \
   --patterns "$RUNTIME_DIR/success-patterns.json" \

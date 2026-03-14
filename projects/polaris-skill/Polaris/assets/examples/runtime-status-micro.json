@@ -1,22 +1,26 @@
 {
   "active_branch": null,
-  "active_rule_layers": null,
+  "active_rule_layers": [
+    "hard",
+    "soft",
+    "experimental"
+  ],
   "blocked_reason": null,
-  "completed_at": "2026-03-13T11:57:20.539326+00:00",
+  "completed_at": "2026-03-14T04:03:27.895629+00:00",
   "current_step": "Completed",
   "event_budget": "micro",
   "execution_profile": "micro",
-  "last_heartbeat_at": "2026-03-13T11:57:20.567904+00:00",
+  "last_heartbeat_at": "2026-03-14T04:03:28.053540+00:00",
   "lifecycle_stage": "completed",
   "next_action": "Review outputs",
   "phase": "completed",
   "progress_pct": 100,
   "run_id": "polaris-orchestrated-run",
   "selected_adapter": "python-local",
-  "started_at": "2026-03-13T11:57:19.903228+00:00",
+  "started_at": "2026-03-14T04:03:27.022985+00:00",
   "state_density": "minimal",
   "state_node": "completed",
   "status": "completed",
-  "summary": "Micro profile completed with sticky adapter reuse",
-  "ts": "2026-03-13T11:59:36.939420+00:00"
+  "summary": "Polaris orchestration demo completed",
+  "ts": "2026-03-14T04:03:28.103628+00:00"
 }

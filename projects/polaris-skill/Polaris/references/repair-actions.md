@@ -2,20 +2,25 @@
 
 ## Purpose
 
-Move from diagnosis to bounded local action without confusing troubleshooting with policy evasion.
+Translate a repairable local failure into a bounded local probe plan.
+Preserve explicit stop classifications instead of collapsing every denial into repair.
 
 ## Flow
 
-1. `diagnose` classifies the failure and routes it to `shallow`, `medium`, or `deep`.
-2. `plan` creates a controlled local action tree with an execution order and safety gate.
-3. `execute` runs only reversible local leaves when the plan is safe.
+1. `diagnose` decides whether the failure is repairable or a `nonrepair_stop`.
+2. `plan` creates a small local action tree only for repairable failures.
+3. `execute` runs reversible local leaves and records evidence.
+
+## Routing
+
+- repairable -> continue through `shallow`, `medium`, or `deep`
+- `nonrepair_stop` -> no repair execution, no repair learning, no retry-as-bug guidance
 
 ## Depth Routing
 
-- `shallow`: first-failure pass for `micro` and `standard`; keep probes to a very small budget.
-- `medium`: use after repeated failure or blocked progress; expand evidence collection without opening the full tree.
-- `deep`: preserve the full repair tree for `deep` profile work.
-- Boundary and approval failures still stop immediately instead of escalating.
+- `shallow`: first-failure pass for `micro` and `standard`; keep probes very small
+- `medium`: use after repeated failure or blocked progress; widen evidence collection carefully
+- `deep`: preserve the full repair tree for deep-profile work and re-execute after recovery
 
 ## Current Trees
 
@@ -23,8 +28,15 @@ Move from diagnosis to bounded local action without confusing troubleshooting wi
 - `tool_probe_tree`: PATH and local tool-resolution probes
 - `path_probe_tree`: working-directory and nearby-file inspection
 - `generic_probe_tree`: minimum evidence collection
-- `boundary_stop`: explicit no-execute stop for safeguard or approval boundaries
+- `nonrepair_stop`: explicit stop classification for non-repair denials
 
-## Rule
+## Repair Contract
 
-Automatic repair action execution must stay local, reversible, auditable, and subordinate to safety boundaries.
+Automatic repair execution must stay:
+
+- local
+- reversible or inspectable
+- evidence-producing
+- inside the current execution contract
+
+If a repair plan cannot satisfy those conditions, Polaris should stop instead of broadening the task on its own.

@@ -1,0 +1,133 @@
+{
+  "patterns": [
+    {
+      "adapter": "shell-local",
+      "best_lifecycle_state": "validated",
+      "confidence": 79,
+      "created_at": "2026-03-14T12:10:21.912067+00:00",
+      "demotion_count": 0,
+      "evidence": [
+        "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/step2-learning-repeat-success/execution-state.json",
+        "runtime-status.json"
+      ],
+      "evidence_count": 2,
+      "expires_at": null,
+      "fingerprint": "success-5328e8b69290",
+      "history": [
+        {
+          "event": "captured",
+          "reason": "new_pattern",
+          "ts": "2026-03-14T12:10:21.912084+00:00"
+        },
+        {
+          "event": "auto_promoted",
+          "reason": "evidence_threshold_met",
+          "to": "validated",
+          "ts": "2026-03-14T12:10:21.912089+00:00"
+        },
+        {
+          "best_lifecycle_state": "validated",
+          "confidence": 79,
+          "event": "merged_validation",
+          "evidence_count": 2,
+          "reason": "rerun_capture",
+          "retained_lifecycle": "validated",
+          "ts": "2026-03-14T12:10:24.010188+00:00",
+          "validation_count": 2
+        }
+      ],
+      "last_selected_at": "2026-03-14T12:10:22.603617+00:00",
+      "last_validated_at": "2026-03-14T12:10:24.010187+00:00",
+      "lifecycle_state": "validated",
+      "modes": [
+        "short"
+      ],
+      "outcome": "task completed locally while keeping heavier learning work off the hot path",
+      "pattern_id": "standard-local-success-marker-success-5328e8b69290",
+      "promotion_count": 1,
+      "reusable": true,
+      "selection_count": 1,
+      "sequence": [
+        "execute",
+        "validate"
+      ],
+      "strategy_hints": {
+        "execution_ordering": [
+          "execute",
+          "validate"
+        ],
+        "fallback_choice": "sticky-adapter-first",
+        "hot_path_budget": 2,
+        "validation_strategy": "runner-contract-strict"
+      },
+      "summary": "Standard profile finished with light foreground orchestration and deferred learning consolidation",
+      "tags": [
+        "orchestration",
+        "local",
+        "standard",
+        "deferred-learning"
+      ],
+      "trigger": "standard local task",
+      "updated_at": "2026-03-14T12:10:24.010186+00:00",
+      "validation_count": 2
+    },
+    {
+      "adapter": null,
+      "best_lifecycle_state": "validated",
+      "confidence": 74,
+      "created_at": "2026-03-14T12:10:20.289579+00:00",
+      "demotion_count": 0,
+      "evidence": [
+        "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/references/repair-actions.md"
+      ],
+      "evidence_count": 1,
+      "expires_at": null,
+      "fingerprint": "bounded-local-repair",
+      "history": [
+        {
+          "event": "captured",
+          "reason": "new_pattern",
+          "ts": "2026-03-14T12:10:20.289596+00:00"
+        },
+        {
+          "best_lifecycle_state": "validated",
+          "confidence": 74,
+          "event": "merged_validation",
+          "evidence_count": 1,
+          "reason": "rerun_capture",
+          "retained_lifecycle": "validated",
+          "ts": "2026-03-14T12:10:22.297802+00:00",
+          "validation_count": 2
+        }
+      ],
+      "last_validated_at": "2026-03-14T12:10:22.297801+00:00",
+      "lifecycle_state": "validated",
+      "modes": [
+        "long"
+      ],
+      "outcome": "bounded recovery without crossing safeguards",
+      "pattern_id": "bounded-local-repair",
+      "promotion_count": 0,
+      "reusable": true,
+      "selection_count": 0,
+      "sequence": [
+        "detect",
+        "branch",
+        "probe",
+        "recover",
+        "record"
+      ],
+      "strategy_hints": {},
+      "summary": "Local repair branches should stay probe-only and feed explicit recovery references",
+      "tags": [
+        "repair",
+        "local",
+        "orchestration"
+      ],
+      "trigger": "repairable local runtime failure",
+      "updated_at": "2026-03-14T12:10:22.297799+00:00",
+      "validation_count": 2
+    }
+  ],
+  "schema_version": 1
+}

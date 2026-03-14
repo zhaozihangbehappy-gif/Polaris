@@ -1,0 +1,51 @@
+{
+  "adapters": [
+    {
+      "avoid_failures": [],
+      "capabilities": [
+        "local-exec",
+        "reporting",
+        "repair-probes"
+      ],
+      "command": "python3 <script>.py",
+      "cost_hint": 1,
+      "failure_notes": [
+        "test"
+      ],
+      "fallback_notes": [
+        "test"
+      ],
+      "fallbacks": [
+        "shell-local"
+      ],
+      "inputs": [
+        "script_path",
+        "args"
+      ],
+      "latency_hint": 1,
+      "mode_preferences": {
+        "long": 4,
+        "short": 2
+      },
+      "modes": [
+        "short",
+        "long"
+      ],
+      "notes": "test",
+      "preferred_failures": [
+        "missing_tool"
+      ],
+      "prerequisites": [
+        "python3"
+      ],
+      "safe_retry": true,
+      "selectors": [
+        "prefer for local JSON tooling"
+      ],
+      "tool": "python-local",
+      "trust_level": "workspace",
+      "updated_at": "2026-03-14T03:03:27.540178+00:00"
+    }
+  ],
+  "schema_version": 3
+}

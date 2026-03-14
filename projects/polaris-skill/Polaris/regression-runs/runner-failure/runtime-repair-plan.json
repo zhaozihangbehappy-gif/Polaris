@@ -1,0 +1,37 @@
+{
+  "action_tree": {
+    "children": [
+      {
+        "command": "python3 --version",
+        "kind": "shell",
+        "label": "Capture interpreter version",
+        "node_id": "python-version",
+        "reversible": true
+      },
+      {
+        "command": "python3 -c 'import sys; print(sys.executable)'",
+        "kind": "shell",
+        "label": "Capture interpreter path",
+        "node_id": "python-exec",
+        "reversible": true
+      }
+    ],
+    "kind": "decision",
+    "label": "Probe local Python environment before any fix",
+    "node_id": "dependency-root"
+  },
+  "created_at": "2026-03-14T12:09:55.815822+00:00",
+  "error": "ModuleNotFoundError: No module named pywinauto",
+  "execution_order": [
+    "python-version",
+    "python-exec"
+  ],
+  "failure_type": "missing_dependency",
+  "nonrepair_stop": false,
+  "notes": "retry after confirming the dependency resolves in the current interpreter or PATH",
+  "policy": "local-only reversible probes or explicit stop",
+  "probe_budget": 2,
+  "recommended_tree": "dependency_probe_tree",
+  "repair_depth": "shallow",
+  "safe_to_execute": true
+}
