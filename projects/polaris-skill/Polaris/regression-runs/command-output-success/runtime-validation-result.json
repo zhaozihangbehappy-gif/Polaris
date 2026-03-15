@@ -1,9 +1,0 @@
-{
-  "payload": {
-    "actual_stdout": "POLARIS_COMMAND_OUTPUT::STANDARD::shell-local",
-    "artifact_output_file": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/command-output-success/runtime-command-output.txt",
-    "expected_stdout": "POLARIS_COMMAND_OUTPUT::STANDARD::shell-local"
-  },
-  "status": "ok",
-  "validator_kind": "command_output_result"
-}
