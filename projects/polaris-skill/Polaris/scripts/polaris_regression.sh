@@ -6,13 +6,14 @@ rm -rf "$OUT_BASE"
 mkdir -p "$OUT_BASE"
 
 run_demo() {
-  local name="$1" profile="$2" mode="$3" err="$4" kind="${5:-auto}" goal="${6:-Demonstrate Polaris local orchestration flow}"
+  local name="$1" profile="$2" mode="$3" err="$4" kind="${5:-auto}" goal="${6:-Demonstrate Polaris local orchestration flow}" target="${7:-}"
   POLARIS_RUNTIME_DIR="$OUT_BASE/$name" \
   POLARIS_EXECUTION_PROFILE="$profile" \
   POLARIS_MODE="$mode" \
   POLARIS_SIMULATE_ERROR="$err" \
   POLARIS_EXECUTION_KIND="$kind" \
   POLARIS_GOAL="$goal" \
+  POLARIS_ANALYSIS_TARGET="$target" \
   bash "$ROOT/scripts/polaris_runtime_demo.sh" >/tmp/polaris-${name}.out
 }
 
@@ -30,6 +31,32 @@ run_demo deep-command-output-repair deep long 'forced command output failure' co
 run_demo deep-repair deep long 'ModuleNotFoundError: No module named pywinauto'
 run_demo boundary-approval standard short 'approval denied by policy'
 run_demo boundary-permission standard short 'Permission denied while writing file'
+
+run_demo real-analysis-success standard short '' file_analysis 'Analyze a real Polaris script file' "$ROOT/scripts/polaris_planner.py"
+
+REAL_REPAIR_DIR="$OUT_BASE/real-analysis-failure-repair"
+REAL_REPAIR_TARGET="/tmp/polaris-step0-nonexistent-target-$$-$(date +%s).txt"
+mkdir -p "$REAL_REPAIR_DIR"
+POLARIS_RUNTIME_DIR="$REAL_REPAIR_DIR" \
+POLARIS_EXECUTION_PROFILE=standard \
+POLARIS_MODE=short \
+POLARIS_SIMULATE_ERROR='' \
+POLARIS_EXECUTION_KIND=file_analysis \
+POLARIS_GOAL='Analyze a file that does not exist yet' \
+POLARIS_ANALYSIS_TARGET="$REAL_REPAIR_TARGET" \
+bash "$ROOT/scripts/polaris_runtime_demo.sh" >/tmp/polaris-real-analysis-failure-repair-1.out || true
+cp "$REAL_REPAIR_DIR/execution-state.json" "$REAL_REPAIR_DIR/execution-state-run1.json"
+echo "Step 0 repair target content created after real failure." > "$REAL_REPAIR_TARGET"
+POLARIS_RUNTIME_DIR="$REAL_REPAIR_DIR" \
+POLARIS_EXECUTION_PROFILE=standard \
+POLARIS_MODE=short \
+POLARIS_SIMULATE_ERROR='' \
+POLARIS_EXECUTION_KIND=file_analysis \
+POLARIS_GOAL='Analyze a file that now exists after repair' \
+POLARIS_ANALYSIS_TARGET="$REAL_REPAIR_TARGET" \
+bash "$ROOT/scripts/polaris_runtime_demo.sh" >/tmp/polaris-real-analysis-failure-repair-2.out
+cp "$REAL_REPAIR_DIR/execution-state.json" "$REAL_REPAIR_DIR/execution-state-run2.json"
+rm -f "$REAL_REPAIR_TARGET"
 
 STEP2_SUCCESS_DIR="$OUT_BASE/step2-learning-repeat-success"
 mkdir -p "$STEP2_SUCCESS_DIR"
@@ -208,6 +235,8 @@ expected={
     'step2-learning-repeat-repair': {'status': 'completed', 'execution_kind': 'runner'},
     'step3-transfer-source': {'status': 'completed', 'execution_kind': 'runner'},
     'step3-transfer-target': {'status': 'completed', 'execution_kind': 'runner'},
+    'real-analysis-success': {'status': 'completed', 'execution_kind': 'file_analysis'},
+    'real-analysis-failure-repair': {'status': 'completed', 'execution_kind': 'file_analysis'},
 }
 for d in sorted(base.iterdir()):
     if not d.is_dir():
@@ -385,6 +414,69 @@ if transfer_target_efficiency and transfer_source_efficiency:
         errors.append('step3-transfer: target should reduce adapter_selection_cost relative to transfer source')
     if transfer_target_efficiency.get('validator_directness_rank', -1) <= transfer_source_efficiency.get('validator_directness_rank', -1):
         errors.append('step3-transfer: target should improve validator directness rank relative to transfer source')
+
+import copy
+import hashlib as _hashlib
+import pathlib
+import sys
+sys.path.insert(0, str(pathlib.Path('Polaris/scripts').resolve()))
+import polaris_validator as pv
+
+real_success_dir = base/'real-analysis-success'
+real_success_state = json.loads((real_success_dir/'execution-state.json').read_text())
+real_success_artifacts = real_success_state.get('artifacts', {})
+if real_success_state.get('status') != 'completed':
+    errors.append('step0-real-analysis-success: run must complete')
+if real_success_artifacts.get('execution_kind') != 'file_analysis':
+    errors.append('step0-real-analysis-success: execution_kind must be file_analysis')
+real_validation = json.loads((real_success_dir/'runtime-validation-result.json').read_text())
+if real_validation.get('validator_kind') != 'independent_file_analysis':
+    errors.append('step0-real-analysis-success: validator_kind must be independent_file_analysis')
+if real_validation.get('status') != 'ok':
+    errors.append('step0-real-analysis-success: independent validation must pass')
+verified_fields = real_validation.get('verified_fields', [])
+for required_field in ['sha256_bytes', 'line_count', 'word_count', 'char_count', 'size_bytes']:
+    if required_field not in verified_fields:
+        errors.append(f'step0-real-analysis-success: validator must independently verify {required_field}')
+real_analysis_output = json.loads((real_success_dir/'runtime-analysis-result.json').read_text())
+if not real_analysis_output.get('sha256_bytes') or len(real_analysis_output['sha256_bytes']) != 64:
+    errors.append('step0-real-analysis-success: adapter must compute a real raw-bytes sha256 hash')
+if real_analysis_output.get('line_count', -1) < 1:
+    errors.append('step0-real-analysis-success: adapter must compute a real line count from a real file')
+
+real_repair_dir = base/'real-analysis-failure-repair'
+real_repair_run1 = json.loads((real_repair_dir/'execution-state-run1.json').read_text())
+real_repair_run2 = json.loads((real_repair_dir/'execution-state-run2.json').read_text())
+if real_repair_run1.get('status') != 'blocked':
+    errors.append('step0-real-analysis-failure-repair: run 1 must block on real missing file')
+repair_report_path = real_repair_dir/'runtime-repair-report.json'
+if repair_report_path.exists():
+    real_repair_report = json.loads(repair_report_path.read_text())
+    if real_repair_report.get('failure_type') != 'path_or_missing_file':
+        errors.append('step0-real-analysis-failure-repair: repair must classify real error as path_or_missing_file')
+else:
+    errors.append('step0-real-analysis-failure-repair: run 1 must produce a repair report')
+if real_repair_run2.get('status') != 'completed':
+    errors.append('step0-real-analysis-failure-repair: run 2 must complete after file is created')
+if real_repair_run2.get('artifacts', {}).get('execution_kind') != 'file_analysis':
+    errors.append('step0-real-analysis-failure-repair: run 2 execution_kind must be file_analysis')
+
+tampered_analysis = copy.deepcopy(real_validation.get('payload', {}))
+tampered_analysis['sha256_bytes'] = 'deadbeef' * 8
+tampered_output_path = real_success_dir/'runtime-analysis-result-tampered.json'
+tampered_output_path.write_text(json.dumps(tampered_analysis, indent=2, sort_keys=True) + '\n')
+tampered_contract = {
+    'validator': {
+        'kind': 'independent_file_analysis',
+        'output_file': str(tampered_output_path),
+        'target': real_analysis_output.get('target'),
+    }
+}
+tampered_result = pv.validate_independent_file_analysis(tampered_contract, {})
+if tampered_result.get('status') != 'failed':
+    errors.append('step0-validator-independence: tampering with adapter sha256 must cause validation failure')
+if 'independent re-computation does not match' not in tampered_result.get('reason', ''):
+    errors.append('step0-validator-independence: tampered validation must report mismatch reason')
 
 conflict_strategy=json.loads((base/'step2-strategy-conflict.json').read_text())
 slot_resolution=conflict_strategy.get('strategy_trace', {}).get('slot_resolution', {})

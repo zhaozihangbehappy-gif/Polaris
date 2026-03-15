@@ -1,0 +1,36 @@
+{
+  "entries": {
+    "503719d7c138fc7f": {
+      "failure_count": 0,
+      "last_failure_at": "2026-03-15T04:43:18.560845+00:00",
+      "last_score": 81,
+      "last_status": "success",
+      "last_success_at": "2026-03-15T04:43:20.395882+00:00",
+      "prerequisite_snapshot": {
+        "checks": [
+          {
+            "available": true,
+            "name": "python3"
+          }
+        ],
+        "ready": true
+      },
+      "scenario": {
+        "execution_profile": "standard",
+        "failure_type": "moderate_local_task",
+        "max_cost": 5,
+        "max_trust": "workspace",
+        "mode": "short",
+        "require_durable_status": false,
+        "required_capabilities": [
+          "file-analysis",
+          "local-exec",
+          "reporting"
+        ]
+      },
+      "selected_adapter": "file-analysis-local",
+      "updated_at": "2026-03-15T04:43:20.395870+00:00"
+    }
+  },
+  "schema_version": 1
+}

@@ -1,0 +1,192 @@
+{
+  "patterns": [
+    {
+      "adapter": "file-analysis-local",
+      "best_lifecycle_state": "validated",
+      "confidence": 76,
+      "created_at": "2026-03-15T04:43:20.481606+00:00",
+      "demotion_count": 0,
+      "evidence": [
+        "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/real-analysis-failure-repair/execution-state.json",
+        "runtime-status.json"
+      ],
+      "evidence_count": 2,
+      "expires_at": null,
+      "fingerprint": "success-b93d07a20ed4",
+      "history": [
+        {
+          "event": "captured",
+          "reason": "new_pattern",
+          "ts": "2026-03-15T04:43:20.481624+00:00"
+        },
+        {
+          "event": "auto_promoted",
+          "reason": "evidence_threshold_met",
+          "to": "validated",
+          "ts": "2026-03-15T04:43:20.481630+00:00"
+        }
+      ],
+      "last_validated_at": "2026-03-15T04:43:20.481632+00:00",
+      "lifecycle_state": "validated",
+      "modes": [
+        "short"
+      ],
+      "outcome": "task completed locally while keeping heavier learning work off the hot path",
+      "pattern_id": "standard-local-success-marker-success-b93d07a20ed4",
+      "promotion_count": 1,
+      "reusable": true,
+      "selection_count": 0,
+      "sequence": [
+        "execute",
+        "validate"
+      ],
+      "strategy_hints": {
+        "execution_ordering": [
+          "execute",
+          "validate"
+        ],
+        "fallback_choice": "sticky-adapter-first",
+        "hot_path_budget": 2,
+        "validation_strategy": "runner-contract-strict"
+      },
+      "summary": "Standard profile finished with light foreground orchestration and deferred learning consolidation",
+      "tags": [
+        "orchestration",
+        "local",
+        "standard",
+        "deferred-learning"
+      ],
+      "trigger": "standard local task",
+      "updated_at": "2026-03-15T04:43:20.481616+00:00",
+      "validation_count": 1
+    },
+    {
+      "adapter": "file-analysis-local",
+      "best_lifecycle_state": "validated",
+      "confidence": 75,
+      "created_at": "2026-03-15T04:43:18.405767+00:00",
+      "demotion_count": 0,
+      "evidence": [
+        "runtime-repair-results.json",
+        "runtime-repair-plan.json",
+        "runtime-repair-report.json"
+      ],
+      "evidence_count": 3,
+      "expires_at": null,
+      "fingerprint": "repair-pattern-50807638f6bd",
+      "history": [
+        {
+          "event": "captured",
+          "reason": "new_pattern",
+          "ts": "2026-03-15T04:43:18.405796+00:00"
+        },
+        {
+          "event": "auto_promoted",
+          "reason": "evidence_threshold_met",
+          "to": "validated",
+          "ts": "2026-03-15T04:43:18.405802+00:00"
+        }
+      ],
+      "last_selected_at": "2026-03-15T04:43:19.088784+00:00",
+      "last_validated_at": "2026-03-15T04:43:18.405804+00:00",
+      "lifecycle_state": "validated",
+      "modes": [
+        "short"
+      ],
+      "outcome": "path-resolution repair path documented with local filesystem evidence",
+      "pattern_id": "repair-pattern-50807638f6bd",
+      "promotion_count": 1,
+      "reusable": true,
+      "selection_count": 1,
+      "sequence": [
+        "diagnose",
+        "path-probes",
+        "record-evidence",
+        "recover"
+      ],
+      "strategy_hints": {
+        "execution_ordering": [
+          "diagnose",
+          "path-probes",
+          "record-evidence",
+          "recover"
+        ],
+        "fallback_choice": "sticky-adapter-first",
+        "hot_path_budget": 4,
+        "validation_strategy": "runner-contract-strict"
+      },
+      "summary": "Path failures improved after bounded working-directory and nearby-file probes captured local filesystem evidence",
+      "tags": [
+        "repair",
+        "local",
+        "path_or_missing_file",
+        "path_probe_tree",
+        "shallow",
+        "filesystem",
+        "paths",
+        "orchestration"
+      ],
+      "trigger": "path_or_missing_file",
+      "updated_at": "2026-03-15T04:43:18.405788+00:00",
+      "validation_count": 1
+    },
+    {
+      "adapter": null,
+      "best_lifecycle_state": "validated",
+      "confidence": 74,
+      "created_at": "2026-03-15T04:43:16.710574+00:00",
+      "demotion_count": 0,
+      "evidence": [
+        "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/references/repair-actions.md"
+      ],
+      "evidence_count": 1,
+      "expires_at": null,
+      "fingerprint": "bounded-local-repair",
+      "history": [
+        {
+          "event": "captured",
+          "reason": "new_pattern",
+          "ts": "2026-03-15T04:43:16.710593+00:00"
+        },
+        {
+          "best_lifecycle_state": "validated",
+          "confidence": 74,
+          "event": "merged_validation",
+          "evidence_count": 1,
+          "reason": "rerun_capture",
+          "retained_lifecycle": "validated",
+          "ts": "2026-03-15T04:43:18.800850+00:00",
+          "validation_count": 2
+        }
+      ],
+      "last_validated_at": "2026-03-15T04:43:18.800849+00:00",
+      "lifecycle_state": "validated",
+      "modes": [
+        "long"
+      ],
+      "outcome": "bounded recovery without crossing safeguards",
+      "pattern_id": "bounded-local-repair",
+      "promotion_count": 0,
+      "reusable": true,
+      "selection_count": 0,
+      "sequence": [
+        "detect",
+        "branch",
+        "probe",
+        "recover",
+        "record"
+      ],
+      "strategy_hints": {},
+      "summary": "Local repair branches should stay probe-only and feed explicit recovery references",
+      "tags": [
+        "repair",
+        "local",
+        "orchestration"
+      ],
+      "trigger": "repairable local runtime failure",
+      "updated_at": "2026-03-15T04:43:18.800846+00:00",
+      "validation_count": 2
+    }
+  ],
+  "schema_version": 1
+}

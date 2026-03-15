@@ -6,6 +6,57 @@
         "local-exec",
         "reporting",
         "validation",
+        "file-analysis",
+        "durable-status",
+        "long-run"
+      ],
+      "command": "python3 <script>.py",
+      "cost_hint": 1,
+      "failure_notes": [
+        "Analysis contracts depend on target file accessibility"
+      ],
+      "fallback_notes": [
+        "Fall back to python-local or shell-local when analysis-specific execution is unavailable"
+      ],
+      "fallbacks": [
+        "python-local",
+        "shell-local"
+      ],
+      "inputs": [
+        "script_path",
+        "args"
+      ],
+      "latency_hint": 1,
+      "mode_preferences": {
+        "long": 3,
+        "short": 5
+      },
+      "modes": [
+        "short",
+        "long"
+      ],
+      "notes": "Adapter for real file analysis with independent validation",
+      "preferred_failures": [
+        "path_or_missing_file"
+      ],
+      "prerequisites": [
+        "python3"
+      ],
+      "safe_retry": true,
+      "selectors": [
+        "prefer for local file analysis contracts",
+        "prefer when validator independently re-reads source files"
+      ],
+      "tool": "file-analysis-local",
+      "trust_level": "workspace",
+      "updated_at": "2026-03-15T04:43:04.741490+00:00"
+    },
+    {
+      "avoid_failures": [],
+      "capabilities": [
+        "local-exec",
+        "reporting",
+        "validation",
         "file-transform",
         "durable-status",
         "long-run"
@@ -49,7 +100,7 @@
       ],
       "tool": "file-transform-local",
       "trust_level": "workspace",
-      "updated_at": "2026-03-14T12:10:10.630992+00:00"
+      "updated_at": "2026-03-15T04:43:04.680054+00:00"
     },
     {
       "avoid_failures": [],
@@ -98,7 +149,7 @@
       ],
       "tool": "python-local",
       "trust_level": "workspace",
-      "updated_at": "2026-03-14T12:10:10.598905+00:00"
+      "updated_at": "2026-03-15T04:43:04.649602+00:00"
     },
     {
       "avoid_failures": [],
@@ -150,7 +201,7 @@
       ],
       "tool": "python-runtime-local",
       "trust_level": "workspace",
-      "updated_at": "2026-03-14T12:10:10.566050+00:00"
+      "updated_at": "2026-03-15T04:43:04.618296+00:00"
     },
     {
       "avoid_failures": [],
@@ -196,7 +247,7 @@
       ],
       "tool": "shell-local",
       "trust_level": "workspace",
-      "updated_at": "2026-03-14T12:10:10.662357+00:00"
+      "updated_at": "2026-03-15T04:43:04.710435+00:00"
     }
   ],
   "schema_version": 3

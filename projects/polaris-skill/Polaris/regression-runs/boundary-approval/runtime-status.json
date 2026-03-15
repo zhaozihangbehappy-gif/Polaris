@@ -10,17 +10,17 @@
   "current_step": "Run the next local step",
   "event_budget": "standard",
   "execution_profile": "standard",
-  "last_heartbeat_at": "2026-03-14T12:10:18.147329+00:00",
+  "last_heartbeat_at": "2026-03-15T04:43:12.431099+00:00",
   "lifecycle_stage": "repairing",
   "next_action": "Verify outcomes and inspect failures",
   "phase": "repairing",
   "progress_pct": 0,
   "run_id": "polaris-orchestrated-run",
   "selected_adapter": "shell-local",
-  "started_at": "2026-03-14T12:10:16.761417+00:00",
+  "started_at": "2026-03-15T04:43:11.033974+00:00",
   "state_density": "minimal",
   "state_node": "repairing",
   "status": "in_progress",
   "summary": "Standard profile ran a shallow repair pass and deferred deeper recovery",
-  "ts": "2026-03-14T12:10:18.173455+00:00"
+  "ts": "2026-03-15T04:43:12.454777+00:00"
 }

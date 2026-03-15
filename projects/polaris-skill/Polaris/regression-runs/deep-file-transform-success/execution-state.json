@@ -27,7 +27,7 @@
       "status": "passed",
       "step": "execute_adapter_contract",
       "summary": "Adapter contract executed successfully",
-      "ts": "2026-03-14T12:10:01.882512+00:00"
+      "ts": "2026-03-15T04:42:55.604548+00:00"
     }
   ],
   "checkpoints": [],
@@ -51,7 +51,7 @@
       "step": "Clarify task scope",
       "step_id": "planning-1",
       "success_signal": "scope accepted",
-      "updated_at": "2026-03-14T12:10:01.196596+00:00"
+      "updated_at": "2026-03-15T04:42:54.890382+00:00"
     },
     {
       "index": 2,
@@ -64,7 +64,7 @@
       "step": "Choose safe local adapter and rules",
       "step_id": "ready-2",
       "success_signal": "execution path chosen",
-      "updated_at": "2026-03-14T12:10:01.308782+00:00"
+      "updated_at": "2026-03-15T04:42:55.009602+00:00"
     },
     {
       "index": 3,
@@ -77,7 +77,7 @@
       "step": "Execute the next local step",
       "step_id": "executing-3",
       "success_signal": "step completed",
-      "updated_at": "2026-03-14T12:10:01.910188+00:00"
+      "updated_at": "2026-03-15T04:42:55.633318+00:00"
     },
     {
       "index": 4,
@@ -91,7 +91,7 @@
       "step": "Verify outcomes and inspect failures",
       "step_id": "validating-4",
       "success_signal": "evidence captured",
-      "updated_at": "2026-03-14T12:10:02.139741+00:00"
+      "updated_at": "2026-03-15T04:42:55.855354+00:00"
     },
     {
       "index": 5,
@@ -104,7 +104,7 @@
       "step": "Record reusable lessons and next actions",
       "step_id": "completed-5",
       "success_signal": "state ready to resume",
-      "updated_at": "2026-03-14T12:10:02.259520+00:00"
+      "updated_at": "2026-03-15T04:42:55.977252+00:00"
     }
   ],
   "progress_pct": 100,
@@ -112,19 +112,19 @@
     {
       "kind": "rules",
       "label": "layered rules store",
-      "ts": "2026-03-14T12:10:00.720640+00:00",
+      "ts": "2026-03-15T04:42:54.411180+00:00",
       "value": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/deep-file-transform-success/rules.json"
     },
     {
       "kind": "patterns",
       "label": "success pattern store",
-      "ts": "2026-03-14T12:10:00.748025+00:00",
+      "ts": "2026-03-15T04:42:54.439394+00:00",
       "value": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/deep-file-transform-success/success-patterns.json"
     },
     {
       "kind": "adapters",
       "label": "adapter registry",
-      "ts": "2026-03-14T12:10:00.776247+00:00",
+      "ts": "2026-03-15T04:42:54.468107+00:00",
       "value": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/deep-file-transform-success/adapters.json"
     }
   ],
@@ -153,18 +153,18 @@
   },
   "run_id": "polaris-orchestrated-run",
   "runtime": {
-    "completed_at": "2026-03-14T12:10:02.288477+00:00",
+    "completed_at": "2026-03-15T04:42:56.006392+00:00",
     "durable_status_surfaces": {
       "live_status": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/deep-file-transform-success/runtime-live-status.json"
     },
-    "last_heartbeat_at": "2026-03-14T12:10:02.458951+00:00",
+    "last_heartbeat_at": "2026-03-15T04:42:56.179781+00:00",
     "last_heartbeat_summary": "run completed",
     "lifecycle_stage": "completed",
     "metrics": {
       "learning_hot_path_ops": 1,
       "state_write_count": 49
     },
-    "started_at": "2026-03-14T12:10:00.692997+00:00"
+    "started_at": "2026-03-15T04:42:54.382399+00:00"
   },
   "schema_version": 5,
   "state_density": "full",
@@ -217,7 +217,7 @@
         "branch_id": "execution-main",
         "kind": "primary",
         "label": "Primary execution path",
-        "opened_at": "2026-03-14T12:10:01.281077+00:00",
+        "opened_at": "2026-03-15T04:42:54.979693+00:00",
         "origin_node": "ready",
         "references": [
           "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/deep-file-transform-success/adapters.json",
@@ -233,35 +233,35 @@
         "from": "intake",
         "summary": "Run initialized and routed to the deep profile",
         "to": "planning",
-        "ts": "2026-03-14T12:10:00.803715+00:00"
+        "ts": "2026-03-15T04:42:54.497720+00:00"
       },
       {
         "branch_id": null,
         "from": "planning",
         "summary": "Plan and adapter routing completed",
         "to": "ready",
-        "ts": "2026-03-14T12:10:01.225322+00:00"
+        "ts": "2026-03-15T04:42:54.919434+00:00"
       },
       {
         "branch_id": "execution-main",
         "from": "ready",
         "summary": "Execution branch started",
         "to": "executing",
-        "ts": "2026-03-14T12:10:01.337203+00:00"
+        "ts": "2026-03-15T04:42:55.039019+00:00"
       },
       {
         "branch_id": "execution-main",
         "from": "executing",
         "summary": "Execution outputs ready for validation",
         "to": "validating",
-        "ts": "2026-03-14T12:10:01.943854+00:00"
+        "ts": "2026-03-15T04:42:55.662032+00:00"
       },
       {
         "branch_id": "execution-main",
         "from": "validating",
         "summary": "Run finished cleanly",
         "to": "completed",
-        "ts": "2026-03-14T12:10:02.288473+00:00"
+        "ts": "2026-03-15T04:42:56.006388+00:00"
       }
     ],
     "history_summary": [],
@@ -271,7 +271,7 @@
   "status": "completed",
   "success_patterns": [
     {
-      "captured_at": "2026-03-14T12:10:02.110219+00:00",
+      "captured_at": "2026-03-15T04:42:55.826871+00:00",
       "confidence": 90,
       "evidence": [
         "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/deep-file-transform-success/execution-state.json",
@@ -283,5 +283,5 @@
     }
   ],
   "summary_outcome": "Run finished cleanly",
-  "updated_at": "2026-03-14T12:10:02.487718+00:00"
+  "updated_at": "2026-03-15T04:42:56.209876+00:00"
 }

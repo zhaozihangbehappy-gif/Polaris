@@ -1,0 +1,11 @@
+{
+  "char_count": 4087,
+  "empty": false,
+  "first_line": "#!/usr/bin/env python3",
+  "last_line": "    main()",
+  "line_count": 86,
+  "sha256_bytes": "deadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef",
+  "size_bytes": 4087,
+  "target": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/scripts/polaris_planner.py",
+  "word_count": 375
+}

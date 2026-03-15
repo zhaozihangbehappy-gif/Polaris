@@ -4,7 +4,7 @@
       "adapter": "shell-local",
       "best_lifecycle_state": "experimental",
       "confidence": 68,
-      "created_at": "2026-03-14T12:10:08.346442+00:00",
+      "created_at": "2026-03-15T04:43:02.295017+00:00",
       "demotion_count": 0,
       "evidence": [
         "runtime-repair-results.json",
@@ -18,10 +18,10 @@
         {
           "event": "captured",
           "reason": "new_pattern",
-          "ts": "2026-03-14T12:10:08.346460+00:00"
+          "ts": "2026-03-15T04:43:02.295038+00:00"
         }
       ],
-      "last_validated_at": "2026-03-14T12:10:08.346454+00:00",
+      "last_validated_at": "2026-03-15T04:43:02.295031+00:00",
       "lifecycle_state": "experimental",
       "modes": [
         "short"
@@ -60,14 +60,14 @@
         "orchestration"
       ],
       "trigger": "unknown",
-      "updated_at": "2026-03-14T12:10:08.346453+00:00",
+      "updated_at": "2026-03-15T04:43:02.295030+00:00",
       "validation_count": 1
     },
     {
       "adapter": null,
       "best_lifecycle_state": "validated",
       "confidence": 72,
-      "created_at": "2026-03-14T12:10:06.718859+00:00",
+      "created_at": "2026-03-15T04:43:00.635831+00:00",
       "demotion_count": 0,
       "evidence": [
         "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/references/repair-actions.md"
@@ -79,10 +79,10 @@
         {
           "event": "captured",
           "reason": "new_pattern",
-          "ts": "2026-03-14T12:10:06.718879+00:00"
+          "ts": "2026-03-15T04:43:00.635851+00:00"
         }
       ],
-      "last_validated_at": "2026-03-14T12:10:06.718871+00:00",
+      "last_validated_at": "2026-03-15T04:43:00.635844+00:00",
       "lifecycle_state": "validated",
       "modes": [
         "long"
@@ -107,7 +107,7 @@
         "orchestration"
       ],
       "trigger": "repairable local runtime failure",
-      "updated_at": "2026-03-14T12:10:06.718869+00:00",
+      "updated_at": "2026-03-15T04:43:00.635841+00:00",
       "validation_count": 1
     }
   ],

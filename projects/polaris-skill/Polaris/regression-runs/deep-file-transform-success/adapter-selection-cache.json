@@ -4,7 +4,7 @@
       "failure_count": 0,
       "last_score": 105,
       "last_status": "success",
-      "last_success_at": "2026-03-14T12:10:02.232304+00:00",
+      "last_success_at": "2026-03-15T04:42:55.946924+00:00",
       "prerequisite_snapshot": {
         "checks": [
           {
@@ -29,7 +29,7 @@
         ]
       },
       "selected_adapter": "file-transform-local",
-      "updated_at": "2026-03-14T12:10:02.232294+00:00"
+      "updated_at": "2026-03-15T04:42:55.946910+00:00"
     }
   },
   "schema_version": 1

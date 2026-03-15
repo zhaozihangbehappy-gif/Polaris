@@ -873,7 +873,7 @@ def persist_efficiency_metrics(base: Path, state_file: str, runtime_dir: Path, m
     return run_checked([sys.executable, str(base / "polaris_state.py"), "artifact", "--state", state_file, "--key", "efficiency_metrics", "--value", json.dumps(metrics, sort_keys=True)], "record efficiency metrics")
 
 
-def build_execution_contract(base: Path, goal: str, state_file: str, adapter: dict, execution_profile: str, mode: str, applied_rules: list[dict], selected_pattern: dict | None, simulate_error: str | None, execution_kind: str) -> dict:
+def build_execution_contract(base: Path, goal: str, state_file: str, adapter: dict, execution_profile: str, mode: str, applied_rules: list[dict], selected_pattern: dict | None, simulate_error: str | None, execution_kind: str, analysis_target: str | None = None) -> dict:
     runtime_dir = Path(state_file).resolve().parent
     default_output_file = str(runtime_dir / "runtime-execution-result.json")
     strategy = build_execution_strategy(applied_rules, selected_pattern, execution_profile, execution_kind)
@@ -889,6 +889,26 @@ def build_execution_contract(base: Path, goal: str, state_file: str, adapter: di
         "strategy": strategy,
         "simulate_error": simulate_error,
     }
+    if execution_kind == "file_analysis":
+        target = analysis_target or str(base / "polaris_planner.py")
+        analysis_output = str(runtime_dir / "runtime-analysis-result.json")
+        contract.update(
+            {
+                "kind": "file_analysis",
+                "script_path": str(base / "polaris_file_analysis.py"),
+                "output_file": analysis_output,
+                "args": [
+                    "--target", target,
+                    "--output-file", analysis_output,
+                ],
+                "validator": {
+                    "kind": "independent_file_analysis",
+                    "output_file": analysis_output,
+                    "target": target,
+                },
+            }
+        )
+        return contract
     if execution_kind == "file_transform":
         input_file = runtime_dir / "runtime-transform-input.txt"
         input_file.write_text(f"Polaris input for goal: {goal}\n", encoding="utf-8")
@@ -1050,7 +1070,8 @@ def main() -> None:
     parser.add_argument("--mode", choices=["short", "long"], default="long")
     parser.add_argument("--execution-profile", choices=["auto", "micro", "standard", "deep"], default="auto")
     parser.add_argument("--state-density", choices=["auto", "minimal", "full"], default="auto")
-    parser.add_argument("--execution-kind", choices=["auto", "runner", "file_transform", "command_output"], default="auto")
+    parser.add_argument("--execution-kind", choices=["auto", "runner", "file_transform", "command_output", "file_analysis"], default="auto")
+    parser.add_argument("--analysis-target")
     args = parser.parse_args()
 
     base = Path(__file__).resolve().parent
@@ -1063,7 +1084,9 @@ def main() -> None:
     execution_profile = infer_profile(args.goal, args.mode, args.simulate_error) if args.execution_profile == "auto" else args.execution_profile
     execution_kind = args.execution_kind
     policy = PROFILE_POLICIES[execution_profile]
-    if args.execution_kind == "file_transform":
+    if args.execution_kind == "file_analysis":
+        effective_capabilities = policy["adapter_capabilities"] + ",file-analysis"
+    elif args.execution_kind == "file_transform":
         effective_capabilities = policy["adapter_capabilities"] + ",file-transform"
     elif args.execution_kind == "command_output":
         effective_capabilities = policy["adapter_capabilities"] + ",command-output"
@@ -1291,8 +1314,8 @@ def main() -> None:
     execution_kind = execution_plan.get("parsed", {}).get("family", "runner")
     history.append(run_checked([sys.executable, str(base / "polaris_state.py"), "artifact", "--state", args.state, "--key", "execution_kind", "--value", execution_kind], "record execution kind"))
     history.append(run_checked([sys.executable, str(base / "polaris_state.py"), "artifact", "--state", args.state, "--key", "execution_family_trace", "--value", json.dumps(execution_plan.get("parsed", {}).get("trace", {}), sort_keys=True)], "record execution family trace"))
-    baseline_contract = build_execution_contract(base, args.goal, args.state, adapter_record, execution_profile, args.mode, [rule for rule in applied_rules if rule.get("layer") == "hard"], None, args.simulate_error, execution_kind)
-    execution_contract = build_execution_contract(base, args.goal, args.state, adapter_record, execution_profile, args.mode, applied_rules, selected_pattern_record, args.simulate_error, execution_kind)
+    baseline_contract = build_execution_contract(base, args.goal, args.state, adapter_record, execution_profile, args.mode, [rule for rule in applied_rules if rule.get("layer") == "hard"], None, args.simulate_error, execution_kind, analysis_target=getattr(args, "analysis_target", None))
+    execution_contract = build_execution_contract(base, args.goal, args.state, adapter_record, execution_profile, args.mode, applied_rules, selected_pattern_record, args.simulate_error, execution_kind, analysis_target=getattr(args, "analysis_target", None))
     contract_diff = build_contract_diff(summarize_contract_for_diff(baseline_contract), summarize_contract_for_diff(execution_contract))
     validator_diff = build_contract_diff(baseline_contract.get("validator", {}), execution_contract.get("validator", {}))
     transfer_contract_diff = contract_diff if family_transfer_applied else {}
@@ -1456,7 +1479,7 @@ def main() -> None:
         history.append(run_checked([sys.executable, str(base / "polaris_state.py"), "branch", "--state", args.state, "--branch-id", execution_branch, "--label", "Primary execution path", "--kind", "primary", "--summary", "Execution resumed after repair branch", "--references", args.state], "reopen execution branch"))
         history.append(run_checked([sys.executable, str(base / "polaris_state.py"), "transition", "--state", args.state, "--to", "executing", "--summary", "Execution resumed after repair branch", "--branch-id", execution_branch], "transition resumed execute"))
         append(history, record_adapter_outcome(base, sticky_cache, policy, execution_profile, adapter_name, "failure", adapter_score))
-        resumed_contract = build_execution_contract(base, args.goal, args.state, adapter_record, execution_profile, args.mode, applied_rules, selected_pattern_record, args.resumed_simulate_error, execution_kind)
+        resumed_contract = build_execution_contract(base, args.goal, args.state, adapter_record, execution_profile, args.mode, applied_rules, selected_pattern_record, args.resumed_simulate_error, execution_kind, analysis_target=getattr(args, "analysis_target", None))
         history.append(run_checked([sys.executable, str(base / "polaris_state.py"), "artifact", "--state", args.state, "--key", "resumed_execution_contract", "--value", json.dumps(resumed_contract, sort_keys=True)], "record resumed execution contract"))
         resumed_result = execute_contract(base, adapter_record, resumed_contract, "runtime-resumed-executor-result.json")
         history.append(resumed_result)

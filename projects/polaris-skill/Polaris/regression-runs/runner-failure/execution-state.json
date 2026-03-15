@@ -58,13 +58,13 @@
     {
       "kind": "patterns",
       "label": "success pattern store",
-      "ts": "2026-03-14T12:09:54.627116+00:00",
+      "ts": "2026-03-15T04:42:48.085661+00:00",
       "value": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/runner-failure/success-patterns.json"
     },
     {
       "kind": "adapters",
       "label": "adapter registry",
-      "ts": "2026-03-14T12:09:54.657514+00:00",
+      "ts": "2026-03-15T04:42:48.113038+00:00",
       "value": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/runner-failure/adapters.json"
     }
   ],
@@ -97,14 +97,14 @@
     "durable_status_surfaces": {
       "live_status": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/runner-failure/runtime-live-status.json"
     },
-    "last_heartbeat_at": "2026-03-14T12:09:56.242576+00:00",
+    "last_heartbeat_at": "2026-03-15T04:42:49.720239+00:00",
     "last_heartbeat_summary": "deferred repair learning consolidated: 2/2 item(s); retained=0; pattern promotions=1; rule promotions=1",
     "lifecycle_stage": "blocked",
     "metrics": {
       "learning_hot_path_ops": 2,
       "state_write_count": 44
     },
-    "started_at": "2026-03-14T12:09:54.571225+00:00"
+    "started_at": "2026-03-15T04:42:48.029760+00:00"
   },
   "schema_version": 5,
   "state_density": "minimal",
@@ -162,19 +162,19 @@
         "from": "executing",
         "summary": "Standard profile opened a shallow repair pass",
         "to": "repairing",
-        "ts": "2026-03-14T12:09:56.026430+00:00"
+        "ts": "2026-03-15T04:42:49.491554+00:00"
       },
       {
         "branch_id": "execution-main",
         "from": "repairing",
         "summary": "Standard profile stopped after shallow repair; escalate to medium only if failure repeats",
         "to": "blocked",
-        "ts": "2026-03-14T12:09:56.079187+00:00"
+        "ts": "2026-03-15T04:42:49.545561+00:00"
       }
     ],
     "node": "blocked"
   },
   "status": "blocked",
   "summary_outcome": "Standard profile stopped after shallow repair; escalate to medium only if failure repeats",
-  "updated_at": "2026-03-14T12:09:56.273435+00:00"
+  "updated_at": "2026-03-15T04:42:49.748010+00:00"
 }

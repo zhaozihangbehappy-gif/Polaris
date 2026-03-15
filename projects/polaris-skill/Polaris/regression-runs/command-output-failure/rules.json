@@ -2,11 +2,11 @@
   "rules": [
     {
       "action": "Stop and reduce scope instead of retrying the blocked path",
-      "created_at": "2026-03-14T12:10:06.691771+00:00",
+      "created_at": "2026-03-15T04:43:00.608749+00:00",
       "evidence": "explicit runtime stop classification",
       "evidence_count": 1,
       "fingerprint": "stop-on-nonrepair-denial",
-      "last_validated_at": "2026-03-14T12:10:06.691761+00:00",
+      "last_validated_at": "2026-03-15T04:43:00.608740+00:00",
       "layer": "hard",
       "priority": 100,
       "rule_id": "stop-on-nonrepair-denial",
@@ -23,7 +23,7 @@
     },
     {
       "action": "Collect the smallest local evidence set that narrows the failure before retrying the same step",
-      "created_at": "2026-03-14T12:10:08.319694+00:00",
+      "created_at": "2026-03-15T04:43:02.266975+00:00",
       "evidence": "runtime-repair-results.json,runtime-repair-plan.json,runtime-repair-report.json",
       "evidence_count": 3,
       "fingerprint": "repair-rule-1c6e7cc8a952",
@@ -32,10 +32,10 @@
           "event": "auto_promoted",
           "reason": "evidence_threshold_met",
           "to": "soft",
-          "ts": "2026-03-14T12:10:08.319698+00:00"
+          "ts": "2026-03-15T04:43:02.266979+00:00"
         }
       ],
-      "last_validated_at": "2026-03-14T12:10:08.319683+00:00",
+      "last_validated_at": "2026-03-15T04:43:02.266963+00:00",
       "layer": "soft",
       "priority": 55,
       "rule_id": "repair-rule-1c6e7cc8a952",

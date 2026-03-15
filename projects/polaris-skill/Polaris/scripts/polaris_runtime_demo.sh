@@ -8,6 +8,7 @@ SIMULATE_ERROR="${POLARIS_SIMULATE_ERROR-ModuleNotFoundError: No module named py
 RESUMED_SIMULATE_ERROR="${POLARIS_RESUMED_SIMULATE_ERROR:-}"
 EXECUTION_KIND="${POLARIS_EXECUTION_KIND:-auto}"
 GOAL="${POLARIS_GOAL:-Demonstrate Polaris local orchestration flow}"
+ANALYSIS_TARGET="${POLARIS_ANALYSIS_TARGET:-}"
 mkdir -p "$RUNTIME_DIR"
 ORCH_ARGS=(
   --state "$RUNTIME_DIR/execution-state.json"
@@ -24,6 +25,9 @@ if [[ -n "$SIMULATE_ERROR" ]]; then
 fi
 if [[ -n "$RESUMED_SIMULATE_ERROR" ]]; then
   ORCH_ARGS+=(--resumed-simulate-error "$RESUMED_SIMULATE_ERROR")
+fi
+if [[ -n "$ANALYSIS_TARGET" ]]; then
+  ORCH_ARGS+=(--analysis-target "$ANALYSIS_TARGET")
 fi
 python3 "$ROOT/scripts/polaris_adapters.py" add \
   --registry "$RUNTIME_DIR/adapters.json" \
@@ -98,6 +102,25 @@ python3 "$ROOT/scripts/polaris_adapters.py" add \
   --latency-hint 1 \
   --safe-retry yes \
   --notes "Generic shell fallback adapter"
+python3 "$ROOT/scripts/polaris_adapters.py" add \
+  --registry "$RUNTIME_DIR/adapters.json" \
+  --tool "file-analysis-local" \
+  --tool-command "python3 <script>.py" \
+  --inputs "script_path,args" \
+  --capabilities "local-exec,reporting,validation,file-analysis,durable-status,long-run" \
+  --modes "short,long" \
+  --prerequisites "python3" \
+  --selectors "prefer for local file analysis contracts,prefer when validator independently re-reads source files" \
+  --failure-notes "Analysis contracts depend on target file accessibility" \
+  --fallbacks "python-local,shell-local" \
+  --fallback-notes "Fall back to python-local or shell-local when analysis-specific execution is unavailable" \
+  --mode-preferences "long:3,short:5" \
+  --trust-level "workspace" \
+  --cost-hint 1 \
+  --latency-hint 1 \
+  --preferred-failures "path_or_missing_file" \
+  --safe-retry yes \
+  --notes "Adapter for real file analysis with independent validation"
 python3 "$ROOT/scripts/polaris_rules.py" add \
   --rules "$RUNTIME_DIR/rules.json" \
   --rule-id "stop-on-nonrepair-denial" \

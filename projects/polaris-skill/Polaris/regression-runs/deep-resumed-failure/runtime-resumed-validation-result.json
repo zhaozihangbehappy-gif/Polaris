@@ -543,7 +543,7 @@
       },
       "validation_strategy": "runner-contract-strict"
     },
-    "ts": "2026-03-14T12:10:32.483608+00:00"
+    "ts": "2026-03-15T04:43:33.382705+00:00"
   },
   "reason": "ModuleNotFoundError: No module named pywinauto",
   "status": "failed",

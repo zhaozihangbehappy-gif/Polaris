@@ -17,6 +17,8 @@ def choose_family(requested_kind: str, adapter: dict, applied_rules: list[dict],
         tags.update(selected_pattern.get("tags", []))
 
     candidates = []
+    if "file-analysis" in capabilities and "file-analysis" in tags:
+        candidates.append(("file_analysis", "adapter-capability+file-analysis-tag"))
     if "file-transform" in capabilities and "transform" in tags:
         candidates.append(("file_transform", "adapter-capability+transform-tag"))
     if "command-output" in capabilities and "command-output" in tags:

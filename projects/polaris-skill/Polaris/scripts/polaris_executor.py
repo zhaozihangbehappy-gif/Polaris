@@ -27,6 +27,8 @@ def render_adapter_command(adapter: dict, contract: dict) -> str:
         return render_script_command(adapter, contract)
     if kind == "file_transform":
         return render_script_command(adapter, contract)
+    if kind == "file_analysis":
+        return render_script_command(adapter, contract)
     if kind == "command_output":
         return render_command_contract(adapter, contract)
     return render_command_contract(adapter, contract)

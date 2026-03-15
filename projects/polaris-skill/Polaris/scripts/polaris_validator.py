@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import argparse
+import hashlib
 import json
 from pathlib import Path
 
@@ -253,6 +254,56 @@ def validate_command_output_result(contract: dict, execution_result: dict) -> di
     }
 
 
+def validate_independent_file_analysis(contract: dict, execution_result: dict) -> dict:
+    validator = contract.get("validator", {})
+    output_file = validator.get("output_file") or execution_result.get("output_file")
+    target = validator.get("target")
+    if not output_file:
+        return {"status": "failed", "reason": "analysis produced no output file", "validator_kind": validator.get("kind")}
+    out_path = Path(output_file)
+    if not out_path.exists():
+        return {"status": "failed", "reason": f"analysis output missing: {output_file}", "validator_kind": validator.get("kind"), "output_file": output_file}
+    adapter_report = json.loads(out_path.read_text(encoding="utf-8"))
+    if not target:
+        return {"status": "failed", "reason": "validator contract missing target path", "validator_kind": validator.get("kind"), "output_file": output_file}
+    target_path = Path(target)
+    if not target_path.exists():
+        return {"status": "failed", "reason": f"target file does not exist for independent verification: {target}", "validator_kind": validator.get("kind"), "output_file": output_file}
+    if not target_path.is_file():
+        return {"status": "failed", "reason": f"target is not a regular file: {target}", "validator_kind": validator.get("kind"), "output_file": output_file}
+    raw_bytes = target_path.read_bytes()
+    content = raw_bytes.decode("utf-8")
+    lines = content.splitlines()
+    words = content.split()
+    independent = {
+        "size_bytes": len(raw_bytes),
+        "line_count": len(lines),
+        "word_count": len(words),
+        "char_count": len(content),
+        "sha256_bytes": hashlib.sha256(raw_bytes).hexdigest(),
+    }
+    mismatches = []
+    for key, expected in independent.items():
+        actual = adapter_report.get(key)
+        if actual != expected:
+            mismatches.append({"field": key, "adapter_value": actual, "independent_value": expected})
+    if mismatches:
+        return {
+            "status": "failed",
+            "reason": "independent re-computation does not match adapter output",
+            "validator_kind": validator.get("kind"),
+            "mismatches": mismatches,
+            "output_file": output_file,
+        }
+    return {
+        "status": "ok",
+        "validator_kind": validator.get("kind"),
+        "output_file": output_file,
+        "verified_fields": list(independent.keys()),
+        "payload": adapter_report,
+    }
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="Validate a Polaris execution result independently from the executor.")
     parser.add_argument("validate", nargs="?")
@@ -274,6 +325,8 @@ def main() -> None:
         payload = validate_file_transform_result(contract, execution_result)
     elif kind == "command_output_result":
         payload = validate_command_output_result(contract, execution_result)
+    elif kind == "independent_file_analysis":
+        payload = validate_independent_file_analysis(contract, execution_result)
     else:
         payload = {"status": "failed", "reason": f"unknown validator kind: {kind}", "validator_kind": kind}
 

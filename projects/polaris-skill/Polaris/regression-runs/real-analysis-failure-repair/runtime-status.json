@@ -1,0 +1,26 @@
+{
+  "active_branch": null,
+  "active_rule_layers": [
+    "hard",
+    "soft",
+    "experimental"
+  ],
+  "blocked_reason": null,
+  "completed_at": "2026-03-15T04:43:20.454304+00:00",
+  "current_step": "Completed",
+  "event_budget": "standard",
+  "execution_profile": "standard",
+  "last_heartbeat_at": "2026-03-15T04:43:20.597529+00:00",
+  "lifecycle_stage": "completed",
+  "next_action": "Review outputs",
+  "phase": "completed",
+  "progress_pct": 100,
+  "run_id": "polaris-orchestrated-run",
+  "selected_adapter": "file-analysis-local",
+  "started_at": "2026-03-15T04:43:18.862951+00:00",
+  "state_density": "minimal",
+  "state_node": "completed",
+  "status": "completed",
+  "summary": "Polaris orchestration demo completed",
+  "ts": "2026-03-15T04:43:20.674945+00:00"
+}

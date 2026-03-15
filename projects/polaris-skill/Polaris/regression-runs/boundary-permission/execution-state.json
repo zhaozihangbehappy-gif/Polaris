@@ -57,13 +57,13 @@
     {
       "kind": "patterns",
       "label": "success pattern store",
-      "ts": "2026-03-14T12:10:18.626074+00:00",
+      "ts": "2026-03-15T04:43:12.942754+00:00",
       "value": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/boundary-permission/success-patterns.json"
     },
     {
       "kind": "adapters",
       "label": "adapter registry",
-      "ts": "2026-03-14T12:10:18.655198+00:00",
+      "ts": "2026-03-15T04:43:12.970927+00:00",
       "value": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/boundary-permission/adapters.json"
     }
   ],
@@ -96,14 +96,14 @@
     "durable_status_surfaces": {
       "live_status": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/boundary-permission/runtime-live-status.json"
     },
-    "last_heartbeat_at": "2026-03-14T12:10:19.989071+00:00",
+    "last_heartbeat_at": "2026-03-15T04:43:14.320283+00:00",
     "last_heartbeat_summary": "execution surfaces updated",
     "lifecycle_stage": "blocked",
     "metrics": {
       "learning_hot_path_ops": 0,
       "state_write_count": 39
     },
-    "started_at": "2026-03-14T12:10:18.568102+00:00"
+    "started_at": "2026-03-15T04:43:12.885521+00:00"
   },
   "schema_version": 5,
   "state_density": "minimal",
@@ -161,19 +161,19 @@
         "from": "executing",
         "summary": "Standard profile opened a shallow repair pass",
         "to": "repairing",
-        "ts": "2026-03-14T12:10:19.935260+00:00"
+        "ts": "2026-03-15T04:43:14.268901+00:00"
       },
       {
         "branch_id": "execution-main",
         "from": "repairing",
         "summary": "do not retry the same blocked action until the scope is reduced or the user changes the request",
         "to": "blocked",
-        "ts": "2026-03-14T12:10:19.989069+00:00"
+        "ts": "2026-03-15T04:43:14.320282+00:00"
       }
     ],
     "node": "blocked"
   },
   "status": "blocked",
   "summary_outcome": "do not retry the same blocked action until the scope is reduced or the user changes the request",
-  "updated_at": "2026-03-14T12:10:20.048026+00:00"
+  "updated_at": "2026-03-15T04:43:14.378278+00:00"
 }

@@ -55,13 +55,13 @@
     {
       "kind": "patterns",
       "label": "success pattern store",
-      "ts": "2026-03-14T12:09:56.640609+00:00",
+      "ts": "2026-03-15T04:42:50.148184+00:00",
       "value": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/standard-success/success-patterns.json"
     },
     {
       "kind": "adapters",
       "label": "adapter registry",
-      "ts": "2026-03-14T12:09:56.669123+00:00",
+      "ts": "2026-03-15T04:42:50.176393+00:00",
       "value": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/standard-success/adapters.json"
     }
   ],
@@ -90,18 +90,18 @@
   },
   "run_id": "polaris-orchestrated-run",
   "runtime": {
-    "completed_at": "2026-03-14T12:09:58.137725+00:00",
+    "completed_at": "2026-03-15T04:42:51.671312+00:00",
     "durable_status_surfaces": {
       "live_status": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/standard-success/runtime-live-status.json"
     },
-    "last_heartbeat_at": "2026-03-14T12:09:58.279958+00:00",
+    "last_heartbeat_at": "2026-03-15T04:42:51.818485+00:00",
     "last_heartbeat_summary": "run completed",
     "lifecycle_stage": "completed",
     "metrics": {
       "learning_hot_path_ops": 1,
       "state_write_count": 47
     },
-    "started_at": "2026-03-14T12:09:56.582444+00:00"
+    "started_at": "2026-03-15T04:42:50.093076+00:00"
   },
   "schema_version": 5,
   "state_density": "minimal",
@@ -155,19 +155,19 @@
         "from": "executing",
         "summary": "Execution outputs ready for validation",
         "to": "validating",
-        "ts": "2026-03-14T12:09:57.787133+00:00"
+        "ts": "2026-03-15T04:42:51.323070+00:00"
       },
       {
         "branch_id": "execution-main",
         "from": "validating",
         "summary": "Run finished cleanly",
         "to": "completed",
-        "ts": "2026-03-14T12:09:58.137722+00:00"
+        "ts": "2026-03-15T04:42:51.671309+00:00"
       }
     ],
     "node": "completed"
   },
   "status": "completed",
   "summary_outcome": "Run finished cleanly",
-  "updated_at": "2026-03-14T12:09:58.309882+00:00"
+  "updated_at": "2026-03-15T04:42:51.847397+00:00"
 }

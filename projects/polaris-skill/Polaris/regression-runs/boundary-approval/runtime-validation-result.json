@@ -260,7 +260,7 @@
       },
       "validation_strategy": "runner-contract-match"
     },
-    "ts": "2026-03-14T12:10:17.778923+00:00"
+    "ts": "2026-03-15T04:43:12.064555+00:00"
   },
   "reason": "approval denied by policy",
   "status": "failed",

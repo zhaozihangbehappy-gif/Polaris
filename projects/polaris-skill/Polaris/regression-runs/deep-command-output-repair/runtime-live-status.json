@@ -1,7 +1,7 @@
 {
   "active_branch": null,
   "blocked_reason": null,
-  "completed_at": "2026-03-14T12:10:13.182903+00:00",
+  "completed_at": "2026-03-15T04:43:07.337743+00:00",
   "current_step": "Completed",
   "durable_status_surfaces": {
     "live_status": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/deep-command-output-repair/runtime-live-status.json"
@@ -18,12 +18,12 @@
       "by_node": {
         "planning": 1
       },
-      "compacted_at": "2026-03-14T12:10:12.839397+00:00",
+      "compacted_at": "2026-03-15T04:43:06.985231+00:00",
       "entry_count": 1,
       "first_summary": "Run initialized and routed to the deep profile",
-      "from_ts": "2026-03-14T12:10:10.897011+00:00",
+      "from_ts": "2026-03-15T04:43:04.981970+00:00",
       "last_summary": "Run initialized and routed to the deep profile",
-      "to_ts": "2026-03-14T12:10:10.897011+00:00"
+      "to_ts": "2026-03-15T04:43:04.981970+00:00"
     },
     {
       "by_branch": {
@@ -32,12 +32,12 @@
       "by_node": {
         "ready": 1
       },
-      "compacted_at": "2026-03-14T12:10:13.182929+00:00",
+      "compacted_at": "2026-03-15T04:43:07.337769+00:00",
       "entry_count": 1,
       "first_summary": "Plan and adapter routing completed",
-      "from_ts": "2026-03-14T12:10:11.311744+00:00",
+      "from_ts": "2026-03-15T04:43:05.412614+00:00",
       "last_summary": "Plan and adapter routing completed",
-      "to_ts": "2026-03-14T12:10:11.311744+00:00"
+      "to_ts": "2026-03-15T04:43:05.412614+00:00"
     }
   ],
   "last_event": {
@@ -52,7 +52,7 @@
     "current_step": "Verify outcomes and inspect failures",
     "event_budget": "deep",
     "execution_profile": "deep",
-    "last_heartbeat_at": "2026-03-14T12:10:12.839371+00:00",
+    "last_heartbeat_at": "2026-03-15T04:43:06.985206+00:00",
     "lifecycle_stage": "validating",
     "next_action": "Record reusable lessons and next actions",
     "phase": "validating",
@@ -61,34 +61,34 @@
       {
         "kind": "rules",
         "label": "layered rules store",
-        "ts": "2026-03-14T12:10:10.812908+00:00",
+        "ts": "2026-03-15T04:43:04.894866+00:00",
         "value": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/deep-command-output-repair/rules.json"
       },
       {
         "kind": "patterns",
         "label": "success pattern store",
-        "ts": "2026-03-14T12:10:10.840013+00:00",
+        "ts": "2026-03-15T04:43:04.923881+00:00",
         "value": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/deep-command-output-repair/success-patterns.json"
       },
       {
         "kind": "adapters",
         "label": "adapter registry",
-        "ts": "2026-03-14T12:10:10.868949+00:00",
+        "ts": "2026-03-15T04:43:04.951688+00:00",
         "value": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/deep-command-output-repair/adapters.json"
       }
     ],
     "run_id": "polaris-orchestrated-run",
     "selected_adapter": "shell-local",
     "selected_pattern": "bounded-local-repair",
-    "started_at": "2026-03-14T12:10:10.783561+00:00",
+    "started_at": "2026-03-15T04:43:04.866094+00:00",
     "state_density": "full",
     "state_node": "validating",
     "status": "in_progress",
     "summary": "Validating outputs and finalizing state",
     "summary_outcome": "Repair branch queued deferred local recovery learning",
-    "ts": "2026-03-14T12:10:12.893744+00:00"
+    "ts": "2026-03-15T04:43:07.040329+00:00"
   },
-  "last_heartbeat_at": "2026-03-14T12:10:13.407573+00:00",
+  "last_heartbeat_at": "2026-03-15T04:43:07.564219+00:00",
   "lifecycle_stage": "completed",
   "mode": "long",
   "next_action": "Review outputs",
@@ -97,12 +97,12 @@
   "run_id": "polaris-orchestrated-run",
   "selected_adapter": "shell-local",
   "selected_pattern": "bounded-local-repair",
-  "started_at": "2026-03-14T12:10:10.783561+00:00",
+  "started_at": "2026-03-15T04:43:04.866094+00:00",
   "state_density": "full",
   "state_node": "completed",
   "state_path": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/deep-command-output-repair/execution-state.json",
   "status": "completed",
   "summary_outcome": "Run finished cleanly",
   "surface_kind": "completed",
-  "updated_at": "2026-03-14T12:10:13.436460+00:00"
+  "updated_at": "2026-03-15T04:43:07.593591+00:00"
 }

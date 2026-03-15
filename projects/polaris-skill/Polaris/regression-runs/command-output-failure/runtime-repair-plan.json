@@ -20,7 +20,7 @@
     "label": "Collect minimal local evidence",
     "node_id": "generic-root"
   },
-  "created_at": "2026-03-14T12:10:08.011846+00:00",
+  "created_at": "2026-03-15T04:43:01.954673+00:00",
   "error": "POLARIS_COMMAND_OUTPUT::STANDARD::shell-local",
   "execution_order": [
     "pwd",
