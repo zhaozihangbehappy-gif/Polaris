@@ -1075,6 +1075,22 @@ def main() -> None:
     args = parser.parse_args()
 
     base = Path(__file__).resolve().parent
+    runtime_dir_for_gate = Path(args.state).resolve().parent
+    # ── Defense-in-depth compatibility gate (primary gate is in wrapper) ──
+    gate_result = subprocess.run(
+        [sys.executable, str(base / "polaris_compat.py"), "check-runtime-format", "--runtime-dir", str(runtime_dir_for_gate)],
+        capture_output=True, text=True,
+    )
+    if gate_result.returncode != 0:
+        print(gate_result.stderr.strip(), file=sys.stderr)
+        raise SystemExit(1)
+    schema_gate = subprocess.run(
+        [sys.executable, str(base / "polaris_compat.py"), "check-schema", "--state", args.state],
+        capture_output=True, text=True,
+    )
+    if schema_gate.returncode != 0:
+        print(schema_gate.stderr.strip(), file=sys.stderr)
+        raise SystemExit(1)
     fresh_state = not Path(args.state).exists()
     run_id = "polaris-orchestrated-run"
     layers = "hard,soft,experimental"

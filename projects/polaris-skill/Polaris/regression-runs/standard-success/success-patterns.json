@@ -4,7 +4,7 @@
       "adapter": "shell-local",
       "best_lifecycle_state": "validated",
       "confidence": 76,
-      "created_at": "2026-03-15T04:42:51.699306+00:00",
+      "created_at": "2026-03-15T05:43:44.360894+00:00",
       "demotion_count": 0,
       "evidence": [
         "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/standard-success/execution-state.json",
@@ -17,16 +17,16 @@
         {
           "event": "captured",
           "reason": "new_pattern",
-          "ts": "2026-03-15T04:42:51.699336+00:00"
+          "ts": "2026-03-15T05:43:44.360912+00:00"
         },
         {
           "event": "auto_promoted",
           "reason": "evidence_threshold_met",
           "to": "validated",
-          "ts": "2026-03-15T04:42:51.699343+00:00"
+          "ts": "2026-03-15T05:43:44.360918+00:00"
         }
       ],
-      "last_validated_at": "2026-03-15T04:42:51.699344+00:00",
+      "last_validated_at": "2026-03-15T05:43:44.360920+00:00",
       "lifecycle_state": "validated",
       "modes": [
         "short"
@@ -57,14 +57,14 @@
         "deferred-learning"
       ],
       "trigger": "standard local task",
-      "updated_at": "2026-03-15T04:42:51.699329+00:00",
+      "updated_at": "2026-03-15T05:43:44.360905+00:00",
       "validation_count": 1
     },
     {
       "adapter": null,
       "best_lifecycle_state": "validated",
       "confidence": 72,
-      "created_at": "2026-03-15T04:42:50.031076+00:00",
+      "created_at": "2026-03-15T05:43:42.669816+00:00",
       "demotion_count": 0,
       "evidence": [
         "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/references/repair-actions.md"
@@ -76,10 +76,10 @@
         {
           "event": "captured",
           "reason": "new_pattern",
-          "ts": "2026-03-15T04:42:50.031100+00:00"
+          "ts": "2026-03-15T05:43:42.669835+00:00"
         }
       ],
-      "last_validated_at": "2026-03-15T04:42:50.031091+00:00",
+      "last_validated_at": "2026-03-15T05:43:42.669829+00:00",
       "lifecycle_state": "validated",
       "modes": [
         "long"
@@ -104,7 +104,7 @@
         "orchestration"
       ],
       "trigger": "repairable local runtime failure",
-      "updated_at": "2026-03-15T04:42:50.031089+00:00",
+      "updated_at": "2026-03-15T05:43:42.669826+00:00",
       "validation_count": 1
     }
   ],

@@ -4,7 +4,7 @@
       "adapter": "shell-local",
       "best_lifecycle_state": "validated",
       "confidence": 80,
-      "created_at": "2026-03-15T04:43:35.533782+00:00",
+      "created_at": "2026-03-15T05:44:30.290263+00:00",
       "demotion_count": 0,
       "evidence": [
         "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/step3-transfer-source/execution-state.json",
@@ -18,13 +18,13 @@
         {
           "event": "captured",
           "reason": "new_pattern",
-          "ts": "2026-03-15T04:43:35.533799+00:00"
+          "ts": "2026-03-15T05:44:30.290281+00:00"
         },
         {
           "event": "auto_promoted",
           "reason": "evidence_threshold_met",
           "to": "validated",
-          "ts": "2026-03-15T04:43:35.533805+00:00"
+          "ts": "2026-03-15T05:44:30.290287+00:00"
         },
         {
           "best_lifecycle_state": "validated",
@@ -33,12 +33,12 @@
           "evidence_count": 3,
           "reason": "rerun_capture",
           "retained_lifecycle": "validated",
-          "ts": "2026-03-15T04:43:37.688802+00:00",
+          "ts": "2026-03-15T05:44:32.592652+00:00",
           "validation_count": 2
         }
       ],
-      "last_selected_at": "2026-03-15T04:43:36.237895+00:00",
-      "last_validated_at": "2026-03-15T04:43:37.688801+00:00",
+      "last_selected_at": "2026-03-15T05:44:31.116528+00:00",
+      "last_validated_at": "2026-03-15T05:44:32.592651+00:00",
       "lifecycle_state": "validated",
       "modes": [
         "short"
@@ -69,14 +69,14 @@
         "deferred-learning"
       ],
       "trigger": "standard local task",
-      "updated_at": "2026-03-15T04:43:37.688800+00:00",
+      "updated_at": "2026-03-15T05:44:32.592650+00:00",
       "validation_count": 2
     },
     {
       "adapter": null,
       "best_lifecycle_state": "validated",
       "confidence": 74,
-      "created_at": "2026-03-15T04:43:33.869217+00:00",
+      "created_at": "2026-03-15T05:44:28.586015+00:00",
       "demotion_count": 0,
       "evidence": [
         "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/references/repair-actions.md"
@@ -88,7 +88,7 @@
         {
           "event": "captured",
           "reason": "new_pattern",
-          "ts": "2026-03-15T04:43:33.869238+00:00"
+          "ts": "2026-03-15T05:44:28.586034+00:00"
         },
         {
           "best_lifecycle_state": "validated",
@@ -97,11 +97,11 @@
           "evidence_count": 1,
           "reason": "rerun_capture",
           "retained_lifecycle": "validated",
-          "ts": "2026-03-15T04:43:35.944746+00:00",
+          "ts": "2026-03-15T05:44:30.778317+00:00",
           "validation_count": 2
         }
       ],
-      "last_validated_at": "2026-03-15T04:43:35.944745+00:00",
+      "last_validated_at": "2026-03-15T05:44:30.778316+00:00",
       "lifecycle_state": "validated",
       "modes": [
         "long"
@@ -126,7 +126,7 @@
         "orchestration"
       ],
       "trigger": "repairable local runtime failure",
-      "updated_at": "2026-03-15T04:43:35.944744+00:00",
+      "updated_at": "2026-03-15T05:44:30.778315+00:00",
       "validation_count": 2
     }
   ],

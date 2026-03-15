@@ -2,7 +2,7 @@
   "entries": {
     "f24239f7375d441f": {
       "failure_count": 1,
-      "last_failure_at": "2026-03-15T04:43:02.447278+00:00",
+      "last_failure_at": "2026-03-15T05:43:55.521819+00:00",
       "last_score": 69,
       "last_status": "failure",
       "prerequisite_snapshot": {
@@ -28,7 +28,7 @@
         ]
       },
       "selected_adapter": "shell-local",
-      "updated_at": "2026-03-15T04:43:02.447267+00:00"
+      "updated_at": "2026-03-15T05:43:55.521806+00:00"
     }
   },
   "schema_version": 1

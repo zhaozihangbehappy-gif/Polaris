@@ -2,11 +2,11 @@
   "rules": [
     {
       "action": "Stop and reduce scope instead of retrying the blocked path",
-      "created_at": "2026-03-15T04:43:07.835844+00:00",
+      "created_at": "2026-03-15T05:44:01.134224+00:00",
       "evidence": "explicit runtime stop classification",
       "evidence_count": 1,
       "fingerprint": "stop-on-nonrepair-denial",
-      "last_validated_at": "2026-03-15T04:43:07.835834+00:00",
+      "last_validated_at": "2026-03-15T05:44:01.134214+00:00",
       "layer": "hard",
       "priority": 100,
       "rule_id": "stop-on-nonrepair-denial",
@@ -23,7 +23,7 @@
     },
     {
       "action": "Verify interpreter, pip visibility, and dependency availability before retrying the same local runtime path",
-      "created_at": "2026-03-15T04:43:10.452871+00:00",
+      "created_at": "2026-03-15T05:44:03.784122+00:00",
       "evidence": "runtime-repair-results.json,runtime-repair-plan.json,runtime-repair-report.json",
       "evidence_count": 3,
       "fingerprint": "repair-rule-d51b976714fa",
@@ -32,10 +32,10 @@
           "event": "auto_promoted",
           "reason": "evidence_threshold_met",
           "to": "soft",
-          "ts": "2026-03-15T04:43:10.452875+00:00"
+          "ts": "2026-03-15T05:44:03.784126+00:00"
         }
       ],
-      "last_validated_at": "2026-03-15T04:43:10.452862+00:00",
+      "last_validated_at": "2026-03-15T05:44:03.784111+00:00",
       "layer": "soft",
       "priority": 70,
       "rule_id": "repair-rule-d51b976714fa",

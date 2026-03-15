@@ -39,7 +39,7 @@ def profile_defaults(profile: str) -> dict:
 def default_state() -> dict:
     defaults = profile_defaults("deep")
     return {
-        "schema_version": 5,
+        "schema_version": 6,
         "run_id": None,
         "goal": None,
         "mode": "long",
@@ -90,61 +90,71 @@ def default_state() -> dict:
             "active_layers": ["hard", "soft"],
             "applied_rules": [],
         },
+        "compat": {
+            "upgraded_from": None,
+            "upgraded_at": None,
+            "runtime_format": 1,
+        },
         "updated_at": now(),
     }
+
+
+def _backfill_v5_defaults(state: dict) -> None:
+    """Fill missing optional fields that may be absent in a v5 state file."""
+    profile = state.setdefault("execution_profile", "deep")
+    defaults = profile_defaults(profile)
+    state.setdefault("state_density", defaults["state_density"])
+    state.setdefault("repair_depth", defaults["repair_depth"])
+    state.setdefault("event_budget", defaults["event_budget"])
+    state.setdefault("learning_backlog", [])
+    state.setdefault("summary_outcome", None)
+    state.setdefault("references", [])
+    state.setdefault("plan", [])
+    state.setdefault("checkpoints", [])
+    state.setdefault("attempts", [])
+    state.setdefault("artifacts", {})
+    state.setdefault("lessons", [])
+    state.setdefault("success_patterns", [])
+    runtime = state.setdefault("runtime", {})
+    runtime.setdefault("lifecycle_stage", "initialized")
+    runtime.setdefault("started_at", now())
+    runtime.setdefault("last_heartbeat_at", now())
+    runtime.setdefault("completed_at", None)
+    runtime.setdefault("durable_status_surfaces", {})
+    runtime.setdefault("metrics", {"state_write_count": 0, "learning_hot_path_ops": 0})
+    machine = state.setdefault("state_machine", {})
+    machine.setdefault("active_branch", None)
+    machine.setdefault("branches", [])
+    machine.setdefault("history_summary", [])
+    machine.setdefault("recovery", [])
+    machine.setdefault("blocked", {"is_blocked": False, "reason": None, "references": []})
+    machine.setdefault("allowed_transitions", ALLOWED_TRANSITIONS)
+    state.setdefault("rule_context", {"active_layers": ["hard", "soft"], "applied_rules": []})
 
 
 def load_state(path: Path) -> dict:
     if not path.exists():
         return default_state()
     state = json.loads(path.read_text())
-    if state.get("schema_version") == 5:
-        profile = state.setdefault("execution_profile", "deep")
-        defaults = profile_defaults(profile)
-        state.setdefault("state_density", defaults["state_density"])
-        state.setdefault("repair_depth", defaults["repair_depth"])
-        state.setdefault("event_budget", defaults["event_budget"])
-        state.setdefault("learning_backlog", [])
-        state.setdefault("summary_outcome", None)
-        state.setdefault("references", [])
-        state.setdefault("plan", [])
-        state.setdefault("checkpoints", [])
-        state.setdefault("attempts", [])
-        state.setdefault("artifacts", {})
-        state.setdefault("lessons", [])
-        state.setdefault("success_patterns", [])
-        runtime = state.setdefault("runtime", {})
-        runtime.setdefault("lifecycle_stage", "initialized")
-        runtime.setdefault("started_at", now())
-        runtime.setdefault("last_heartbeat_at", now())
-        runtime.setdefault("completed_at", None)
-        runtime.setdefault("durable_status_surfaces", {})
-        runtime.setdefault("metrics", {"state_write_count": 0, "learning_hot_path_ops": 0})
-        machine = state.setdefault("state_machine", {})
-        machine.setdefault("active_branch", None)
-        machine.setdefault("branches", [])
-        machine.setdefault("history_summary", [])
-        machine.setdefault("recovery", [])
-        machine.setdefault("blocked", {"is_blocked": False, "reason": None, "references": []})
-        machine.setdefault("allowed_transitions", ALLOWED_TRANSITIONS)
+    version = state.get("schema_version")
+
+    if version == 6:
+        _backfill_v5_defaults(state)
+        state.setdefault("compat", {"upgraded_from": None, "upgraded_at": None, "runtime_format": 1})
         return state
-    upgraded = default_state()
-    upgraded.update(state)
-    upgraded["schema_version"] = 5
-    profile = state.get("execution_profile", "deep")
-    defaults = profile_defaults(profile)
-    upgraded["execution_profile"] = profile
-    upgraded["state_density"] = state.get("state_density", defaults["state_density"])
-    upgraded["repair_depth"] = state.get("repair_depth", defaults["repair_depth"])
-    upgraded["event_budget"] = state.get("event_budget", defaults["event_budget"])
-    upgraded["learning_backlog"] = state.get("learning_backlog", [])
-    upgraded["summary_outcome"] = state.get("summary_outcome")
-    upgraded["references"] = state.get("references", [])
-    upgraded["state_machine"]["history"] = state.get("state_machine", {}).get("history", [])
-    upgraded["state_machine"]["history_summary"] = state.get("state_machine", {}).get("history_summary", [])
-    upgraded.setdefault("runtime", {}).setdefault("metrics", {"state_write_count": 0, "learning_hot_path_ops": 0})
-    upgraded["updated_at"] = now()
-    return upgraded
+
+    if version == 5:
+        _backfill_v5_defaults(state)
+        state["schema_version"] = 6
+        state["compat"] = {"upgraded_from": 5, "upgraded_at": now(), "runtime_format": 1}
+        return state
+
+    # Unknown / incompatible version — refuse, do not silently upgrade
+    raise SystemExit(
+        f"Incompatible state schema version {version}. "
+        f"This Polaris version supports: {sorted({5, 6})}. "
+        f"Refusing to load."
+    )
 
 
 def compact_history(payload: dict, keep_last: int = 6) -> None:
@@ -236,6 +246,7 @@ def write_json(path: Path, payload: dict) -> None:
                 for key, value in payload.get("artifacts", {}).items()
                 if key in {"selected_adapter", "selected_pattern", "execution_kind", "baseline_execution_contract", "execution_contract_diff", "baseline_validator", "validator_diff", "execution_contract", "execution_result", "executor_result", "validation_result", "resumed_execution_contract", "resumed_executor_result", "resumed_validation_result", "repair_report", "repair_plan", "repair_results", "learning_summary", "efficiency_metrics", "family_transfer_applied", "transfer_key", "transfer_source_pattern", "transfer_reason", "transfer_contract_diff"}
             },
+            "compat": payload.get("compat", {"upgraded_from": None, "upgraded_at": None, "runtime_format": 1}),
             "references": payload.get("references", [])[-2:],
             "updated_at": payload.get("updated_at"),
         }

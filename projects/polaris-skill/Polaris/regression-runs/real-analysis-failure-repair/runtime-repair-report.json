@@ -7,7 +7,7 @@
   "depth_reason": "first_failure",
   "escalate": false,
   "evidence": [
-    "Traceback (most recent call last):\n  File \"/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/scripts/polaris_file_analysis.py\", line 46, in <module>\n    main()\n  File \"/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/scripts/polaris_file_analysis.py\", line 38, in main\n    report = analyze_file(args.target)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/scripts/polaris_file_analysis.py\", line 12, in analyze_file\n    raise FileNotFoundError(f\"No such file or directory: {target}\")\nFileNotFoundError: No such file or directory: /tmp/polaris-step0-nonexistent-target-19276-1773549796.txt"
+    "Traceback (most recent call last):\n  File \"/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/scripts/polaris_file_analysis.py\", line 46, in <module>\n    main()\n  File \"/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/scripts/polaris_file_analysis.py\", line 38, in main\n    report = analyze_file(args.target)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/scripts/polaris_file_analysis.py\", line 12, in analyze_file\n    raise FileNotFoundError(f\"No such file or directory: {target}\")\nFileNotFoundError: No such file or directory: /tmp/polaris-step0-nonexistent-target-50418-1773553450.txt"
   ],
   "failure_type": "path_or_missing_file",
   "next_depth": "medium",

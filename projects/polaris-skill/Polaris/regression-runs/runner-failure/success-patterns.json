@@ -4,7 +4,7 @@
       "adapter": "shell-local",
       "best_lifecycle_state": "validated",
       "confidence": 78,
-      "created_at": "2026-03-15T04:42:49.630020+00:00",
+      "created_at": "2026-03-15T05:43:42.189724+00:00",
       "demotion_count": 0,
       "evidence": [
         "runtime-repair-results.json",
@@ -18,16 +18,16 @@
         {
           "event": "captured",
           "reason": "new_pattern",
-          "ts": "2026-03-15T04:42:49.630039+00:00"
+          "ts": "2026-03-15T05:43:42.189742+00:00"
         },
         {
           "event": "auto_promoted",
           "reason": "evidence_threshold_met",
           "to": "validated",
-          "ts": "2026-03-15T04:42:49.630045+00:00"
+          "ts": "2026-03-15T05:43:42.189748+00:00"
         }
       ],
-      "last_validated_at": "2026-03-15T04:42:49.630047+00:00",
+      "last_validated_at": "2026-03-15T05:43:42.189749+00:00",
       "lifecycle_state": "validated",
       "modes": [
         "short"
@@ -66,14 +66,14 @@
         "orchestration"
       ],
       "trigger": "missing_dependency",
-      "updated_at": "2026-03-15T04:42:49.630031+00:00",
+      "updated_at": "2026-03-15T05:43:42.189735+00:00",
       "validation_count": 1
     },
     {
       "adapter": null,
       "best_lifecycle_state": "validated",
       "confidence": 72,
-      "created_at": "2026-03-15T04:42:47.965846+00:00",
+      "created_at": "2026-03-15T05:43:40.491477+00:00",
       "demotion_count": 0,
       "evidence": [
         "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/references/repair-actions.md"
@@ -85,10 +85,10 @@
         {
           "event": "captured",
           "reason": "new_pattern",
-          "ts": "2026-03-15T04:42:47.965867+00:00"
+          "ts": "2026-03-15T05:43:40.491497+00:00"
         }
       ],
-      "last_validated_at": "2026-03-15T04:42:47.965859+00:00",
+      "last_validated_at": "2026-03-15T05:43:40.491489+00:00",
       "lifecycle_state": "validated",
       "modes": [
         "long"
@@ -113,7 +113,7 @@
         "orchestration"
       ],
       "trigger": "repairable local runtime failure",
-      "updated_at": "2026-03-15T04:42:47.965857+00:00",
+      "updated_at": "2026-03-15T05:43:40.491488+00:00",
       "validation_count": 1
     }
   ],

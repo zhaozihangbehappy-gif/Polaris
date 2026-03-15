@@ -19,6 +19,11 @@
     "validation_result": "runtime-validation-result.json",
     "validator_diff": "{}"
   },
+  "compat": {
+    "runtime_format": 1,
+    "upgraded_at": null,
+    "upgraded_from": null
+  },
   "current_step": "Blocked after bounded repair",
   "event_budget": "standard",
   "execution_profile": "standard",
@@ -58,13 +63,13 @@
     {
       "kind": "patterns",
       "label": "success pattern store",
-      "ts": "2026-03-15T04:43:00.759214+00:00",
+      "ts": "2026-03-15T05:43:53.861798+00:00",
       "value": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/command-output-failure/success-patterns.json"
     },
     {
       "kind": "adapters",
       "label": "adapter registry",
-      "ts": "2026-03-15T04:43:00.787348+00:00",
+      "ts": "2026-03-15T05:43:53.889875+00:00",
       "value": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/command-output-failure/adapters.json"
     }
   ],
@@ -97,16 +102,16 @@
     "durable_status_surfaces": {
       "live_status": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/command-output-failure/runtime-live-status.json"
     },
-    "last_heartbeat_at": "2026-03-15T04:43:02.382816+00:00",
+    "last_heartbeat_at": "2026-03-15T05:43:55.455475+00:00",
     "last_heartbeat_summary": "deferred repair learning consolidated: 2/2 item(s); retained=0; pattern promotions=0; rule promotions=1",
     "lifecycle_stage": "blocked",
     "metrics": {
       "learning_hot_path_ops": 2,
       "state_write_count": 44
     },
-    "started_at": "2026-03-15T04:43:00.697693+00:00"
+    "started_at": "2026-03-15T05:43:53.805558+00:00"
   },
-  "schema_version": 5,
+  "schema_version": 6,
   "state_density": "minimal",
   "state_machine": {
     "active_branch": "execution-main",
@@ -162,19 +167,19 @@
         "from": "executing",
         "summary": "Standard profile opened a shallow repair pass",
         "to": "repairing",
-        "ts": "2026-03-15T04:43:02.155887+00:00"
+        "ts": "2026-03-15T05:43:55.236627+00:00"
       },
       {
         "branch_id": "execution-main",
         "from": "repairing",
         "summary": "Standard profile stopped after shallow repair; escalate to medium only if failure repeats",
         "to": "blocked",
-        "ts": "2026-03-15T04:43:02.210141+00:00"
+        "ts": "2026-03-15T05:43:55.289946+00:00"
       }
     ],
     "node": "blocked"
   },
   "status": "blocked",
   "summary_outcome": "Standard profile stopped after shallow repair; escalate to medium only if failure repeats",
-  "updated_at": "2026-03-15T04:43:02.411388+00:00"
+  "updated_at": "2026-03-15T05:43:55.485860+00:00"
 }

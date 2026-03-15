@@ -16,6 +16,11 @@
     "validation_result": "runtime-validation-result.json",
     "validator_diff": "{}"
   },
+  "compat": {
+    "runtime_format": 1,
+    "upgraded_at": null,
+    "upgraded_from": null
+  },
   "current_step": "Completed",
   "event_budget": "standard",
   "execution_profile": "standard",
@@ -55,13 +60,13 @@
     {
       "kind": "patterns",
       "label": "success pattern store",
-      "ts": "2026-03-15T04:42:56.605668+00:00",
+      "ts": "2026-03-15T05:43:49.540818+00:00",
       "value": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/file-transform-success/success-patterns.json"
     },
     {
       "kind": "adapters",
       "label": "adapter registry",
-      "ts": "2026-03-15T04:42:56.634625+00:00",
+      "ts": "2026-03-15T05:43:49.569145+00:00",
       "value": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/file-transform-success/adapters.json"
     }
   ],
@@ -90,20 +95,20 @@
   },
   "run_id": "polaris-orchestrated-run",
   "runtime": {
-    "completed_at": "2026-03-15T04:42:58.099940+00:00",
+    "completed_at": "2026-03-15T05:43:51.019383+00:00",
     "durable_status_surfaces": {
       "live_status": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/file-transform-success/runtime-live-status.json"
     },
-    "last_heartbeat_at": "2026-03-15T04:42:58.244841+00:00",
+    "last_heartbeat_at": "2026-03-15T05:43:51.159529+00:00",
     "last_heartbeat_summary": "run completed",
     "lifecycle_stage": "completed",
     "metrics": {
       "learning_hot_path_ops": 1,
       "state_write_count": 47
     },
-    "started_at": "2026-03-15T04:42:56.546496+00:00"
+    "started_at": "2026-03-15T05:43:49.482958+00:00"
   },
-  "schema_version": 5,
+  "schema_version": 6,
   "state_density": "minimal",
   "state_machine": {
     "active_branch": null,
@@ -155,19 +160,19 @@
         "from": "executing",
         "summary": "Execution outputs ready for validation",
         "to": "validating",
-        "ts": "2026-03-15T04:42:57.759006+00:00"
+        "ts": "2026-03-15T05:43:50.681147+00:00"
       },
       {
         "branch_id": "execution-main",
         "from": "validating",
         "summary": "Run finished cleanly",
         "to": "completed",
-        "ts": "2026-03-15T04:42:58.099937+00:00"
+        "ts": "2026-03-15T05:43:51.019380+00:00"
       }
     ],
     "node": "completed"
   },
   "status": "completed",
   "summary_outcome": "Run finished cleanly",
-  "updated_at": "2026-03-15T04:42:58.273035+00:00"
+  "updated_at": "2026-03-15T05:43:51.190185+00:00"
 }

@@ -16,6 +16,11 @@
     "validation_result": "runtime-validation-result.json",
     "validator_diff": "{}"
   },
+  "compat": {
+    "runtime_format": 1,
+    "upgraded_at": null,
+    "upgraded_from": null
+  },
   "current_step": "Completed",
   "event_budget": "micro",
   "execution_profile": "micro",
@@ -71,20 +76,20 @@
   },
   "run_id": "polaris-orchestrated-run",
   "runtime": {
-    "completed_at": "2026-03-15T04:42:45.454591+00:00",
+    "completed_at": "2026-03-15T05:43:37.793414+00:00",
     "durable_status_surfaces": {
       "live_status": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/micro-success/runtime-live-status.json"
     },
-    "last_heartbeat_at": "2026-03-15T04:42:45.598630+00:00",
+    "last_heartbeat_at": "2026-03-15T05:43:37.933821+00:00",
     "last_heartbeat_summary": "run completed",
     "lifecycle_stage": "completed",
     "metrics": {
       "learning_hot_path_ops": 1,
       "state_write_count": 39
     },
-    "started_at": "2026-03-15T04:42:44.254130+00:00"
+    "started_at": "2026-03-15T05:43:36.585819+00:00"
   },
-  "schema_version": 5,
+  "schema_version": 6,
   "state_density": "minimal",
   "state_machine": {
     "active_branch": null,
@@ -136,19 +141,19 @@
         "from": "executing",
         "summary": "Execution outputs ready for validation",
         "to": "validating",
-        "ts": "2026-03-15T04:42:45.220210+00:00"
+        "ts": "2026-03-15T05:43:37.556783+00:00"
       },
       {
         "branch_id": "execution-main",
         "from": "validating",
         "summary": "Run finished cleanly",
         "to": "completed",
-        "ts": "2026-03-15T04:42:45.454587+00:00"
+        "ts": "2026-03-15T05:43:37.793411+00:00"
       }
     ],
     "node": "completed"
   },
   "status": "completed",
   "summary_outcome": "Run finished cleanly",
-  "updated_at": "2026-03-15T04:42:45.630092+00:00"
+  "updated_at": "2026-03-15T05:43:37.964189+00:00"
 }

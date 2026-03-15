@@ -1,0 +1,126 @@
+{
+  "artifacts": {
+    "execution_kind": "runner",
+    "execution_result": "runtime-execution-result.json",
+    "executor_result": "runtime-executor-result.json",
+    "selected_adapter": "shell-local",
+    "selected_pattern": "test-pattern",
+    "validation_result": "runtime-validation-result.json"
+  },
+  "compat": {
+    "runtime_format": 1,
+    "upgraded_at": "2026-03-15T05:44:33.000700+00:00",
+    "upgraded_from": 5
+  },
+  "current_step": "Done",
+  "event_budget": "standard",
+  "execution_profile": "standard",
+  "goal": "Test v5 compatibility",
+  "learning_backlog": [],
+  "mode": "short",
+  "next_action": null,
+  "phase": "completed",
+  "plan": [
+    {
+      "index": 1,
+      "phase": "completed",
+      "status": "completed",
+      "step": "Test"
+    }
+  ],
+  "progress_pct": 100,
+  "references": [
+    {
+      "kind": "rules",
+      "label": "test",
+      "ts": "2026-03-15T00:00:00+00:00",
+      "value": "rules.json"
+    }
+  ],
+  "repair_depth": "shallow",
+  "rule_context": {
+    "active_layers": [
+      "hard",
+      "soft"
+    ],
+    "applied_rules": [
+      {
+        "layer": "hard",
+        "rule_id": "stop-on-nonrepair-denial"
+      }
+    ]
+  },
+  "run_id": "v5-test-run",
+  "runtime": {
+    "completed_at": "2026-03-15T00:01:00+00:00",
+    "durable_status_surfaces": {},
+    "last_heartbeat_at": "2026-03-15T00:00:00+00:00",
+    "last_heartbeat_summary": null,
+    "lifecycle_stage": "completed",
+    "metrics": {
+      "learning_hot_path_ops": 1,
+      "state_write_count": 6
+    },
+    "started_at": "2026-03-15T00:00:00+00:00"
+  },
+  "schema_version": 6,
+  "state_density": "minimal",
+  "state_machine": {
+    "active_branch": null,
+    "allowed_transitions": {
+      "blocked": [
+        "planning",
+        "ready",
+        "executing",
+        "completed"
+      ],
+      "completed": [],
+      "executing": [
+        "validating",
+        "repairing",
+        "blocked"
+      ],
+      "intake": [
+        "planning",
+        "blocked"
+      ],
+      "planning": [
+        "ready",
+        "executing",
+        "blocked"
+      ],
+      "ready": [
+        "executing",
+        "blocked"
+      ],
+      "repairing": [
+        "ready",
+        "executing",
+        "blocked"
+      ],
+      "validating": [
+        "completed",
+        "repairing",
+        "blocked"
+      ]
+    },
+    "blocked": {
+      "is_blocked": false,
+      "reason": null,
+      "references": []
+    },
+    "history": [
+      {
+        "branch_id": "main",
+        "from": "executing",
+        "summary": "done",
+        "to": "completed",
+        "ts": "2026-03-15T00:00:00+00:00"
+      }
+    ],
+    "node": "completed"
+  },
+  "status": "completed",
+  "summary_outcome": "v5 test completed",
+  "updated_at": "2026-03-15T05:44:33.000724+00:00"
+}

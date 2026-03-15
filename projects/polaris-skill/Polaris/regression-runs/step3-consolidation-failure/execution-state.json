@@ -2,6 +2,11 @@
   "artifacts": {
     "learning_summary": "{\"failed_patterns\": [\"step3-consolidation-smoke\"], \"failed_rules\": [], \"merged_patterns\": [], \"merged_rules\": [], \"processed_items\": 0, \"promoted_patterns\": [], \"promoted_rules\": [], \"queued_items\": 1, \"retained_items\": 1, \"rule_candidates\": 0, \"success_markers\": 1}"
   },
+  "compat": {
+    "runtime_format": 1,
+    "upgraded_at": null,
+    "upgraded_from": null
+  },
   "current_step": null,
   "event_budget": "standard",
   "execution_profile": "standard",
@@ -62,16 +67,16 @@
   "runtime": {
     "completed_at": null,
     "durable_status_surfaces": {},
-    "last_heartbeat_at": "2026-03-15T04:43:37.955862+00:00",
+    "last_heartbeat_at": "2026-03-15T05:44:32.866827+00:00",
     "last_heartbeat_summary": null,
     "lifecycle_stage": "initialized",
     "metrics": {
       "learning_hot_path_ops": 0,
       "state_write_count": 2
     },
-    "started_at": "2026-03-15T04:43:37.955852+00:00"
+    "started_at": "2026-03-15T05:44:32.866825+00:00"
   },
-  "schema_version": 5,
+  "schema_version": 6,
   "state_density": "minimal",
   "state_machine": {
     "active_branch": null,
@@ -122,5 +127,5 @@
   },
   "status": "not_started",
   "summary_outcome": null,
-  "updated_at": "2026-03-15T04:43:38.087349+00:00"
+  "updated_at": "2026-03-15T05:44:32.995711+00:00"
 }

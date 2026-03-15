@@ -2,12 +2,12 @@
   "rules": [
     {
       "action": "Stop and reduce scope instead of retrying the blocked path",
-      "created_at": "2026-03-15T04:43:16.683603+00:00",
+      "created_at": "2026-03-15T05:44:10.484739+00:00",
       "evidence": "explicit runtime stop classification",
       "evidence_count": 2,
       "fingerprint": "stop-on-nonrepair-denial",
       "history": [],
-      "last_validated_at": "2026-03-15T04:43:18.773342+00:00",
+      "last_validated_at": "2026-03-15T05:44:12.682326+00:00",
       "layer": "hard",
       "priority": 100,
       "rule_id": "stop-on-nonrepair-denial",
@@ -24,7 +24,7 @@
     },
     {
       "action": "Verify working directory, nearby files, and target path assumptions before retrying the same file operation",
-      "created_at": "2026-03-15T04:43:18.376969+00:00",
+      "created_at": "2026-03-15T05:44:12.219531+00:00",
       "evidence": "runtime-repair-results.json,runtime-repair-plan.json,runtime-repair-report.json",
       "evidence_count": 3,
       "fingerprint": "repair-rule-99bfba26a673",
@@ -33,10 +33,10 @@
           "event": "auto_promoted",
           "reason": "evidence_threshold_met",
           "to": "soft",
-          "ts": "2026-03-15T04:43:18.376973+00:00"
+          "ts": "2026-03-15T05:44:12.219535+00:00"
         }
       ],
-      "last_validated_at": "2026-03-15T04:43:18.376958+00:00",
+      "last_validated_at": "2026-03-15T05:44:12.219521+00:00",
       "layer": "soft",
       "priority": 65,
       "rule_id": "repair-rule-99bfba26a673",

@@ -524,6 +524,8 @@ if malformed_result.get('status') != 'failed' or 'missing required fields' not i
 
 consolidation_dir = base/'step3-consolidation-failure'
 consolidation_dir.mkdir(exist_ok=True)
+import polaris_compat as pc
+pc.write_runtime_format(consolidation_dir)
 consolidation_state = consolidation_dir/'execution-state.json'
 state = ps.default_state()
 state['execution_profile'] = 'standard'
@@ -567,6 +569,210 @@ if len(consolidated_state.get('learning_backlog', [])) != 1:
     errors.append('step3-consolidation-failure: learning_backlog should retain failed consolidation item')
 if not parse_inline_json(consolidated_state.get('artifacts', {}).get('learning_summary')):
     errors.append('step3-consolidation-failure: learning_summary should be recorded even when consolidation fails')
+
+# ═══════════════════════════════════════════════════════════════
+# Step 1-2 assertions: Compatibility Spine + Runtime-dir Safety
+# ═══════════════════════════════════════════════════════════════
+
+# --- compat-v5-load-write-reload-lossless ---
+# Create a representative v5 state, load -> write -> reload, verify lossless round-trip
+v5_dir = base / 'compat-v5-lossless-test'
+v5_dir.mkdir(exist_ok=True)
+pc.write_runtime_format(v5_dir)
+v5_state_path = v5_dir / 'execution-state.json'
+v5_state = {
+    'schema_version': 5,
+    'run_id': 'v5-test-run',
+    'goal': 'Test v5 compatibility',
+    'mode': 'short',
+    'execution_profile': 'standard',
+    'state_density': 'minimal',
+    'repair_depth': 'shallow',
+    'event_budget': 'standard',
+    'learning_backlog': [],
+    'status': 'completed',
+    'progress_pct': 100,
+    'phase': 'completed',
+    'current_step': 'Done',
+    'next_action': None,
+    'summary_outcome': 'v5 test completed',
+    'plan': [{'index': 1, 'step_id': 'p1', 'phase': 'completed', 'step': 'Test', 'status': 'completed'}],
+    'checkpoints': [{'value': 'cp1', 'kind': 'milestone', 'ts': '2026-03-15T00:00:00+00:00'}],
+    'attempts': [{'ts': '2026-03-15T00:00:00+00:00', 'step': 'test', 'status': 'passed', 'summary': 'ok', 'evidence': [], 'branch_id': 'main'}],
+    'artifacts': {
+        'selected_adapter': 'shell-local',
+        'selected_pattern': 'test-pattern',
+        'execution_kind': 'runner',
+        'execution_result': 'runtime-execution-result.json',
+        'executor_result': 'runtime-executor-result.json',
+        'validation_result': 'runtime-validation-result.json',
+    },
+    'lessons': [],
+    'success_patterns': [],
+    'references': [{'ts': '2026-03-15T00:00:00+00:00', 'kind': 'rules', 'value': 'rules.json', 'label': 'test'}],
+    'runtime': {
+        'lifecycle_stage': 'completed',
+        'started_at': '2026-03-15T00:00:00+00:00',
+        'last_heartbeat_at': '2026-03-15T00:00:00+00:00',
+        'completed_at': '2026-03-15T00:01:00+00:00',
+        'durable_status_surfaces': {},
+        'metrics': {'state_write_count': 5, 'learning_hot_path_ops': 1},
+    },
+    'state_machine': {
+        'node': 'completed',
+        'active_branch': None,
+        'history': [{'ts': '2026-03-15T00:00:00+00:00', 'from': 'executing', 'to': 'completed', 'summary': 'done', 'branch_id': 'main'}],
+        'history_summary': [],
+        'branches': [],
+        'recovery': [],
+        'blocked': {'is_blocked': False, 'reason': None, 'references': []},
+    },
+    'rule_context': {
+        'active_layers': ['hard', 'soft'],
+        'applied_rules': [{'rule_id': 'stop-on-nonrepair-denial', 'layer': 'hard'}],
+    },
+    'updated_at': '2026-03-15T00:01:00+00:00',
+}
+v5_state_path.write_text(json.dumps(v5_state, indent=2, sort_keys=True) + '\n')
+
+# Step 1: load
+loaded = ps.load_state(v5_state_path)
+if loaded.get('schema_version') != 6:
+    errors.append('compat-v5-lossless: loaded state should have schema_version 6')
+if loaded.get('compat', {}).get('upgraded_from') != 5:
+    errors.append('compat-v5-lossless: compat.upgraded_from should be 5')
+if loaded.get('run_id') != 'v5-test-run':
+    errors.append('compat-v5-lossless: run_id lost during load')
+if loaded.get('goal') != 'Test v5 compatibility':
+    errors.append('compat-v5-lossless: goal lost during load')
+if loaded.get('artifacts', {}).get('selected_adapter') != 'shell-local':
+    errors.append('compat-v5-lossless: artifacts.selected_adapter lost during load')
+if loaded.get('state_machine', {}).get('node') != 'completed':
+    errors.append('compat-v5-lossless: state_machine.node lost during load')
+if loaded.get('rule_context', {}).get('applied_rules', [{}])[0].get('rule_id') != 'stop-on-nonrepair-denial':
+    errors.append('compat-v5-lossless: rule_context.applied_rules lost during load')
+
+# Step 2: write (exercises minimal-density whitelist)
+ps.write_json(v5_state_path, loaded)
+
+# Step 3: reload and compare key fields
+reloaded = json.loads(v5_state_path.read_text())
+if reloaded.get('schema_version') != 6:
+    errors.append('compat-v5-lossless: schema_version lost after write-reload')
+if reloaded.get('compat', {}).get('upgraded_from') != 5:
+    errors.append('compat-v5-lossless: compat field lost after write-reload (minimal-density whitelist gap)')
+if reloaded.get('run_id') != 'v5-test-run':
+    errors.append('compat-v5-lossless: run_id lost after write-reload')
+if reloaded.get('goal') != 'Test v5 compatibility':
+    errors.append('compat-v5-lossless: goal lost after write-reload')
+if reloaded.get('mode') != 'short':
+    errors.append('compat-v5-lossless: mode lost after write-reload')
+if reloaded.get('execution_profile') != 'standard':
+    errors.append('compat-v5-lossless: execution_profile lost after write-reload')
+if reloaded.get('artifacts', {}).get('selected_adapter') != 'shell-local':
+    errors.append('compat-v5-lossless: artifacts.selected_adapter lost after write-reload')
+if reloaded.get('artifacts', {}).get('execution_kind') != 'runner':
+    errors.append('compat-v5-lossless: artifacts.execution_kind lost after write-reload')
+if reloaded.get('state_machine', {}).get('node') != 'completed':
+    errors.append('compat-v5-lossless: state_machine.node lost after write-reload')
+if reloaded.get('rule_context', {}).get('applied_rules', [{}])[0].get('rule_id') != 'stop-on-nonrepair-denial':
+    errors.append('compat-v5-lossless: rule_context.applied_rules lost after write-reload')
+if reloaded.get('summary_outcome') != 'v5 test completed':
+    errors.append('compat-v5-lossless: summary_outcome lost after write-reload')
+
+# --- compat-runtime-format-gate ---
+# Incompatible runtime-format.json should block the demo script entirely
+import subprocess as sp
+gate_dir = base / 'compat-gate-test'
+gate_dir.mkdir(exist_ok=True)
+(gate_dir / 'runtime-format.json').write_text(json.dumps({'runtime_format': 999, 'created_by': 'future-polaris'}, indent=2) + '\n')
+gate_proc = sp.run(
+    ['bash', str(pathlib.Path('Polaris/scripts/polaris_runtime_demo.sh'))],
+    capture_output=True, text=True,
+    env={**__import__('os').environ, 'POLARIS_RUNTIME_DIR': str(gate_dir), 'POLARIS_SIMULATE_ERROR': ''},
+)
+if gate_proc.returncode == 0:
+    errors.append('compat-runtime-format-gate: demo should abort on incompatible runtime format')
+
+# --- compat-wrapper-no-early-write ---
+# Verify no adapter/rule/pattern files were written before gate blocked
+if (gate_dir / 'adapters.json').exists():
+    errors.append('compat-wrapper-no-early-write: adapters.json was written before gate blocked')
+if (gate_dir / 'rules.json').exists():
+    errors.append('compat-wrapper-no-early-write: rules.json was written before gate blocked')
+if (gate_dir / 'success-patterns.json').exists():
+    errors.append('compat-wrapper-no-early-write: success-patterns.json was written before gate blocked')
+
+# --- compat-schema-gate ---
+# Compatible runtime_format (1) but incompatible schema_version (999) should be refused
+schema_gate_dir = base / 'compat-schema-gate-test'
+schema_gate_dir.mkdir(exist_ok=True)
+pc.write_runtime_format(schema_gate_dir)
+(schema_gate_dir / 'execution-state.json').write_text(json.dumps({
+    'schema_version': 999,
+    'run_id': 'future-run',
+    'goal': 'from the future',
+}, indent=2, sort_keys=True) + '\n')
+schema_gate_proc = sp.run(
+    ['bash', str(pathlib.Path('Polaris/scripts/polaris_runtime_demo.sh'))],
+    capture_output=True, text=True,
+    env={**__import__('os').environ, 'POLARIS_RUNTIME_DIR': str(schema_gate_dir), 'POLARIS_SIMULATE_ERROR': ''},
+)
+if schema_gate_proc.returncode == 0:
+    errors.append('compat-schema-gate: demo should abort on incompatible schema version 999')
+if (schema_gate_dir / 'adapters.json').exists():
+    errors.append('compat-schema-gate: adapters.json was written despite incompatible schema')
+if (schema_gate_dir / 'rules.json').exists():
+    errors.append('compat-schema-gate: rules.json was written despite incompatible schema')
+
+# --- compat-legacy-dir-upgrade ---
+# Directory with v5 state and no runtime-format.json should be upgraded gracefully
+legacy_dir = base / 'compat-legacy-upgrade-test'
+legacy_dir.mkdir(exist_ok=True)
+legacy_state_path = legacy_dir / 'execution-state.json'
+legacy_v5 = {'schema_version': 5, 'run_id': 'legacy-run', 'goal': 'legacy test', 'mode': 'long', 'status': 'not_started'}
+legacy_state_path.write_text(json.dumps(legacy_v5, indent=2, sort_keys=True) + '\n')
+# No runtime-format.json — this is a legacy dir
+legacy_proc = sp.run(
+    ['bash', str(pathlib.Path('Polaris/scripts/polaris_runtime_demo.sh'))],
+    capture_output=True, text=True,
+    env={**__import__('os').environ, 'POLARIS_RUNTIME_DIR': str(legacy_dir), 'POLARIS_SIMULATE_ERROR': ''},
+)
+if legacy_proc.returncode != 0:
+    errors.append(f'compat-legacy-dir-upgrade: demo should complete on legacy dir, got exit {legacy_proc.returncode}: {legacy_proc.stderr[:200]}')
+if not (legacy_dir / 'runtime-format.json').exists():
+    errors.append('compat-legacy-dir-upgrade: runtime-format.json should be created for legacy dir')
+else:
+    legacy_marker = json.loads((legacy_dir / 'runtime-format.json').read_text())
+    if legacy_marker.get('runtime_format') != 1:
+        errors.append('compat-legacy-dir-upgrade: runtime-format.json should have runtime_format=1')
+legacy_final_state = json.loads(legacy_state_path.read_text())
+if legacy_final_state.get('schema_version') != 6:
+    errors.append('compat-legacy-dir-upgrade: state should be upgraded to schema_version 6')
+
+# --- compat-format-marker-written ---
+# Verify runtime-format.json exists in every normal regression scenario dir
+for scenario_name in summary:
+    scenario_dir = base / scenario_name
+    marker_path = scenario_dir / 'runtime-format.json'
+    if not marker_path.exists():
+        errors.append(f'compat-format-marker-written: {scenario_name} missing runtime-format.json')
+    else:
+        marker_data = json.loads(marker_path.read_text())
+        if marker_data.get('runtime_format') != 1:
+            errors.append(f'compat-format-marker-written: {scenario_name} has wrong runtime_format')
+
+# Verify all normal scenarios have schema_version 6 and compat field
+for scenario_name in summary:
+    scenario_dir = base / scenario_name
+    state_path = scenario_dir / 'execution-state.json'
+    if state_path.exists():
+        s = json.loads(state_path.read_text())
+        if s.get('schema_version') != 6:
+            errors.append(f'compat-schema-v6: {scenario_name} has schema_version {s.get("schema_version")}, expected 6')
+        if 'compat' not in s:
+            errors.append(f'compat-schema-v6: {scenario_name} missing compat field')
+
 print(json.dumps(summary, indent=2, sort_keys=True))
 if errors:
     print('\nASSERTION FAILURES:')

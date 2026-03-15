@@ -10,6 +10,11 @@ EXECUTION_KIND="${POLARIS_EXECUTION_KIND:-auto}"
 GOAL="${POLARIS_GOAL:-Demonstrate Polaris local orchestration flow}"
 ANALYSIS_TARGET="${POLARIS_ANALYSIS_TARGET:-}"
 mkdir -p "$RUNTIME_DIR"
+# ── Compatibility gate: must pass before ANY file is written to runtime dir ──
+python3 "$ROOT/scripts/polaris_compat.py" check-runtime-format --runtime-dir "$RUNTIME_DIR"
+python3 "$ROOT/scripts/polaris_compat.py" check-schema --state "$RUNTIME_DIR/execution-state.json"
+python3 "$ROOT/scripts/polaris_compat.py" write-runtime-format --runtime-dir "$RUNTIME_DIR"
+# ── Gate passed — safe to write adapters, rules, patterns ──
 ORCH_ARGS=(
   --state "$RUNTIME_DIR/execution-state.json"
   --goal "$GOAL"
