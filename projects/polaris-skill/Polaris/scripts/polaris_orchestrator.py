@@ -536,7 +536,7 @@ def stop_action(applied_rules: list[dict], repair_report: dict | None = None) ->
     return f"Retry or escalate to {next_depth} if the same failure repeats"
 
 
-def choose_execution_kind(base: Path, requested_kind: str, adapter: dict, applied_rules: list[dict], selected_pattern: dict | None, simulate_error: str | None) -> dict:
+def choose_execution_kind(base: Path, requested_kind: str, adapter: dict, applied_rules: list[dict], selected_pattern: dict | None, simulate_error: str | None, plan_requires: list[str] | None = None) -> dict:
     return run_json_checked(
         [
             sys.executable,
@@ -551,6 +551,7 @@ def choose_execution_kind(base: Path, requested_kind: str, adapter: dict, applie
             "--selected-pattern-json",
             json.dumps(selected_pattern or {}, sort_keys=True),
             *( ["--simulate-error", simulate_error] if simulate_error else []),
+            *( ["--plan-requires-json", json.dumps(plan_requires)] if plan_requires else []),
         ],
         "plan execution family",
     )
@@ -1072,6 +1073,7 @@ def main() -> None:
     parser.add_argument("--state-density", choices=["auto", "minimal", "full"], default="auto")
     parser.add_argument("--execution-kind", choices=["auto", "runner", "file_transform", "command_output", "file_analysis"], default="auto")
     parser.add_argument("--analysis-target")
+    parser.add_argument("--resume", action="store_true", default=False)
     args = parser.parse_args()
 
     base = Path(__file__).resolve().parent
@@ -1091,7 +1093,17 @@ def main() -> None:
     if schema_gate.returncode != 0:
         print(schema_gate.stderr.strip(), file=sys.stderr)
         raise SystemExit(1)
-    fresh_state = not Path(args.state).exists()
+    state_path = Path(args.state)
+    resuming = False
+    fresh_state = not state_path.exists()
+    if not fresh_state:
+        prior_state = json.loads(state_path.read_text())
+        prior_status = prior_state.get("status")
+        if prior_status == "in_progress":
+            print("Refusing to run: existing state has status 'in_progress' (possible concurrent run)", file=sys.stderr)
+            raise SystemExit(1)
+        if args.resume and prior_status == "blocked" and prior_state.get("state_machine", {}).get("node") == "blocked":
+            resuming = True
     run_id = "polaris-orchestrated-run"
     layers = "hard,soft,experimental"
     history = []
@@ -1115,30 +1127,52 @@ def main() -> None:
     runtime_dir = Path(args.state).resolve().parent
     sticky_cache = str(Path(args.adapters).with_name("adapter-selection-cache.json"))
 
-    history.append(
-        run_checked(
-            [
-                sys.executable,
-                str(base / "polaris_state.py"),
-                "init",
-                "--state",
-                args.state,
-                "--goal",
-                args.goal,
-                "--run-id",
-                run_id,
-                "--mode",
-                args.mode,
-                "--execution-profile",
-                execution_profile,
-                "--state-density",
-                state_density,
-                "--active-layers",
-                layers,
-            ],
-            "state init",
+    if resuming:
+        # Resume from blocked: preserve run_id, attempts, artifacts, learning_backlog, compat
+        # Use canonical writer (polaris_state.py set) to ensure state_write_count, updated_at, and history compaction are tracked
+        new_resumed_count = prior_state.get("compat", {}).get("resumed_count", 0) + 1
+        history.append(
+            run_checked(
+                [
+                    sys.executable,
+                    str(base / "polaris_state.py"),
+                    "set",
+                    "--state",
+                    args.state,
+                    "--status",
+                    "in_progress",
+                    "--resumed-count",
+                    str(new_resumed_count),
+                ],
+                "resume: set status and increment resumed_count",
+            )
         )
-    )
+        run_id = prior_state.get("run_id", run_id)
+    else:
+        history.append(
+            run_checked(
+                [
+                    sys.executable,
+                    str(base / "polaris_state.py"),
+                    "init",
+                    "--state",
+                    args.state,
+                    "--goal",
+                    args.goal,
+                    "--run-id",
+                    run_id,
+                    "--mode",
+                    args.mode,
+                    "--execution-profile",
+                    execution_profile,
+                    "--state-density",
+                    state_density,
+                    "--active-layers",
+                    layers,
+                ],
+                "state init",
+            )
+        )
     if policy["write_references"]:
         history.append(run_checked([sys.executable, str(base / "polaris_state.py"), "reference", "--state", args.state, "--kind", "rules", "--value", args.rules, "--label", "layered rules store"], "record rules reference"))
         history.append(run_checked([sys.executable, str(base / "polaris_state.py"), "reference", "--state", args.state, "--kind", "patterns", "--value", args.patterns, "--label", "success pattern store"], "record patterns reference"))
@@ -1325,7 +1359,11 @@ def main() -> None:
     append(history, emit_runtime_surface(base, policy, "execution", args.state, "execution"))
 
     adapter_record = adapter_selection[0]["adapter"] if adapter_selection else {"tool": adapter_name or "none", "command": "bash -lc <command>", "inputs": ["command"]}
-    execution_plan = choose_execution_kind(base, args.execution_kind, adapter_record, applied_rules, selected_pattern_record, args.simulate_error)
+    # Read plan step requires for capability check
+    current_state = json.loads(Path(args.state).read_text()) if Path(args.state).exists() else {}
+    executing_step = next((s for s in current_state.get("plan", []) if s.get("phase") == "executing" and s.get("status") in ("in_progress", "pending")), None)
+    plan_requires = executing_step.get("requires") if executing_step else None
+    execution_plan = choose_execution_kind(base, args.execution_kind, adapter_record, applied_rules, selected_pattern_record, args.simulate_error, plan_requires)
     history.append(execution_plan)
     execution_kind = execution_plan.get("parsed", {}).get("family", "runner")
     history.append(run_checked([sys.executable, str(base / "polaris_state.py"), "artifact", "--state", args.state, "--key", "execution_kind", "--value", execution_kind], "record execution kind"))

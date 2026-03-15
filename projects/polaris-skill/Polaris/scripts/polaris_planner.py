@@ -4,6 +4,23 @@ import json
 from pathlib import Path
 
 
+PHASE_REQUIRES = {
+    "planning": [],
+    "ready": ["local-exec"],
+    "executing": ["local-exec"],
+    "validating": ["local-exec", "reporting"],
+    "completed": ["reporting"],
+}
+
+PHASE_VALIDATES_WITH = {
+    "planning": None,
+    "ready": None,
+    "executing": "runner_result_contract",
+    "validating": "evidence_check",
+    "completed": None,
+}
+
+
 def step_id(phase: str, index: int) -> str:
     return f"{phase}-{index}"
 
@@ -54,6 +71,8 @@ def build_steps(goal: str, mode: str, execution_profile: str) -> list[dict]:
                 "status": "pending",
                 "rule_layers": layers.split(","),
                 "success_signal": success_signal,
+                "requires": PHASE_REQUIRES.get(phase, []),
+                "validates_with": PHASE_VALIDATES_WITH.get(phase),
             }
         )
     return plan

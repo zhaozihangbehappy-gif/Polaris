@@ -3,11 +3,15 @@ import argparse
 import json
 
 
-def choose_family(requested_kind: str, adapter: dict, applied_rules: list[dict], selected_pattern: dict | None, simulate_error: str | None) -> tuple[str, dict]:
+def choose_family(requested_kind: str, adapter: dict, applied_rules: list[dict], selected_pattern: dict | None, simulate_error: str | None, plan_requires: list[str] | None = None) -> tuple[str, dict]:
     if requested_kind != "auto":
-        return requested_kind, {"reason": "explicit-request", "requested_kind": requested_kind}
+        trace = {"reason": "explicit-request", "requested_kind": requested_kind}
+        _check_capability_gap(adapter, plan_requires, trace)
+        return requested_kind, trace
     if simulate_error:
-        return "runner", {"reason": "simulate-error-forces-runner", "simulate_error": simulate_error}
+        trace = {"reason": "simulate-error-forces-runner", "simulate_error": simulate_error}
+        _check_capability_gap(adapter, plan_requires, trace)
+        return "runner", trace
 
     capabilities = set(adapter.get("capabilities", []))
     tags = set()
@@ -27,15 +31,29 @@ def choose_family(requested_kind: str, adapter: dict, applied_rules: list[dict],
         candidates.append(("runner", "generic-runner-capability"))
 
     if not candidates:
-        return "runner", {"reason": "fallback-runner", "capabilities": sorted(capabilities), "tags": sorted(tags)}
+        trace = {"reason": "fallback-runner", "capabilities": sorted(capabilities), "tags": sorted(tags)}
+        _check_capability_gap(adapter, plan_requires, trace)
+        return "runner", trace
 
     family, reason = candidates[0]
-    return family, {
+    trace = {
         "reason": reason,
         "capabilities": sorted(capabilities),
         "tags": sorted(tags),
         "candidates": [family for family, _ in candidates],
     }
+    _check_capability_gap(adapter, plan_requires, trace)
+    return family, trace
+
+
+def _check_capability_gap(adapter: dict, plan_requires: list[str] | None, trace: dict) -> None:
+    """If plan_requires is given, check adapter capabilities and add warning if gap found."""
+    if not plan_requires:
+        return
+    adapter_caps = set(adapter.get("capabilities", []))
+    missing = sorted(set(plan_requires) - adapter_caps)
+    if missing:
+        trace["capability_warning"] = f"adapter missing: {missing}"
 
 
 def main() -> None:
@@ -46,12 +64,14 @@ def main() -> None:
     parser.add_argument("--applied-rules-json", default="[]")
     parser.add_argument("--selected-pattern-json", default="{}")
     parser.add_argument("--simulate-error")
+    parser.add_argument("--plan-requires-json")
     args = parser.parse_args()
 
     adapter = json.loads(args.adapter_json)
     applied_rules = json.loads(args.applied_rules_json)
     selected_pattern = json.loads(args.selected_pattern_json) if args.selected_pattern_json else {}
-    family, trace = choose_family(args.requested_kind, adapter, applied_rules, selected_pattern or None, args.simulate_error)
+    plan_requires = json.loads(args.plan_requires_json) if args.plan_requires_json else None
+    family, trace = choose_family(args.requested_kind, adapter, applied_rules, selected_pattern or None, args.simulate_error, plan_requires)
     print(json.dumps({"family": family, "trace": trace}, sort_keys=True))
 
 

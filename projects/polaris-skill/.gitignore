@@ -1,4 +1,7 @@
 Polaris/regression-runs/
 Polaris/runtime-demo/
+Polaris/runtime-*/
+Polaris/step1-*.txt
+Polaris/runtime-execution-result.json
 __pycache__/
 *.pyc

@@ -94,6 +94,7 @@ def default_state() -> dict:
             "upgraded_from": None,
             "upgraded_at": None,
             "runtime_format": 1,
+            "resumed_count": 0,
         },
         "updated_at": now(),
     }
@@ -132,6 +133,29 @@ def _backfill_v5_defaults(state: dict) -> None:
     state.setdefault("rule_context", {"active_layers": ["hard", "soft"], "applied_rules": []})
 
 
+def _migrate_backlog_versions(state: dict) -> None:
+    """Tag old backlog items that lack asset_version with version 1."""
+    for item in state.get("learning_backlog", []):
+        if "asset_version" not in item:
+            item["asset_version"] = 1
+
+
+def _migrate_stringified_artifacts(state: dict) -> None:
+    """De-stringify any artifact values that are JSON strings encoding dicts, lists, or bools."""
+    artifacts = state.get("artifacts")
+    if not artifacts or not isinstance(artifacts, dict):
+        return
+    for key, value in artifacts.items():
+        if not isinstance(value, str):
+            continue
+        try:
+            parsed = json.loads(value)
+            if isinstance(parsed, (dict, list, bool, int, float)):
+                artifacts[key] = parsed
+        except (json.JSONDecodeError, TypeError):
+            pass
+
+
 def load_state(path: Path) -> dict:
     if not path.exists():
         return default_state()
@@ -140,13 +164,18 @@ def load_state(path: Path) -> dict:
 
     if version == 6:
         _backfill_v5_defaults(state)
-        state.setdefault("compat", {"upgraded_from": None, "upgraded_at": None, "runtime_format": 1})
+        _migrate_stringified_artifacts(state)
+        _migrate_backlog_versions(state)
+        compat = state.setdefault("compat", {"upgraded_from": None, "upgraded_at": None, "runtime_format": 1, "resumed_count": 0})
+        compat.setdefault("resumed_count", 0)
         return state
 
     if version == 5:
         _backfill_v5_defaults(state)
+        _migrate_stringified_artifacts(state)
+        _migrate_backlog_versions(state)
         state["schema_version"] = 6
-        state["compat"] = {"upgraded_from": 5, "upgraded_at": now(), "runtime_format": 1}
+        state["compat"] = {"upgraded_from": 5, "upgraded_at": now(), "runtime_format": 1, "resumed_count": 0}
         return state
 
     # Unknown / incompatible version — refuse, do not silently upgrade
@@ -196,14 +225,17 @@ def write_json(path: Path, payload: dict) -> None:
     if payload.get("state_density") == "minimal":
         plan = []
         for item in payload.get("plan", []):
-            plan.append(
-                {
-                    "index": item.get("index"),
-                    "phase": item.get("phase"),
-                    "step": item.get("step"),
-                    "status": item.get("status"),
-                }
-            )
+            entry = {
+                "index": item.get("index"),
+                "phase": item.get("phase"),
+                "step": item.get("step"),
+                "status": item.get("status"),
+            }
+            if "requires" in item:
+                entry["requires"] = item["requires"]
+            if "validates_with" in item:
+                entry["validates_with"] = item["validates_with"]
+            plan.append(entry)
         persisted = {
             "schema_version": payload.get("schema_version"),
             "run_id": payload.get("run_id"),
@@ -336,6 +368,7 @@ def main() -> None:
     set_parser.add_argument("--active-layers")
     set_parser.add_argument("--summary-outcome")
     set_parser.add_argument("--repair-depth", choices=["shallow", "medium", "deep"])
+    set_parser.add_argument("--resumed-count", type=int)
 
     attempt_parser = subparsers.add_parser("attempt")
     attempt_parser.add_argument("--state", required=True)
@@ -472,6 +505,8 @@ def main() -> None:
             state["summary_outcome"] = args.summary_outcome
         if args.repair_depth:
             state["repair_depth"] = args.repair_depth
+        if args.resumed_count is not None:
+            state.setdefault("compat", {})["resumed_count"] = args.resumed_count
     elif args.command == "attempt":
         state["attempts"].append(
             {
@@ -532,7 +567,14 @@ def main() -> None:
         state["summary_outcome"] = args.reason
         append_history(state, "blocked", args.reason, state["state_machine"].get("active_branch"))
     elif args.command == "artifact":
-        state.setdefault("artifacts", {})[args.key] = args.value
+        value = args.value
+        try:
+            parsed = json.loads(value)
+            if isinstance(parsed, (dict, list, bool, int, float)):
+                value = parsed
+        except (json.JSONDecodeError, TypeError):
+            pass
+        state.setdefault("artifacts", {})[args.key] = value
     elif args.command == "apply-rules":
         state.setdefault("rule_context", {})["applied_rules"] = json.loads(args.rules_json)
     elif args.command == "reference":
@@ -558,6 +600,7 @@ def main() -> None:
                 "queued_at": now(),
                 "kind": args.kind,
                 "payload": payload,
+                "asset_version": 2,
             }
         )
         runtime = state.setdefault("runtime", {})

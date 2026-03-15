@@ -112,9 +112,9 @@ POLARIS_SIMULATE_ERROR='' \
 POLARIS_GOAL='Demonstrate Polaris transfer target flow with a different task prompt' \
 bash "$ROOT/scripts/polaris_runtime_demo.sh" >/tmp/polaris-step3-transfer-target.out
 
-python3 - <<'PY' > "$OUT_BASE/step2-strategy-conflict.json"
-import json, pathlib, sys
-sys.path.insert(0, str(pathlib.Path('Polaris/scripts').resolve()))
+POLARIS_ROOT="$ROOT" python3 - <<'PY' > "$OUT_BASE/step2-strategy-conflict.json"
+import json, os, pathlib, sys
+sys.path.insert(0, str(pathlib.Path(os.environ['POLARIS_ROOT']) / 'scripts'))
 import polaris_orchestrator as po
 rules = [
     {
@@ -152,20 +152,218 @@ strategy = po.build_execution_strategy(rules, pattern, 'standard', 'runner')
 print(json.dumps(strategy, indent=2, sort_keys=True))
 PY
 
-POLARIS_REGRESSION_OUT_DIR="$OUT_BASE" python3 - <<'PY'
+# ── Resume regression scenarios (Step 3B) ──
+# resume-from-blocked: run 1 blocks (standard profile), run 2 resumes with POLARIS_RESUME=1
+RESUME_BLOCKED_DIR="$OUT_BASE/resume-from-blocked"
+POLARIS_RUNTIME_DIR="$RESUME_BLOCKED_DIR" \
+POLARIS_EXECUTION_PROFILE=standard \
+POLARIS_MODE=short \
+POLARIS_EXECUTION_KIND=runner \
+POLARIS_SIMULATE_ERROR='forced resume seed failure' \
+POLARIS_GOAL='Demonstrate Polaris resume from blocked' \
+bash "$ROOT/scripts/polaris_runtime_demo.sh" >/tmp/polaris-resume-blocked-1.out || true
+POLARIS_RUNTIME_DIR="$RESUME_BLOCKED_DIR" \
+POLARIS_EXECUTION_PROFILE=standard \
+POLARIS_MODE=short \
+POLARIS_EXECUTION_KIND=runner \
+POLARIS_SIMULATE_ERROR='' \
+POLARIS_GOAL='Demonstrate Polaris resume from blocked' \
+POLARIS_RESUME=1 \
+bash "$ROOT/scripts/polaris_runtime_demo.sh" >/tmp/polaris-resume-blocked-2.out
+
+# resume-no-overwrite-completed: completed run + resume flag → fresh init, not resume
+RESUME_COMPLETED_DIR="$OUT_BASE/resume-no-overwrite-completed"
+POLARIS_RUNTIME_DIR="$RESUME_COMPLETED_DIR" \
+POLARIS_EXECUTION_PROFILE=standard \
+POLARIS_MODE=short \
+POLARIS_EXECUTION_KIND=runner \
+POLARIS_SIMULATE_ERROR='' \
+POLARIS_GOAL='Demonstrate Polaris completed run' \
+bash "$ROOT/scripts/polaris_runtime_demo.sh" >/tmp/polaris-resume-completed-1.out
+POLARIS_RUNTIME_DIR="$RESUME_COMPLETED_DIR" \
+POLARIS_EXECUTION_PROFILE=standard \
+POLARIS_MODE=short \
+POLARIS_EXECUTION_KIND=runner \
+POLARIS_SIMULATE_ERROR='' \
+POLARIS_GOAL='Demonstrate Polaris completed run' \
+POLARIS_RESUME=1 \
+bash "$ROOT/scripts/polaris_runtime_demo.sh" >/tmp/polaris-resume-completed-2.out
+
+# resume-refuse-in-progress: create in_progress state → orchestrator should refuse
+RESUME_INPROGRESS_DIR="$OUT_BASE/resume-refuse-in-progress"
+mkdir -p "$RESUME_INPROGRESS_DIR"
+python3 -c "
+import json
+state = {'schema_version': 6, 'status': 'in_progress', 'state_machine': {'node': 'executing'}, 'compat': {'upgraded_from': None, 'upgraded_at': None, 'runtime_format': 1, 'resumed_count': 0}}
+open('$RESUME_INPROGRESS_DIR/execution-state.json', 'w').write(json.dumps(state, indent=2))
+"
+python3 "$ROOT/scripts/polaris_compat.py" write-runtime-format --runtime-dir "$RESUME_INPROGRESS_DIR"
+RESUME_INPROGRESS_EXIT=0
+POLARIS_RUNTIME_DIR="$RESUME_INPROGRESS_DIR" \
+POLARIS_EXECUTION_PROFILE=standard \
+POLARIS_MODE=short \
+POLARIS_EXECUTION_KIND=runner \
+POLARIS_SIMULATE_ERROR='' \
+POLARIS_GOAL='Should refuse' \
+bash "$ROOT/scripts/polaris_runtime_demo.sh" >/tmp/polaris-resume-inprogress.out 2>&1 || RESUME_INPROGRESS_EXIT=$?
+
+# ── Bootstrap regression scenarios (Step 4A) ──
+# 4A idempotency: run bootstrap twice on the same dir → second should skip
+BOOTSTRAP_IDEM_DIR="$OUT_BASE/bootstrap-idempotency"
+mkdir -p "$BOOTSTRAP_IDEM_DIR"
+python3 "$ROOT/scripts/polaris_compat.py" write-runtime-format --runtime-dir "$BOOTSTRAP_IDEM_DIR"
+python3 "$ROOT/scripts/polaris_bootstrap.py" bootstrap --manifest "$ROOT/scripts/polaris_bootstrap.json" --runtime-dir "$BOOTSTRAP_IDEM_DIR" >/dev/null
+python3 "$ROOT/scripts/polaris_bootstrap.py" bootstrap --manifest "$ROOT/scripts/polaris_bootstrap.json" --runtime-dir "$BOOTSTRAP_IDEM_DIR" > "$BOOTSTRAP_IDEM_DIR/bootstrap-run2.json"
+
+# 4A requirement failure: bad interpreter
+BOOTSTRAP_FAIL_DIR="$OUT_BASE/bootstrap-req-failure"
+mkdir -p "$BOOTSTRAP_FAIL_DIR"
+python3 -c "
+import json
+manifest = json.load(open('$ROOT/scripts/polaris_bootstrap.json'))
+manifest['requires']['interpreter'] = 'nonexistent-binary-xyz'
+open('$BOOTSTRAP_FAIL_DIR/bad-manifest.json', 'w').write(json.dumps(manifest))
+"
+BOOTSTRAP_FAIL_EXIT=0
+python3 "$ROOT/scripts/polaris_bootstrap.py" bootstrap --manifest "$BOOTSTRAP_FAIL_DIR/bad-manifest.json" --runtime-dir "$BOOTSTRAP_FAIL_DIR" >/dev/null 2>&1 || BOOTSTRAP_FAIL_EXIT=$?
+
+# 4A capability probe failure: unknown capability
+BOOTSTRAP_CAP_DIR="$OUT_BASE/bootstrap-cap-failure"
+mkdir -p "$BOOTSTRAP_CAP_DIR"
+python3 -c "
+import json
+manifest = json.load(open('$ROOT/scripts/polaris_bootstrap.json'))
+manifest['requires']['capabilities'] = ['nonexistent-capability']
+open('$BOOTSTRAP_CAP_DIR/bad-cap-manifest.json', 'w').write(json.dumps(manifest))
+"
+BOOTSTRAP_CAP_EXIT=0
+python3 "$ROOT/scripts/polaris_bootstrap.py" bootstrap --manifest "$BOOTSTRAP_CAP_DIR/bad-cap-manifest.json" --runtime-dir "$BOOTSTRAP_CAP_DIR" >/dev/null 2>&1 || BOOTSTRAP_CAP_EXIT=$?
+
+# 4A real probe failure: interpreter exists but local-exec probe fails (false always exits 1)
+BOOTSTRAP_PROBE_DIR="$OUT_BASE/bootstrap-probe-failure"
+mkdir -p "$BOOTSTRAP_PROBE_DIR"
+python3 -c "
+import json
+manifest = json.load(open('$ROOT/scripts/polaris_bootstrap.json'))
+manifest['requires']['interpreter'] = 'false'
+manifest['requires']['capabilities'] = ['local-exec']
+open('$BOOTSTRAP_PROBE_DIR/probe-fail-manifest.json', 'w').write(json.dumps(manifest))
+"
+BOOTSTRAP_PROBE_EXIT=0
+python3 "$ROOT/scripts/polaris_bootstrap.py" bootstrap --manifest "$BOOTSTRAP_PROBE_DIR/probe-fail-manifest.json" --runtime-dir "$BOOTSTRAP_PROBE_DIR" >/dev/null 2>&1 || BOOTSTRAP_PROBE_EXIT=$?
+
+# ── Step 4B regression scenarios: Experience asset versioning ──
+# 4b-pattern-migration: create v1 patterns (no asset_version) → load → assert migrated
+PATTERN_MIG_DIR="$OUT_BASE/4b-pattern-migration"
+mkdir -p "$PATTERN_MIG_DIR"
+python3 -c "
+import json
+store = {'schema_version': 1, 'patterns': [
+    {'pattern_id': 'v1-test', 'summary': 'v1 test pattern', 'trigger': 'test', 'sequence': ['a','b'], 'outcome': 'pass', 'evidence': ['e1'], 'tags': ['test'], 'modes': ['long'], 'confidence': 70, 'lifecycle_state': 'experimental', 'fingerprint': 'v1-test', 'adapter': None, 'promotion_count': 0, 'demotion_count': 0, 'selection_count': 0, 'reusable': True, 'strategy_hints': {}, 'expires_at': None, 'created_at': '2026-01-01T00:00:00+00:00', 'updated_at': '2026-01-01T00:00:00+00:00', 'last_validated_at': '2026-01-01T00:00:00+00:00', 'validation_count': 1, 'evidence_count': 1}
+]}
+open('$PATTERN_MIG_DIR/success-patterns.json', 'w').write(json.dumps(store, indent=2))
+"
+# Capture a new pattern into the same store → should have asset_version: 2
+python3 "$ROOT/scripts/polaris_success_patterns.py" capture \
+  --patterns "$PATTERN_MIG_DIR/success-patterns.json" \
+  --pattern-id "v2-test" --summary "v2 test" --trigger "test" \
+  --sequence "a,b" --outcome "pass" --evidence "e2" --tags "test" > /dev/null
+
+# 4b-pattern-merge-upgrade: v1 pattern (no asset_version) → capture same-id → merged must be asset_version: 2
+PATTERN_MERGE_DIR="$OUT_BASE/4b-pattern-merge-upgrade"
+mkdir -p "$PATTERN_MERGE_DIR"
+python3 -c "
+import json
+store = {'schema_version': 1, 'patterns': [
+    {'pattern_id': 'merge-target', 'summary': 'old pattern', 'trigger': 'test', 'sequence': ['a','b'], 'outcome': 'pass', 'evidence': ['e1'], 'tags': ['test'], 'modes': ['long'], 'confidence': 70, 'lifecycle_state': 'experimental', 'fingerprint': 'merge-target', 'adapter': None, 'promotion_count': 0, 'demotion_count': 0, 'selection_count': 0, 'reusable': True, 'strategy_hints': {}, 'expires_at': None, 'created_at': '2026-01-01T00:00:00+00:00', 'updated_at': '2026-01-01T00:00:00+00:00', 'last_validated_at': '2026-01-01T00:00:00+00:00', 'validation_count': 1, 'evidence_count': 1}
+]}
+open('$PATTERN_MERGE_DIR/success-patterns.json', 'w').write(json.dumps(store, indent=2))
+"
+# Capture same pattern_id → triggers merge_pattern(existing=v1, incoming=v2)
+python3 "$ROOT/scripts/polaris_success_patterns.py" capture \
+  --patterns "$PATTERN_MERGE_DIR/success-patterns.json" \
+  --pattern-id "merge-target" --summary "updated pattern" --trigger "test" \
+  --sequence "a,b" --outcome "pass" --evidence "e2" --tags "test" > /dev/null
+# Also test consolidate-marker merge path
+PATTERN_CONSOL_DIR="$OUT_BASE/4b-pattern-consolidate-merge"
+mkdir -p "$PATTERN_CONSOL_DIR"
+python3 -c "
+import json
+store = {'schema_version': 1, 'patterns': [
+    {'pattern_id': 'consol-target', 'summary': 'old pattern', 'trigger': 'test', 'sequence': ['a','b'], 'outcome': 'pass', 'evidence': ['e1'], 'tags': ['test'], 'modes': ['long'], 'confidence': 70, 'lifecycle_state': 'experimental', 'fingerprint': 'consol-target', 'adapter': None, 'promotion_count': 0, 'demotion_count': 0, 'selection_count': 0, 'reusable': True, 'strategy_hints': {}, 'expires_at': None, 'created_at': '2026-01-01T00:00:00+00:00', 'updated_at': '2026-01-01T00:00:00+00:00', 'last_validated_at': '2026-01-01T00:00:00+00:00', 'validation_count': 1, 'evidence_count': 1}
+]}
+open('$PATTERN_CONSOL_DIR/success-patterns.json', 'w').write(json.dumps(store, indent=2))
+"
+python3 "$ROOT/scripts/polaris_success_patterns.py" consolidate-marker \
+  --patterns "$PATTERN_CONSOL_DIR/success-patterns.json" \
+  --marker '{"pattern_id":"consol-target","summary":"consolidated","trigger":"test","sequence":["a","b"],"outcome":"pass","evidence":["e2"],"tags":["test"],"modes":["long"],"confidence":72}' > /dev/null
+
+# 4b-rule-migration: create v1 rules (no asset_version) → load → assert migrated
+RULE_MIG_DIR="$OUT_BASE/4b-rule-migration"
+mkdir -p "$RULE_MIG_DIR"
+python3 -c "
+import json
+store = {'schema_version': 3, 'rules': [
+    {'rule_id': 'v1-rule', 'layer': 'soft', 'trigger': 'test', 'action': 'do thing', 'evidence': 'e1', 'scope': 'local', 'fingerprint': 'v1-rule', 'tags': ['test'], 'validation': 'observed', 'priority': 50, 'strategy_overrides': {}, 'evidence_count': 1, 'validation_count': 1, 'last_validated_at': '2026-01-01T00:00:00+00:00', 'created_at': '2026-01-01T00:00:00+00:00'}
+]}
+open('$RULE_MIG_DIR/rules.json', 'w').write(json.dumps(store, indent=2))
+"
+# Add a new rule → should have asset_version: 2
+python3 "$ROOT/scripts/polaris_rules.py" add \
+  --rules "$RULE_MIG_DIR/rules.json" \
+  --rule-id "v2-rule" --layer soft --trigger "test2" --action "do other" \
+  --evidence "e2" --scope "local" --tags "test" > /dev/null
+
+# 4b-backlog-migration: create state with v1 backlog items (no asset_version) → load → assert migrated
+BACKLOG_MIG_DIR="$OUT_BASE/4b-backlog-migration"
+mkdir -p "$BACKLOG_MIG_DIR"
+python3 -c "
+import json
+state = {
+    'schema_version': 6, 'run_id': 'test', 'goal': 'test', 'mode': 'long',
+    'execution_profile': 'deep', 'status': 'completed', 'phase': 'completed',
+    'learning_backlog': [
+        {'queued_at': '2026-01-01T00:00:00+00:00', 'kind': 'success_marker', 'payload': {'pattern_id': 'test'}},
+        {'queued_at': '2026-01-01T00:00:00+00:00', 'kind': 'rule_candidate', 'payload': {'rule_id': 'test'}}
+    ],
+    'compat': {'upgraded_from': None, 'upgraded_at': None, 'runtime_format': 1, 'resumed_count': 0}
+}
+open('$BACKLOG_MIG_DIR/execution-state.json', 'w').write(json.dumps(state, indent=2))
+"
+python3 "$ROOT/scripts/polaris_compat.py" write-runtime-format --runtime-dir "$BACKLOG_MIG_DIR"
+
+# ── Step 5A regression scenarios: Cross-version state evidence ──
+# coexist-v5-dir-full-run: v5 state + no runtime-format.json → full polaris_runtime_demo.sh
+COEXIST_V5_DIR="$OUT_BASE/coexist-v5-dir-full-run"
+mkdir -p "$COEXIST_V5_DIR"
+POLARIS_ROOT="$ROOT" python3 -c "
+import os, sys, pathlib
+sys.path.insert(0, str(pathlib.Path(os.environ['POLARIS_ROOT']) / 'scripts'))
+import polaris_v5_snapshot as v5
+state = v5.v5_default_state()
+state['run_id'] = 'v5-coexist-test'
+state['goal'] = 'v5 coexistence test'
+state['status'] = 'completed'
+v5.v5_write_json(pathlib.Path('$COEXIST_V5_DIR/execution-state.json'), state)
+"
+# No runtime-format.json — legacy gate should fire
+POLARIS_RUNTIME_DIR="$COEXIST_V5_DIR" \
+POLARIS_EXECUTION_PROFILE=standard \
+POLARIS_MODE=short \
+POLARIS_EXECUTION_KIND=runner \
+POLARIS_SIMULATE_ERROR='' \
+POLARIS_GOAL='Run on v5 dir' \
+bash "$ROOT/scripts/polaris_runtime_demo.sh" >/tmp/polaris-coexist-v5.out
+
+POLARIS_REGRESSION_OUT_DIR="$OUT_BASE" POLARIS_ROOT="$ROOT" RESUME_INPROGRESS_EXIT="$RESUME_INPROGRESS_EXIT" BOOTSTRAP_FAIL_EXIT="$BOOTSTRAP_FAIL_EXIT" BOOTSTRAP_CAP_EXIT="$BOOTSTRAP_CAP_EXIT" BOOTSTRAP_PROBE_EXIT="$BOOTSTRAP_PROBE_EXIT" python3 - <<'PY'
 import json, os, pathlib, sys
 base=pathlib.Path(os.environ['POLARIS_REGRESSION_OUT_DIR'])
 summary={}
 errors=[]
 
-def parse_inline_json(value):
-    if value in (None, "", "{}"):
-        return {} if value == "{}" else None
-    return json.loads(value)
-
 def load_efficiency_metrics(directory):
     state = json.loads((directory/'execution-state.json').read_text())
-    artifact_payload = parse_inline_json(state.get('artifacts', {}).get('efficiency_metrics'))
+    artifact_payload = state.get('artifacts', {}).get('efficiency_metrics')
     artifact_file = directory/'runtime-efficiency-metrics.json'
     if not artifact_file.exists():
         errors.append(f"{directory.name}: missing runtime-efficiency-metrics.json")
@@ -237,9 +435,12 @@ expected={
     'step3-transfer-target': {'status': 'completed', 'execution_kind': 'runner'},
     'real-analysis-success': {'status': 'completed', 'execution_kind': 'file_analysis'},
     'real-analysis-failure-repair': {'status': 'completed', 'execution_kind': 'file_analysis'},
+    'coexist-v5-dir-full-run': {'status': 'completed', 'execution_kind': 'runner'},
 }
 for d in sorted(base.iterdir()):
     if not d.is_dir():
+        continue
+    if not (d/'execution-state.json').exists():
         continue
     state=json.loads((d/'execution-state.json').read_text())
     artifacts=state.get('artifacts', {})
@@ -276,11 +477,11 @@ for d in sorted(base.iterdir()):
             errors.append('deep-resumed-failure: missing resumed executor artifact pointer')
         if artifacts.get('resumed_validation_result') != 'runtime-resumed-validation-result.json':
             errors.append('deep-resumed-failure: missing resumed validation artifact pointer')
-        efficiency = parse_inline_json(artifacts.get('efficiency_metrics'))
+        efficiency = artifacts.get('efficiency_metrics')
         if not efficiency or efficiency.get('retry_actions') != 1:
             errors.append('deep-resumed-failure: efficiency_metrics should record one retry action after resumed failure')
     if d.name == 'deep-command-output-repair':
-        resumed=json.loads(artifacts.get('resumed_execution_contract', '{}'))
+        resumed=artifacts.get('resumed_execution_contract', {})
         if resumed.get('kind') != 'command_output':
             errors.append('deep-command-output-repair: resumed contract did not stay on command_output family')
         if artifacts.get('resumed_executor_result') != 'runtime-resumed-executor-result.json':
@@ -303,8 +504,8 @@ run2_state=json.loads((success_dir/'execution-state-run2.json').read_text())
 run1_output=json.loads((success_dir/'runtime-execution-result-run1.json').read_text())
 run2_output=json.loads((success_dir/'runtime-execution-result-run2.json').read_text())
 run2_validation=json.loads((success_dir/'runtime-validation-result-run2.json').read_text())
-run1_contract=json.loads(run1_state['artifacts']['execution_contract'])
-run2_contract=json.loads(run2_state['artifacts']['execution_contract'])
+run1_contract=run1_state['artifacts']['execution_contract']
+run2_contract=run2_state['artifacts']['execution_contract']
 run2_validator=run2_contract.get('validator', {})
 if run1_state.get('status') != 'completed' or run2_state.get('status') != 'completed':
     errors.append('step2-learning-repeat-success: both runs must complete')
@@ -327,9 +528,9 @@ if run2_validator.get('baseline_stage_count') != 3 or run2_validator.get('max_st
     errors.append('step2-learning-repeat-success: validator should persist explicit hot-path stage budget fields')
 if run2_validator.get('max_retry_actions') != 0 or run2_validator.get('observed_selection_inputs') != 2 or run2_validator.get('max_selection_inputs') != 4 or run2_validator.get('budget_profile') != 'standard':
     errors.append('step2-learning-repeat-success: validator should persist explicit retry/selection/profile budget fields')
-if not json.loads(run2_state['artifacts'].get('execution_contract_diff', '{}')):
+if not run2_state['artifacts'].get('execution_contract_diff', {}):
     errors.append('step2-learning-repeat-success: second run should persist non-empty contract diff')
-if not json.loads(run2_state['artifacts'].get('validator_diff', '{}')):
+if not run2_state['artifacts'].get('validator_diff', {}):
     errors.append('step2-learning-repeat-success: second run should persist non-empty validator diff')
 if run2_validation.get('status') != 'ok':
     errors.append('step2-learning-repeat-success: second run validator should pass')
@@ -349,10 +550,10 @@ repair_run1_state=json.loads((repair_dir/'execution-state-run1.json').read_text(
 repair_run2_state=json.loads((repair_dir/'execution-state-run2.json').read_text())
 repair_run1_report=json.loads((repair_dir/'runtime-repair-report-run1.json').read_text())
 repair_run2_output=json.loads((repair_dir/'runtime-execution-result-run2.json').read_text())
-repair_run2_contract=json.loads(repair_run2_state['artifacts']['execution_contract'])
+repair_run2_contract=repair_run2_state['artifacts']['execution_contract']
 repair_run2_validator=repair_run2_contract.get('validator', {})
 repair_run2_validation=json.loads((repair_dir/'runtime-validation-result-run2.json').read_text())
-repair_diff=json.loads(repair_run2_state['artifacts'].get('execution_contract_diff', '{}'))
+repair_diff=repair_run2_state['artifacts'].get('execution_contract_diff', {})
 if repair_run1_state.get('status') != 'blocked':
     errors.append('step2-learning-repeat-repair: first run should block on seeded failure')
 if repair_run1_report.get('failure_type') != 'unknown':
@@ -379,7 +580,7 @@ if repair_run2_state['artifacts'].get('resumed_executor_result') or repair_run2_
 for case_name in ['micro-success', 'standard-success', 'deep-success']:
     case_dir = base/case_name
     case_state, case_efficiency = load_efficiency_metrics(case_dir)
-    case_contract = json.loads(case_state['artifacts']['execution_contract'])
+    case_contract = case_state['artifacts']['execution_contract']
     assert_efficiency_budget(case_name, case_state, case_efficiency, case_contract)
 
 success_run2_state_full, success_run2_efficiency = load_efficiency_metrics(success_dir)
@@ -391,19 +592,19 @@ transfer_source_dir = base/'step3-transfer-source'
 transfer_target_dir = base/'step3-transfer-target'
 transfer_source_state, transfer_source_efficiency = load_efficiency_metrics(transfer_source_dir)
 transfer_target_state, transfer_target_efficiency = load_efficiency_metrics(transfer_target_dir)
-transfer_source_contract = json.loads(transfer_source_state['artifacts']['execution_contract'])
-transfer_target_contract = json.loads(transfer_target_state['artifacts']['execution_contract'])
+transfer_source_contract = transfer_source_state['artifacts']['execution_contract']
+transfer_target_contract = transfer_target_state['artifacts']['execution_contract']
 assert_efficiency_budget('step3-transfer-source', transfer_source_state, transfer_source_efficiency, transfer_source_contract)
 assert_efficiency_budget('step3-transfer-target', transfer_target_state, transfer_target_efficiency, transfer_target_contract)
 if transfer_source_state.get('goal') == transfer_target_state.get('goal'):
     errors.append('step3-transfer: source and target goals must differ to prove cross-task transfer')
-if json.loads(transfer_target_state['artifacts'].get('family_transfer_applied', 'false')) is not True:
+if transfer_target_state['artifacts'].get('family_transfer_applied', False) is not True:
     errors.append('step3-transfer: target should record family_transfer_applied=true')
 if not transfer_target_state['artifacts'].get('transfer_source_pattern'):
     errors.append('step3-transfer: target should record transfer_source_pattern')
 if not transfer_target_state['artifacts'].get('transfer_reason'):
     errors.append('step3-transfer: target should record transfer_reason')
-if not json.loads(transfer_target_state['artifacts'].get('transfer_contract_diff', '{}')):
+if not transfer_target_state['artifacts'].get('transfer_contract_diff', {}):
     errors.append('step3-transfer: target should record non-empty transfer_contract_diff')
 if transfer_target_state['artifacts'].get('selected_pattern') != transfer_target_state['artifacts'].get('transfer_source_pattern'):
     errors.append('step3-transfer: target selected_pattern should match transfer_source_pattern')
@@ -419,7 +620,7 @@ import copy
 import hashlib as _hashlib
 import pathlib
 import sys
-sys.path.insert(0, str(pathlib.Path('Polaris/scripts').resolve()))
+sys.path.insert(0, str(pathlib.Path(os.environ['POLARIS_ROOT']) / 'scripts'))
 import polaris_validator as pv
 
 real_success_dir = base/'real-analysis-success'
@@ -496,11 +697,11 @@ import copy
 import pathlib
 import sys
 import tempfile
-sys.path.insert(0, str(pathlib.Path('Polaris/scripts').resolve()))
+sys.path.insert(0, str(pathlib.Path(os.environ['POLARIS_ROOT']) / 'scripts'))
 import polaris_validator as pv
 import polaris_orchestrator as po
 import polaris_state as ps
-success_contract = json.loads(run2_state['artifacts']['execution_contract'])
+success_contract = run2_state['artifacts']['execution_contract']
 tampered_profile = copy.deepcopy(success_contract)
 tampered_profile['validator']['max_selection_inputs'] = 99
 profile_result = pv.validate_runner_result_contract(tampered_profile, {})
@@ -554,7 +755,7 @@ backlog_items = [{
     },
 }]
 results, retained, consolidation_summary = po.consolidate_backlog(
-    pathlib.Path('Polaris/scripts').resolve(),
+    pathlib.Path(os.environ['POLARIS_ROOT']) / 'scripts',
     str(consolidation_state),
     str(consolidation_dir/'missing'/'success-patterns.json'),
     str(consolidation_dir/'rules.json'),
@@ -567,7 +768,7 @@ if not results or results[0].get('returncode') == 0:
 consolidated_state = json.loads(consolidation_state.read_text())
 if len(consolidated_state.get('learning_backlog', [])) != 1:
     errors.append('step3-consolidation-failure: learning_backlog should retain failed consolidation item')
-if not parse_inline_json(consolidated_state.get('artifacts', {}).get('learning_summary')):
+if not consolidated_state.get('artifacts', {}).get('learning_summary'):
     errors.append('step3-consolidation-failure: learning_summary should be recorded even when consolidation fails')
 
 # ═══════════════════════════════════════════════════════════════
@@ -687,7 +888,7 @@ gate_dir = base / 'compat-gate-test'
 gate_dir.mkdir(exist_ok=True)
 (gate_dir / 'runtime-format.json').write_text(json.dumps({'runtime_format': 999, 'created_by': 'future-polaris'}, indent=2) + '\n')
 gate_proc = sp.run(
-    ['bash', str(pathlib.Path('Polaris/scripts/polaris_runtime_demo.sh'))],
+    ['bash', str(pathlib.Path(os.environ['POLARIS_ROOT']) / 'scripts' / 'polaris_runtime_demo.sh')],
     capture_output=True, text=True,
     env={**__import__('os').environ, 'POLARIS_RUNTIME_DIR': str(gate_dir), 'POLARIS_SIMULATE_ERROR': ''},
 )
@@ -714,7 +915,7 @@ pc.write_runtime_format(schema_gate_dir)
     'goal': 'from the future',
 }, indent=2, sort_keys=True) + '\n')
 schema_gate_proc = sp.run(
-    ['bash', str(pathlib.Path('Polaris/scripts/polaris_runtime_demo.sh'))],
+    ['bash', str(pathlib.Path(os.environ['POLARIS_ROOT']) / 'scripts' / 'polaris_runtime_demo.sh')],
     capture_output=True, text=True,
     env={**__import__('os').environ, 'POLARIS_RUNTIME_DIR': str(schema_gate_dir), 'POLARIS_SIMULATE_ERROR': ''},
 )
@@ -734,7 +935,7 @@ legacy_v5 = {'schema_version': 5, 'run_id': 'legacy-run', 'goal': 'legacy test',
 legacy_state_path.write_text(json.dumps(legacy_v5, indent=2, sort_keys=True) + '\n')
 # No runtime-format.json — this is a legacy dir
 legacy_proc = sp.run(
-    ['bash', str(pathlib.Path('Polaris/scripts/polaris_runtime_demo.sh'))],
+    ['bash', str(pathlib.Path(os.environ['POLARIS_ROOT']) / 'scripts' / 'polaris_runtime_demo.sh')],
     capture_output=True, text=True,
     env={**__import__('os').environ, 'POLARIS_RUNTIME_DIR': str(legacy_dir), 'POLARIS_SIMULATE_ERROR': ''},
 )
@@ -772,6 +973,381 @@ for scenario_name in summary:
             errors.append(f'compat-schema-v6: {scenario_name} has schema_version {s.get("schema_version")}, expected 6')
         if 'compat' not in s:
             errors.append(f'compat-schema-v6: {scenario_name} missing compat field')
+
+# ═══════════════════════════════════════════════════════════════
+# Step 3B assertions: Resume from blocked
+# ═══════════════════════════════════════════════════════════════
+
+# --- resume-from-blocked ---
+resume_blocked_dir = base / 'resume-from-blocked'
+resume_state = json.loads((resume_blocked_dir / 'execution-state.json').read_text())
+if resume_state.get('status') != 'completed':
+    errors.append('resume-from-blocked: second run (resumed) should complete')
+if resume_state.get('run_id') != 'polaris-orchestrated-run':
+    errors.append('resume-from-blocked: run_id should be preserved from first run')
+if resume_state.get('compat', {}).get('resumed_count') != 1:
+    errors.append(f'resume-from-blocked: compat.resumed_count should be 1, got {resume_state.get("compat", {}).get("resumed_count")}')
+# learning_backlog key must exist in resumed state (preserved from first run, not cleared by re-init)
+if 'learning_backlog' not in resume_state:
+    errors.append('resume-from-blocked: learning_backlog key must exist in resumed state')
+# State machine history should exist (may be compacted in minimal density, so just check non-empty)
+history = resume_state.get('state_machine', {}).get('history', [])
+if not history:
+    errors.append('resume-from-blocked: state machine history should not be empty after resumed run')
+
+# --- resume-no-overwrite-completed ---
+resume_completed_dir = base / 'resume-no-overwrite-completed'
+resume_completed_state = json.loads((resume_completed_dir / 'execution-state.json').read_text())
+if resume_completed_state.get('status') != 'completed':
+    errors.append('resume-no-overwrite-completed: second run should complete')
+if resume_completed_state.get('compat', {}).get('resumed_count', -1) != 0:
+    errors.append(f'resume-no-overwrite-completed: compat.resumed_count should be 0 (fresh init), got {resume_completed_state.get("compat", {}).get("resumed_count")}')
+
+# --- resume-refuse-in-progress ---
+resume_inprogress_exit = int(os.environ.get('RESUME_INPROGRESS_EXIT', '0'))
+if resume_inprogress_exit == 0:
+    errors.append('resume-refuse-in-progress: orchestrator should refuse (exit non-zero) when state is in_progress')
+
+# Verify resumed_count exists in all scenarios
+for scenario_name in summary:
+    scenario_dir = base / scenario_name
+    state_path = scenario_dir / 'execution-state.json'
+    if state_path.exists():
+        s = json.loads(state_path.read_text())
+        if 'compat' in s and 'resumed_count' not in s.get('compat', {}):
+            errors.append(f'compat-resumed-count: {scenario_name} missing resumed_count in compat')
+
+# ═══════════════════════════════════════════════════════════════
+# Step 4A assertions: Bootstrap protocol
+# ═══════════════════════════════════════════════════════════════
+
+# 4A.1: polaris_bootstrap.json exists with 5 adapters, 1 rule, 1 pattern, requires section
+bootstrap_manifest_path = pathlib.Path(os.environ['POLARIS_ROOT']) / 'scripts' / 'polaris_bootstrap.json'
+manifest = json.loads(bootstrap_manifest_path.read_text()) if bootstrap_manifest_path.exists() else None
+if manifest is None:
+    errors.append('4A-manifest: polaris_bootstrap.json does not exist')
+else:
+    if len(manifest.get('adapters', [])) != 5:
+        errors.append(f'4A-manifest: expected 5 adapters, got {len(manifest.get("adapters", []))}')
+    if len(manifest.get('rules', [])) != 1:
+        errors.append(f'4A-manifest: expected 1 rule, got {len(manifest.get("rules", []))}')
+    if len(manifest.get('patterns', [])) != 1:
+        errors.append(f'4A-manifest: expected 1 pattern, got {len(manifest.get("patterns", []))}')
+    if 'requires' not in manifest:
+        errors.append('4A-manifest: missing requires section')
+
+# 4A.2: polaris_runtime_demo.sh has no polaris_adapters.py add calls
+demo_path = pathlib.Path(os.environ['POLARIS_ROOT']) / 'scripts' / 'polaris_runtime_demo.sh'
+if demo_path.exists():
+    demo_content = demo_path.read_text()
+    if 'polaris_adapters.py add' in demo_content:
+        errors.append('4A-demo: polaris_runtime_demo.sh still has inline polaris_adapters.py add calls')
+    if 'polaris_rules.py add' in demo_content:
+        errors.append('4A-demo: polaris_runtime_demo.sh still has inline polaris_rules.py add calls')
+    if 'polaris_success_patterns.py capture' in demo_content:
+        errors.append('4A-demo: polaris_runtime_demo.sh still has inline polaris_success_patterns.py capture calls')
+
+# 4A.5: Bootstrap idempotency — second run should skip
+idem_report_path = base / 'bootstrap-idempotency' / 'bootstrap-run2.json'
+if idem_report_path.exists():
+    idem_report = json.loads(idem_report_path.read_text())
+    if not idem_report.get('skipped'):
+        errors.append('4A-idempotency: second bootstrap run should report skipped=true')
+else:
+    errors.append('4A-idempotency: bootstrap-run2.json not found')
+
+# 4A.6: Bootstrap requirement failure
+bootstrap_fail_exit = int(os.environ.get('BOOTSTRAP_FAIL_EXIT', '0'))
+if bootstrap_fail_exit == 0:
+    errors.append('4A-req-failure: bootstrap with bad interpreter should exit non-zero')
+# No files should be written to the fail dir
+fail_adapters = base / 'bootstrap-req-failure' / 'adapters.json'
+if fail_adapters.exists():
+    errors.append('4A-req-failure: adapters.json should not be written when requirements fail')
+
+# 4A.7: Bootstrap capability probe — unknown capability should fail
+bootstrap_cap_exit = int(os.environ.get('BOOTSTRAP_CAP_EXIT', '0'))
+if bootstrap_cap_exit == 0:
+    errors.append('4A-cap-failure: bootstrap with unknown capability should exit non-zero')
+
+# 4A.7b: Bootstrap real probe failure — interpreter exists but local-exec probe fails
+bootstrap_probe_exit = int(os.environ.get('BOOTSTRAP_PROBE_EXIT', '0'))
+if bootstrap_probe_exit == 0:
+    errors.append('4A-probe-failure: bootstrap with failing local-exec probe (false interpreter) should exit non-zero')
+probe_adapters = base / 'bootstrap-probe-failure' / 'adapters.json'
+if probe_adapters.exists():
+    errors.append('4A-probe-failure: adapters.json should not be written when probe fails')
+
+# 4A.8: runtime-bootstrap-report.json written for normal scenarios
+for scenario_name in ['micro-success', 'runner-success', 'deep-success']:
+    report_path = base / scenario_name / 'runtime-bootstrap-report.json'
+    if not report_path.exists():
+        errors.append(f'4A-report: {scenario_name} missing runtime-bootstrap-report.json')
+    else:
+        report = json.loads(report_path.read_text())
+        if 'requires_check' not in report:
+            errors.append(f'4A-report: {scenario_name} bootstrap report missing requires_check')
+
+# ═══════════════════════════════════════════════════════════════
+# Step 4B assertions: Experience asset versioning + migration
+# ═══════════════════════════════════════════════════════════════
+
+# 4B.1/4B.2: Pattern migration — v1 gets asset_version:1, new gets asset_version:2
+pattern_mig_dir = base / '4b-pattern-migration'
+pattern_store = json.loads((pattern_mig_dir / 'success-patterns.json').read_text())
+for p in pattern_store.get('patterns', []):
+    if p.get('pattern_id') == 'v1-test':
+        if p.get('asset_version') != 1:
+            errors.append(f'4B-pattern-migration: v1 pattern should have asset_version=1, got {p.get("asset_version")}')
+        if p.get('migrated_from') != 'pre-step4':
+            errors.append('4B-pattern-migration: v1 pattern should have migrated_from=pre-step4')
+        # Behavioral fields must be unchanged
+        if p.get('trigger') != 'test' or p.get('outcome') != 'pass' or p.get('sequence') != ['a', 'b']:
+            errors.append('4B-pattern-migration: migration altered behavioral fields')
+    elif p.get('pattern_id') == 'v2-test':
+        if p.get('asset_version') != 2:
+            errors.append(f'4B-pattern-migration: v2 pattern should have asset_version=2, got {p.get("asset_version")}')
+
+# 4B: Pattern merge upgrade — v1 pattern re-captured must become asset_version:2
+merge_dir = base / '4b-pattern-merge-upgrade'
+merge_store = json.loads((merge_dir / 'success-patterns.json').read_text())
+for p in merge_store.get('patterns', []):
+    if p.get('pattern_id') == 'merge-target':
+        if p.get('asset_version') != 2:
+            errors.append(f'4B-pattern-merge: merged v1 pattern should upgrade to asset_version=2, got {p.get("asset_version")}')
+        if p.get('migrated_from') is not None:
+            errors.append('4B-pattern-merge: merged pattern should not retain migrated_from')
+
+# 4B: Pattern consolidate-marker merge upgrade — same path via consolidate
+consol_dir = base / '4b-pattern-consolidate-merge'
+consol_store = json.loads((consol_dir / 'success-patterns.json').read_text())
+for p in consol_store.get('patterns', []):
+    if p.get('pattern_id') == 'consol-target':
+        if p.get('asset_version') != 2:
+            errors.append(f'4B-pattern-consol-merge: consolidated v1 pattern should upgrade to asset_version=2, got {p.get("asset_version")}')
+        if p.get('migrated_from') is not None:
+            errors.append('4B-pattern-consol-merge: consolidated pattern should not retain migrated_from')
+
+# 4B.5/4B.6: Rule migration — v1 gets asset_version:1, new gets asset_version:2
+rule_mig_dir = base / '4b-rule-migration'
+rule_store = json.loads((rule_mig_dir / 'rules.json').read_text())
+for r in rule_store.get('rules', []):
+    if r.get('rule_id') == 'v1-rule':
+        if r.get('asset_version') != 1:
+            errors.append(f'4B-rule-migration: v1 rule should have asset_version=1, got {r.get("asset_version")}')
+        if r.get('migrated_from') != 'pre-step4':
+            errors.append('4B-rule-migration: v1 rule should have migrated_from=pre-step4')
+        # Behavioral fields must be unchanged
+        if r.get('trigger') != 'test' or r.get('action') != 'do thing':
+            errors.append('4B-rule-migration: migration altered behavioral fields')
+    elif r.get('rule_id') == 'v2-rule':
+        if r.get('asset_version') != 2:
+            errors.append(f'4B-rule-migration: v2 rule should have asset_version=2, got {r.get("asset_version")}')
+
+# 4B.7/4B.8: Backlog migration — v1 items get asset_version:1
+backlog_mig_dir = base / '4b-backlog-migration'
+sys.path.insert(0, str(pathlib.Path(os.environ['POLARIS_ROOT']) / 'scripts'))
+import polaris_state
+backlog_state = polaris_state.load_state(backlog_mig_dir / 'execution-state.json')
+for item in backlog_state.get('learning_backlog', []):
+    if 'asset_version' not in item:
+        errors.append('4B-backlog-migration: backlog item missing asset_version after load')
+    elif item['asset_version'] != 1:
+        errors.append(f'4B-backlog-migration: old backlog item should have asset_version=1, got {item["asset_version"]}')
+
+# 4B.5 (new backlog items): check any scenario with learning backlog for asset_version:2
+for scenario_name in ['deep-success', 'deep-repair']:
+    scenario_dir = base / scenario_name
+    state_path = scenario_dir / 'execution-state.json'
+    if state_path.exists():
+        s = json.loads(state_path.read_text())
+        for item in s.get('learning_backlog', []):
+            if 'asset_version' not in item:
+                errors.append(f'4B-backlog-new: {scenario_name} backlog item missing asset_version')
+            elif item['asset_version'] != 2:
+                errors.append(f'4B-backlog-new: {scenario_name} new backlog item should have asset_version=2, got {item["asset_version"]}')
+
+# 4B.1 (new patterns): check that patterns registered by bootstrap have asset_version:2
+for scenario_name in ['micro-success', 'runner-success']:
+    scenario_dir = base / scenario_name
+    pat_path = scenario_dir / 'success-patterns.json'
+    if pat_path.exists():
+        ps = json.loads(pat_path.read_text())
+        for p in ps.get('patterns', []):
+            if 'asset_version' not in p:
+                errors.append(f'4B-pattern-new: {scenario_name} pattern missing asset_version')
+            elif p['asset_version'] != 2:
+                errors.append(f'4B-pattern-new: {scenario_name} pattern should have asset_version=2')
+
+# 4B.5 (new rules): check that rules registered by bootstrap have asset_version:2
+for scenario_name in ['micro-success', 'runner-success']:
+    scenario_dir = base / scenario_name
+    rules_path = scenario_dir / 'rules.json'
+    if rules_path.exists():
+        rs = json.loads(rules_path.read_text())
+        for r in rs.get('rules', []):
+            if 'asset_version' not in r:
+                errors.append(f'4B-rule-new: {scenario_name} rule missing asset_version')
+            elif r['asset_version'] != 2:
+                errors.append(f'4B-rule-new: {scenario_name} rule should have asset_version=2')
+
+# 4B.9: Resume preserves original asset_version on backlog items
+resume_blocked_dir2 = base / 'resume-from-blocked'
+resume_state2 = json.loads((resume_blocked_dir2 / 'execution-state.json').read_text())
+for item in resume_state2.get('learning_backlog', []):
+    if 'asset_version' not in item:
+        errors.append('4B-resume-version: resumed backlog item missing asset_version')
+    elif item['asset_version'] != 2:
+        errors.append(f'4B-resume-version: resumed backlog item should keep asset_version=2, got {item["asset_version"]}')
+
+# ═══════════════════════════════════════════════════════════════
+# Step 5A assertions: Cross-version state evidence
+# ═══════════════════════════════════════════════════════════════
+
+import polaris_v5_snapshot as v5
+
+# 5A.1: polaris_v5_snapshot.py exists with the three required functions
+snapshot_path = pathlib.Path(os.environ['POLARIS_ROOT']) / 'scripts' / 'polaris_v5_snapshot.py'
+if not snapshot_path.exists():
+    errors.append('5A-snapshot: polaris_v5_snapshot.py does not exist')
+for fn_name in ['v5_load_state', 'v5_write_json', 'v5_default_state']:
+    if not hasattr(v5, fn_name):
+        errors.append(f'5A-snapshot: polaris_v5_snapshot.py missing {fn_name}')
+
+# 5A.2: rollback-v6-in-v5-loader — v6 state loads in v5 loader, key fields survive
+# Pick a completed v6 scenario
+v6_source = base / 'runner-success' / 'execution-state.json'
+if v6_source.exists():
+    import tempfile
+    v6_state_orig = json.loads(v6_source.read_text())
+    # Feed to v5 loader
+    with tempfile.TemporaryDirectory() as td:
+        td_path = pathlib.Path(td)
+        # Copy v6 state to temp
+        (td_path / 'execution-state.json').write_text(v6_source.read_text())
+        try:
+            v5_loaded = v5.v5_load_state(td_path / 'execution-state.json')
+            # Key fields survive
+            if v5_loaded.get('run_id') != v6_state_orig.get('run_id'):
+                errors.append('5A-rollback: run_id did not survive v6->v5 load')
+            if v5_loaded.get('goal') != v6_state_orig.get('goal'):
+                errors.append('5A-rollback: goal did not survive v6->v5 load')
+            if v5_loaded.get('status') != v6_state_orig.get('status'):
+                errors.append('5A-rollback: status did not survive v6->v5 load')
+            if v5_loaded.get('artifacts', {}).get('selected_adapter') != v6_state_orig.get('artifacts', {}).get('selected_adapter'):
+                errors.append('5A-rollback: artifacts.selected_adapter did not survive v6->v5 load')
+            if v5_loaded.get('state_machine', {}).get('node') != v6_state_orig.get('state_machine', {}).get('node'):
+                errors.append('5A-rollback: state_machine.node did not survive v6->v5 load')
+            # schema_version should be 5 (v5 loader forces it)
+            if v5_loaded.get('schema_version') != 5:
+                errors.append(f'5A-rollback: v5 loader should set schema_version=5, got {v5_loaded.get("schema_version")}')
+            # Write with v5 writer, then reload with current loader
+            v5.v5_write_json(td_path / 'execution-state.json', v5_loaded)
+            v6_reloaded = polaris_state.load_state(td_path / 'execution-state.json')
+            if v6_reloaded.get('schema_version') != 6:
+                errors.append('5A-rollback-roundtrip: v5-written state should upgrade to v6')
+            if v6_reloaded.get('run_id') != v6_state_orig.get('run_id'):
+                errors.append('5A-rollback-roundtrip: run_id did not survive full round-trip')
+            if v6_reloaded.get('goal') != v6_state_orig.get('goal'):
+                errors.append('5A-rollback-roundtrip: goal did not survive full round-trip')
+            if v6_reloaded.get('status') != v6_state_orig.get('status'):
+                errors.append('5A-rollback-roundtrip: status did not survive full round-trip')
+        except Exception as e:
+            errors.append(f'5A-rollback: v5 loader crashed on v6 state: {e}')
+else:
+    errors.append('5A-rollback: runner-success/execution-state.json not found')
+
+# 5A.3: coexist-v5-dir-full-run — v5-written state runs end-to-end
+coexist_dir = base / 'coexist-v5-dir-full-run'
+coexist_state_path = coexist_dir / 'execution-state.json'
+if coexist_state_path.exists():
+    coexist_state = json.loads(coexist_state_path.read_text())
+    if coexist_state.get('schema_version') != 6:
+        errors.append(f'5A-coexist: state should be upgraded to v6, got {coexist_state.get("schema_version")}')
+    if coexist_state.get('status') != 'completed':
+        errors.append(f'5A-coexist: run should complete, got {coexist_state.get("status")}')
+    if not (coexist_dir / 'runtime-format.json').exists():
+        errors.append('5A-coexist: runtime-format.json should be written by legacy gate')
+else:
+    errors.append('5A-coexist: coexist-v5-dir-full-run/execution-state.json not found')
+
+# 5A.4: cross-version-round-trip — v5->v6->v5 preserves key fields
+import tempfile
+with tempfile.TemporaryDirectory() as td:
+    td_path = pathlib.Path(td)
+    # Start: v5 default state → v5 write
+    v5_state = v5.v5_default_state()
+    v5_state['run_id'] = 'cross-version-test'
+    v5_state['goal'] = 'round-trip test'
+    v5_state['status'] = 'completed'
+    v5.v5_write_json(td_path / 'execution-state.json', v5_state)
+    # Step 1: current load_state (v5→v6 upgrade)
+    try:
+        v6_loaded = polaris_state.load_state(td_path / 'execution-state.json')
+        if v6_loaded.get('schema_version') != 6:
+            errors.append('5A-roundtrip: step1 should upgrade to v6')
+        if v6_loaded.get('run_id') != 'cross-version-test':
+            errors.append('5A-roundtrip: step1 lost run_id')
+        if v6_loaded.get('goal') != 'round-trip test':
+            errors.append('5A-roundtrip: step1 lost goal')
+        # Step 2: current write_json (v6 format)
+        polaris_state.write_json(td_path / 'execution-state.json', v6_loaded)
+        # Step 3: v5 load
+        v5_reloaded = v5.v5_load_state(td_path / 'execution-state.json')
+        if v5_reloaded.get('run_id') != 'cross-version-test':
+            errors.append('5A-roundtrip: step3 lost run_id after v5 reload')
+        if v5_reloaded.get('goal') != 'round-trip test':
+            errors.append('5A-roundtrip: step3 lost goal after v5 reload')
+        if v5_reloaded.get('status') != 'completed':
+            errors.append('5A-roundtrip: step3 lost status after v5 reload')
+    except Exception as e:
+        errors.append(f'5A-roundtrip: crashed during round-trip: {e}')
+
+# ═══════════════════════════════════════════════════════════════
+# Step 5B assertions: Planner contract metadata
+# ═══════════════════════════════════════════════════════════════
+
+# 5B.1/5B.3: Deep-profile plan steps have requires and validates_with
+deep_state = json.loads((base / 'deep-success' / 'execution-state.json').read_text())
+for step in deep_state.get('plan', []):
+    if 'requires' not in step:
+        errors.append(f'5B-plan-requires: deep step {step.get("phase")} missing requires')
+    if 'validates_with' not in step:
+        errors.append(f'5B-plan-requires: deep step {step.get("phase")} missing validates_with')
+    phase = step.get('phase')
+    if phase == 'executing':
+        if 'local-exec' not in step.get('requires', []):
+            errors.append('5B-plan-requires: executing step should require local-exec')
+        if step.get('validates_with') != 'runner_result_contract':
+            errors.append(f'5B-plan-requires: executing step should have validates_with=runner_result_contract, got {step.get("validates_with")}')
+    if phase == 'validating':
+        if 'local-exec' not in step.get('requires', []) or 'reporting' not in step.get('requires', []):
+            errors.append('5B-plan-requires: validating step should require local-exec and reporting')
+        if step.get('validates_with') != 'evidence_check':
+            errors.append(f'5B-plan-requires: validating step should have validates_with=evidence_check, got {step.get("validates_with")}')
+
+# 5B.2: Micro-profile plan steps have requires and validates_with
+micro_state = json.loads((base / 'micro-success' / 'execution-state.json').read_text())
+for step in micro_state.get('plan', []):
+    if 'requires' not in step:
+        errors.append(f'5B-plan-requires-micro: step {step.get("phase")} missing requires')
+    if 'validates_with' not in step:
+        errors.append(f'5B-plan-requires-micro: step {step.get("phase")} missing validates_with')
+
+# 5B.4: capability_warning on synthetic mismatch
+import polaris_contract_planner as cp
+limited_adapter = {'tool': 'limited', 'command': 'echo', 'capabilities': ['reporting'], 'inputs': []}
+_, warn_trace = cp.choose_family('auto', limited_adapter, [], None, None, plan_requires=['local-exec', 'reporting'])
+if 'capability_warning' not in warn_trace:
+    errors.append('5B-capability-warning: trace should contain capability_warning when adapter missing local-exec')
+elif 'local-exec' not in warn_trace['capability_warning']:
+    errors.append(f'5B-capability-warning: warning should mention local-exec, got: {warn_trace["capability_warning"]}')
+
+# Verify no warning when adapter has all required capabilities
+full_adapter = {'tool': 'full', 'command': 'echo', 'capabilities': ['local-exec', 'reporting', 'generic-runner'], 'inputs': []}
+_, no_warn_trace = cp.choose_family('auto', full_adapter, [], None, None, plan_requires=['local-exec', 'reporting'])
+if 'capability_warning' in no_warn_trace:
+    errors.append('5B-capability-warning: no warning expected when adapter has all required capabilities')
 
 print(json.dumps(summary, indent=2, sort_keys=True))
 if errors:

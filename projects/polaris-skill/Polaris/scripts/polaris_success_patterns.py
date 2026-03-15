@@ -32,6 +32,10 @@ def load_store(path: Path) -> dict:
         return {"schema_version": 1, "patterns": payload}
     payload.setdefault("schema_version", 1)
     payload.setdefault("patterns", [])
+    for p in payload["patterns"]:
+        if "asset_version" not in p:
+            p["asset_version"] = 1
+            p["migrated_from"] = "pre-step4"
     return payload
 
 
@@ -165,6 +169,8 @@ def merge_pattern(existing: dict | None, incoming: dict) -> dict:
     merged["reusable"] = incoming["reusable"]
     merged["strategy_hints"] = incoming.get("strategy_hints", existing.get("strategy_hints", {}))
     merged["expires_at"] = incoming.get("expires_at") or existing.get("expires_at")
+    merged["asset_version"] = incoming.get("asset_version", 2)
+    merged.pop("migrated_from", None)
     merged["updated_at"] = now()
     merged["last_validated_at"] = now()
     merged.setdefault("history", []).append(
@@ -296,6 +302,7 @@ def main() -> None:
             "created_at": now(),
             "updated_at": now(),
             "last_validated_at": now(),
+            "asset_version": 2,
         }
         pattern = merge_pattern(existing, incoming)
         store["patterns"] = [
@@ -375,6 +382,7 @@ def main() -> None:
             "created_at": now(),
             "updated_at": now(),
             "last_validated_at": now(),
+            "asset_version": marker.get("asset_version", 2),
         }
         pattern = merge_pattern(existing, incoming)
         store["patterns"] = [

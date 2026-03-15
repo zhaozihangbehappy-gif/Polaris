@@ -30,6 +30,10 @@ def load_store(path: Path) -> dict:
         }
     payload.setdefault("schema_version", 3)
     payload.setdefault("rules", [])
+    for r in payload["rules"]:
+        if "asset_version" not in r:
+            r["asset_version"] = 1
+            r["migrated_from"] = "pre-step4"
     return payload
 
 
@@ -135,6 +139,7 @@ def main() -> None:
             "validation_count": 1,
             "last_validated_at": now(),
             "created_at": now(),
+            "asset_version": 2,
         }
         existing = find_existing_rule(store, args.rule_id, None)
         if existing:
@@ -178,6 +183,7 @@ def main() -> None:
             "validation_count": 1,
             "last_validated_at": now(),
             "created_at": now(),
+            "asset_version": candidate.get("asset_version", 2),
         }
         if existing:
             rule["created_at"] = existing.get("created_at", rule["created_at"])
