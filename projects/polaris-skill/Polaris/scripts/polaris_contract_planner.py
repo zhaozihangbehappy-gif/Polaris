@@ -27,6 +27,8 @@ def choose_family(requested_kind: str, adapter: dict, applied_rules: list[dict],
         candidates.append(("file_transform", "adapter-capability+transform-tag"))
     if "command-output" in capabilities and "command-output" in tags:
         candidates.append(("command_output", "adapter-capability+command-output-tag"))
+    if "shell-command" in tags or requested_kind == "shell_command":
+        candidates.append(("shell_command", "shell-command-explicit"))
     if "generic-runner" in capabilities:
         candidates.append(("runner", "generic-runner-capability"))
 

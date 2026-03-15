@@ -7,6 +7,9 @@ import subprocess
 import sys
 from pathlib import Path
 
+# Ensure sibling modules (polaris_task_fingerprint, polaris_failure_records) are importable
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+
 
 PROFILE_POLICIES = {
     "micro": {
@@ -536,6 +539,38 @@ def stop_action(applied_rules: list[dict], repair_report: dict | None = None) ->
     return f"Retry or escalate to {next_depth} if the same failure repeats"
 
 
+def _build_failure_avoidance_hints(error_text: str, error_class: str, command: str) -> list[dict]:
+    """Map error_class + error_text → structured avoidance hint primitives.
+
+    Hints must be actionable: the adapter applies them before execution,
+    so each hint should change the command, env, cwd, or timeout in a way
+    that has a realistic chance of avoiding the same failure on retry.
+    """
+    hints = []
+    text = error_text.lower()
+    if error_class == "missing_dependency" and "no module named" in text:
+        parts = text.split("no module named")
+        if len(parts) > 1:
+            module = parts[1].strip().strip("'\"").split()[0]
+            hints.append({"kind": "set_env", "vars": {"POLARIS_HINT_INSTALL": module}})
+    if error_class == "missing_dependency" and "required env" in text:
+        # Extract env var name from original error text to preserve case
+        import re
+        m = re.search(r"required env (\w+)", error_text, re.IGNORECASE)
+        if m:
+            hints.append({"kind": "set_env", "vars": {m.group(1): "polaris-provided"}})
+    if error_class == "permission_denial":
+        hints.append({"kind": "set_env", "vars": {"POLARIS_HINT_PERMISSION_ERROR": "true"}})
+    if error_class == "path_or_missing_file":
+        # Rewrite cwd to /tmp as a safe fallback for path-dependent failures
+        hints.append({"kind": "rewrite_cwd", "cwd": "/tmp"})
+    if "timeout" in text:
+        hints.append({"kind": "set_timeout", "timeout_ms": 120000})
+    if not hints:
+        hints.append({"kind": "set_timeout", "timeout_ms": 120000})
+    return hints
+
+
 def choose_execution_kind(base: Path, requested_kind: str, adapter: dict, applied_rules: list[dict], selected_pattern: dict | None, simulate_error: str | None, plan_requires: list[str] | None = None) -> dict:
     return run_json_checked(
         [
@@ -874,7 +909,7 @@ def persist_efficiency_metrics(base: Path, state_file: str, runtime_dir: Path, m
     return run_checked([sys.executable, str(base / "polaris_state.py"), "artifact", "--state", state_file, "--key", "efficiency_metrics", "--value", json.dumps(metrics, sort_keys=True)], "record efficiency metrics")
 
 
-def build_execution_contract(base: Path, goal: str, state_file: str, adapter: dict, execution_profile: str, mode: str, applied_rules: list[dict], selected_pattern: dict | None, simulate_error: str | None, execution_kind: str, analysis_target: str | None = None) -> dict:
+def build_execution_contract(base: Path, goal: str, state_file: str, adapter: dict, execution_profile: str, mode: str, applied_rules: list[dict], selected_pattern: dict | None, simulate_error: str | None, execution_kind: str, analysis_target: str | None = None, shell_command: str | None = None, shell_cwd: str | None = None, shell_timeout_ms: int = 60000, experience_hints: dict | None = None) -> dict:
     runtime_dir = Path(state_file).resolve().parent
     default_output_file = str(runtime_dir / "runtime-execution-result.json")
     strategy = build_execution_strategy(applied_rules, selected_pattern, execution_profile, execution_kind)
@@ -890,6 +925,23 @@ def build_execution_contract(base: Path, goal: str, state_file: str, adapter: di
         "strategy": strategy,
         "simulate_error": simulate_error,
     }
+    if execution_kind == "shell_command":
+        shell_output = str(runtime_dir / "runtime-execution-result.json")
+        contract.update({
+            "kind": "shell_command",
+            "shell_command": shell_command or goal,
+            "shell_cwd": shell_cwd or str(runtime_dir),
+            "shell_timeout_ms": shell_timeout_ms,
+            "output_file": shell_output,
+            "experience_hints": experience_hints or {},
+            "validator": {
+                "kind": "json_status_file",
+                "output_file": shell_output,
+                "expected_status": "ok",
+                "required_fields": ["status", "command", "exit_code", "duration_ms"],
+            },
+        })
+        return contract
     if execution_kind == "file_analysis":
         target = analysis_target or str(base / "polaris_planner.py")
         analysis_output = str(runtime_dir / "runtime-analysis-result.json")
@@ -1025,6 +1077,42 @@ def build_execution_contract(base: Path, goal: str, state_file: str, adapter: di
 
 def execute_contract(base: Path, adapter: dict, contract: dict, artifact_name: str = "runtime-executor-result.json") -> dict:
     runtime_dir = Path(contract["output_file"]).resolve().parent
+    if contract.get("kind") == "shell_command":
+        cmd = [
+            sys.executable,
+            str(base / "polaris_adapter_shell.py"),
+            "--command", contract["shell_command"],
+            "--cwd", contract.get("shell_cwd", "."),
+            "--timeout-ms", str(contract.get("shell_timeout_ms", 60000)),
+            "--output", contract["output_file"],
+            "--goal", contract.get("goal", ""),
+            "--adapter", contract.get("adapter", "shell-command"),
+            "--experience-hints-json", json.dumps(contract.get("experience_hints", {}), sort_keys=True),
+            "--applied-rules-json", json.dumps([{"rule_id": rid} for rid in contract.get("applied_rule_ids", [])], sort_keys=True),
+            "--selected-pattern-json", json.dumps({"pattern_id": contract.get("selected_pattern")} if contract.get("selected_pattern") else {}, sort_keys=True),
+            "--execution-contract-json", json.dumps({"strategy": contract.get("strategy", {}), "kind": "shell_command"}, sort_keys=True),
+        ]
+        result = run(cmd)
+        # Also write executor result for consistency
+        executor_path = runtime_dir / artifact_name
+        executor_path.parent.mkdir(parents=True, exist_ok=True)
+        executor_payload = {
+            "status": "ok" if result["returncode"] == 0 else "failed",
+            "adapter": contract.get("adapter", "shell-command"),
+            "contract_kind": "shell_command",
+            "rendered_command": contract["shell_command"],
+            "returncode": result["returncode"],
+            "stdout": result.get("stdout", "").strip(),
+            "stderr": result.get("stderr", "").strip(),
+            "output_file": contract["output_file"],
+        }
+        executor_path.write_text(json.dumps(executor_payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+        if result["returncode"] == 0 and result.get("stdout"):
+            try:
+                result["parsed"] = json.loads(result["stdout"])
+            except json.JSONDecodeError:
+                pass
+        return result
     return run_json_checked(
         [
             sys.executable,
@@ -1071,7 +1159,10 @@ def main() -> None:
     parser.add_argument("--mode", choices=["short", "long"], default="long")
     parser.add_argument("--execution-profile", choices=["auto", "micro", "standard", "deep"], default="auto")
     parser.add_argument("--state-density", choices=["auto", "minimal", "full"], default="auto")
-    parser.add_argument("--execution-kind", choices=["auto", "runner", "file_transform", "command_output", "file_analysis"], default="auto")
+    parser.add_argument("--execution-kind", choices=["auto", "runner", "file_transform", "command_output", "file_analysis", "shell_command"], default="auto")
+    parser.add_argument("--shell-command")
+    parser.add_argument("--shell-cwd")
+    parser.add_argument("--shell-timeout-ms", type=int, default=60000)
     parser.add_argument("--analysis-target")
     parser.add_argument("--resume", action="store_true", default=False)
     args = parser.parse_args()
@@ -1118,6 +1209,8 @@ def main() -> None:
         effective_capabilities = policy["adapter_capabilities"] + ",file-transform"
     elif args.execution_kind == "command_output":
         effective_capabilities = policy["adapter_capabilities"] + ",command-output"
+    elif args.execution_kind == "shell_command":
+        effective_capabilities = policy["adapter_capabilities"] + ",shell-command"
     elif args.execution_kind == "runner":
         effective_capabilities = policy["adapter_capabilities"] + ",generic-runner"
     else:
@@ -1368,8 +1461,46 @@ def main() -> None:
     execution_kind = execution_plan.get("parsed", {}).get("family", "runner")
     history.append(run_checked([sys.executable, str(base / "polaris_state.py"), "artifact", "--state", args.state, "--key", "execution_kind", "--value", execution_kind], "record execution kind"))
     history.append(run_checked([sys.executable, str(base / "polaris_state.py"), "artifact", "--state", args.state, "--key", "execution_family_trace", "--value", json.dumps(execution_plan.get("parsed", {}).get("trace", {}), sort_keys=True)], "record execution family trace"))
-    baseline_contract = build_execution_contract(base, args.goal, args.state, adapter_record, execution_profile, args.mode, [rule for rule in applied_rules if rule.get("layer") == "hard"], None, args.simulate_error, execution_kind, analysis_target=getattr(args, "analysis_target", None))
-    execution_contract = build_execution_contract(base, args.goal, args.state, adapter_record, execution_profile, args.mode, applied_rules, selected_pattern_record, args.simulate_error, execution_kind, analysis_target=getattr(args, "analysis_target", None))
+    # ── Experience hints assembly (Phase 1: L2 path pruning) ──
+    experience_hints = {"prefer": [], "avoid": []}
+    task_fingerprint = None
+    shell_cmd = getattr(args, "shell_command", None)
+    shell_cwd = getattr(args, "shell_cwd", None) or str(runtime_dir)
+    shell_timeout_ms = getattr(args, "shell_timeout_ms", 60000)
+    if execution_kind == "shell_command" and shell_cmd:
+        import polaris_task_fingerprint as ptf
+        import polaris_failure_records as pfr
+        task_fingerprint = ptf.compute(shell_cmd, shell_cwd)
+        # Query failure records for avoidance hints
+        failure_store_path = Path(args.patterns).parent / "failure-records.json"
+        failure_store = pfr.load_store(failure_store_path)
+        failure_matches = pfr.query(failure_store, task_fingerprint)
+        avoid_hints = pfr.build_avoidance_hints(failure_matches)
+        experience_hints["avoid"] = avoid_hints
+        # Query success patterns for prefer hints
+        if selected_pattern_record:
+            strategy_hints = selected_pattern_record.get("strategy_hints", {})
+            for hint in strategy_hints.get("experience_hints_prefer", []):
+                if hint.get("kind") in {"append_flags", "set_env", "rewrite_cwd", "set_timeout"}:
+                    experience_hints["prefer"].append(hint)
+        # Filter hints to adapter's supported kinds
+        adapter_supported = set(adapter_record.get("supported_hint_kinds", ["append_flags", "set_env", "rewrite_cwd", "set_timeout"]))
+        experience_hints["prefer"] = [h for h in experience_hints["prefer"] if h.get("kind") in adapter_supported]
+        experience_hints["avoid"] = [h for h in experience_hints["avoid"] if h.get("kind") in adapter_supported]
+        history.append(run_checked([sys.executable, str(base / "polaris_state.py"), "artifact", "--state", args.state, "--key", "task_fingerprint", "--value", json.dumps(task_fingerprint, sort_keys=True)], "record task fingerprint"))
+        if experience_hints["prefer"] or experience_hints["avoid"]:
+            history.append(run_checked([sys.executable, str(base / "polaris_state.py"), "artifact", "--state", args.state, "--key", "experience_hints", "--value", json.dumps(experience_hints, sort_keys=True)], "record experience hints"))
+
+    extra_contract_args = {}
+    if execution_kind == "shell_command":
+        extra_contract_args = {
+            "shell_command": shell_cmd or args.goal,
+            "shell_cwd": shell_cwd,
+            "shell_timeout_ms": shell_timeout_ms,
+            "experience_hints": experience_hints,
+        }
+    baseline_contract = build_execution_contract(base, args.goal, args.state, adapter_record, execution_profile, args.mode, [rule for rule in applied_rules if rule.get("layer") == "hard"], None, args.simulate_error, execution_kind, analysis_target=getattr(args, "analysis_target", None), **extra_contract_args)
+    execution_contract = build_execution_contract(base, args.goal, args.state, adapter_record, execution_profile, args.mode, applied_rules, selected_pattern_record, args.simulate_error, execution_kind, analysis_target=getattr(args, "analysis_target", None), **extra_contract_args)
     contract_diff = build_contract_diff(summarize_contract_for_diff(baseline_contract), summarize_contract_for_diff(execution_contract))
     validator_diff = build_contract_diff(baseline_contract.get("validator", {}), execution_contract.get("validator", {}))
     transfer_contract_diff = contract_diff if family_transfer_applied else {}
@@ -1393,9 +1524,26 @@ def main() -> None:
     execution_validation_error = validation_result.get("parsed", {}).get("reason")
     execution_payload = validation_result.get("parsed", {}).get("payload")
     execution_error = None
-    if execution_result.get("parsed", {}).get("returncode") != 0 or not execution_ok:
-        execution_error = execution_result.get("parsed", {}).get("stderr") or execution_result.get("parsed", {}).get("stdout") or execution_validation_error or args.simulate_error or "execution failed"
+    # For shell_command, the adapter process returncode is at top level, not in parsed;
+    # for other kinds, the executor embeds returncode in parsed output.
+    exec_rc = execution_result.get("returncode", 0) if execution_kind == "shell_command" else execution_result.get("parsed", {}).get("returncode", 0)
+    if exec_rc != 0 or not execution_ok:
+        execution_error = execution_result.get("parsed", {}).get("stderr") or execution_result.get("stderr") or execution_result.get("parsed", {}).get("stdout") or execution_validation_error or args.simulate_error or "execution failed"
         history.append(run_checked([sys.executable, str(base / "polaris_state.py"), "attempt", "--state", args.state, "--step", "execute_adapter_contract", "--status", "failed", "--summary", execution_error, "--evidence", execution_contract.get("output_file", ""), "--branch-id", execution_branch], "record execution failure attempt"))
+        # ── Record failure to failure store (Phase 1: L2 experience) ──
+        if execution_kind == "shell_command" and task_fingerprint:
+            import polaris_failure_records as pfr
+            import polaris_repair as pr
+            failure_classification = pr.classify(execution_error)
+            error_class = failure_classification.get("failure_type", "unknown")
+            repair_class = failure_classification.get("repair_class", "unknown")
+            # Build avoidance hints from the failure
+            avoidance_hints = _build_failure_avoidance_hints(execution_error, error_class, shell_cmd or args.goal)
+            failure_store_path = Path(args.patterns).parent / "failure-records.json"
+            failure_store = pfr.load_store(failure_store_path)
+            pfr.record(failure_store, task_fingerprint, shell_cmd or args.goal, error_class, execution_error[:500], repair_class, avoidance_hints)
+            pfr.write_store(failure_store_path, failure_store)
+            history.append(run_checked([sys.executable, str(base / "polaris_state.py"), "artifact", "--state", args.state, "--key", "failure_record_written", "--value", "true"], "record failure record written"))
         repair_report = run_json_checked(
             [
                 sys.executable,
@@ -1629,6 +1777,8 @@ def main() -> None:
             "adapter": adapter_name or "none",
             "kind": "foreground-success",
         }
+        if task_fingerprint:
+            success_context["task_fingerprint"] = task_fingerprint
         success_fp = make_fingerprint("success", success_context)
         success_marker = {
             "pattern_id": f"{execution_profile}-local-success-marker-{success_fp}",
@@ -1651,6 +1801,8 @@ def main() -> None:
                 "hot_path_budget": 2,
             },
         }
+        if task_fingerprint:
+            success_marker["task_fingerprint"] = task_fingerprint
         history.append(queue_learning_item(base, args.state, "success_marker", success_marker))
         history.append(run_checked([sys.executable, str(base / "polaris_state.py"), "set", "--state", args.state, "--summary-outcome", f"{execution_profile.title()} run validated locally and queued deferred learning capture"], "record deferred success summary"))
     history.append(run_checked([sys.executable, str(base / "polaris_state.py"), "plan-step", "--state", args.state, "--phase", "validating", "--status", "completed"], "complete validating step"))

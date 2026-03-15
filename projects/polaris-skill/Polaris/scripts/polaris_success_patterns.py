@@ -170,6 +170,8 @@ def merge_pattern(existing: dict | None, incoming: dict) -> dict:
     merged["strategy_hints"] = incoming.get("strategy_hints", existing.get("strategy_hints", {}))
     merged["expires_at"] = incoming.get("expires_at") or existing.get("expires_at")
     merged["asset_version"] = incoming.get("asset_version", 2)
+    if incoming.get("task_fingerprint"):
+        merged["task_fingerprint"] = incoming["task_fingerprint"]
     merged.pop("migrated_from", None)
     merged["updated_at"] = now()
     merged["last_validated_at"] = now()
@@ -384,6 +386,8 @@ def main() -> None:
             "last_validated_at": now(),
             "asset_version": marker.get("asset_version", 2),
         }
+        if marker.get("task_fingerprint"):
+            incoming["task_fingerprint"] = marker["task_fingerprint"]
         pattern = merge_pattern(existing, incoming)
         store["patterns"] = [
             item for item in store["patterns"]

@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 ROOT=$(cd "$(dirname "$0")/.." && pwd)
-OUT_BASE="${POLARIS_REGRESSION_OUT:-$ROOT/regression-runs}"
-rm -rf "$OUT_BASE"
+OUT_BASE="${POLARIS_REGRESSION_OUT:-/tmp/polaris-regression-runs}"
+rm -rf "$OUT_BASE" 2>/dev/null || true
 mkdir -p "$OUT_BASE"
 
 run_demo() {
@@ -111,6 +111,81 @@ POLARIS_EXECUTION_KIND=runner \
 POLARIS_SIMULATE_ERROR='' \
 POLARIS_GOAL='Demonstrate Polaris transfer target flow with a different task prompt' \
 bash "$ROOT/scripts/polaris_runtime_demo.sh" >/tmp/polaris-step3-transfer-target.out
+
+# ── Phase 1: Real shell-command experience loop scenarios ──
+
+# real-shell-success: shell_command adapter runs echo hello, captures result, pattern recorded
+REAL_SHELL_SUCCESS_DIR="$OUT_BASE/real-shell-success"
+POLARIS_RUNTIME_DIR="$REAL_SHELL_SUCCESS_DIR" \
+POLARIS_EXECUTION_PROFILE=standard \
+POLARIS_MODE=short \
+POLARIS_EXECUTION_KIND=shell_command \
+POLARIS_SIMULATE_ERROR='' \
+POLARIS_GOAL='Run echo hello via real shell adapter' \
+POLARIS_SHELL_COMMAND='echo hello' \
+bash "$ROOT/scripts/polaris_runtime_demo.sh" >/tmp/polaris-real-shell-success.out
+
+# real-shell-failure-classified: shell_command that fails → repair classifies real stderr → failure record written
+REAL_SHELL_FAIL_DIR="$OUT_BASE/real-shell-failure-classified"
+POLARIS_RUNTIME_DIR="$REAL_SHELL_FAIL_DIR" \
+POLARIS_EXECUTION_PROFILE=standard \
+POLARIS_MODE=short \
+POLARIS_EXECUTION_KIND=shell_command \
+POLARIS_SIMULATE_ERROR='' \
+POLARIS_GOAL='Run a command that will fail' \
+POLARIS_SHELL_COMMAND='cat /nonexistent/path/that/does/not/exist/polaris-test-file.txt' \
+bash "$ROOT/scripts/polaris_runtime_demo.sh" >/tmp/polaris-real-shell-failure-classified.out || true
+
+# real-experience-replay: Run 1 succeeds + pattern captured → Run 2 same task, pattern selected
+REAL_REPLAY_DIR="$OUT_BASE/real-experience-replay"
+POLARIS_RUNTIME_DIR="$REAL_REPLAY_DIR" \
+POLARIS_EXECUTION_PROFILE=standard \
+POLARIS_MODE=short \
+POLARIS_EXECUTION_KIND=shell_command \
+POLARIS_SIMULATE_ERROR='' \
+POLARIS_GOAL='Run echo replay-test via real shell adapter' \
+POLARIS_SHELL_COMMAND='echo replay-test' \
+bash "$ROOT/scripts/polaris_runtime_demo.sh" >/tmp/polaris-real-experience-replay-1.out
+cp "$REAL_REPLAY_DIR/execution-state.json" "$REAL_REPLAY_DIR/execution-state-run1.json"
+
+# Run 2: same command, fresh state — should pick up pattern from run 1
+rm -f "$REAL_REPLAY_DIR/execution-state.json"
+POLARIS_RUNTIME_DIR="$REAL_REPLAY_DIR" \
+POLARIS_EXECUTION_PROFILE=standard \
+POLARIS_MODE=short \
+POLARIS_EXECUTION_KIND=shell_command \
+POLARIS_SIMULATE_ERROR='' \
+POLARIS_GOAL='Run echo replay-test via real shell adapter' \
+POLARIS_SHELL_COMMAND='echo replay-test' \
+bash "$ROOT/scripts/polaris_runtime_demo.sh" >/tmp/polaris-real-experience-replay-2.out
+cp "$REAL_REPLAY_DIR/execution-state.json" "$REAL_REPLAY_DIR/execution-state-run2.json"
+
+# real-experience-avoids-failure: Run 1 fails → failure recorded → Run 2 avoids failure via hints
+# The command checks $POLARIS_TEST_TOKEN. Run 1 has no env var → missing_dependency + "required env".
+# The avoidance hint sets POLARIS_TEST_TOKEN=polaris-provided → Run 2 succeeds.
+REAL_AVOID_DIR="$OUT_BASE/real-experience-avoids-failure"
+POLARIS_RUNTIME_DIR="$REAL_AVOID_DIR" \
+POLARIS_EXECUTION_PROFILE=standard \
+POLARIS_MODE=short \
+POLARIS_EXECUTION_KIND=shell_command \
+POLARIS_SIMULATE_ERROR='' \
+POLARIS_GOAL='Test experience avoidance with env var' \
+POLARIS_SHELL_COMMAND='bash -c '"'"'test -n "$POLARIS_TEST_TOKEN" || (echo "required env POLARIS_TEST_TOKEN not set" >&2; exit 1)'"'"'' \
+bash "$ROOT/scripts/polaris_runtime_demo.sh" >/tmp/polaris-real-avoid-1.out || true
+cp "$REAL_AVOID_DIR/execution-state.json" "$REAL_AVOID_DIR/execution-state-run1.json"
+
+# Run 2: same command, fresh state — avoidance hint sets POLARIS_TEST_TOKEN=polaris-provided
+rm -f "$REAL_AVOID_DIR/execution-state.json"
+rm -f "$REAL_AVOID_DIR/runtime-execution-result.json"
+POLARIS_RUNTIME_DIR="$REAL_AVOID_DIR" \
+POLARIS_EXECUTION_PROFILE=standard \
+POLARIS_MODE=short \
+POLARIS_EXECUTION_KIND=shell_command \
+POLARIS_SIMULATE_ERROR='' \
+POLARIS_GOAL='Test experience avoidance with env var' \
+POLARIS_SHELL_COMMAND='bash -c '"'"'test -n "$POLARIS_TEST_TOKEN" || (echo "required env POLARIS_TEST_TOKEN not set" >&2; exit 1)'"'"'' \
+bash "$ROOT/scripts/polaris_runtime_demo.sh" >/tmp/polaris-real-avoid-2.out || true
+cp "$REAL_AVOID_DIR/execution-state.json" "$REAL_AVOID_DIR/execution-state-run2.json"
 
 POLARIS_ROOT="$ROOT" python3 - <<'PY' > "$OUT_BASE/step2-strategy-conflict.json"
 import json, os, pathlib, sys
@@ -1027,8 +1102,8 @@ manifest = json.loads(bootstrap_manifest_path.read_text()) if bootstrap_manifest
 if manifest is None:
     errors.append('4A-manifest: polaris_bootstrap.json does not exist')
 else:
-    if len(manifest.get('adapters', [])) != 5:
-        errors.append(f'4A-manifest: expected 5 adapters, got {len(manifest.get("adapters", []))}')
+    if len(manifest.get('adapters', [])) != 6:
+        errors.append(f'4A-manifest: expected 6 adapters, got {len(manifest.get("adapters", []))}')
     if len(manifest.get('rules', [])) != 1:
         errors.append(f'4A-manifest: expected 1 rule, got {len(manifest.get("rules", []))}')
     if len(manifest.get('patterns', [])) != 1:
@@ -1348,6 +1423,144 @@ full_adapter = {'tool': 'full', 'command': 'echo', 'capabilities': ['local-exec'
 _, no_warn_trace = cp.choose_family('auto', full_adapter, [], None, None, plan_requires=['local-exec', 'reporting'])
 if 'capability_warning' in no_warn_trace:
     errors.append('5B-capability-warning: no warning expected when adapter has all required capabilities')
+
+# ═══════════════════════════════════════════════════════════════
+# Phase 1: Real shell-command experience loop assertions
+# ═══════════════════════════════════════════════════════════════
+
+# Phase 1A: real-shell-success — adapter ran real command, result is runner-compatible
+real_shell_success_state = json.loads((base / 'real-shell-success' / 'execution-state.json').read_text())
+if real_shell_success_state.get('status') != 'completed':
+    errors.append('phase1-real-shell-success: run should complete')
+real_shell_result_path = base / 'real-shell-success' / 'runtime-execution-result.json'
+if not real_shell_result_path.exists():
+    errors.append('phase1-real-shell-success: execution result file missing')
+else:
+    real_shell_result = json.loads(real_shell_result_path.read_text())
+    if real_shell_result.get('status') != 'ok':
+        errors.append(f'phase1-real-shell-success: status should be ok, got {real_shell_result.get("status")}')
+    if real_shell_result.get('exit_code') != 0:
+        errors.append(f'phase1-real-shell-success: exit_code should be 0, got {real_shell_result.get("exit_code")}')
+    if 'hello' not in real_shell_result.get('stdout', ''):
+        errors.append('phase1-real-shell-success: stdout should contain hello')
+    if 'command' not in real_shell_result:
+        errors.append('phase1-real-shell-success: result should contain command field')
+    if 'duration_ms' not in real_shell_result:
+        errors.append('phase1-real-shell-success: result should contain duration_ms field')
+
+# Phase 1A: real-shell-failure-classified — failure classified and recorded
+real_fail_dir = base / 'real-shell-failure-classified'
+failure_store_path = real_fail_dir / 'failure-records.json'
+if not failure_store_path.exists():
+    errors.append('phase1-real-shell-failure-classified: failure-records.json should exist')
+else:
+    failure_store = json.loads(failure_store_path.read_text())
+    if len(failure_store.get('records', [])) == 0:
+        errors.append('phase1-real-shell-failure-classified: failure store should have at least one record')
+    else:
+        rec = failure_store['records'][0]
+        if 'task_fingerprint' not in rec:
+            errors.append('phase1-real-shell-failure-classified: failure record should have task_fingerprint')
+        else:
+            fp = rec['task_fingerprint']
+            if 'raw_descriptor' not in fp or 'normalized_descriptor' not in fp or 'matching_key' not in fp:
+                errors.append('phase1-real-shell-failure-classified: task_fingerprint must have raw_descriptor, normalized_descriptor, matching_key')
+        if rec.get('error_class') not in ('path_or_missing_file', 'unknown'):
+            errors.append(f'phase1-real-shell-failure-classified: error_class should be path_or_missing_file, got {rec.get("error_class")}')
+        if rec.get('asset_version') != 2:
+            errors.append('phase1-real-shell-failure-classified: failure record should have asset_version 2')
+        if not rec.get('avoidance_hints'):
+            errors.append('phase1-real-shell-failure-classified: failure record should have avoidance_hints')
+        else:
+            for hint in rec['avoidance_hints']:
+                if hint.get('kind') not in ('append_flags', 'set_env', 'rewrite_cwd', 'set_timeout'):
+                    errors.append(f'phase1-real-shell-failure-classified: avoidance hint kind {hint.get("kind")} not in allowed set')
+
+# Verify failure store has NO entries in success pattern store
+real_fail_patterns_path = real_fail_dir / 'success-patterns.json'
+if real_fail_patterns_path.exists():
+    fail_patterns = json.loads(real_fail_patterns_path.read_text())
+    for p in fail_patterns.get('patterns', []):
+        if 'failure' in p.get('lifecycle_state', '') or 'failure' in p.get('pattern_id', ''):
+            errors.append('phase1-real-shell-failure-classified: failure data should NOT be in success pattern store')
+
+# Phase 1D: real-experience-avoids-failure — Run 1 fails, Run 2 succeeds via hints
+avoid_dir = base / 'real-experience-avoids-failure'
+avoid_state_run1 = avoid_dir / 'execution-state-run1.json'
+avoid_state_run2 = avoid_dir / 'execution-state-run2.json'
+if not avoid_state_run1.exists():
+    errors.append('phase1-real-experience-avoids-failure: run1 state should exist')
+else:
+    avoid_s1 = json.loads(avoid_state_run1.read_text())
+    if avoid_s1.get('status') != 'blocked':
+        errors.append(f'phase1-real-experience-avoids-failure: run1 should be blocked, got {avoid_s1.get("status")}')
+if not avoid_state_run2.exists():
+    errors.append('phase1-real-experience-avoids-failure: run2 state should exist')
+else:
+    avoid_state2 = json.loads(avoid_state_run2.read_text())
+    artifacts2 = avoid_state2.get('artifacts', {})
+    # Blocker 1 hard gate: Run 2 must succeed (outcome changed by hints)
+    if avoid_state2.get('status') != 'completed':
+        errors.append(f'phase1-real-experience-avoids-failure: run2 must complete (outcome must change), got {avoid_state2.get("status")}')
+    # Check that experience hints were assembled
+    hints_json = artifacts2.get('experience_hints')
+    if not hints_json:
+        errors.append('phase1-real-experience-avoids-failure: run2 should have experience_hints artifact')
+    else:
+        hints = json.loads(hints_json) if isinstance(hints_json, str) else hints_json
+        if not hints.get('avoid'):
+            errors.append('phase1-real-experience-avoids-failure: run2 experience_hints.avoid should not be empty')
+        else:
+            has_set_env = any(h.get('kind') == 'set_env' for h in hints['avoid'])
+            if not has_set_env:
+                errors.append('phase1-real-experience-avoids-failure: avoidance hints should include set_env for the missing env var')
+    # Check that task_fingerprint was recorded
+    if not artifacts2.get('task_fingerprint'):
+        errors.append('phase1-real-experience-avoids-failure: run2 should have task_fingerprint artifact')
+    # Check execution result shows experience was applied
+    avoid_result_path = avoid_dir / 'runtime-execution-result.json'
+    if avoid_result_path.exists():
+        avoid_result = json.loads(avoid_result_path.read_text())
+        applied = avoid_result.get('experience_applied', [])
+        if not applied:
+            errors.append('phase1-real-experience-avoids-failure: run2 execution result should show experience_applied is not empty')
+        # Verify the applied hint actually set the env var
+        set_env_applied = [a for a in applied if a.get('kind') == 'set_env']
+        if not set_env_applied:
+            errors.append('phase1-real-experience-avoids-failure: run2 should have applied a set_env hint')
+
+# Phase 1E: real-experience-replay — task_fingerprint on success side (Blocker 2)
+replay_dir = base / 'real-experience-replay'
+replay_run1_state = json.loads((replay_dir / 'execution-state-run1.json').read_text())
+replay_run2_state = json.loads((replay_dir / 'execution-state-run2.json').read_text())
+if replay_run1_state.get('status') != 'completed':
+    errors.append('phase1-real-experience-replay: run1 should complete')
+if replay_run2_state.get('status') != 'completed':
+    errors.append('phase1-real-experience-replay: run2 should complete')
+# Both runs must have task_fingerprint
+replay_run1_fp = replay_run1_state.get('artifacts', {}).get('task_fingerprint')
+replay_run2_fp = replay_run2_state.get('artifacts', {}).get('task_fingerprint')
+if not replay_run1_fp:
+    errors.append('phase1-real-experience-replay: run1 must have task_fingerprint artifact')
+if not replay_run2_fp:
+    errors.append('phase1-real-experience-replay: run2 must have task_fingerprint artifact')
+# Success patterns store must have entry with task_fingerprint
+replay_patterns_path = replay_dir / 'success-patterns.json'
+if replay_patterns_path.exists():
+    replay_patterns = json.loads(replay_patterns_path.read_text())
+    replay_pats = replay_patterns.get('patterns', [])
+    has_task_fp_in_pattern = any(p.get('task_fingerprint') for p in replay_pats)
+    if not has_task_fp_in_pattern:
+        errors.append('phase1-real-experience-replay: success pattern must have task_fingerprint for experience loop closure')
+else:
+    errors.append('phase1-real-experience-replay: success-patterns.json should exist')
+
+# Add phase1 scenarios to expected dict
+summary['real-shell-success'] = {
+    'status': real_shell_success_state.get('status'),
+    'phase': real_shell_success_state.get('phase'),
+    'execution_kind': real_shell_success_state.get('artifacts', {}).get('execution_kind'),
+}
 
 print(json.dumps(summary, indent=2, sort_keys=True))
 if errors:

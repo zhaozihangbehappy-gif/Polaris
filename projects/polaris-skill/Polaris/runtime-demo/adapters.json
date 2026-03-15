@@ -5,7 +5,110 @@
       "capabilities": [
         "local-exec",
         "reporting",
-        "repair-probes"
+        "validation",
+        "file-analysis",
+        "durable-status",
+        "long-run"
+      ],
+      "command": "python3 <script>.py",
+      "cost_hint": 1,
+      "failure_notes": [
+        "Analysis contracts depend on target file accessibility"
+      ],
+      "fallback_notes": [
+        "Fall back to python-local or shell-local when analysis-specific execution is unavailable"
+      ],
+      "fallbacks": [
+        "python-local",
+        "shell-local"
+      ],
+      "inputs": [
+        "script_path",
+        "args"
+      ],
+      "latency_hint": 1,
+      "mode_preferences": {
+        "long": 3,
+        "short": 5
+      },
+      "modes": [
+        "short",
+        "long"
+      ],
+      "notes": "Adapter for real file analysis with independent validation",
+      "preferred_failures": [
+        "path_or_missing_file"
+      ],
+      "prerequisites": [
+        "python3"
+      ],
+      "safe_retry": true,
+      "selectors": [
+        "prefer for local file analysis contracts",
+        "prefer when validator independently re-reads source files"
+      ],
+      "tool": "file-analysis-local",
+      "trust_level": "workspace",
+      "updated_at": "2026-03-15T13:23:13.020338+00:00"
+    },
+    {
+      "avoid_failures": [],
+      "capabilities": [
+        "local-exec",
+        "reporting",
+        "validation",
+        "file-transform",
+        "durable-status",
+        "long-run"
+      ],
+      "command": "python3 <script>.py",
+      "cost_hint": 1,
+      "failure_notes": [
+        "Transform contracts still depend on local filesystem writes"
+      ],
+      "fallback_notes": [
+        "Fall back to python-local or shell-local when transform-specific execution is unavailable"
+      ],
+      "fallbacks": [
+        "python-local",
+        "shell-local"
+      ],
+      "inputs": [
+        "script_path",
+        "args"
+      ],
+      "latency_hint": 1,
+      "mode_preferences": {
+        "long": 3,
+        "short": 5
+      },
+      "modes": [
+        "short",
+        "long"
+      ],
+      "notes": "Preferred adapter for local file transform execution contracts",
+      "preferred_failures": [
+        "path_or_missing_file"
+      ],
+      "prerequisites": [
+        "python3"
+      ],
+      "safe_retry": true,
+      "selectors": [
+        "prefer for local file transform contracts",
+        "prefer when validator reads transformed files"
+      ],
+      "tool": "file-transform-local",
+      "trust_level": "workspace",
+      "updated_at": "2026-03-15T13:23:12.927977+00:00"
+    },
+    {
+      "avoid_failures": [],
+      "capabilities": [
+        "local-exec",
+        "reporting",
+        "repair-probes",
+        "generic-runner"
       ],
       "command": "python3 <script>.py",
       "cost_hint": 1,
@@ -46,7 +149,7 @@
       ],
       "tool": "python-local",
       "trust_level": "workspace",
-      "updated_at": "2026-03-13T12:02:45.237408+00:00"
+      "updated_at": "2026-03-15T13:23:12.894476+00:00"
     },
     {
       "avoid_failures": [],
@@ -55,7 +158,8 @@
         "reporting",
         "repair-probes",
         "durable-status",
-        "long-run"
+        "long-run",
+        "generic-runner"
       ],
       "command": "python3 <script>.py",
       "cost_hint": 2,
@@ -97,7 +201,47 @@
       ],
       "tool": "python-runtime-local",
       "trust_level": "workspace",
-      "updated_at": "2026-03-13T12:02:45.197806+00:00"
+      "updated_at": "2026-03-15T13:23:12.862061+00:00"
+    },
+    {
+      "avoid_failures": [],
+      "capabilities": [
+        "local-exec",
+        "reporting",
+        "shell-command"
+      ],
+      "command": "bash -lc <command>",
+      "cost_hint": 1,
+      "failure_notes": [
+        "Real command execution \u2014 failures are classified and recorded for L2 path pruning"
+      ],
+      "fallback_notes": [],
+      "fallbacks": [],
+      "inputs": [
+        "command"
+      ],
+      "latency_hint": 1,
+      "mode_preferences": {},
+      "modes": [
+        "short",
+        "long"
+      ],
+      "notes": "Real shell execution adapter for Phase 1 experience loop",
+      "preferred_failures": [
+        "missing_tool",
+        "path_or_missing_file",
+        "permission_denial"
+      ],
+      "prerequisites": [
+        "bash"
+      ],
+      "safe_retry": true,
+      "selectors": [
+        "prefer for real shell command execution with experience accumulation"
+      ],
+      "tool": "shell-command",
+      "trust_level": "workspace",
+      "updated_at": "2026-03-15T13:23:12.989935+00:00"
     },
     {
       "avoid_failures": [],
@@ -105,7 +249,11 @@
         "local-exec",
         "reporting",
         "validation",
-        "repo-inspection"
+        "repo-inspection",
+        "generic-runner",
+        "command-output",
+        "durable-status",
+        "long-run"
       ],
       "command": "bash -lc <command>",
       "cost_hint": 2,
@@ -139,7 +287,7 @@
       ],
       "tool": "shell-local",
       "trust_level": "workspace",
-      "updated_at": "2026-03-13T12:02:45.274478+00:00"
+      "updated_at": "2026-03-15T13:23:12.959745+00:00"
     }
   ],
   "schema_version": 2

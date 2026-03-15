@@ -2,26 +2,30 @@
   "rules": [
     {
       "action": "Stop and reduce scope instead of retrying the blocked path",
+      "asset_version": 2,
       "created_at": "2026-03-13T09:48:41.698287+00:00",
       "evidence": "explicit runtime stop classification",
-      "evidence_count": 8,
+      "evidence_count": 9,
+      "fingerprint": "stop-on-nonrepair-denial",
       "history": [],
-      "last_validated_at": "2026-03-13T12:02:45.302712+00:00",
+      "last_validated_at": "2026-03-15T13:23:13.047980+00:00",
       "layer": "hard",
       "priority": 100,
       "rule_id": "stop-on-nonrepair-denial",
       "scope": "all Polaris runs",
+      "strategy_overrides": {},
       "tags": [
-        "safety",
-        "boundary",
+        "stop",
+        "runtime",
         "local"
       ],
       "trigger": "an explicit non-repair denial appears",
       "validation": "explicit runtime stop classification",
-      "validation_count": 8
+      "validation_count": 9
     },
     {
       "action": "Check interpreter, pip, and local environment before retrying",
+      "asset_version": 1,
       "created_at": "2026-03-13T09:48:42.544072+00:00",
       "evidence": "runtime-repair-results.json,runtime-repair-plan.json,runtime-repair-report.json",
       "evidence_count": 24,
@@ -77,6 +81,7 @@
       ],
       "last_validated_at": "2026-03-13T12:02:46.521173+00:00",
       "layer": "soft",
+      "migrated_from": "pre-step4",
       "priority": 70,
       "rule_id": "repair-known-missing-dependency",
       "scope": "local-python-env",
@@ -88,6 +93,43 @@
       "trigger": "ModuleNotFoundError",
       "validation": "repair action tree probes completed locally",
       "validation_count": 8
+    },
+    {
+      "action": "Verify working directory, nearby files, and target path assumptions before retrying the same file operation",
+      "asset_version": 2,
+      "created_at": "2026-03-15T13:23:14.813069+00:00",
+      "evidence": "runtime-repair-results.json,runtime-repair-plan.json,runtime-repair-report.json",
+      "evidence_count": 3,
+      "fingerprint": "repair-rule-8c03354bec09",
+      "history": [
+        {
+          "event": "auto_promoted",
+          "reason": "evidence_threshold_met",
+          "to": "soft",
+          "ts": "2026-03-15T13:23:14.813073+00:00"
+        }
+      ],
+      "last_validated_at": "2026-03-15T13:23:14.813057+00:00",
+      "layer": "soft",
+      "priority": 65,
+      "rule_id": "repair-rule-8c03354bec09",
+      "scope": "repair-path-resolution",
+      "strategy_overrides": {
+        "retry_policy": "bounded-repair-with-evidence"
+      },
+      "tags": [
+        "repair",
+        "local",
+        "path_or_missing_file",
+        "path_probe_tree",
+        "shallow",
+        "filesystem",
+        "paths",
+        "orchestration"
+      ],
+      "trigger": "path_or_missing_file",
+      "validation": "repair action tree probes completed locally",
+      "validation_count": 1
     }
   ],
   "schema_version": 2,

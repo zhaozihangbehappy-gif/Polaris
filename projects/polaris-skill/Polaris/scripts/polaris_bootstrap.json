@@ -80,6 +80,23 @@
       "notes": "Generic shell fallback adapter"
     },
     {
+      "tool": "shell-command",
+      "command": "bash -lc <command>",
+      "inputs": "command",
+      "capabilities": "local-exec,reporting,shell-command",
+      "supported_hint_kinds": "append_flags,set_env,rewrite_cwd,set_timeout",
+      "modes": "short,long",
+      "prerequisites": "bash",
+      "selectors": "prefer for real shell command execution with experience accumulation",
+      "failure_notes": "Real command execution — failures are classified and recorded for L2 path pruning",
+      "preferred_failures": "missing_tool,path_or_missing_file,permission_denial",
+      "trust_level": "workspace",
+      "cost_hint": 1,
+      "latency_hint": 1,
+      "safe_retry": "yes",
+      "notes": "Real shell execution adapter for Phase 1 experience loop"
+    },
+    {
       "tool": "file-analysis-local",
       "command": "python3 <script>.py",
       "inputs": "script_path,args",

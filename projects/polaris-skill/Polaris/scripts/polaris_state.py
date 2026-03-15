@@ -276,7 +276,7 @@ def write_json(path: Path, payload: dict) -> None:
             "artifacts": {
                 key: value
                 for key, value in payload.get("artifacts", {}).items()
-                if key in {"selected_adapter", "selected_pattern", "execution_kind", "baseline_execution_contract", "execution_contract_diff", "baseline_validator", "validator_diff", "execution_contract", "execution_result", "executor_result", "validation_result", "resumed_execution_contract", "resumed_executor_result", "resumed_validation_result", "repair_report", "repair_plan", "repair_results", "learning_summary", "efficiency_metrics", "family_transfer_applied", "transfer_key", "transfer_source_pattern", "transfer_reason", "transfer_contract_diff"}
+                if key in {"selected_adapter", "selected_pattern", "execution_kind", "baseline_execution_contract", "execution_contract_diff", "baseline_validator", "validator_diff", "execution_contract", "execution_result", "executor_result", "validation_result", "resumed_execution_contract", "resumed_executor_result", "resumed_validation_result", "repair_report", "repair_plan", "repair_results", "learning_summary", "efficiency_metrics", "family_transfer_applied", "transfer_key", "transfer_source_pattern", "transfer_reason", "transfer_contract_diff", "task_fingerprint", "experience_hints", "failure_record_written", "execution_family_trace"}
             },
             "compat": payload.get("compat", {"upgraded_from": None, "upgraded_at": None, "runtime_format": 1}),
             "references": payload.get("references", [])[-2:],

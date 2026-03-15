@@ -22,6 +22,20 @@ def classify(error_text: str) -> dict:
             "recommended_tree": "nonrepair_stop",
             "nonrepair_stop": True,
         }
+    if "required env" in text:
+        return {
+            "failure_type": "missing_dependency",
+            "repair_class": "env_probe_tree",
+            "confidence": "high",
+            "candidate_fixes": [
+                "set the required environment variable before retrying",
+            ],
+            "retry_guidance": "retry after providing the missing environment variable",
+            "escalate": False,
+            "suggested_rule_layer": "soft",
+            "recommended_tree": "dependency_probe_tree",
+            "nonrepair_stop": False,
+        }
     if "no module named" in text or "module not found" in text:
         return {
             "failure_type": "missing_dependency",

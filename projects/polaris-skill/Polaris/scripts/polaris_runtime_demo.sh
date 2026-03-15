@@ -9,6 +9,9 @@ RESUMED_SIMULATE_ERROR="${POLARIS_RESUMED_SIMULATE_ERROR:-}"
 EXECUTION_KIND="${POLARIS_EXECUTION_KIND:-auto}"
 GOAL="${POLARIS_GOAL:-Demonstrate Polaris local orchestration flow}"
 ANALYSIS_TARGET="${POLARIS_ANALYSIS_TARGET:-}"
+SHELL_COMMAND="${POLARIS_SHELL_COMMAND:-}"
+SHELL_CWD="${POLARIS_SHELL_CWD:-}"
+SHELL_TIMEOUT_MS="${POLARIS_SHELL_TIMEOUT_MS:-60000}"
 RESUME="${POLARIS_RESUME:-}"
 mkdir -p "$RUNTIME_DIR"
 # ── Compatibility gate: must pass before ANY file is written to runtime dir ──
@@ -34,6 +37,15 @@ if [[ -n "$RESUMED_SIMULATE_ERROR" ]]; then
 fi
 if [[ -n "$ANALYSIS_TARGET" ]]; then
   ORCH_ARGS+=(--analysis-target "$ANALYSIS_TARGET")
+fi
+if [[ -n "$SHELL_COMMAND" ]]; then
+  ORCH_ARGS+=(--shell-command "$SHELL_COMMAND")
+fi
+if [[ -n "$SHELL_CWD" ]]; then
+  ORCH_ARGS+=(--shell-cwd "$SHELL_CWD")
+fi
+if [[ -n "$SHELL_TIMEOUT_MS" && "$SHELL_TIMEOUT_MS" != "60000" ]]; then
+  ORCH_ARGS+=(--shell-timeout-ms "$SHELL_TIMEOUT_MS")
 fi
 if [[ -n "$RESUME" ]]; then
   ORCH_ARGS+=(--resume)
