@@ -1,9 +1,11 @@
 ---
 name: polaris
+version: "1.0"
+platform: 1
 description: Local-first modular execution skill for long or failure-prone tasks that need explicit planning, layered rules, success-pattern capture, bounded self-repair, richer adapter selection, and resumable state. Use when Codex needs auditable orchestration for multi-step local work, especially when planner/repair/reporter/adapters/rule-store coordination must stay concise, reviewable, and preserve explicit runtime stop/retry semantics.
 ---
 
-# Polaris
+# Polaris — Platform 1
 
 Use Polaris to turn complex local work into a small auditable runtime with explicit state, bounded repair, and reusable patterns.
 
@@ -37,6 +39,19 @@ Use Polaris to turn complex local work into a small auditable runtime with expli
 - `experimental`: narrow trial guidance that must remain easy to remove
 
 Apply `hard` first, then `soft`, then `experimental`. Promote guidance only when local evidence justifies it.
+
+## Platform 1 Changelog
+
+Three hard gates met for Platform 1 designation:
+
+1. **Safe fingerprint contract**: `normalize_command()` preserves positional arg order; flags sorted separately. `cp a b` ≠ `cp b a`.
+2. **Two-level pattern selection**: strict fingerprint match (+1000 bonus) > family fallback (legacy/wide patterns) > no-hit. Legacy patterns auto-tagged `legacy_family=true` at `load_store()` time.
+3. **Blocked fallback with no-loop design**: `attempted_adapters` persisted in state schema (`fallback_state`), surviving resume. Hard-stop rules checked before any fallback. Loop breaker = total adapter count. Sticky cache invalidated for blocked adapter.
+
+Supplementary contracts:
+- Hot path budget: 4 measured JSON fields, warn at 8192 bytes, exceeded at 16384 (warn-only, no payload modification).
+- Operator summary / diagnostic detail output modes in reporter.
+- Cold/hot path separation enforced: hot path receives at most top-1 selected result.
 
 ## Success Capture
 

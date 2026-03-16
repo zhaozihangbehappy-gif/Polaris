@@ -318,6 +318,7 @@ def main() -> None:
     select.add_argument("--verify-prereqs", choices=["yes", "no"], default="yes")
     select.add_argument("--sticky-cache")
     select.add_argument("--reuse-window-seconds", type=int, default=3600)
+    select.add_argument("--exclude-adapters", default="")
 
     record = sub.add_parser("record")
     record.add_argument("--cache", required=True)
@@ -401,6 +402,9 @@ def main() -> None:
         return
 
     required_capabilities = parse_csv(args.capabilities)
+    excluded_set = set(parse_csv(args.exclude_adapters))
+    if excluded_set:
+        items = [item for item in items if item.get("tool") not in excluded_set]
     by_tool = {item.get("tool"): item for item in items}
     scenario = scenario_payload(
         required_capabilities,
@@ -423,7 +427,7 @@ def main() -> None:
         args.reuse_window_seconds,
         args.verify_prereqs == "yes",
     )
-    if reused_rank is not None:
+    if reused_rank is not None and reused_rank["adapter"].get("tool") not in excluded_set:
         selected = [reused_rank]
         ranked = [reused_rank]
     else:

@@ -24,6 +24,24 @@ def parse_csv(value: str | None) -> list[str]:
     return [item.strip() for item in value.split(",") if item.strip()]
 
 
+LEGACY_WIDE_PATTERN_IDS = {"layered-local-orchestration"}
+LEGACY_WIDE_TRIGGER_PREFIXES = ("long local task", "standard local task", "micro local task")
+
+
+def _is_legacy_wide(pattern: dict) -> bool:
+    """Detect Platform 0 wide/family-level patterns that lack task_fingerprint."""
+    if pattern.get("pattern_id") in LEGACY_WIDE_PATTERN_IDS:
+        return True
+    trigger = (pattern.get("trigger") or "").lower()
+    if any(trigger.startswith(p) for p in LEGACY_WIDE_TRIGGER_PREFIXES):
+        return True
+    if not pattern.get("task_fingerprint") and pattern.get("tags") and set(pattern["tags"]).issubset(
+        {"orchestration", "local", "success", "deferred-learning", "micro", "standard", "deep"}
+    ):
+        return True
+    return False
+
+
 def load_store(path: Path) -> dict:
     if not path.exists():
         return {"schema_version": 1, "patterns": []}
@@ -36,6 +54,9 @@ def load_store(path: Path) -> dict:
         if "asset_version" not in p:
             p["asset_version"] = 1
             p["migrated_from"] = "pre-step4"
+        # ── Platform 1 load-time migration: backfill legacy_family ──
+        if "legacy_family" not in p:
+            p["legacy_family"] = _is_legacy_wide(p)
     return payload
 
 
@@ -247,6 +268,7 @@ def main() -> None:
     select.add_argument("--mode")
     select.add_argument("--adapter")
     select.add_argument("--min-confidence", type=int, default=0)
+    select.add_argument("--task-fingerprint-json", default="")
 
     promote = sub.add_parser("promote")
     promote.add_argument("--patterns", required=True)
@@ -334,19 +356,65 @@ def main() -> None:
 
     if args.command == "select":
         tags = parse_csv(args.tags)
-        ranked = []
+        task_fp = json.loads(args.task_fingerprint_json) if args.task_fingerprint_json else None
+
+        # ── Two-level selection: strict fingerprint hit > family fallback > no-hit ──
+        strict_ranked = []
+        family_ranked = []
         for pattern in store["patterns"]:
             if not matches(pattern, tags, args.trigger, args.mode, args.adapter):
                 continue
             if int(pattern.get("confidence", 0)) < args.min_confidence:
                 continue
-            ranked.append(rank_pattern(pattern, tags, args.adapter))
-        ranked.sort(key=lambda item: (-item["score"], item["pattern"].get("pattern_id", "")))
+
+            # Strict match: pattern has task_fingerprint AND it matches the query fingerprint
+            is_strict = False
+            if task_fp and pattern.get("task_fingerprint"):
+                pfp = pattern["task_fingerprint"]
+                if pfp.get("matching_key") and pfp["matching_key"] == task_fp.get("matching_key"):
+                    is_strict = True
+
+            if pattern.get("legacy_family"):
+                # Legacy wide patterns can only serve as family fallback, never strict
+                is_strict = False
+
+            # A pattern with task_fingerprint is task-specific: it must NOT
+            # leak into family fallback when the query has no fingerprint.
+            pattern_has_fp = bool(pattern.get("task_fingerprint") and pattern["task_fingerprint"].get("matching_key"))
+            if pattern_has_fp and not is_strict:
+                # Task-specific pattern did not match strictly — skip it
+                # to prevent leaking into unrelated tasks via family fallback
+                continue
+
+            entry = rank_pattern(pattern, tags, args.adapter)
+            if is_strict:
+                entry["match_type"] = "strict"
+                # Strict hits get a large score bonus to guarantee priority
+                entry["score"] += 1000
+                strict_ranked.append(entry)
+            else:
+                entry["match_type"] = "family"
+                family_ranked.append(entry)
+
+        strict_ranked.sort(key=lambda item: (-item["score"], item["pattern"].get("pattern_id", "")))
+        family_ranked.sort(key=lambda item: (-item["score"], item["pattern"].get("pattern_id", "")))
+
+        # Resolution order: strict first, then family fallback
+        if strict_ranked:
+            ranked = strict_ranked + family_ranked
+            match_resolution = "strict"
+        elif family_ranked:
+            ranked = family_ranked
+            match_resolution = "family_fallback"
+        else:
+            ranked = []
+            match_resolution = "no_hit"
+
         if ranked:
             ranked[0]["pattern"]["selection_count"] = ranked[0]["pattern"].get("selection_count", 0) + 1
             ranked[0]["pattern"]["last_selected_at"] = now()
             write_store(path, store)
-        print(json.dumps({"selected": ranked[:1], "candidates": ranked}, sort_keys=True))
+        print(json.dumps({"selected": ranked[:1], "candidates": ranked, "match_resolution": match_resolution}, sort_keys=True))
         return
 
     if args.command == "promote-auto":

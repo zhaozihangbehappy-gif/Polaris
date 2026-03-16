@@ -29,6 +29,7 @@ def main() -> None:
     parser.add_argument("--event-log")
     parser.add_argument("--status-file")
     parser.add_argument("--detail", choices=["minimal", "full"], default="full")
+    parser.add_argument("--output-mode", choices=["operator_summary", "diagnostic_detail"], default="diagnostic_detail")
     args = parser.parse_args()
 
     event = {
@@ -79,15 +80,27 @@ def main() -> None:
                 }
             )
 
+    # ── Platform 1: operator_summary strips internal state ──
+    OPERATOR_SAFE_KEYS = {
+        "ts", "run_id", "phase", "status", "summary",
+        "progress_pct", "current_step", "next_action",
+        "blocked_reason", "execution_profile",
+    }
+    if args.output_mode == "operator_summary":
+        output_event = {k: v for k, v in event.items() if k in OPERATOR_SAFE_KEYS}
+    else:
+        output_event = event
+
     if args.event_log:
         path = Path(args.event_log)
         with path.open("a", encoding="utf-8") as handle:
-            handle.write(json.dumps(event, sort_keys=True) + "\n")
+            # Event log respects output_mode — operator_summary strips internal state
+            handle.write(json.dumps(output_event, sort_keys=True) + "\n")
 
     if args.status_file:
-        Path(args.status_file).write_text(json.dumps(event, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+        Path(args.status_file).write_text(json.dumps(output_event, indent=2, sort_keys=True) + "\n", encoding="utf-8")
 
-    print(json.dumps(event, sort_keys=True))
+    print(json.dumps(output_event, sort_keys=True))
 
 
 if __name__ == "__main__":

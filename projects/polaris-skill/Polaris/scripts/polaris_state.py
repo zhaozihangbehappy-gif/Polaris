@@ -83,12 +83,18 @@ def default_state() -> dict:
                 "is_blocked": False,
                 "reason": None,
                 "references": [],
+                "nonrepair_stop": False,
             },
             "allowed_transitions": ALLOWED_TRANSITIONS,
         },
         "rule_context": {
             "active_layers": ["hard", "soft"],
             "applied_rules": [],
+        },
+        "fallback_state": {
+            "attempted_adapters": [],
+            "fallback_count": 0,
+            "max_fallback_attempts": 0,
         },
         "compat": {
             "upgraded_from": None,
@@ -128,9 +134,11 @@ def _backfill_v5_defaults(state: dict) -> None:
     machine.setdefault("branches", [])
     machine.setdefault("history_summary", [])
     machine.setdefault("recovery", [])
-    machine.setdefault("blocked", {"is_blocked": False, "reason": None, "references": []})
+    machine.setdefault("blocked", {"is_blocked": False, "reason": None, "references": [], "nonrepair_stop": False})
+    machine["blocked"].setdefault("nonrepair_stop", False)
     machine.setdefault("allowed_transitions", ALLOWED_TRANSITIONS)
     state.setdefault("rule_context", {"active_layers": ["hard", "soft"], "applied_rules": []})
+    state.setdefault("fallback_state", {"attempted_adapters": [], "fallback_count": 0, "max_fallback_attempts": 0})
 
 
 def _migrate_backlog_versions(state: dict) -> None:
@@ -276,8 +284,9 @@ def write_json(path: Path, payload: dict) -> None:
             "artifacts": {
                 key: value
                 for key, value in payload.get("artifacts", {}).items()
-                if key in {"selected_adapter", "selected_pattern", "execution_kind", "baseline_execution_contract", "execution_contract_diff", "baseline_validator", "validator_diff", "execution_contract", "execution_result", "executor_result", "validation_result", "resumed_execution_contract", "resumed_executor_result", "resumed_validation_result", "repair_report", "repair_plan", "repair_results", "learning_summary", "efficiency_metrics", "family_transfer_applied", "transfer_key", "transfer_source_pattern", "transfer_reason", "transfer_contract_diff", "task_fingerprint", "experience_hints", "failure_record_written", "execution_family_trace"}
+                if key in {"selected_adapter", "selected_pattern", "execution_kind", "baseline_execution_contract", "execution_contract_diff", "baseline_validator", "validator_diff", "execution_contract", "execution_result", "executor_result", "validation_result", "resumed_execution_contract", "resumed_executor_result", "resumed_validation_result", "repair_report", "repair_plan", "repair_results", "learning_summary", "efficiency_metrics", "family_transfer_applied", "transfer_key", "transfer_source_pattern", "transfer_reason", "transfer_contract_diff", "task_fingerprint", "experience_hints", "failure_record_written", "execution_family_trace", "hot_path_budget"}
             },
+            "fallback_state": payload.get("fallback_state", {"attempted_adapters": [], "fallback_count": 0, "max_fallback_attempts": 0}),
             "compat": payload.get("compat", {"upgraded_from": None, "upgraded_at": None, "runtime_format": 1}),
             "references": payload.get("references", [])[-2:],
             "updated_at": payload.get("updated_at"),
@@ -403,6 +412,7 @@ def main() -> None:
     block_parser.add_argument("--state", required=True)
     block_parser.add_argument("--reason", required=True)
     block_parser.add_argument("--references", default="")
+    block_parser.add_argument("--nonrepair-stop", choices=["true", "false"], default="false")
 
     artifact_parser = subparsers.add_parser("artifact")
     artifact_parser.add_argument("--state", required=True)
@@ -450,6 +460,14 @@ def main() -> None:
     surface_parser.add_argument("--state", required=True)
     surface_parser.add_argument("--kind", required=True)
     surface_parser.add_argument("--value", required=True)
+
+    fallback_record_parser = subparsers.add_parser("fallback-record")
+    fallback_record_parser.add_argument("--state", required=True)
+    fallback_record_parser.add_argument("--adapter", required=True)
+    fallback_record_parser.add_argument("--max-fallback-attempts", type=int, required=True)
+
+    fallback_reset_parser = subparsers.add_parser("fallback-reset")
+    fallback_reset_parser.add_argument("--state", required=True)
 
     args = parser.parse_args()
     state_path = Path(getattr(args, "state"))
@@ -563,6 +581,7 @@ def main() -> None:
             "is_blocked": True,
             "reason": args.reason,
             "references": parse_csv(args.references),
+            "nonrepair_stop": args.nonrepair_stop == "true",
         }
         state["summary_outcome"] = args.reason
         append_history(state, "blocked", args.reason, state["state_machine"].get("active_branch"))
@@ -618,6 +637,16 @@ def main() -> None:
             state.setdefault("runtime", {})["last_heartbeat_summary"] = args.summary
     elif args.command == "surface":
         state.setdefault("runtime", {}).setdefault("durable_status_surfaces", {})[args.kind] = args.value
+    elif args.command == "fallback-record":
+        fb = state.setdefault("fallback_state", {"attempted_adapters": [], "fallback_count": 0, "max_fallback_attempts": 0})
+        if args.adapter not in fb["attempted_adapters"]:
+            fb["attempted_adapters"].append(args.adapter)
+        fb["fallback_count"] = len(fb["attempted_adapters"])
+        # Freeze max_fallback_attempts on first record; never overwrite with a different value
+        if int(fb.get("max_fallback_attempts", 0)) == 0:
+            fb["max_fallback_attempts"] = args.max_fallback_attempts
+    elif args.command == "fallback-reset":
+        state["fallback_state"] = {"attempted_adapters": [], "fallback_count": 0, "max_fallback_attempts": 0}
 
     write_json(state_path, state)
     print(json.dumps(state, sort_keys=True))

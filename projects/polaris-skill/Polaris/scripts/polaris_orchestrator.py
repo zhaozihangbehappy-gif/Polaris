@@ -93,6 +93,39 @@ def run_json_checked(cmd: list[str], label: str) -> dict:
     return require_ok(run_json(cmd), label, require_json=True)
 
 
+HOT_PATH_BUDGET_WARN = 8192
+HOT_PATH_BUDGET_HARD = 16384
+
+
+def hot_path_budget_check(
+    selected_pattern_json: str,
+    execution_contract_json: str,
+    applied_rules_json: str,
+    experience_hints_json: str,
+) -> dict:
+    """Measure total decision-bearing JSON bytes passed to the adapter.
+
+    Returns a budget report with warn/exceeded flags.  Both thresholds
+    are advisory (warn-only) — the caller logs diagnostics but does not
+    modify the execution contract or adapter inputs.
+    """
+    fields = {
+        "selected_pattern_json": len(selected_pattern_json.encode("utf-8")),
+        "execution_contract_json": len(execution_contract_json.encode("utf-8")),
+        "applied_rules_json": len(applied_rules_json.encode("utf-8")),
+        "experience_hints_json": len(experience_hints_json.encode("utf-8")),
+    }
+    total = sum(fields.values())
+    return {
+        "total_bytes": total,
+        "fields": fields,
+        "warn": total > HOT_PATH_BUDGET_WARN,
+        "exceeded": total > HOT_PATH_BUDGET_HARD,
+        "budget_warn": HOT_PATH_BUDGET_WARN,
+        "budget_hard": HOT_PATH_BUDGET_HARD,
+    }
+
+
 def infer_profile(goal: str, mode: str, simulate_error: str | None) -> str:
     goal_l = goal.lower()
     if mode == "long" or simulate_error:
@@ -119,6 +152,7 @@ def emit_progress(
     active_branch: str | None,
     blocked_reason: str | None = None,
     state_file: str | None = None,
+    output_mode: str = "diagnostic_detail",
 ) -> dict | None:
     if key not in policy["event_keys"]:
         return None
@@ -159,6 +193,8 @@ def emit_progress(
             str(runtime_dir / "runtime-status.json"),
             "--detail",
             policy["report_detail"],
+            "--output-mode",
+            output_mode,
         ]
     )
 
@@ -1220,6 +1256,10 @@ def main() -> None:
     runtime_dir = Path(args.state).resolve().parent
     sticky_cache = str(Path(args.adapters).with_name("adapter-selection-cache.json"))
 
+    # ── Platform 1: blocked fallback state ──
+    # Restore attempted_adapters from prior state on resume; empty list for fresh runs.
+    fallback_attempted_adapters: list[str] = []
+    fallback_hard_stop = False
     if resuming:
         # Resume from blocked: preserve run_id, attempts, artifacts, learning_backlog, compat
         # Use canonical writer (polaris_state.py set) to ensure state_write_count, updated_at, and history compaction are tracked
@@ -1241,6 +1281,44 @@ def main() -> None:
             )
         )
         run_id = prior_state.get("run_id", run_id)
+        # ── Platform 1: restore fallback state from persisted state ──
+        prior_fallback = prior_state.get("fallback_state", {})
+        fallback_attempted_adapters = list(prior_fallback.get("attempted_adapters", []))
+        # Record the adapter that was blocked (from prior artifacts)
+        prior_blocked_adapter = prior_state.get("artifacts", {}).get("selected_adapter")
+        if prior_blocked_adapter and prior_blocked_adapter != "none" and prior_blocked_adapter not in fallback_attempted_adapters:
+            fallback_attempted_adapters.append(prior_blocked_adapter)
+        # Persist the updated attempted_adapters list
+        # Loop breaker: use persisted max_fallback_attempts (frozen at first block time)
+        persisted_max = int(prior_fallback.get("max_fallback_attempts", 0))
+        if persisted_max > 0:
+            total_adapter_count = persisted_max
+        else:
+            # First resume — freeze from registry (will be persisted by fallback-record)
+            _registry_for_count = json.loads(Path(args.adapters).read_text())
+            total_adapter_count = len(_registry_for_count.get("adapters", []))
+        history.append(
+            run_checked(
+                [
+                    sys.executable,
+                    str(base / "polaris_state.py"),
+                    "fallback-record",
+                    "--state",
+                    args.state,
+                    "--adapter",
+                    prior_blocked_adapter or "unknown",
+                    "--max-fallback-attempts",
+                    str(total_adapter_count),
+                ],
+                "record blocked adapter in fallback state",
+            )
+        )
+        # Invalidate sticky cache for the blocked adapter
+        if prior_blocked_adapter and prior_blocked_adapter != "none":
+            append(history, record_adapter_outcome(base, sticky_cache, policy, execution_profile, prior_blocked_adapter, "failure", None))
+        # Loop breaker: if attempted >= total adapters, hard stop
+        if len(fallback_attempted_adapters) >= total_adapter_count:
+            fallback_hard_stop = True
     else:
         history.append(
             run_checked(
@@ -1303,34 +1381,52 @@ def main() -> None:
         ],
         "select rules",
     )
-    selected_adapter = run_json_checked(
-        [
-            sys.executable,
-            str(base / "polaris_adapters.py"),
-            "select",
-            "--registry",
-            args.adapters,
-            "--capabilities",
-            policy["effective_adapter_capabilities"],
-            "--mode",
-            args.mode,
-            "--execution-profile",
-            execution_profile,
-            "--max-trust",
-            "workspace",
-            "--max-cost",
-            "5",
-            "--failure-type",
-            policy["failure_type"],
-            "--require-durable-status",
-            policy["require_durable_status"],
-            "--verify-prereqs",
-            "yes",
-            "--sticky-cache",
-            sticky_cache,
-        ],
-        "select adapter",
-    )
+    # ── Platform 1: hard-stop rule check before fallback attempt ──
+    # Only block fallback when the prior block was caused by a hard-stop condition
+    # (nonrepair denial), not merely because a stop rule exists in the store.
+    if resuming and fallback_attempted_adapters:
+        _prior_block_info = prior_state.get("state_machine", {}).get("blocked", {})
+        # Platform 1: read explicit nonrepair_stop boolean — no keyword heuristics
+        _nonrepair_blocked = _prior_block_info.get("nonrepair_stop", False)
+        _hard_stop_triggered = _nonrepair_blocked
+        if _hard_stop_triggered or fallback_hard_stop:
+            _stop_reason = "hard-stop rule matched (nonrepair denial)" if _hard_stop_triggered else f"all {len(fallback_attempted_adapters)} adapters exhausted"
+            _block_reason = f"Fallback blocked: {_stop_reason}"
+            history.append(run_checked([sys.executable, str(base / "polaris_state.py"), "block", "--state", args.state, "--reason", _block_reason, "--references", "", "--nonrepair-stop", "true" if _hard_stop_triggered else "false"], "hard stop block state"))
+            history.append(run_checked([sys.executable, str(base / "polaris_state.py"), "set", "--state", args.state, "--status", "blocked", "--progress-pct", "0", "--current-step", "Hard stop", "--next-action", "Manual intervention required", "--phase", "blocked", "--summary-outcome", _block_reason], "hard stop on fallback"))
+            append(history, emit_progress(base, policy, "complete", run_id, "blocked", "blocked", _block_reason, 0, "Hard stop", "Manual intervention required", "blocked", layers, None, None, _block_reason, args.state, output_mode="operator_summary"))
+            append(history, emit_runtime_surface(base, policy, "complete", args.state, "blocked"))
+            print(json.dumps({"status": "blocked", "fallback_hard_stop": True, "reason": _stop_reason, "attempted_adapters": fallback_attempted_adapters, "history": history}, indent=2, sort_keys=True))
+            return
+    adapter_select_cmd = [
+        sys.executable,
+        str(base / "polaris_adapters.py"),
+        "select",
+        "--registry",
+        args.adapters,
+        "--capabilities",
+        policy["effective_adapter_capabilities"],
+        "--mode",
+        args.mode,
+        "--execution-profile",
+        execution_profile,
+        "--max-trust",
+        "workspace",
+        "--max-cost",
+        "5",
+        "--failure-type",
+        policy["failure_type"],
+        "--require-durable-status",
+        policy["require_durable_status"],
+        "--verify-prereqs",
+        "yes",
+        "--sticky-cache",
+        sticky_cache,
+    ]
+    # Platform 1: exclude already-attempted adapters on fallback resume
+    if fallback_attempted_adapters:
+        adapter_select_cmd.extend(["--exclude-adapters", ",".join(fallback_attempted_adapters)])
+    selected_adapter = run_json_checked(adapter_select_cmd, "select adapter")
     adapter_name = None
     adapter_score = None
     adapter_attempt_count = 1
@@ -1338,6 +1434,15 @@ def main() -> None:
     if adapter_selection:
         adapter_name = adapter_selection[0]["adapter"]["tool"]
         adapter_score = adapter_selection[0].get("score")
+    elif fallback_attempted_adapters:
+        # Platform 1: all adapters exhausted during fallback — hard stop
+        _exhaust_reason = f"All adapters exhausted after {len(fallback_attempted_adapters)} attempts"
+        history.append(run_checked([sys.executable, str(base / "polaris_state.py"), "block", "--state", args.state, "--reason", _exhaust_reason, "--references", "", "--nonrepair-stop", "false"], "adapter exhaustion block state"))
+        history.append(run_checked([sys.executable, str(base / "polaris_state.py"), "set", "--state", args.state, "--status", "blocked", "--progress-pct", "0", "--current-step", "Hard stop", "--next-action", "Manual intervention required", "--phase", "blocked", "--summary-outcome", _exhaust_reason], "adapter exhaustion hard stop"))
+        append(history, emit_progress(base, policy, "complete", run_id, "blocked", "blocked", _exhaust_reason, 0, "Hard stop", "Manual intervention required", "blocked", layers, None, None, _exhaust_reason, args.state, output_mode="operator_summary"))
+        append(history, emit_runtime_surface(base, policy, "complete", args.state, "blocked"))
+        print(json.dumps({"status": "blocked", "fallback_hard_stop": True, "reason": "adapter_exhaustion", "attempted_adapters": fallback_attempted_adapters, "history": history}, indent=2, sort_keys=True))
+        return
     else:
         raise SystemExit("no eligible adapter selected")
     sticky_entry = selected_adapter.get("parsed", {}).get("selection_trace", {}).get("sticky_reuse", {}).get("entry", {})
@@ -1352,31 +1457,42 @@ def main() -> None:
     transfer_source_pattern = None
     transfer_reason = None
     if policy["select_patterns"]:
-        selected_patterns = run_json_checked(
-            [
-                sys.executable,
-                str(base / "polaris_success_patterns.py"),
-                "select",
-                "--patterns",
-                args.patterns,
-                "--tags",
-                "orchestration,local",
-                "--mode",
-                args.mode,
-                "--adapter",
-                adapter_name or "",
-                "--min-confidence",
-                "50",
-            ],
-            "select patterns",
-        )
+        # ── Platform 1: fingerprint-aware two-level pattern selection ──
+        # Build a task_fingerprint early for the selector even for non-shell tasks
+        selector_fp_json = ""
+        shell_cmd_early = getattr(args, "shell_command", None)
+        shell_cwd_early = getattr(args, "shell_cwd", None) or str(runtime_dir)
+        if shell_cmd_early:
+            import polaris_task_fingerprint as ptf
+            selector_fp = ptf.compute(shell_cmd_early, shell_cwd_early)
+            selector_fp_json = json.dumps(selector_fp, sort_keys=True)
+        select_cmd = [
+            sys.executable,
+            str(base / "polaris_success_patterns.py"),
+            "select",
+            "--patterns",
+            args.patterns,
+            "--tags",
+            "orchestration,local",
+            "--mode",
+            args.mode,
+            "--adapter",
+            adapter_name or "",
+            "--min-confidence",
+            "50",
+        ]
+        if selector_fp_json:
+            select_cmd.extend(["--task-fingerprint-json", selector_fp_json])
+        selected_patterns = run_json_checked(select_cmd, "select patterns")
+        match_resolution = selected_patterns.get("parsed", {}).get("match_resolution", "no_hit")
         top_pattern = selected_patterns.get("parsed", {}).get("selected", [])
         selected_pattern_record = top_pattern[0]["pattern"] if top_pattern else None
         pattern_name = selected_pattern_record["pattern_id"] if selected_pattern_record else None
-        if fresh_state and execution_kind == "runner" and selected_pattern_record is not None:
+        # family_transfer_applied only when actual family fallback was used
+        if fresh_state and selected_pattern_record is not None and match_resolution == "family_fallback":
             family_transfer_applied = True
             transfer_source_pattern = selected_pattern_record.get("pattern_id")
-            transfer_reason = f"fresh runner task reused family-level pattern {transfer_source_pattern}"
+            transfer_reason = f"fresh task used family-fallback pattern {transfer_source_pattern} (no strict fingerprint hit)"
 
     applied_rules = applied_rules_payload(selected_rules)
     history.append(run_checked([sys.executable, str(base / "polaris_state.py"), "apply-rules", "--state", args.state, "--rules-json", json.dumps(applied_rules, sort_keys=True)], "apply rules to state"))
@@ -1512,6 +1628,17 @@ def main() -> None:
     history.append(run_checked([sys.executable, str(base / "polaris_state.py"), "artifact", "--state", args.state, "--key", "baseline_validator", "--value", json.dumps(baseline_contract.get("validator", {}), sort_keys=True)], "record baseline validator"))
     history.append(run_checked([sys.executable, str(base / "polaris_state.py"), "artifact", "--state", args.state, "--key", "validator_diff", "--value", json.dumps(validator_diff, sort_keys=True)], "record validator diff"))
     history.append(run_checked([sys.executable, str(base / "polaris_state.py"), "artifact", "--state", args.state, "--key", "execution_contract", "--value", json.dumps(execution_contract, sort_keys=True)], "record execution contract"))
+    # ── Platform 1: Hot path budget check before adapter invocation ──
+    _budget_pattern_json = json.dumps(selected_pattern_record or {}, sort_keys=True)
+    _budget_contract_json = json.dumps(execution_contract, sort_keys=True)
+    _budget_rules_json = json.dumps(applied_rules, sort_keys=True)
+    _budget_hints_json = json.dumps(experience_hints, sort_keys=True)
+    budget_report = hot_path_budget_check(_budget_pattern_json, _budget_contract_json, _budget_rules_json, _budget_hints_json)
+    if budget_report["warn"] or budget_report["exceeded"]:
+        import sys as _sys
+        _budget_level = "EXCEEDED" if budget_report["exceeded"] else "WARNING"
+        print(f"[polaris] hot-path budget {_budget_level}: {budget_report['total_bytes']} bytes (warn={HOT_PATH_BUDGET_WARN}, hard={HOT_PATH_BUDGET_HARD})", file=_sys.stderr)
+    history.append(run_checked([sys.executable, str(base / "polaris_state.py"), "artifact", "--state", args.state, "--key", "hot_path_budget", "--value", json.dumps(budget_report, sort_keys=True)], "record hot path budget"))
     execution_result = execute_contract(base, adapter_record, execution_contract)
     history.append(execution_result)
     history.append(run_checked([sys.executable, str(base / "polaris_state.py"), "artifact", "--state", args.state, "--key", "execution_result", "--value", execution_contract.get("output_file", "")], "record execution result artifact"))
@@ -1613,9 +1740,11 @@ def main() -> None:
                     execution_branch,
                     execution_error,
                     args.state,
+                    output_mode="operator_summary",
                 ),
             )
-            history.append(run_checked([sys.executable, str(base / "polaris_state.py"), "block", "--state", args.state, "--reason", blocked_reason, "--references", "runtime-repair-report.json,runtime-repair-plan.json,runtime-repair-results.json"], "record blocked state"))
+            _is_nonrepair_stop = "true" if repair_report.get("parsed", {}).get("nonrepair_stop") else "false"
+            history.append(run_checked([sys.executable, str(base / "polaris_state.py"), "block", "--state", args.state, "--reason", blocked_reason, "--references", "runtime-repair-report.json,runtime-repair-plan.json,runtime-repair-results.json", "--nonrepair-stop", _is_nonrepair_stop], "record blocked state"))
             history.append(run_checked([sys.executable, str(base / "polaris_state.py"), "set", "--state", args.state, "--status", "blocked", "--progress-pct", "60", "--current-step", "Blocked after bounded repair", "--next-action", next_action, "--phase", "blocked", "--summary-outcome", blocked_reason], "set blocked summary"))
             blocked_backlog_state = json.loads(Path(args.state).read_text())
             blocked_backlog_items = blocked_backlog_state.get("learning_backlog", [])
@@ -1628,6 +1757,31 @@ def main() -> None:
             blocked_state = json.loads(Path(args.state).read_text())
             history.append(persist_efficiency_metrics(base, args.state, runtime_dir, build_runtime_efficiency_metrics(blocked_state, execution_contract, execution_payload, False, repair_probe_steps, family_transfer_applied)))
             append(history, record_adapter_outcome(base, sticky_cache, policy, execution_profile, adapter_name, "failure", adapter_score))
+            # ── Platform 1: record blocked adapter in fallback state for future resume ──
+            # Freeze max_fallback_attempts from registry at first block; reuse persisted value on subsequent blocks
+            _existing_fb = blocked_state.get("fallback_state", {})
+            _persisted_max_fb = int(_existing_fb.get("max_fallback_attempts", 0))
+            if _persisted_max_fb > 0:
+                _total_adapters_fb = _persisted_max_fb
+            else:
+                _registry_for_fb = json.loads(Path(args.adapters).read_text())
+                _total_adapters_fb = len(_registry_for_fb.get("adapters", []))
+            history.append(
+                run_checked(
+                    [
+                        sys.executable,
+                        str(base / "polaris_state.py"),
+                        "fallback-record",
+                        "--state",
+                        args.state,
+                        "--adapter",
+                        adapter_name or "unknown",
+                        "--max-fallback-attempts",
+                        str(_total_adapters_fb),
+                    ],
+                    "record blocked adapter for fallback",
+                )
+            )
             append(history, emit_runtime_surface(base, policy, "complete", args.state, "blocked"))
             print(
                 json.dumps(
@@ -1637,6 +1791,7 @@ def main() -> None:
                         "selected_rules": selected_rules.get("parsed", {}),
                         "selected_adapter": selected_adapter.get("parsed", {}),
                         "selected_patterns": selected_patterns.get("parsed", selected_patterns),
+                        "attempted_adapters": fallback_attempted_adapters + ([adapter_name] if adapter_name and adapter_name not in fallback_attempted_adapters else []),
                         "history": history,
                     },
                     indent=2,
@@ -1768,6 +1923,8 @@ def main() -> None:
                 "hot_path_budget": 3,
             },
         }
+        if task_fingerprint:
+            deep_success_marker["task_fingerprint"] = task_fingerprint
         history.append(queue_learning_item(base, args.state, "success_marker", deep_success_marker))
         history.append(run_checked([sys.executable, str(base / "polaris_state.py"), "success", "--state", args.state, "--pattern-id", "layered-local-orchestration", "--summary", "Full run queued a reusable orchestration pattern for deferred consolidation", "--evidence", args.state + ",runtime-status.json", "--confidence", "90"], "record deep success marker"))
     else:
@@ -1845,6 +2002,7 @@ def main() -> None:
             execution_branch,
             None,
             args.state,
+            output_mode="operator_summary",
         ),
     )
 

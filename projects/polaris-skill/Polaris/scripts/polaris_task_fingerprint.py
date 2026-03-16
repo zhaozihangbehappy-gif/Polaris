@@ -13,17 +13,52 @@ import json
 import shlex
 
 
+def _is_flag(token: str) -> bool:
+    """Return True if the token looks like a flag (starts with -)."""
+    return token.startswith("-")
+
+
 def normalize_command(command: str) -> str:
-    """Canonicalize a shell command: sort flags, collapse whitespace."""
+    """Canonicalize a shell command: sort flags, preserve positional arg order.
+
+    Flags (tokens starting with '-') and their immediately following values
+    are collected, sorted, and placed after the executable.  Positional
+    arguments (non-flag tokens that are not flag-values) keep their original
+    relative order.  This prevents order-sensitive commands like ``cp a b``
+    and ``cp b a`` from collapsing into the same fingerprint.
+    """
     try:
         parts = shlex.split(command)
     except ValueError:
         parts = command.split()
     if not parts:
         return command.strip()
+
     executable = parts[0]
-    args = sorted(parts[1:])
-    return " ".join([executable] + args)
+    rest = parts[1:]
+
+    flags: list[tuple[str, ...]] = []  # each item is (flag,) or (flag, value)
+    positionals: list[str] = []
+    i = 0
+    while i < len(rest):
+        token = rest[i]
+        if _is_flag(token):
+            # Peek ahead: if the next token exists and is NOT a flag, treat
+            # it as this flag's value (e.g. --output foo).
+            if i + 1 < len(rest) and not _is_flag(rest[i + 1]):
+                flags.append((token, rest[i + 1]))
+                i += 2
+            else:
+                flags.append((token,))
+                i += 1
+        else:
+            positionals.append(token)
+            i += 1
+
+    # Sort flags lexicographically; positionals stay in original order.
+    sorted_flags = sorted(flags)
+    flag_tokens = [tok for group in sorted_flags for tok in group]
+    return " ".join([executable] + flag_tokens + positionals)
 
 
 def compute(command: str, cwd: str, task_name: str | None = None) -> dict:

@@ -264,6 +264,56 @@ POLARIS_GOAL='Demonstrate Polaris completed run' \
 POLARIS_RESUME=1 \
 bash "$ROOT/scripts/polaris_runtime_demo.sh" >/tmp/polaris-resume-completed-2.out
 
+# ── P1 e2e: nonrepair_stop=true → resume → hard stop ──
+RESUME_NONREPAIR_DIR="$OUT_BASE/resume-nonrepair-hardstop"
+POLARIS_RUNTIME_DIR="$RESUME_NONREPAIR_DIR" \
+POLARIS_EXECUTION_PROFILE=standard \
+POLARIS_MODE=short \
+POLARIS_EXECUTION_KIND=runner \
+POLARIS_SIMULATE_ERROR='approval denied by sandbox policy' \
+POLARIS_GOAL='Demonstrate nonrepair hard stop on resume' \
+bash "$ROOT/scripts/polaris_runtime_demo.sh" >/tmp/polaris-resume-nonrepair-1.out || true
+RESUME_NONREPAIR_EXIT=0
+POLARIS_RUNTIME_DIR="$RESUME_NONREPAIR_DIR" \
+POLARIS_EXECUTION_PROFILE=standard \
+POLARIS_MODE=short \
+POLARIS_EXECUTION_KIND=runner \
+POLARIS_SIMULATE_ERROR='' \
+POLARIS_GOAL='Demonstrate nonrepair hard stop on resume' \
+POLARIS_RESUME=1 \
+bash "$ROOT/scripts/polaris_runtime_demo.sh" >/tmp/polaris-resume-nonrepair-2.out || RESUME_NONREPAIR_EXIT=$?
+
+# ── P1 e2e: attempted_adapters → resume → adapter exhaustion hard stop ──
+# Run 1 blocks normally, then we inject all adapter names into attempted_adapters before resume
+RESUME_EXHAUST_DIR="$OUT_BASE/resume-adapter-exhaust"
+POLARIS_RUNTIME_DIR="$RESUME_EXHAUST_DIR" \
+POLARIS_EXECUTION_PROFILE=standard \
+POLARIS_MODE=short \
+POLARIS_EXECUTION_KIND=runner \
+POLARIS_SIMULATE_ERROR='forced adapter exhaust seed failure' \
+POLARIS_GOAL='Demonstrate adapter exhaustion on resume' \
+bash "$ROOT/scripts/polaris_runtime_demo.sh" >/tmp/polaris-resume-exhaust-1.out || true
+# Inject all adapter names into attempted_adapters to simulate full exhaustion
+python3 -c "
+import json
+state = json.loads(open('$RESUME_EXHAUST_DIR/execution-state.json').read())
+registry = json.loads(open('$RESUME_EXHAUST_DIR/adapters.json').read())
+all_names = [a['tool'] for a in registry.get('adapters', [])]
+state['fallback_state']['attempted_adapters'] = all_names
+state['fallback_state']['fallback_count'] = len(all_names)
+state['fallback_state']['max_fallback_attempts'] = len(all_names)
+open('$RESUME_EXHAUST_DIR/execution-state.json', 'w').write(json.dumps(state, indent=2))
+"
+RESUME_EXHAUST_EXIT=0
+POLARIS_RUNTIME_DIR="$RESUME_EXHAUST_DIR" \
+POLARIS_EXECUTION_PROFILE=standard \
+POLARIS_MODE=short \
+POLARIS_EXECUTION_KIND=runner \
+POLARIS_SIMULATE_ERROR='' \
+POLARIS_GOAL='Demonstrate adapter exhaustion on resume' \
+POLARIS_RESUME=1 \
+bash "$ROOT/scripts/polaris_runtime_demo.sh" >/tmp/polaris-resume-exhaust-2.out || RESUME_EXHAUST_EXIT=$?
+
 # resume-refuse-in-progress: create in_progress state → orchestrator should refuse
 RESUME_INPROGRESS_DIR="$OUT_BASE/resume-refuse-in-progress"
 mkdir -p "$RESUME_INPROGRESS_DIR"
@@ -1561,6 +1611,457 @@ summary['real-shell-success'] = {
     'phase': real_shell_success_state.get('phase'),
     'execution_kind': real_shell_success_state.get('artifacts', {}).get('execution_kind'),
 }
+
+# ═══════════════════════════════════════════════════════════════
+# Platform 1: Fingerprint safety + two-level pattern selection
+# ═══════════════════════════════════════════════════════════════
+
+import polaris_task_fingerprint as ptf
+
+# P1-fingerprint-1: cp a b != cp b a (positional arg order preserved)
+fp_ab = ptf.compute('cp a b', '/tmp')
+fp_ba = ptf.compute('cp b a', '/tmp')
+if fp_ab['matching_key'] == fp_ba['matching_key']:
+    errors.append('P1-fingerprint: cp a b and cp b a must produce different fingerprints')
+
+# P1-fingerprint-2: flags sort correctly (--flag-b --flag-a == --flag-a --flag-b)
+fp_fb = ptf.compute('cmd --flag-b --flag-a', '/tmp')
+fp_fa = ptf.compute('cmd --flag-a --flag-b', '/tmp')
+if fp_fb['matching_key'] != fp_fa['matching_key']:
+    errors.append('P1-fingerprint: flag ordering should be normalized')
+
+# P1-fingerprint-3: mixed positional+flag (cmd src --flag dst != cmd dst --flag src)
+fp_sfd = ptf.compute('cmd src --flag dst', '/tmp')
+fp_dfs = ptf.compute('cmd dst --flag src', '/tmp')
+if fp_sfd['matching_key'] == fp_dfs['matching_key']:
+    errors.append('P1-fingerprint: cmd src --flag dst and cmd dst --flag src must differ')
+
+# P1-fingerprint-4: identical commands match
+fp_id1 = ptf.compute('echo hello world', '/tmp')
+fp_id2 = ptf.compute('echo hello world', '/tmp')
+if fp_id1['matching_key'] != fp_id2['matching_key']:
+    errors.append('P1-fingerprint: identical commands must produce same fingerprint')
+
+# P1-legacy-backfill: load_store auto-tags legacy patterns
+import polaris_success_patterns as psp
+import tempfile
+legacy_test_store = {
+    'schema_version': 1,
+    'patterns': [
+        {'pattern_id': 'layered-local-orchestration', 'tags': ['orchestration', 'local', 'success'],
+         'trigger': 'long local task', 'confidence': 88, 'lifecycle_state': 'experimental'},
+        {'pattern_id': 'specific-task', 'tags': ['orchestration', 'local', 'custom'],
+         'trigger': 'deploy mysql', 'confidence': 80, 'lifecycle_state': 'validated',
+         'task_fingerprint': {'matching_key': 'test123'}},
+    ]
+}
+with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as ltf:
+    json.dump(legacy_test_store, ltf)
+    ltf.flush()
+    loaded_legacy = psp.load_store(pathlib.Path(ltf.name))
+for lp in loaded_legacy['patterns']:
+    if lp['pattern_id'] == 'layered-local-orchestration' and not lp.get('legacy_family'):
+        errors.append('P1-legacy-backfill: layered-local-orchestration must be tagged legacy_family=true')
+    if lp['pattern_id'] == 'specific-task' and lp.get('legacy_family'):
+        errors.append('P1-legacy-backfill: specific-task with task_fingerprint must NOT be tagged legacy_family')
+
+# P1-two-level-select: strict > family when fingerprint matches
+import subprocess as sp2
+two_level_store = {
+    'schema_version': 1,
+    'patterns': [
+        {'pattern_id': 'wide-family', 'tags': ['orchestration', 'local', 'success'],
+         'trigger': 'long local task', 'confidence': 88, 'lifecycle_state': 'experimental',
+         'modes': ['short', 'long'], 'reusable': True},
+        {'pattern_id': 'strict-match', 'tags': ['orchestration', 'local'],
+         'trigger': 'shell task', 'confidence': 75, 'lifecycle_state': 'experimental',
+         'modes': ['short'], 'reusable': True,
+         'task_fingerprint': {'matching_key': 'two_level_test_key'}},
+    ]
+}
+with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as tlf:
+    json.dump(two_level_store, tlf)
+    tl_path = tlf.name
+# Strict hit
+tl_result = sp2.run([sys.executable, str(pathlib.Path(os.environ['POLARIS_ROOT']) / 'scripts' / 'polaris_success_patterns.py'),
+    'select', '--patterns', tl_path, '--tags', 'orchestration,local', '--mode', 'short',
+    '--min-confidence', '50', '--task-fingerprint-json', json.dumps({'matching_key': 'two_level_test_key'})],
+    capture_output=True, text=True)
+tl_parsed = json.loads(tl_result.stdout)
+if tl_parsed.get('match_resolution') != 'strict':
+    errors.append(f'P1-two-level-select: expected strict resolution, got {tl_parsed.get("match_resolution")}')
+if tl_parsed.get('selected', [{}])[0].get('pattern', {}).get('pattern_id') != 'strict-match':
+    errors.append('P1-two-level-select: strict hit should select strict-match pattern')
+
+# Family fallback when no fingerprint match
+tl_result2 = sp2.run([sys.executable, str(pathlib.Path(os.environ['POLARIS_ROOT']) / 'scripts' / 'polaris_success_patterns.py'),
+    'select', '--patterns', tl_path, '--tags', 'orchestration,local', '--mode', 'short',
+    '--min-confidence', '50', '--task-fingerprint-json', json.dumps({'matching_key': 'nonexistent'})],
+    capture_output=True, text=True)
+tl_parsed2 = json.loads(tl_result2.stdout)
+if tl_parsed2.get('match_resolution') != 'family_fallback':
+    errors.append(f'P1-two-level-select: expected family_fallback, got {tl_parsed2.get("match_resolution")}')
+
+# P1-hot-path-budget: orchestrator records budget check
+for scenario_name in ['real-shell-success']:
+    scenario_dir = base / scenario_name
+    state_path = scenario_dir / 'execution-state.json'
+    if state_path.exists():
+        s = json.loads(state_path.read_text())
+        budget = s.get('artifacts', {}).get('hot_path_budget')
+        if not budget:
+            errors.append(f'P1-hot-path-budget: {scenario_name} must have hot_path_budget artifact')
+        else:
+            budget_data = json.loads(budget) if isinstance(budget, str) else budget
+            if 'total_bytes' not in budget_data:
+                errors.append(f'P1-hot-path-budget: {scenario_name} budget must have total_bytes')
+            if 'fields' not in budget_data:
+                errors.append(f'P1-hot-path-budget: {scenario_name} budget must have per-field breakdown')
+            for required_field in ['selected_pattern_json', 'execution_contract_json', 'applied_rules_json', 'experience_hints_json']:
+                if required_field not in budget_data.get('fields', {}):
+                    errors.append(f'P1-hot-path-budget: {scenario_name} budget must measure {required_field}')
+
+# P1-family-transfer: step3-transfer uses family_fallback (not unconditional)
+transfer_target_dir2 = base / 'step3-transfer-target'
+transfer_target_state2 = json.loads((transfer_target_dir2 / 'execution-state.json').read_text())
+# After Platform 1, family_transfer_applied should only be true when match_resolution is family_fallback
+if transfer_target_state2['artifacts'].get('family_transfer_applied', False):
+    tr = transfer_target_state2['artifacts'].get('transfer_reason', '')
+    if 'family-fallback' not in tr and 'family_fallback' not in tr.replace('-', '_'):
+        errors.append('P1-family-transfer: transfer_reason must indicate family-fallback, not unconditional reuse')
+
+# ── Platform 1 Day 2: Blocked fallback regression ──
+import subprocess as sp_test
+scripts = pathlib.Path(os.environ['POLARIS_ROOT']) / 'scripts'
+
+# P1-fallback-state-schema: fallback_state exists in state with correct shape
+for scenario_name in ['standard-repair']:
+    scenario_dir = base / scenario_name
+    state_path = scenario_dir / 'execution-state.json'
+    if state_path.exists():
+        s = json.loads(state_path.read_text())
+        fb = s.get('fallback_state')
+        if fb is None:
+            errors.append(f'P1-fallback-state: {scenario_name} must have fallback_state')
+        else:
+            for key in ['attempted_adapters', 'fallback_count', 'max_fallback_attempts']:
+                if key not in fb:
+                    errors.append(f'P1-fallback-state: {scenario_name} fallback_state missing {key}')
+
+# P1-adapter-exclude: polaris_adapters.py select --exclude-adapters filters correctly
+import subprocess as sp_test
+adapter_exclude_result = sp_test.run([
+    sys.executable, str(scripts / 'polaris_adapters.py'), 'select',
+    '--registry', str(base / 'standard-success' / 'adapter-registry.json'),
+    '--capabilities', 'local-exec,reporting',
+    '--mode', 'short',
+    '--execution-profile', 'standard',
+    '--max-trust', 'workspace',
+    '--max-cost', '5',
+    '--failure-type', 'moderate_local_task',
+    '--require-durable-status', 'no',
+    '--verify-prereqs', 'no',
+    '--exclude-adapters', 'bash-runner',
+], capture_output=True, text=True)
+if adapter_exclude_result.returncode == 0:
+    exclude_parsed = json.loads(adapter_exclude_result.stdout)
+    for sel in exclude_parsed.get('selected', []):
+        if sel.get('adapter', {}).get('tool') == 'bash-runner':
+            errors.append('P1-adapter-exclude: bash-runner should be excluded but was selected')
+
+# P1-operator-summary: report --output-mode operator_summary must not leak internal state keys
+op_summary_result = sp_test.run([
+    sys.executable, str(scripts / 'polaris_report.py'),
+    '--run-id', 'test-op-summary',
+    '--phase', 'complete',
+    '--status', 'completed',
+    '--summary', 'Test completed',
+    '--output-mode', 'operator_summary',
+    '--selected-adapter', 'bash-runner',
+    '--active-rule-layers', 'hard,soft',
+    '--state-node', 'completed',
+], capture_output=True, text=True)
+if op_summary_result.returncode != 0:
+    errors.append(f'P1-operator-summary: report failed: {op_summary_result.stderr}')
+else:
+    op_event = json.loads(op_summary_result.stdout)
+    leaked_keys = {'active_rule_layers', 'selected_adapter', 'state_node', 'active_branch',
+                   'selected_pattern', 'references', 'summary_outcome',
+                   'lifecycle_stage', 'started_at', 'last_heartbeat_at', 'completed_at',
+                   'state_density', 'event_budget'}
+    found_leaked = leaked_keys.intersection(set(op_event.keys()))
+    if found_leaked:
+        errors.append(f'P1-operator-summary: internal keys leaked to operator view: {sorted(found_leaked)}')
+
+# P1-diagnostic-detail: report --output-mode diagnostic_detail preserves all keys
+diag_result = sp_test.run([
+    sys.executable, str(scripts / 'polaris_report.py'),
+    '--run-id', 'test-diag',
+    '--phase', 'complete',
+    '--status', 'completed',
+    '--summary', 'Test completed',
+    '--output-mode', 'diagnostic_detail',
+    '--selected-adapter', 'bash-runner',
+    '--active-rule-layers', 'hard,soft',
+], capture_output=True, text=True)
+if diag_result.returncode != 0:
+    errors.append(f'P1-diagnostic-detail: report failed: {diag_result.stderr}')
+else:
+    diag_event = json.loads(diag_result.stdout)
+    if 'selected_adapter' not in diag_event:
+        errors.append('P1-diagnostic-detail: diagnostic mode must include selected_adapter')
+
+# P1-skill-version: SKILL.md must declare platform 1
+skill_md = (base / '..' / 'SKILL.md').resolve()
+if skill_md.exists():
+    skill_text = skill_md.read_text()
+    if 'platform: 1' not in skill_text and 'Platform 1' not in skill_text:
+        errors.append('P1-skill-version: SKILL.md must declare Platform 1')
+
+# ── Platform 1 Day 2: P0 regression gaps ──
+
+# P1-fallback-record-and-resume: fallback-record writes adapter, resume restores attempted set
+import tempfile as _tmpfb
+_fb_state_dir = tempfile.mkdtemp(prefix='p1-fb-resume-')
+_fb_state_path = os.path.join(_fb_state_dir, 'execution-state.json')
+# init
+sp_test.run([sys.executable, str(scripts / 'polaris_state.py'), 'init', '--state', _fb_state_path, '--goal', 'test', '--mode', 'short', '--execution-profile', 'standard'], capture_output=True, text=True)
+# record first blocked adapter
+sp_test.run([sys.executable, str(scripts / 'polaris_state.py'), 'fallback-record', '--state', _fb_state_path, '--adapter', 'adapter-a', '--max-fallback-attempts', '3'], capture_output=True, text=True)
+# record second blocked adapter
+sp_test.run([sys.executable, str(scripts / 'polaris_state.py'), 'fallback-record', '--state', _fb_state_path, '--adapter', 'adapter-b', '--max-fallback-attempts', '3'], capture_output=True, text=True)
+_fb_state = json.loads(pathlib.Path(_fb_state_path).read_text())
+_fb = _fb_state.get('fallback_state', {})
+if set(_fb.get('attempted_adapters', [])) != {'adapter-a', 'adapter-b'}:
+    errors.append(f'P1-fallback-record-resume: attempted_adapters should be {{adapter-a, adapter-b}}, got {_fb.get("attempted_adapters")}')
+if _fb.get('fallback_count') != 2:
+    errors.append(f'P1-fallback-record-resume: fallback_count should be 2, got {_fb.get("fallback_count")}')
+if _fb.get('max_fallback_attempts') != 3:
+    errors.append(f'P1-fallback-record-resume: max_fallback_attempts should be frozen at 3, got {_fb.get("max_fallback_attempts")}')
+
+# P1-nonrepair-stop-persisted: block --nonrepair-stop true persists boolean in state_machine.blocked
+_nr_state_dir = tempfile.mkdtemp(prefix='p1-nr-stop-')
+_nr_state_path = os.path.join(_nr_state_dir, 'execution-state.json')
+sp_test.run([sys.executable, str(scripts / 'polaris_state.py'), 'init', '--state', _nr_state_path, '--goal', 'test', '--mode', 'short', '--execution-profile', 'standard'], capture_output=True, text=True)
+sp_test.run([sys.executable, str(scripts / 'polaris_state.py'), 'block', '--state', _nr_state_path, '--reason', 'nonrepair denial test', '--references', '', '--nonrepair-stop', 'true'], capture_output=True, text=True)
+_nr_state = json.loads(pathlib.Path(_nr_state_path).read_text())
+_nr_blocked = _nr_state.get('state_machine', {}).get('blocked', {})
+if _nr_blocked.get('nonrepair_stop') is not True:
+    errors.append(f'P1-nonrepair-stop: blocked.nonrepair_stop should be True, got {_nr_blocked.get("nonrepair_stop")}')
+# Verify false case
+_nr2_state_dir = tempfile.mkdtemp(prefix='p1-nr-stop2-')
+_nr2_state_path = os.path.join(_nr2_state_dir, 'execution-state.json')
+sp_test.run([sys.executable, str(scripts / 'polaris_state.py'), 'init', '--state', _nr2_state_path, '--goal', 'test', '--mode', 'short', '--execution-profile', 'standard'], capture_output=True, text=True)
+sp_test.run([sys.executable, str(scripts / 'polaris_state.py'), 'block', '--state', _nr2_state_path, '--reason', 'normal block test', '--references', '', '--nonrepair-stop', 'false'], capture_output=True, text=True)
+_nr2_state = json.loads(pathlib.Path(_nr2_state_path).read_text())
+_nr2_blocked = _nr2_state.get('state_machine', {}).get('blocked', {})
+if _nr2_blocked.get('nonrepair_stop') is not False:
+    errors.append(f'P1-nonrepair-stop: blocked.nonrepair_stop should be False for normal block, got {_nr2_blocked.get("nonrepair_stop")}')
+
+# P1-operator-summary-event-log: event-log must respect --output-mode operator_summary (no internal key leak)
+_evlog_dir = tempfile.mkdtemp(prefix='p1-evlog-')
+_evlog_path = os.path.join(_evlog_dir, 'test-events.jsonl')
+# Create a minimal authoritative state file for the test
+_auth_state = {
+    'status': 'in_progress', 'phase': 'execute', 'progress_pct': '50',
+    'current_step': 'Running', 'next_action': 'Wait',
+    'state_machine': {'node': 'executing', 'blocked': {}, 'active_branch': 'b1'},
+    'artifacts': {'selected_adapter': 'bash-runner', 'selected_pattern': 'p1'},
+    'summary_outcome': 'internal detail', 'references': ['ref1'],
+    'rule_context': {'active_layers': ['hard', 'soft']},
+    'execution_profile': 'standard', 'state_density': 'normal', 'event_budget': 10,
+    'runtime': {'lifecycle_stage': 'running', 'started_at': '2026-01-01', 'last_heartbeat_at': '2026-01-01', 'completed_at': None},
+}
+_auth_state_path = os.path.join(_evlog_dir, 'auth-state.json')
+pathlib.Path(_auth_state_path).write_text(json.dumps(_auth_state))
+_evlog_result = sp_test.run([
+    sys.executable, str(scripts / 'polaris_report.py'),
+    '--run-id', 'test-evlog',
+    '--phase', 'execute',
+    '--status', 'in_progress',
+    '--summary', 'Test',
+    '--output-mode', 'operator_summary',
+    '--selected-adapter', 'bash-runner',
+    '--active-rule-layers', 'hard,soft',
+    '--state-node', 'executing',
+    '--authoritative-state', _auth_state_path,
+    '--event-log', _evlog_path,
+], capture_output=True, text=True)
+if _evlog_result.returncode != 0:
+    errors.append(f'P1-operator-summary-event-log: report failed: {_evlog_result.stderr}')
+else:
+    _evlog_lines = pathlib.Path(_evlog_path).read_text().strip().split('\n')
+    _evlog_event = json.loads(_evlog_lines[-1])
+    _evlog_leaked_keys = {'selected_adapter', 'state_node', 'active_branch',
+                          'selected_pattern', 'references', 'summary_outcome',
+                          'lifecycle_stage', 'started_at', 'last_heartbeat_at', 'completed_at',
+                          'state_density', 'event_budget'}
+    _evlog_found_leaked = _evlog_leaked_keys.intersection(set(_evlog_event.keys()))
+    if _evlog_found_leaked:
+        errors.append(f'P1-operator-summary-event-log: event-log leaks internal keys under operator_summary: {sorted(_evlog_found_leaked)}')
+
+# P1-diagnostic-event-log: diagnostic_detail mode still includes all keys in event-log
+_diag_evlog_path = os.path.join(_evlog_dir, 'test-diag-events.jsonl')
+_diag_evlog_result = sp_test.run([
+    sys.executable, str(scripts / 'polaris_report.py'),
+    '--run-id', 'test-diag-evlog',
+    '--phase', 'execute',
+    '--status', 'in_progress',
+    '--summary', 'Test',
+    '--output-mode', 'diagnostic_detail',
+    '--selected-adapter', 'bash-runner',
+    '--active-rule-layers', 'hard,soft',
+    '--state-node', 'executing',
+    '--authoritative-state', _auth_state_path,
+    '--event-log', _diag_evlog_path,
+], capture_output=True, text=True)
+if _diag_evlog_result.returncode != 0:
+    errors.append(f'P1-diagnostic-event-log: report failed: {_diag_evlog_result.stderr}')
+else:
+    _diag_evlog_lines = pathlib.Path(_diag_evlog_path).read_text().strip().split('\n')
+    _diag_evlog_event = json.loads(_diag_evlog_lines[-1])
+    if 'selected_adapter' not in _diag_evlog_event:
+        errors.append('P1-diagnostic-event-log: diagnostic mode event-log must include selected_adapter')
+    if 'summary_outcome' not in _diag_evlog_event:
+        errors.append('P1-diagnostic-event-log: diagnostic mode event-log must include summary_outcome')
+
+# ── Platform 1 Day 2: additional negative-path regressions ──
+
+# P1-old-state-migration: old state with blocked dict but no nonrepair_stop must backfill False
+_old_state_dir = tempfile.mkdtemp(prefix='p1-old-migrate-')
+_old_state_path = os.path.join(_old_state_dir, 'execution-state.json')
+# Write a synthetic old-format state: blocked exists but lacks nonrepair_stop
+_old_state = {
+    'schema_version': 6,
+    'status': 'blocked', 'phase': 'blocked', 'goal': 'test', 'mode': 'short',
+    'execution_profile': 'standard', 'progress_pct': '60',
+    'current_step': 'Blocked', 'next_action': 'Manual',
+    'state_machine': {
+        'node': 'blocked',
+        'active_branch': None, 'branches': [], 'history': [], 'history_summary': [],
+        'recovery': [],
+        'blocked': {'is_blocked': True, 'reason': 'old format test', 'references': []},
+        'allowed_transitions': {},
+    },
+    'rule_context': {'active_layers': ['hard', 'soft'], 'applied_rules': []},
+    'fallback_state': {'attempted_adapters': ['old-adapter'], 'fallback_count': 1, 'max_fallback_attempts': 2},
+    'summary_outcome': 'old format test',
+    'updated_at': '2026-01-01T00:00:00Z',
+}
+pathlib.Path(_old_state_path).write_text(json.dumps(_old_state))
+# Any state read through polaris_state.py should trigger backfill
+_old_migrate_result = sp_test.run([
+    sys.executable, str(scripts / 'polaris_state.py'), 'heartbeat',
+    '--state', _old_state_path,
+], capture_output=True, text=True)
+if _old_migrate_result.returncode != 0:
+    errors.append(f'P1-old-state-migration: heartbeat on old state failed: {_old_migrate_result.stderr}')
+else:
+    _migrated = json.loads(pathlib.Path(_old_state_path).read_text())
+    _migrated_blocked = _migrated.get('state_machine', {}).get('blocked', {})
+    if 'nonrepair_stop' not in _migrated_blocked:
+        errors.append('P1-old-state-migration: backfill must add nonrepair_stop to existing blocked dict')
+    elif _migrated_blocked['nonrepair_stop'] is not False:
+        errors.append(f'P1-old-state-migration: backfill nonrepair_stop must be False, got {_migrated_blocked["nonrepair_stop"]}')
+
+# P1-fallback-reset-refreeze: after fallback-reset, next fallback-record must re-freeze max
+_rf_state_dir = tempfile.mkdtemp(prefix='p1-refreeze-')
+_rf_state_path = os.path.join(_rf_state_dir, 'execution-state.json')
+sp_test.run([sys.executable, str(scripts / 'polaris_state.py'), 'init', '--state', _rf_state_path, '--goal', 'test', '--mode', 'short', '--execution-profile', 'standard'], capture_output=True, text=True)
+# First record: freeze at 3
+sp_test.run([sys.executable, str(scripts / 'polaris_state.py'), 'fallback-record', '--state', _rf_state_path, '--adapter', 'a1', '--max-fallback-attempts', '3'], capture_output=True, text=True)
+# Reset
+sp_test.run([sys.executable, str(scripts / 'polaris_state.py'), 'fallback-reset', '--state', _rf_state_path], capture_output=True, text=True)
+_rf_after_reset = json.loads(pathlib.Path(_rf_state_path).read_text())
+if _rf_after_reset.get('fallback_state', {}).get('max_fallback_attempts') != 0:
+    errors.append('P1-fallback-reset-refreeze: after reset, max_fallback_attempts must be 0')
+# Re-record with different count: should freeze at new value 5
+sp_test.run([sys.executable, str(scripts / 'polaris_state.py'), 'fallback-record', '--state', _rf_state_path, '--adapter', 'b1', '--max-fallback-attempts', '5'], capture_output=True, text=True)
+_rf_refrozen = json.loads(pathlib.Path(_rf_state_path).read_text())
+if _rf_refrozen.get('fallback_state', {}).get('max_fallback_attempts') != 5:
+    errors.append(f'P1-fallback-reset-refreeze: after reset+record, max should re-freeze at 5, got {_rf_refrozen.get("fallback_state", {}).get("max_fallback_attempts")}')
+
+# P1-emit-progress-default-mode: emit_progress without explicit output_mode must default to diagnostic_detail
+# We test this by calling polaris_report.py without --output-mode and verifying it defaults to diagnostic_detail
+_dflt_evlog_dir = tempfile.mkdtemp(prefix='p1-dflt-mode-')
+_dflt_evlog_path = os.path.join(_dflt_evlog_dir, 'dflt-events.jsonl')
+_dflt_auth_path = os.path.join(_dflt_evlog_dir, 'auth-state.json')
+pathlib.Path(_dflt_auth_path).write_text(json.dumps({
+    'status': 'in_progress', 'phase': 'execute', 'progress_pct': '50',
+    'current_step': 'Running', 'next_action': 'Wait',
+    'state_machine': {'node': 'executing', 'blocked': {}, 'active_branch': 'b1'},
+    'artifacts': {'selected_adapter': 'bash-runner', 'selected_pattern': 'p1'},
+    'summary_outcome': 'internal detail', 'references': ['ref1'],
+    'rule_context': {'active_layers': ['hard', 'soft']},
+    'execution_profile': 'standard', 'state_density': 'normal', 'event_budget': 10,
+    'runtime': {'lifecycle_stage': 'running', 'started_at': '2026-01-01', 'last_heartbeat_at': '2026-01-01', 'completed_at': None},
+}))
+# No --output-mode flag = default diagnostic_detail
+_dflt_result = sp_test.run([
+    sys.executable, str(scripts / 'polaris_report.py'),
+    '--run-id', 'test-dflt',
+    '--phase', 'execute',
+    '--status', 'in_progress',
+    '--summary', 'Test default',
+    '--selected-adapter', 'bash-runner',
+    '--active-rule-layers', 'hard,soft',
+    '--state-node', 'executing',
+    '--authoritative-state', _dflt_auth_path,
+    '--event-log', _dflt_evlog_path,
+], capture_output=True, text=True)
+if _dflt_result.returncode != 0:
+    errors.append(f'P1-emit-progress-default-mode: report failed: {_dflt_result.stderr}')
+else:
+    # Default mode should be diagnostic_detail: event-log must contain full keys
+    _dflt_evlog_event = json.loads(pathlib.Path(_dflt_evlog_path).read_text().strip().split('\n')[-1])
+    if 'selected_adapter' not in _dflt_evlog_event:
+        errors.append('P1-emit-progress-default-mode: default mode event-log must include selected_adapter (diagnostic_detail)')
+    if 'summary_outcome' not in _dflt_evlog_event:
+        errors.append('P1-emit-progress-default-mode: default mode event-log must include summary_outcome (diagnostic_detail)')
+    # stdout should also be diagnostic_detail
+    _dflt_stdout_event = json.loads(_dflt_result.stdout)
+    if 'selected_adapter' not in _dflt_stdout_event:
+        errors.append('P1-emit-progress-default-mode: default mode stdout must include selected_adapter (diagnostic_detail)')
+
+# ── Platform 1 e2e: nonrepair_stop → resume → hard stop ──
+# Verify via state file (authoritative) after resume run 2
+_nr_e2e_dir = base / 'resume-nonrepair-hardstop'
+_nr_e2e_state = _nr_e2e_dir / 'execution-state.json'
+if _nr_e2e_state.exists():
+    _nr_e2e = json.loads(_nr_e2e_state.read_text())
+    _nr_e2e_blocked = _nr_e2e.get('state_machine', {}).get('blocked', {})
+    # After resume, state must still be blocked (hard stop prevented fallback)
+    if _nr_e2e.get('status') != 'blocked':
+        errors.append(f'P1-e2e-nonrepair-hardstop: after resume, status must be blocked, got {_nr_e2e.get("status")}')
+    # nonrepair_stop must be persisted from run 1
+    if _nr_e2e_blocked.get('nonrepair_stop') is not True:
+        errors.append(f'P1-e2e-nonrepair-hardstop: nonrepair_stop must be True, got {_nr_e2e_blocked.get("nonrepair_stop")}')
+    # summary_outcome must mention hard-stop / nonrepair denial (written by resume hard stop path)
+    _nr_summary = _nr_e2e.get('summary_outcome', '')
+    if 'nonrepair' not in _nr_summary.lower() and 'hard-stop' not in _nr_summary.lower() and 'Fallback blocked' not in _nr_summary:
+        errors.append(f'P1-e2e-nonrepair-hardstop: summary_outcome must indicate nonrepair hard stop, got: {_nr_summary}')
+else:
+    errors.append('P1-e2e-nonrepair-hardstop: state file missing after run')
+
+# ── Platform 1 e2e: attempted_adapters → resume → adapter exhaustion ──
+# With 1 adapter in registry, after run 1 blocks it, resume must hit exhaustion hard stop
+_ex_e2e_dir = base / 'resume-adapter-exhaust'
+_ex_e2e_state = _ex_e2e_dir / 'execution-state.json'
+if _ex_e2e_state.exists():
+    _ex_e2e = json.loads(_ex_e2e_state.read_text())
+    _ex_e2e_fb = _ex_e2e.get('fallback_state', {})
+    # State must be blocked after adapter exhaustion
+    if _ex_e2e.get('status') != 'blocked':
+        errors.append(f'P1-e2e-adapter-exhaust: after resume, status must be blocked, got {_ex_e2e.get("status")}')
+    # attempted_adapters must contain at least one adapter
+    if not _ex_e2e_fb.get('attempted_adapters'):
+        errors.append('P1-e2e-adapter-exhaust: attempted_adapters must not be empty')
+    # summary must indicate exhaustion or hard stop
+    _ex_summary = _ex_e2e.get('summary_outcome', '')
+    if 'exhaust' not in _ex_summary.lower() and 'Fallback blocked' not in _ex_summary:
+        errors.append(f'P1-e2e-adapter-exhaust: summary_outcome must indicate adapter exhaustion, got: {_ex_summary}')
+else:
+    errors.append('P1-e2e-adapter-exhaust: state file missing after run')
 
 print(json.dumps(summary, indent=2, sort_keys=True))
 if errors:
