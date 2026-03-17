@@ -36,7 +36,7 @@ def classify(error_text: str) -> dict:
             "recommended_tree": "dependency_probe_tree",
             "nonrepair_stop": False,
         }
-    if "no module named" in text or "module not found" in text:
+    if "no module named" in text or "module not found" in text or "cannot find module" in text:
         return {
             "failure_type": "missing_dependency",
             "repair_class": "env_probe_tree",

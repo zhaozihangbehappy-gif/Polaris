@@ -7,6 +7,10 @@ PASS=0; FAIL=0; TOTAL=0
 assert_contains() { TOTAL=$((TOTAL+1)); if grep -qF "$2" <<< "$1"; then PASS=$((PASS+1)); else FAIL=$((FAIL+1)); echo "FAIL[$TOTAL]: output missing '$2' — $3"; fi; }
 assert_not_contains() { TOTAL=$((TOTAL+1)); if grep -qF "$2" <<< "$1"; then FAIL=$((FAIL+1)); echo "FAIL[$TOTAL]: output should NOT contain '$2' — $3"; else PASS=$((PASS+1)); fi; }
 
+# R1: Isolate from global experience library
+export POLARIS_HOME=$(mktemp -d)
+trap 'rm -rf "$POLARIS_HOME"' EXIT
+
 # --- Test 1: first successful run → learned + success pattern captured ---
 RTDIR=$(mktemp -d)
 OUT=$(python3 Polaris/scripts/polaris_cli.py run "echo first-success" --runtime-dir "$RTDIR" 2>&1)

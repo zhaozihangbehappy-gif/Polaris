@@ -1,0 +1,24 @@
+{
+  "ecosystem": "python",
+  "pack_version": "1.0",
+  "records": [
+    {
+      "error_class": "missing_dependency",
+      "stderr_pattern": "ModuleNotFoundError",
+      "avoidance_hints": [{"kind": "set_env", "vars": {"PYTHONPATH": "."}}],
+      "description": "Python cannot import module — add cwd to PYTHONPATH"
+    },
+    {
+      "error_class": "missing_dependency",
+      "stderr_pattern": "venv",
+      "avoidance_hints": [{"kind": "set_env", "vars": {"VIRTUAL_ENV": ".venv", "PATH": ".venv/bin:$PATH"}}],
+      "description": "venv not activated — set VIRTUAL_ENV and prepend bin to PATH"
+    },
+    {
+      "error_class": "encoding_error",
+      "stderr_pattern": "UnicodeDecodeError",
+      "avoidance_hints": [{"kind": "set_env", "vars": {"PYTHONIOENCODING": "utf-8"}}],
+      "description": "Unicode decode error — force UTF-8 IO encoding"
+    }
+  ]
+}

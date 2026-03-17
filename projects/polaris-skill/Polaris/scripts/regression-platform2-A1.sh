@@ -8,6 +8,10 @@ assert_eq() { TOTAL=$((TOTAL+1)); if [ "$1" = "$2" ]; then PASS=$((PASS+1)); els
 assert_contains() { TOTAL=$((TOTAL+1)); if echo "$1" | grep -qF "$2"; then PASS=$((PASS+1)); else FAIL=$((FAIL+1)); echo "FAIL[$TOTAL]: output missing '$2' — $3"; fi; }
 assert_file_exists() { TOTAL=$((TOTAL+1)); if [ -f "$1" ]; then PASS=$((PASS+1)); else FAIL=$((FAIL+1)); echo "FAIL[$TOTAL]: file not found '$1' — $2"; fi; }
 
+# R1: Isolate from global experience library
+export POLARIS_HOME=$(mktemp -d)
+trap 'rm -rf "$POLARIS_HOME"' EXIT
+
 # --- Test 1: successful command, full lifecycle ---
 RTDIR=$(mktemp -d)
 python3 Polaris/scripts/polaris_cli.py run "echo hello-polaris" --runtime-dir "$RTDIR" >/dev/null 2>&1

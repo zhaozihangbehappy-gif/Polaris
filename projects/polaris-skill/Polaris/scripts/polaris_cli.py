@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
 """Polaris CLI — single-command entry point for the Polaris orchestration skill.
 
+Platform 2 APPROVED by Codex audit 2026-03-17.
+
 Usage:
-    polaris_cli.py run <command> [--goal GOAL] [--profile PROFILE] [--runtime-dir DIR] [--resume] [--shell-timeout-ms MS]
-    polaris_cli.py experience reset-prebuilt [--runtime-dir DIR] [--ecosystem ECO]
+    polaris_cli.py run <command> [--goal GOAL] [--profile PROFILE] [--runtime-dir DIR] [--resume] [--shell-timeout-ms MS] [--no-prebuilt]
+    polaris_cli.py stats --runtime-dir DIR [--json]
+    polaris_cli.py experience reset-prebuilt --runtime-dir DIR [--ecosystem ECO]
     polaris_cli.py feedback reject <index> [--store PATH]
     polaris_cli.py feedback correct <index> --hint-kind KIND --hint-value JSON [--store PATH]
     polaris_cli.py feedback list [--store PATH]
@@ -14,12 +17,17 @@ Internally delegates to the same module path as polaris_runtime_demo.sh:
 import argparse
 import hashlib
 import json
+import os
+import re
 import subprocess
 import sys
+import time
+from datetime import datetime, timezone
 from pathlib import Path
 
 SCRIPTS = Path(__file__).resolve().parent
 ROOT = SCRIPTS.parent
+PACKS_DIR = ROOT / "experience-packs"
 
 
 def _default_runtime_dir(command: str) -> str:
@@ -64,14 +72,9 @@ def _safe_json_obj(raw) -> dict:
 
 def _has_prior_experience_for_task(runtime_dir: Path, matching_key: str) -> bool:
     """Check failure-records.json and success-patterns.json for experience
-    matching the given task fingerprint.
-
-    Only returns True if the specific task (by matching_key) has prior records,
-    not just any task in the same runtime directory.
-    """
+    matching the given task fingerprint."""
     if not matching_key:
         return False
-    # Failure records: check for matching_key
     fr_path = runtime_dir / "failure-records.json"
     if fr_path.exists():
         try:
@@ -85,7 +88,6 @@ def _has_prior_experience_for_task(runtime_dir: Path, matching_key: str) -> bool
                             return True
         except (json.JSONDecodeError, OSError):
             pass
-    # Success patterns: check for matching_key in task_fingerprint
     sp_path = runtime_dir / "success-patterns.json"
     if sp_path.exists():
         try:
@@ -102,35 +104,46 @@ def _has_prior_experience_for_task(runtime_dir: Path, matching_key: str) -> bool
     return False
 
 
-def _emit_experience_summary(state: dict, runtime_dir: Path, had_prior_experience: bool = False) -> None:
-    """Emit human-readable experience summary lines to stderr (A2).
+def _emit_experience_summary(state: dict, runtime_dir: Path, had_prior_experience: bool = False, global_experience_loaded: bool = False) -> None:
+    """Emit human-readable experience summary lines to stderr (A2 + R1).
 
     Truthfulness contract: every line must reflect actual on-disk state.
-    - "applied N avoidance hints" → experience_hints.avoid has N entries
-    - "applied N strategy hints" → experience_hints.prefer has N entries
-    - "first run for this task" → no records for this task's fingerprint existed before run
-    - "learned: ... stored" → failure record is on-disk in failure-records.json
-    - "learned: success pattern captured" → pattern was promoted or merged (on-disk)
     """
     artifacts = state.get("artifacts", {})
     lines = []
 
-    # 1. Experience hints applied? Separate avoid (from failures) and prefer (from patterns)
     hints = _safe_json_obj(artifacts.get("experience_hints"))
     avoid_count = len(hints.get("avoid", []))
     prefer_count = len(hints.get("prefer", []))
     if avoid_count > 0:
-        lines.append(f"[polaris] \u21bb applied {avoid_count} avoidance hints from previous failures")
+        source_note = " (includes global library)" if global_experience_loaded else ""
+        lines.append(f"[polaris] \u21bb applied {avoid_count} avoidance hints from previous failures{source_note}")
     if prefer_count > 0:
-        lines.append(f"[polaris] \u21bb applied {prefer_count} strategy hints from success patterns")
+        # R2: Show reuse message with confidence from the source pattern
+        _reuse_conf_str = ""
+        try:
+            sp_path = runtime_dir / "success-patterns.json"
+            if sp_path.exists():
+                sp_data = json.loads(sp_path.read_text())
+                _sel_pat = artifacts.get("selected_pattern", "")
+                for _pat in sp_data.get("patterns", []):
+                    if _pat.get("pattern_id") == _sel_pat or _pat.get("fingerprint") == _sel_pat:
+                        _conf = _pat.get("confidence", 0)
+                        _rsc = _pat.get("reuse_success_count", 0)
+                        if _rsc > 0:
+                            _reuse_conf_str = f" from {_rsc} successful runs (confidence: {_conf/100:.2f})"
+                        else:
+                            _reuse_conf_str = f" (confidence: {_conf/100:.2f})"
+                        break
+        except (json.JSONDecodeError, OSError, TypeError):
+            pass
+        lines.append(f"[polaris] \u21bb reusing verified strategy{_reuse_conf_str}")
     if avoid_count == 0 and prefer_count == 0 and not had_prior_experience:
         lines.append("[polaris] first run for this task, no prior experience")
 
-    # 2. What was learned this run?
     status = state.get("status")
     failure_written = artifacts.get("failure_record_written")
     if failure_written is True or failure_written == "true":
-        # Extract error class and hint kinds from on-disk failure records
         fp = _safe_json_obj(artifacts.get("task_fingerprint"))
         matching_key = fp.get("matching_key", "")
         error_class = "unknown"
@@ -155,8 +168,6 @@ def _emit_experience_summary(state: dict, runtime_dir: Path, had_prior_experienc
         lines.append(f"[polaris] \u2717 learned: {error_class} \u2192 avoidance hints [{hint_kinds_str}] stored for next run")
 
     elif status == "completed":
-        # Fix #2: check promoted_patterns + merged_patterns as on-disk evidence,
-        # not success_markers which is just a queue count
         learning = _safe_json_obj(artifacts.get("learning_summary"))
         promoted = learning.get("promoted_patterns", [])
         merged = learning.get("merged_patterns", [])
@@ -172,6 +183,74 @@ def _emit_experience_summary(state: dict, runtime_dir: Path, had_prior_experienc
         print(line, file=sys.stderr)
 
 
+# ── C1: Ecosystem detection and prebuilt pack loading ──
+
+ECOSYSTEM_PATTERNS = {
+    "node": re.compile(r"\b(npm|node|npx|yarn|pnpm)\b"),
+    "python": re.compile(r"\b(python3?|pip3?|pytest|poetry|uv)\b"),
+    "go": re.compile(r"\bgo\s"),
+}
+
+
+def _detect_ecosystem(command: str) -> str | None:
+    """Detect ecosystem from command keywords."""
+    for eco, pattern in ECOSYSTEM_PATTERNS.items():
+        if pattern.search(command):
+            return eco
+    return None
+
+
+def _load_prebuilt_pack(runtime_dir: Path, ecosystem: str) -> int:
+    """Load a prebuilt experience pack into failure-records.json. Idempotent.
+    Returns number of records added."""
+    sys.path.insert(0, str(SCRIPTS))
+    import polaris_failure_records as pfr
+
+    pack_path = PACKS_DIR / f"{ecosystem}.json"
+    if not pack_path.exists():
+        return 0
+
+    store_path = runtime_dir / "failure-records.json"
+    store = pfr.load_store(store_path)
+
+    # Idempotency: check if this ecosystem's prebuilt records already exist
+    existing_prebuilt = [r for r in store.get("records", [])
+                         if r.get("source") == "prebuilt" and r.get("ecosystem") == ecosystem]
+    if existing_prebuilt:
+        return 0
+
+    pack = json.loads(pack_path.read_text())
+    pack_records = pack.get("records", [])
+    added = 0
+    for prec in pack_records:
+        # Each pack record becomes a failure record with source=prebuilt
+        fp = {"matching_key": f"prebuilt-{ecosystem}-{added:04x}",
+              "command_key": f"prebuilt-{ecosystem}",
+              "raw_descriptor": prec.get("stderr_pattern", ""),
+              "normalized_descriptor": prec.get("stderr_pattern", "")}
+        pfr.record(store, fp, f"prebuilt-{ecosystem}",
+                   prec.get("error_class", "unknown"),
+                   prec.get("description", ""),
+                   "prebuilt",
+                   prec.get("avoidance_hints", []),
+                   source="prebuilt",
+                   ecosystem=ecosystem)
+        added += 1
+
+    pfr.write_store(store_path, store)
+    return added
+
+
+# ── D1: Event-log adapter events ──
+
+def _write_event(runtime_dir: Path, event: dict) -> None:
+    """Append an event to runtime-events.jsonl."""
+    event.setdefault("ts", datetime.now(timezone.utc).isoformat())
+    path = runtime_dir / "runtime-events.jsonl"
+    with path.open("a", encoding="utf-8") as f:
+        f.write(json.dumps(event, sort_keys=True) + "\n")
+
+
 def cmd_run(args: argparse.Namespace) -> None:
     runtime_dir = Path(args.runtime_dir or _default_runtime_dir(args.command))
     runtime_dir.mkdir(parents=True, exist_ok=True)
@@ -180,20 +259,67 @@ def cmd_run(args: argparse.Namespace) -> None:
     profile = args.profile
     mode = "short" if profile in ("micro", "standard") else "long"
 
-    # 1. Compat gates (same as polaris_runtime_demo.sh)
+    # R1: Load global experience into runtime-dir before orchestrator
+    import polaris_experience_store as pes
+    global_dir, _ = pes.resolve_paths(runtime_dir)
+    global_failure_path = global_dir / "failure-records.json"
+    global_success_path = global_dir / "success-patterns.json"
+    _global_experience_loaded = False
+    try:
+        if global_failure_path.exists():
+            global_fstore, _ = pes.safe_load(global_failure_path)
+            runtime_fstore_path = runtime_dir / "failure-records.json"
+            runtime_fstore, _ = pes.safe_load(
+                runtime_fstore_path,
+                default_factory={"schema_version": 2, "records": []},
+            )
+            merged = pes.merge_failure_stores(runtime_fstore, global_fstore)
+            pes.atomic_write(runtime_fstore_path, merged)
+            _global_experience_loaded = True
+        if global_success_path.exists():
+            global_sstore, _ = pes.safe_load(
+                global_success_path,
+                default_factory={"schema_version": 1, "patterns": []},
+            )
+            runtime_sstore_path = runtime_dir / "success-patterns.json"
+            runtime_sstore, _ = pes.safe_load(
+                runtime_sstore_path,
+                default_factory={"schema_version": 1, "patterns": []},
+            )
+            merged_s = pes.merge_success_stores(runtime_sstore, global_sstore)
+            pes.atomic_write(runtime_sstore_path, merged_s)
+            _global_experience_loaded = True
+    except Exception as exc:
+        print(f"[polaris] warning: global experience load failed ({exc}), continuing without", file=sys.stderr)
+
+    # 1. Compat gates
     _run([sys.executable, str(SCRIPTS / "polaris_compat.py"), "check-runtime-format", "--runtime-dir", str(runtime_dir)], "compat: check-runtime-format")
     _run([sys.executable, str(SCRIPTS / "polaris_compat.py"), "check-schema", "--state", str(runtime_dir / "execution-state.json")], "compat: check-schema")
     _run([sys.executable, str(SCRIPTS / "polaris_compat.py"), "write-runtime-format", "--runtime-dir", str(runtime_dir)], "compat: write-runtime-format")
 
-    # 2. Bootstrap (idempotent)
+    # 2. Bootstrap
     _run([sys.executable, str(SCRIPTS / "polaris_bootstrap.py"), "bootstrap", "--manifest", str(SCRIPTS / "polaris_bootstrap.json"), "--runtime-dir", str(runtime_dir)], "bootstrap")
+
+    # C1: Load prebuilt experience pack if applicable
+    no_prebuilt = getattr(args, "no_prebuilt", False) or os.environ.get("POLARIS_NO_PREBUILT") == "1"
+    if not no_prebuilt:
+        eco = _detect_ecosystem(args.command)
+        if eco:
+            _load_prebuilt_pack(runtime_dir, eco)
+
+    # R2: Resolve shell cwd (user-provided or default to runtime-dir)
+    shell_cwd = getattr(args, "cwd", None) or str(runtime_dir)
 
     # Compute task fingerprint and snapshot per-task experience BEFORE orchestrator runs
     sys.path.insert(0, str(SCRIPTS))
     import polaris_task_fingerprint as ptf
-    task_fp = ptf.compute(args.command, str(runtime_dir))
+    task_fp = ptf.compute(args.command, shell_cwd)
     task_matching_key = task_fp.get("matching_key", "")
     had_prior_experience = _has_prior_experience_for_task(runtime_dir, task_matching_key)
+
+    # D1: Emit adapter_selected event after orchestrator selects adapter
+    # (We capture timing for adapter_outcome)
+    exec_start = time.monotonic()
 
     # 3. Orchestrator
     orch_args = [
@@ -208,23 +334,84 @@ def cmd_run(args: argparse.Namespace) -> None:
         "--execution-kind", "shell_command",
         "--shell-command", args.command,
     ]
+    if shell_cwd != str(runtime_dir):
+        orch_args.extend(["--shell-cwd", shell_cwd])
     if args.resume:
         orch_args.append("--resume")
     if args.shell_timeout_ms:
         orch_args.extend(["--shell-timeout-ms", str(args.shell_timeout_ms)])
 
     result = subprocess.run(orch_args, capture_output=True, text=True)
+    exec_end = time.monotonic()
+    duration_ms = int((exec_end - exec_start) * 1000)
+
     if result.stdout.strip():
         print(result.stdout.strip())
     if result.stderr.strip():
         print(result.stderr.strip(), file=sys.stderr)
 
-    # Determine exit code and emit experience summary
+    # D1: Read state and emit adapter events to event-log
     state_path = runtime_dir / "execution-state.json"
     if state_path.exists():
         state = json.loads(state_path.read_text())
-        _emit_experience_summary(state, runtime_dir, had_prior_experience)
-        status = state.get("status")
+        artifacts = state.get("artifacts", {})
+        adapter_name = artifacts.get("selected_adapter", "unknown")
+        status = state.get("status", "unknown")
+
+        # Parse orchestrator stdout for selection_trace info
+        orch_parsed = {}
+        try:
+            orch_parsed = json.loads(result.stdout.strip()) if result.stdout.strip() else {}
+        except (json.JSONDecodeError, ValueError):
+            pass
+        selection_trace = orch_parsed.get("selected_adapter", {}).get("selection_trace", {})
+        scenario_fp = selection_trace.get("scenario_fingerprint", "")
+        sticky_reuse = selection_trace.get("sticky_reuse", {})
+        cache_hit = bool(sticky_reuse.get("entry"))
+
+        # Determine score from selected adapter
+        selected_list = orch_parsed.get("selected_adapter", {}).get("selected", [])
+        adapter_score = selected_list[0].get("score", 0) if selected_list else 0
+
+        # adapter_selected event
+        _write_event(runtime_dir, {
+            "type": "adapter_selected",
+            "adapter": adapter_name,
+            "score": adapter_score,
+            "scenario_fingerprint": scenario_fp,
+            "cache_hit": cache_hit,
+        })
+
+        # adapter_outcome event
+        success = status == "completed"
+        exit_code = 0 if success else (result.returncode or 1)
+        error_class = artifacts.get("error_class", "") if not success else ""
+        _write_event(runtime_dir, {
+            "type": "adapter_outcome",
+            "adapter": adapter_name,
+            "success": success,
+            "exit_code": exit_code,
+            "duration_ms": duration_ms,
+            "error_class": error_class,
+        })
+
+        # R1: Sync runtime experience back to global library
+        try:
+            runtime_fstore, _ = pes.safe_load(
+                runtime_dir / "failure-records.json",
+                default_factory={"schema_version": 2, "records": []},
+            )
+            pes.sync_failure_to_global(runtime_fstore, global_failure_path)
+            runtime_sstore, _ = pes.safe_load(
+                runtime_dir / "success-patterns.json",
+                default_factory={"schema_version": 1, "patterns": []},
+            )
+            pes.sync_success_to_global(runtime_sstore, global_success_path)
+        except Exception as exc:
+            print(f"[polaris] warning: global experience sync failed ({exc})", file=sys.stderr)
+
+        _emit_experience_summary(state, runtime_dir, had_prior_experience, global_experience_loaded=_global_experience_loaded)
+
         if status == "completed":
             sys.exit(0)
         elif status == "blocked":
@@ -252,18 +439,16 @@ def _load_safe_list(path: Path, key: str) -> list[dict]:
 
 
 def _parse_event_log(path: Path) -> dict:
-    """Parse runtime-events.jsonl for run statistics.
-
-    The event log is a state journal written by polaris_report.py /
-    polaris_runtime.py.  Each line is a JSON object with fields like
-    ``phase``, ``status``, ``summary``, ``ts``.  A completed run is
-    indicated by ``status == "completed"``.
-
-    Experience-query events (experience_queries / experience_hits) are
-    not yet emitted by the orchestrator — those fields are reserved for
-    Phase D and always report 0 for now.
-    """
-    result = {"total_runs": 0, "total_queries": 0, "total_hits": 0, "task_hits": {}}
+    """Parse runtime-events.jsonl for run statistics and adapter performance."""
+    result = {
+        "total_runs": 0,
+        "total_queries": 0,
+        "total_hits": 0,
+        "task_hits": {},
+        "adapter_stats": {},
+        "adapter_selections": 0,
+        "adapter_cache_hits": 0,
+    }
     if not path.exists():
         return result
     try:
@@ -277,7 +462,26 @@ def _parse_event_log(path: Path) -> dict:
                 continue
             if not isinstance(event, dict):
                 continue
-            if event.get("status") == "completed":
+            etype = event.get("type")
+
+            if etype == "adapter_selected":
+                result["adapter_selections"] += 1
+                if event.get("cache_hit"):
+                    result["adapter_cache_hits"] += 1
+
+            elif etype == "adapter_outcome":
+                adapter = event.get("adapter", "unknown")
+                if adapter not in result["adapter_stats"]:
+                    result["adapter_stats"][adapter] = {
+                        "calls": 0, "successes": 0, "total_duration_ms": 0
+                    }
+                stats = result["adapter_stats"][adapter]
+                stats["calls"] += 1
+                if event.get("success"):
+                    stats["successes"] += 1
+                stats["total_duration_ms"] += event.get("duration_ms", 0)
+
+            elif event.get("status") == "completed":
                 result["total_runs"] += 1
     except OSError:
         pass
@@ -316,17 +520,19 @@ def _build_stats(runtime_dir: Path) -> dict:
         "patterns_by_lifecycle": lifecycle_states,
         "patterns_by_adapter": adapters,
         "total_runs": event_stats["total_runs"],
+        "adapter_stats": event_stats["adapter_stats"],
+        "adapter_selections": event_stats["adapter_selections"],
+        "adapter_cache_hits": event_stats["adapter_cache_hits"],
     }
 
 
 def cmd_stats(args: argparse.Namespace) -> None:
-    """Show experience store summary (A3)."""
+    """Show experience store summary (A3 + D1)."""
     stats = _build_stats(Path(args.runtime_dir))
 
     has_data = stats["failure_records"] > 0 or stats["success_patterns"] > 0 or stats["total_runs"] > 0
 
     if args.json_output:
-        # Fix #5: stable schema — always output all fields
         print(json.dumps(stats, indent=2, sort_keys=True))
     elif not has_data:
         print("no experience recorded yet")
@@ -346,6 +552,90 @@ def cmd_stats(args: argparse.Namespace) -> None:
         tr = stats["total_runs"]
         print(f"Runs:             {tr} completed" if tr > 0 else "Runs:             0")
 
+        # D1: Adapter Performance section
+        adapter_stats = stats.get("adapter_stats", {})
+        if adapter_stats:
+            print()
+            print("Adapter Performance")
+            print("===================")
+            for name, st in sorted(adapter_stats.items()):
+                calls = st["calls"]
+                successes = st["successes"]
+                rate = (successes / calls * 100) if calls > 0 else 0.0
+                avg_ms = (st["total_duration_ms"] / calls / 1000) if calls > 0 else 0.0
+                print(f"{name}:  {calls} calls, {successes} success ({rate:.1f}%), avg {avg_ms:.1f}s")
+            sels = stats["adapter_selections"]
+            hits = stats["adapter_cache_hits"]
+            hit_rate = (hits / sels * 100) if sels > 0 else 0.0
+            print(f"Cache hit rate: {hit_rate:.1f}% (out of {sels} selections)")
+
+
+def cmd_experience_reset_prebuilt(args: argparse.Namespace) -> None:
+    """Remove all prebuilt experience records (C1)."""
+    sys.path.insert(0, str(SCRIPTS))
+    import polaris_failure_records as pfr
+
+    store_path = Path(args.runtime_dir) / "failure-records.json"
+    store = pfr.load_store(store_path)
+    removed = pfr.reset_prebuilt(store, ecosystem=args.ecosystem)
+    pfr.write_store(store_path, store)
+    print(f"Removed {removed} prebuilt records")
+
+
+def cmd_feedback_reject(args: argparse.Namespace) -> None:
+    """Mark a failure record as rejected (C2)."""
+    sys.path.insert(0, str(SCRIPTS))
+    import polaris_failure_records as pfr
+
+    store_path = Path(args.store)
+    store = pfr.load_store(store_path)
+    ok = pfr.reject_record(store, args.index)
+    if not ok:
+        print(f"Error: index {args.index} out of range", file=sys.stderr)
+        sys.exit(1)
+    pfr.write_store(store_path, store)
+    print(f"Record {args.index} rejected")
+
+
+def cmd_feedback_correct(args: argparse.Namespace) -> None:
+    """Create a user correction for a failure record (C2)."""
+    sys.path.insert(0, str(SCRIPTS))
+    import polaris_failure_records as pfr
+
+    if args.hint_kind not in pfr.HINT_KINDS:
+        print(f"Error: invalid hint kind '{args.hint_kind}', must be one of: {', '.join(sorted(pfr.HINT_KINDS))}", file=sys.stderr)
+        sys.exit(1)
+
+    store_path = Path(args.store)
+    store = pfr.load_store(store_path)
+    try:
+        hint_value = json.loads(args.hint_value)
+    except json.JSONDecodeError:
+        print("Error: --hint-value must be valid JSON", file=sys.stderr)
+        sys.exit(1)
+    entry = pfr.correct_record(store, args.index, args.hint_kind, hint_value)
+    if entry is None:
+        print(f"Error: index {args.index} out of range or invalid hint kind", file=sys.stderr)
+        sys.exit(1)
+    pfr.write_store(store_path, store)
+    print(json.dumps(entry, sort_keys=True))
+
+
+def cmd_feedback_list(args: argparse.Namespace) -> None:
+    """List all rejected and user_correction records (C2)."""
+    sys.path.insert(0, str(SCRIPTS))
+    import polaris_failure_records as pfr
+
+    store_path = Path(args.store)
+    store = pfr.load_store(store_path)
+    items = pfr.list_feedback(store)
+    if not items:
+        print("No feedback records found")
+    else:
+        for item in items:
+            status = "rejected" if item.get("rejected_by") else item.get("source", "")
+            print(f"[{item['index']}] {status}: {item['command']} ({item['error_class']})")
+
 
 def main() -> None:
     parser = argparse.ArgumentParser(prog="polaris", description="Polaris orchestration CLI")
@@ -359,11 +649,37 @@ def main() -> None:
     run_parser.add_argument("--runtime-dir", help="Runtime directory (default: /tmp/polaris-<hash>)")
     run_parser.add_argument("--resume", action="store_true", default=False, help="Resume from blocked state")
     run_parser.add_argument("--shell-timeout-ms", type=int, default=60000, help="Shell command timeout in ms")
+    run_parser.add_argument("--cwd", default=None, help="Working directory for the command (default: runtime-dir)")
+    run_parser.add_argument("--no-prebuilt", action="store_true", default=False, help="Do not load prebuilt experience packs")
 
     # --- stats ---
     stats_parser = subparsers.add_parser("stats", help="Show experience store summary")
     stats_parser.add_argument("--runtime-dir", required=True, help="Runtime directory to inspect")
     stats_parser.add_argument("--json", dest="json_output", action="store_true", default=False, help="Output as JSON")
+
+    # --- experience ---
+    exp_parser = subparsers.add_parser("experience", help="Manage experience store")
+    exp_sub = exp_parser.add_subparsers(dest="exp_command")
+    reset_parser = exp_sub.add_parser("reset-prebuilt", help="Remove prebuilt experience records")
+    reset_parser.add_argument("--runtime-dir", required=True, help="Runtime directory")
+    reset_parser.add_argument("--ecosystem", default=None, choices=["node", "python", "go"], help="Only reset this ecosystem")
+
+    # --- feedback ---
+    fb_parser = subparsers.add_parser("feedback", help="User feedback on experience records")
+    fb_sub = fb_parser.add_subparsers(dest="fb_command")
+
+    rej_parser = fb_sub.add_parser("reject", help="Reject a failure record")
+    rej_parser.add_argument("index", type=int, help="Record index to reject")
+    rej_parser.add_argument("--store", required=True, help="Path to failure-records.json")
+
+    cor_parser = fb_sub.add_parser("correct", help="Correct a failure record")
+    cor_parser.add_argument("index", type=int, help="Record index to correct")
+    cor_parser.add_argument("--hint-kind", required=True, help="Hint kind (set_env, append_flags, rewrite_cwd, set_timeout)")
+    cor_parser.add_argument("--hint-value", required=True, help="Hint value as JSON")
+    cor_parser.add_argument("--store", required=True, help="Path to failure-records.json")
+
+    list_parser = fb_sub.add_parser("list", help="List feedback records")
+    list_parser.add_argument("--store", required=True, help="Path to failure-records.json")
 
     args = parser.parse_args()
 
@@ -374,6 +690,22 @@ def main() -> None:
         cmd_run(args)
     elif args.subcommand == "stats":
         cmd_stats(args)
+    elif args.subcommand == "experience":
+        if args.exp_command == "reset-prebuilt":
+            cmd_experience_reset_prebuilt(args)
+        else:
+            exp_parser.print_help()
+            sys.exit(2)
+    elif args.subcommand == "feedback":
+        if args.fb_command == "reject":
+            cmd_feedback_reject(args)
+        elif args.fb_command == "correct":
+            cmd_feedback_correct(args)
+        elif args.fb_command == "list":
+            cmd_feedback_list(args)
+        else:
+            fb_parser.print_help()
+            sys.exit(2)
     else:
         parser.print_help()
         sys.exit(2)

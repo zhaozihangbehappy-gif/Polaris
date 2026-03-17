@@ -1,13 +1,15 @@
 #!/usr/bin/env python3
 """Task fingerprint contract for Polaris experience stores.
 
-Every fingerprint preserves three layers:
+Every fingerprint preserves four layers:
 - raw_descriptor: original user input, verbatim
 - normalized_descriptor: canonicalized form
-- matching_key: deterministic hash for exact-match lookup
+- matching_key: deterministic hash for exact-match lookup (includes cwd)
+- command_key: deterministic hash for command-only fallback (excludes cwd)
 
 Both success patterns and failure records use this as their primary key.
 """
+import argparse
 import hashlib
 import json
 import shlex
@@ -62,20 +64,54 @@ def normalize_command(command: str) -> str:
 
 
 def compute(command: str, cwd: str, task_name: str | None = None) -> dict:
-    """Compute a three-layer task fingerprint."""
+    """Compute a four-layer task fingerprint.
+
+    - matching_key: SHA-256(normalized + cwd + task_name) — exact match
+    - command_key: SHA-256(normalized + task_name) — command-only fallback (no cwd)
+    """
     raw = command
     normalized = normalize_command(command)
+
+    # matching_key includes cwd
     key_input = f"{normalized}\0{cwd}"
     if task_name:
         key_input = f"{task_name}\0{key_input}"
     matching_key = hashlib.sha256(key_input.encode("utf-8")).hexdigest()[:16]
+
+    # command_key excludes cwd
+    cmd_key_input = normalized
+    if task_name:
+        cmd_key_input = f"{task_name}\0{cmd_key_input}"
+    command_key = hashlib.sha256(cmd_key_input.encode("utf-8")).hexdigest()[:16]
+
     return {
         "raw_descriptor": raw,
         "normalized_descriptor": normalized,
         "matching_key": matching_key,
+        "command_key": command_key,
     }
 
 
 def matches(fp_a: dict, fp_b: dict) -> bool:
     """Exact-match on matching_key. This is the L3 extension point."""
     return fp_a.get("matching_key") == fp_b.get("matching_key")
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description="Compute Polaris task fingerprints.")
+    sub = parser.add_subparsers(dest="subcommand", required=True)
+
+    comp = sub.add_parser("compute")
+    comp.add_argument("--command", required=True)
+    comp.add_argument("--cwd", default=".")
+    comp.add_argument("--task-name", default=None)
+
+    args = parser.parse_args()
+
+    if args.subcommand == "compute":
+        fp = compute(args.command, args.cwd, args.task_name)
+        print(json.dumps(fp, sort_keys=True))
+
+
+if __name__ == "__main__":
+    main()

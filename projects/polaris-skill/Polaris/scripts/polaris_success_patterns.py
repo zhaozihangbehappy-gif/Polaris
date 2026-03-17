@@ -30,6 +30,10 @@ LEGACY_WIDE_TRIGGER_PREFIXES = ("long local task", "standard local task", "micro
 
 def _is_legacy_wide(pattern: dict) -> bool:
     """Detect Platform 0 wide/family-level patterns that lack task_fingerprint."""
+    # R2: Patterns with a task_fingerprint are task-specific, not legacy wide
+    tfp = pattern.get("task_fingerprint")
+    if isinstance(tfp, dict) and tfp.get("matching_key"):
+        return False
     if pattern.get("pattern_id") in LEGACY_WIDE_PATTERN_IDS:
         return True
     trigger = (pattern.get("trigger") or "").lower()
@@ -43,11 +47,15 @@ def _is_legacy_wide(pattern: dict) -> bool:
 
 
 def load_store(path: Path) -> dict:
-    if not path.exists():
-        return {"schema_version": 1, "patterns": []}
-    payload = json.loads(path.read_text())
-    if isinstance(payload, list):
-        return {"schema_version": 1, "patterns": payload}
+    """Load success pattern store via the R0 contract layer (atomic read + corruption recovery).
+
+    Legacy bare-list format is handled by safe_load itself; callers always
+    receive a dict with schema_version and patterns keys.
+    """
+    import polaris_experience_store as pes
+    payload, _mtime = pes.safe_load(
+        path, default_factory={"schema_version": 1, "patterns": []},
+    )
     payload.setdefault("schema_version", 1)
     payload.setdefault("patterns", [])
     for p in payload["patterns"]:
@@ -61,7 +69,9 @@ def load_store(path: Path) -> dict:
 
 
 def write_store(path: Path, payload: dict) -> None:
-    path.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    """Write success pattern store via the R0 contract layer (atomic write)."""
+    import polaris_experience_store as pes
+    pes.atomic_write(path, payload)
 
 
 def is_active(pattern: dict) -> bool:
@@ -298,6 +308,11 @@ def main() -> None:
     consolidate.add_argument("--marker", required=True)
     consolidate.add_argument("--promote-auto", choices=["yes", "no"], default="yes")
 
+    reuse_outcome = sub.add_parser("update-reuse-outcome")
+    reuse_outcome.add_argument("--patterns", required=True)
+    reuse_outcome.add_argument("--fingerprint", required=True)
+    reuse_outcome.add_argument("--success", choices=["yes", "no"], required=True)
+
     args = parser.parse_args()
     path = Path(getattr(args, "patterns"))
     store = load_store(path)
@@ -469,6 +484,56 @@ def main() -> None:
         store["patterns"].sort(key=lambda item: (LIFECYCLE_ORDER.get(item.get("lifecycle_state"), 99), -item.get("confidence", 0), item.get("pattern_id", "")))
         write_store(path, store)
         print(json.dumps({"pattern": pattern, "promoted": promoted, "new_state": target}, sort_keys=True))
+        return
+
+    if args.command == "update-reuse-outcome":
+        target = None
+        for item in store["patterns"]:
+            if item.get("fingerprint") == args.fingerprint or item.get("pattern_id") == args.fingerprint:
+                target = item
+                break
+        if not target:
+            print(json.dumps({"updated": False, "reason": "pattern not found"}))
+            return
+        confidence = int(target.get("confidence", 50))
+        reuse_success_count = int(target.get("reuse_success_count", 0))
+        reuse_failure_count = int(target.get("reuse_failure_count", 0))
+        consecutive_reuse_failures = int(target.get("consecutive_reuse_failures", 0))
+        if args.success == "yes":
+            confidence = min(95, confidence + 2)
+            reuse_success_count += 1
+            consecutive_reuse_failures = 0
+        else:
+            confidence = max(0, confidence - 5)
+            reuse_failure_count += 1
+            consecutive_reuse_failures += 1
+        target["confidence"] = confidence
+        target["reuse_success_count"] = reuse_success_count
+        target["reuse_failure_count"] = reuse_failure_count
+        target["consecutive_reuse_failures"] = consecutive_reuse_failures
+        target["updated_at"] = now()
+        stale = False
+        if consecutive_reuse_failures >= 3:
+            target["stale"] = True
+            target["lifecycle_state"] = "retired"
+            target.setdefault("history", []).append({
+                "ts": now(), "event": "stale_reuse",
+                "reason": "3 consecutive reuse failures",
+            })
+            stale = True
+        else:
+            target.setdefault("history", []).append({
+                "ts": now(), "event": "reuse_outcome",
+                "success": args.success == "yes",
+                "confidence": confidence,
+            })
+        write_store(path, store)
+        print(json.dumps({
+            "updated": True, "confidence": confidence,
+            "reuse_success_count": reuse_success_count,
+            "consecutive_reuse_failures": consecutive_reuse_failures,
+            "stale": stale,
+        }))
         return
 
     for item in store["patterns"]:

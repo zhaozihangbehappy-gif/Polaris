@@ -1,0 +1,30 @@
+{
+  "ecosystem": "node",
+  "pack_version": "1.0",
+  "records": [
+    {
+      "error_class": "missing_dependency",
+      "stderr_pattern": "MODULE_NOT_FOUND",
+      "avoidance_hints": [{"kind": "set_env", "vars": {"NODE_PATH": "./node_modules"}}],
+      "description": "Node cannot find module — ensure NODE_PATH includes local node_modules"
+    },
+    {
+      "error_class": "permission_denial",
+      "stderr_pattern": "EACCES",
+      "avoidance_hints": [{"kind": "append_flags", "flags": ["--no-optional"]}],
+      "description": "npm install permission error — skip optional dependencies"
+    },
+    {
+      "error_class": "resource_exhaustion",
+      "stderr_pattern": "heap out of memory",
+      "avoidance_hints": [{"kind": "set_env", "vars": {"NODE_OPTIONS": "--max-old-space-size=4096"}}],
+      "description": "Node heap OOM — increase max old space size"
+    },
+    {
+      "error_class": "missing_dependency",
+      "stderr_pattern": "ENOENT",
+      "avoidance_hints": [{"kind": "rewrite_cwd", "target": "."}],
+      "description": "package.json not found — rewrite cwd to directory containing package.json"
+    }
+  ]
+}

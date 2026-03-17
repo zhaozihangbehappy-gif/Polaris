@@ -607,6 +607,39 @@ def _build_failure_avoidance_hints(error_text: str, error_class: str, command: s
     return hints
 
 
+def _build_experience_prefer_hints(execution_contract: dict) -> list[dict]:
+    """R2: Extract reusable strategy hints from a successful shell execution.
+
+    Returns a non-empty list of prefer hints for the success pattern's
+    strategy_hints.experience_hints_prefer field.
+    """
+    hints: list[dict] = []
+    # Carry forward existing prefer hints that were applied
+    contract_prefer = execution_contract.get("experience_hints", {}).get("prefer", [])
+    for hint in contract_prefer:
+        hints.append(dict(hint))
+    # Read execution result for applied hints and duration
+    output_file = execution_contract.get("output_file")
+    if output_file and Path(output_file).exists():
+        try:
+            data = json.loads(Path(output_file).read_text())
+            # Adopt applied hints that weren't already in contract prefer
+            for applied in data.get("experience_applied", []):
+                kind = applied.get("kind")
+                if kind in ("set_env", "rewrite_cwd") and applied not in contract_prefer:
+                    hints.append(dict(applied))
+            # set_timeout from observed duration (1.5x + 1s buffer)
+            duration = data.get("duration_ms", 0)
+            has_timeout = any(h.get("kind") == "set_timeout" for h in hints)
+            if isinstance(duration, (int, float)) and duration > 0 and not has_timeout:
+                hints.append({"kind": "set_timeout", "timeout_ms": int(duration * 1.5) + 1000})
+        except (json.JSONDecodeError, OSError):
+            pass
+    if not hints:
+        hints.append({"kind": "set_timeout", "timeout_ms": 120000})
+    return hints
+
+
 def choose_execution_kind(base: Path, requested_kind: str, adapter: dict, applied_rules: list[dict], selected_pattern: dict | None, simulate_error: str | None, plan_requires: list[str] | None = None) -> dict:
     return run_json_checked(
         [
@@ -1381,6 +1414,46 @@ def main() -> None:
         ],
         "select rules",
     )
+    # ── Platform 2: refresh experience hints on resume ──
+    # On resume, re-query the failure store so that error_class from the prior failure
+    # can upgrade ecosystem-tier hints from 0.4 → 0.5 (above the apply threshold).
+    # This must happen before the hard-stop early return below, which exits before
+    # the main experience hints assembly block.
+    if resuming and execution_kind == "shell_command":
+        shell_cmd = getattr(args, "shell_command", None)
+        shell_cwd = getattr(args, "shell_cwd", None) or str(runtime_dir)
+        if shell_cmd:
+            import polaris_task_fingerprint as ptf
+            import polaris_failure_records as pfr
+            import re as _re
+            _task_fp = ptf.compute(shell_cmd, shell_cwd)
+            _ECO_PAT = {
+                "node": _re.compile(r"\b(npm|node|npx|yarn|pnpm)\b"),
+                "python": _re.compile(r"\b(python3?|pip3?|pytest|poetry|uv)\b"),
+                "go": _re.compile(r"\bgo\s"),
+            }
+            _det_eco = None
+            for _eco, _pat in _ECO_PAT.items():
+                if _pat.search(shell_cmd):
+                    _det_eco = _eco
+                    break
+            _fstore_path = Path(args.patterns).parent / "failure-records.json"
+            _fstore = pfr.load_store(_fstore_path)
+            _prior_ec = None
+            _mk = _task_fp.get("matching_key")
+            if _mk:
+                for _rec in reversed(_fstore.get("records", [])):
+                    if _rec.get("task_fingerprint", {}).get("matching_key") == _mk:
+                        _prior_ec = _rec.get("error_class")
+                        break
+            _qresult = pfr.query(_fstore, matching_key=_mk,
+                                 command_key=_task_fp.get("command_key"),
+                                 ecosystem=_det_eco, error_class=_prior_ec)
+            _avoid = _qresult.get("avoidance_hints", [])
+            if _avoid:
+                _exp_hints = {"prefer": [], "avoid": _avoid}
+                history.append(run_checked([sys.executable, str(base / "polaris_state.py"), "artifact", "--state", args.state, "--key", "experience_hints", "--value", json.dumps(_exp_hints, sort_keys=True)], "refresh experience hints on resume"))
+
     # ── Platform 1: hard-stop rule check before fallback attempt ──
     # Only block fallback when the prior block was caused by a hard-stop condition
     # (nonrepair denial), not merely because a stop rule exists in the store.
@@ -1587,11 +1660,36 @@ def main() -> None:
         import polaris_task_fingerprint as ptf
         import polaris_failure_records as pfr
         task_fingerprint = ptf.compute(shell_cmd, shell_cwd)
-        # Query failure records for avoidance hints
+        # Detect ecosystem for prebuilt pack fallback (Platform 2 C1)
+        import re as _re
+        _ECO_PATTERNS = {
+            "node": _re.compile(r"\b(npm|node|npx|yarn|pnpm)\b"),
+            "python": _re.compile(r"\b(python3?|pip3?|pytest|poetry|uv)\b"),
+            "go": _re.compile(r"\bgo\s"),
+        }
+        _detected_ecosystem = None
+        for _eco, _pat in _ECO_PATTERNS.items():
+            if _pat.search(shell_cmd):
+                _detected_ecosystem = _eco
+                break
+        # Query failure records for avoidance hints (Platform 2: three-tier matching)
         failure_store_path = Path(args.patterns).parent / "failure-records.json"
         failure_store = pfr.load_store(failure_store_path)
-        failure_matches = pfr.query(failure_store, task_fingerprint)
-        avoid_hints = pfr.build_avoidance_hints(failure_matches)
+        # Look up the most recent error_class for this task from prior failures.
+        # This lets ecosystem tier match prebuilt records by error_class (discount 0.5)
+        # instead of blindly returning all ecosystem hints (discount 0.4, below apply threshold).
+        _prior_error_class = None
+        _mk = task_fingerprint.get("matching_key")
+        if _mk:
+            for _rec in reversed(failure_store.get("records", [])):
+                if _rec.get("task_fingerprint", {}).get("matching_key") == _mk:
+                    _prior_error_class = _rec.get("error_class")
+                    break
+        query_result = pfr.query(failure_store, matching_key=_mk,
+                                 command_key=task_fingerprint.get("command_key"),
+                                 ecosystem=_detected_ecosystem,
+                                 error_class=_prior_error_class)
+        avoid_hints = query_result.get("avoidance_hints", [])
         experience_hints["avoid"] = avoid_hints
         # Query success patterns for prefer hints
         if selected_pattern_record:
@@ -1671,6 +1769,17 @@ def main() -> None:
             pfr.record(failure_store, task_fingerprint, shell_cmd or args.goal, error_class, execution_error[:500], repair_class, avoidance_hints)
             pfr.write_store(failure_store_path, failure_store)
             history.append(run_checked([sys.executable, str(base / "polaris_state.py"), "artifact", "--state", args.state, "--key", "failure_record_written", "--value", "true"], "record failure record written"))
+        # ── R2: Track reuse outcome on failure ──
+        if selected_pattern_record and experience_hints.get("prefer"):
+            _reuse_fp = selected_pattern_record.get("fingerprint") or selected_pattern_record.get("pattern_id")
+            if _reuse_fp:
+                history.append(run([
+                    sys.executable, str(base / "polaris_success_patterns.py"),
+                    "update-reuse-outcome",
+                    "--patterns", args.patterns,
+                    "--fingerprint", _reuse_fp,
+                    "--success", "no",
+                ]))
         repair_report = run_json_checked(
             [
                 sys.executable,
@@ -1893,6 +2002,23 @@ def main() -> None:
     )
     history.append(run_checked([sys.executable, str(base / "polaris_state.py"), "heartbeat", "--state", args.state, "--summary", "validation surfaces updated"], "validation heartbeat"))
     append(history, emit_runtime_surface(base, policy, "validate", args.state, "validating"))
+    # ── R2: Build prefer hints for success pattern ──
+    _r2_prefer_hints = []
+    if execution_kind == "shell_command":
+        _r2_prefer_hints = _build_experience_prefer_hints(execution_contract)
+    # ── R2: Track reuse outcome on success ──
+    # Guard: if we resumed after repair, the reuse failure was already recorded
+    # at the initial failure point.  Don't double-count as both fail + success.
+    if selected_pattern_record and experience_hints.get("prefer") and not resumed_after_repair:
+        _reuse_fp = selected_pattern_record.get("fingerprint") or selected_pattern_record.get("pattern_id")
+        if _reuse_fp:
+            history.append(run([
+                sys.executable, str(base / "polaris_success_patterns.py"),
+                "update-reuse-outcome",
+                "--patterns", args.patterns,
+                "--fingerprint", _reuse_fp,
+                "--success", "yes",
+            ]))
     if execution_profile == "deep":
         deep_success_context = {
             "execution_profile": execution_profile,
@@ -1921,6 +2047,7 @@ def main() -> None:
                 "validation_strategy": "runner-contract-strict",
                 "execution_ordering": ["precheck", "execute", "validate"],
                 "hot_path_budget": 3,
+                "experience_hints_prefer": _r2_prefer_hints,
             },
         }
         if task_fingerprint:
@@ -1956,6 +2083,7 @@ def main() -> None:
                 "validation_strategy": "runner-contract-strict",
                 "execution_ordering": ["execute", "validate"],
                 "hot_path_budget": 2,
+                "experience_hints_prefer": _r2_prefer_hints,
             },
         }
         if task_fingerprint:

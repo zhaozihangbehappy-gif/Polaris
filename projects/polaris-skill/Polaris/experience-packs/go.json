@@ -1,0 +1,21 @@
+{
+  "ecosystem": "go",
+  "pack_version": "1.0",
+  "records": [
+    {
+      "error_class": "missing_dependency",
+      "stderr_pattern": "go mod tidy",
+      "avoidance_hints": [
+        {"kind": "append_flags", "flags": ["-v"]},
+        {"kind": "set_env", "vars": {"GOFLAGS": "-mod=mod"}}
+      ],
+      "description": "go mod tidy failure — enable verbose and mod=mod"
+    },
+    {
+      "error_class": "build_error",
+      "stderr_pattern": "CGO_ENABLED",
+      "avoidance_hints": [{"kind": "set_env", "vars": {"CGO_ENABLED": "0"}}],
+      "description": "CGO build issue — disable CGO"
+    }
+  ]
+}

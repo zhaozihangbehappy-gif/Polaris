@@ -41,6 +41,12 @@ def apply_hints(command: str, cwd: str, timeout_ms: int,
             rejected.append({"hint": hint, "reason": f"unsupported hint kind: {kind}"})
             continue
 
+        # Platform 2 B2: skip low-confidence hints (ecosystem fallback etc.)
+        discount = hint.get("confidence_discount")
+        if isinstance(discount, (int, float)) and discount < 0.5:
+            rejected.append({"hint": hint, "reason": f"confidence_discount {discount} below threshold 0.5"})
+            continue
+
         # If this is a prefer-hint but an avoid-hint of same kind exists, skip (avoid wins)
         is_prefer = hint in experience_hints.get("prefer", [])
         if is_prefer and kind in avoid_kinds:
