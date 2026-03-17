@@ -1834,7 +1834,98 @@ def main() -> None:
         history.append(run_checked([sys.executable, str(base / "polaris_state.py"), "artifact", "--state", args.state, "--key", "repair_plan", "--value", "runtime-repair-plan.json"], "record repair plan artifact"))
         history.append(run_checked([sys.executable, str(base / "polaris_state.py"), "artifact", "--state", args.state, "--key", "repair_results", "--value", "runtime-repair-results.json"], "record repair results artifact"))
 
-        if execution_profile != "deep":
+        # ── R4a: Safe auto-fix for non-deep profiles ──
+        # If the failure produced safe avoidance hints (set_env, rewrite_cwd,
+        # set_timeout) that weren't already applied in the first attempt,
+        # auto-apply them and retry once before blocking.
+        _SAFE_AUTOFIX_KINDS = {"set_env", "rewrite_cwd", "set_timeout"}
+        _r4a_applied = False
+        _r4a_nonrepair_stop = repair_report.get("parsed", {}).get("nonrepair_stop", False)
+        if execution_profile != "deep" and execution_kind == "shell_command" and not _r4a_nonrepair_stop:
+            # Re-query the updated failure store for hints (includes the just-recorded failure)
+            import polaris_failure_records as _pfr_r4a
+            _r4a_fstore_path = Path(args.patterns).parent / "failure-records.json"
+            _r4a_fstore = _pfr_r4a.load_store(_r4a_fstore_path)
+            _r4a_mk = task_fingerprint.get("matching_key") if task_fingerprint else None
+            _r4a_query = _pfr_r4a.query(
+                _r4a_fstore, matching_key=_r4a_mk,
+                command_key=task_fingerprint.get("command_key") if task_fingerprint else None,
+                ecosystem=_detected_ecosystem if '_detected_ecosystem' in dir() else None,
+                error_class=error_class if 'error_class' in dir() else None,
+                stderr_text=execution_error[:500] if execution_error else None,
+            )
+            _r4a_hints = _r4a_query.get("avoidance_hints", [])
+            # Filter to safe kinds only, above confidence threshold
+            _r4a_safe = [h for h in _r4a_hints
+                         if h.get("kind") in _SAFE_AUTOFIX_KINDS
+                         and h.get("confidence_discount", 1.0) >= 0.5]
+            # Check these weren't already applied in the first execution
+            _r4a_first_applied = set()
+            _r4a_exec_output = execution_contract.get("output_file", "")
+            if _r4a_exec_output and Path(_r4a_exec_output).exists():
+                try:
+                    _r4a_out = json.loads(Path(_r4a_exec_output).read_text())
+                    for _h in _r4a_out.get("experience_applied", []):
+                        _r4a_first_applied.add(json.dumps(_h, sort_keys=True))
+                except (json.JSONDecodeError, OSError):
+                    pass
+            _r4a_new_hints = [h for h in _r4a_safe
+                              if json.dumps({k: v for k, v in h.items() if k != "confidence_discount"}, sort_keys=True) not in _r4a_first_applied]
+            if _r4a_new_hints:
+                # Build retry contract with auto-fix hints applied
+                _r4a_retry_hints = {"prefer": [], "avoid": _r4a_new_hints}
+                _r4a_retry_contract = build_execution_contract(
+                    base, args.goal, args.state, adapter_record, execution_profile, args.mode,
+                    applied_rules, selected_pattern_record, None, execution_kind,
+                    analysis_target=getattr(args, "analysis_target", None),
+                    shell_command=shell_cmd or args.goal,
+                    shell_cwd=shell_cwd,
+                    shell_timeout_ms=shell_timeout_ms,
+                    experience_hints=_r4a_retry_hints,
+                )
+                history.append(run_checked([sys.executable, str(base / "polaris_state.py"), "artifact", "--state", args.state, "--key", "autofix_hints", "--value", json.dumps(_r4a_new_hints, sort_keys=True)], "record autofix hints"))
+                history.append(run_checked([sys.executable, str(base / "polaris_state.py"), "transition", "--state", args.state, "--to", "repairing", "--summary", "R4a auto-fix: retrying with safe experience hints", "--branch-id", execution_branch], "transition to R4a auto-fix"))
+                history.append(run_checked([sys.executable, str(base / "polaris_state.py"), "artifact", "--state", args.state, "--key", "resumed_execution_contract", "--value", json.dumps(_r4a_retry_contract, sort_keys=True)], "record R4a resumed contract"))
+                _r4a_result = execute_contract(base, adapter_record, _r4a_retry_contract, "runtime-autofix-executor-result.json")
+                history.append(_r4a_result)
+                history.append(run_checked([sys.executable, str(base / "polaris_state.py"), "artifact", "--state", args.state, "--key", "execution_result", "--value", _r4a_retry_contract.get("output_file", "")], "record autofix execution result"))
+                # Read actual experience application from retry output
+                _r4a_out_file = _r4a_retry_contract.get("output_file", "")
+                _r4a_exp_applied = 0
+                if _r4a_out_file and Path(_r4a_out_file).exists():
+                    try:
+                        _r4a_exp = json.loads(Path(_r4a_out_file).read_text())
+                        _r4a_exp_applied = len(_r4a_exp.get("experience_applied", []))
+                    except (json.JSONDecodeError, OSError):
+                        pass
+                history.append(run_checked([sys.executable, str(base / "polaris_state.py"), "artifact", "--state", args.state, "--key", "experience_applied_count", "--value", str(_r4a_exp_applied)], "record autofix experience applied count"))
+                _r4a_validation = validate_contract(base, _r4a_retry_contract, _r4a_result.get("parsed", _r4a_result), "runtime-autofix-validation-result.json")
+                history.append(_r4a_validation)
+                _r4a_ok = _r4a_validation.get("parsed", {}).get("status") == "ok"
+                _r4a_rc = _r4a_result.get("returncode", 0) if execution_kind == "shell_command" else _r4a_result.get("parsed", {}).get("returncode", 0)
+                if _r4a_rc == 0 and _r4a_ok:
+                    # Auto-fix succeeded — continue as normal success
+                    history.append(run_checked([sys.executable, str(base / "polaris_state.py"), "attempt", "--state", args.state, "--step", "autofix_retry", "--status", "passed", "--summary", "R4a auto-fix succeeded", "--evidence", _r4a_retry_contract.get("output_file", ""), "--branch-id", execution_branch], "record autofix success"))
+                    history.append(run_checked([sys.executable, str(base / "polaris_state.py"), "artifact", "--state", args.state, "--key", "autofix_result", "--value", "success"], "record autofix result"))
+                    history.append(run_checked([sys.executable, str(base / "polaris_state.py"), "transition", "--state", args.state, "--to", "executing", "--summary", "Auto-fix succeeded, resuming execution", "--branch-id", execution_branch], "transition back from autofix"))
+                    execution_contract = _r4a_retry_contract
+                    execution_result = _r4a_result
+                    execution_payload = _r4a_validation.get("parsed", {}).get("payload")
+                    execution_error = None
+                    resumed_after_repair = True
+                    _r4a_applied = True
+                else:
+                    # Auto-fix failed — record and fall through to normal blocking
+                    history.append(run_checked([sys.executable, str(base / "polaris_state.py"), "attempt", "--state", args.state, "--step", "autofix_retry", "--status", "failed", "--summary", "R4a auto-fix failed", "--evidence", _r4a_retry_contract.get("output_file", ""), "--branch-id", execution_branch], "record autofix failure"))
+                    history.append(run_checked([sys.executable, str(base / "polaris_state.py"), "artifact", "--state", args.state, "--key", "autofix_result", "--value", "failed"], "record autofix result failed"))
+                    # Transition back to executing so normal block path can transition to repairing
+                    history.append(run_checked([sys.executable, str(base / "polaris_state.py"), "transition", "--state", args.state, "--to", "executing", "--summary", "Auto-fix failed, returning to execution state", "--branch-id", execution_branch], "transition back from failed autofix"))
+                    # Update failure record: mark hints as applied+failed
+                    if _r4a_mk:
+                        pfr.update_applied(failure_store, _r4a_mk, False)
+                        pfr.write_store(failure_store_path, failure_store)
+
+        if execution_profile != "deep" and not _r4a_applied:
             repair_learning = build_repair_learning_items(repair_report, resolved_repair_depth, execution_profile, args.mode, adapter_name)
             if repair_learning is not None:
                 rule_candidate, repair_marker = repair_learning

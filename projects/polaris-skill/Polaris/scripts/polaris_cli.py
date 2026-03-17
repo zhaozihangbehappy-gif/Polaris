@@ -153,6 +153,8 @@ def _emit_experience_summary(state: dict, runtime_dir: Path, had_prior_experienc
     # "succeeded (no prior experience for this task)" — don't duplicate.
 
     status = state.get("status")
+    autofix_result = artifacts.get("autofix_result")
+    autofix_hints_raw = artifacts.get("autofix_hints")
     failure_written = artifacts.get("failure_record_written")
     if failure_written is True or failure_written == "true":
         fp = _safe_json_obj(artifacts.get("task_fingerprint"))
@@ -175,10 +177,34 @@ def _emit_experience_summary(state: dict, runtime_dir: Path, had_prior_experienc
                             break
             except (json.JSONDecodeError, OSError):
                 pass
-        hint_kinds_str = ", ".join(hint_kinds) if hint_kinds else "general"
-        lines.append(f"[polaris] \u2717 learned: {error_class} \u2192 avoidance hints [{hint_kinds_str}] stored for next run")
+        # R4a: Show auto-fix action if attempted
+        if autofix_hints_raw:
+            _autofix_hints = autofix_hints_raw if isinstance(autofix_hints_raw, list) else []
+            if isinstance(autofix_hints_raw, str):
+                try:
+                    _autofix_hints = json.loads(autofix_hints_raw)
+                except (json.JSONDecodeError, TypeError):
+                    _autofix_hints = []
+            for _afh in _autofix_hints:
+                _afk = _afh.get("kind", "?")
+                if _afk == "set_env":
+                    _vars = _afh.get("vars", {})
+                    _var_str = ", ".join(f'{k}="{v}"' for k, v in _vars.items())
+                    lines.append(f"[polaris] \u26a1 auto-fix: set {_var_str} (from experience)")
+                elif _afk == "rewrite_cwd":
+                    lines.append(f"[polaris] \u26a1 auto-fix: cwd \u2192 {_afh.get('cwd', '?')} (from experience)")
+                elif _afk == "set_timeout":
+                    lines.append(f"[polaris] \u26a1 auto-fix: timeout \u2192 {_afh.get('timeout_ms', '?')}ms (from experience)")
+            if autofix_result == "success":
+                lines.append(f"[polaris] \u2713 auto-fix succeeded (recording as verified strategy)")
+            elif autofix_result == "failed":
+                lines.append(f"[polaris] \u2717 auto-fix failed (recording for review)")
+        elif not autofix_hints_raw:
+            # No auto-fix attempted — show original failure learning
+            hint_kinds_str = ", ".join(hint_kinds) if hint_kinds else "general"
+            lines.append(f"[polaris] \u2717 learned: {error_class} \u2192 avoidance hints [{hint_kinds_str}] stored for next run")
         # R5: experience actually applied but still failed
-        if _actual_applied > 0:
+        if _actual_applied > 0 and not autofix_hints_raw:
             lines.append(f"[polaris] \u2717 failed despite experience hints (recording for improvement)")
 
     elif status == "completed":
