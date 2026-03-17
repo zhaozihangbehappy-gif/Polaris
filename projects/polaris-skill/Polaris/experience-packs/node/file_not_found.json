@@ -1,0 +1,21 @@
+{
+  "ecosystem": "node",
+  "error_class": "file_not_found",
+  "shard_version": "3.0",
+  "records": [
+    {
+      "stderr_pattern": "ENOENT: no such file or directory, open '([^']*package\\.json[^']*)'",
+      "avoidance_hints": [{"kind": "rewrite_cwd", "target": "."}],
+      "description": "package.json not found — cwd may be wrong; rewrite to directory containing package.json",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "rm -rf /tmp/_polaris_repro_nfnf && node -e \"require('fs').readFileSync('/tmp/_polaris_repro_nfnf/package.json')\" 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "ENOENT",
+        "fix_command": "mkdir -p /tmp/_polaris_repro_nfnf && echo '{}' > /tmp/_polaris_repro_nfnf/package.json && node -e \"require('fs').readFileSync('/tmp/_polaris_repro_nfnf/package.json'); console.log('ok')\" 2>&1 || true",
+        "fix_env": {},
+        "expected_fix_outcome": "different_error_or_success"
+      }
+    }
+  ]
+}

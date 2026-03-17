@@ -1,0 +1,20 @@
+{
+  "ecosystem": "node",
+  "error_class": "permission_denial",
+  "shard_version": "3.0",
+  "records": [
+    {
+      "stderr_pattern": "EACCES: permission denied|npm ERR! Error: EACCES",
+      "avoidance_hints": [{"kind": "set_env", "vars": {"npm_config_cache": "/tmp/.npm-cache"}}],
+      "description": "npm cache permission error — redirect npm cache to writable directory",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "npm cache ls 2>&1 || true",
+        "trigger_env": {"npm_config_cache": "/root/.npm-readonly"},
+        "expected_stderr_match": "EACCES|permission denied",
+        "fix_env": {"npm_config_cache": "/tmp/.npm-cache"},
+        "expected_fix_outcome": "different_error_or_success"
+      }
+    }
+  ]
+}

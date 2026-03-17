@@ -1,0 +1,20 @@
+{
+  "ecosystem": "go",
+  "error_class": "build_error",
+  "shard_version": "3.0",
+  "records": [
+    {
+      "stderr_pattern": "build constraints exclude all Go files in|no Go files in",
+      "avoidance_hints": [{"kind": "set_env", "vars": {"CGO_ENABLED": "0"}}],
+      "description": "CGO or platform build constraint failure — disable CGO",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "CGO_ENABLED=1 go build ./empty_dir 2>&1 || true",
+        "trigger_env": {"CGO_ENABLED": "1"},
+        "expected_stderr_match": "no Go files",
+        "fix_env": {"CGO_ENABLED": "0"},
+        "expected_fix_outcome": "different_error_or_success"
+      }
+    }
+  ]
+}

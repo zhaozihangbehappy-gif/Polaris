@@ -1,0 +1,20 @@
+{
+  "ecosystem": "node",
+  "error_class": "resource_exhaustion",
+  "shard_version": "3.0",
+  "records": [
+    {
+      "stderr_pattern": "JavaScript heap out of memory|FATAL ERROR:.*Reached heap limit",
+      "avoidance_hints": [{"kind": "set_env", "vars": {"NODE_OPTIONS": "--max-old-space-size=4096"}}],
+      "description": "Node.js V8 heap OOM — increase max old space size",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "node --max-old-space-size=8 -e \"let a=[]; while(true) a.push(new Array(1e6))\" 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "heap|FATAL ERROR",
+        "fix_env": {"NODE_OPTIONS": "--max-old-space-size=4096"},
+        "expected_fix_outcome": "different_error_or_success"
+      }
+    }
+  ]
+}

@@ -4,7 +4,7 @@ PASS=0; FAIL=0; TOTAL=0
 SCRIPTS=Polaris/scripts
 
 assert_eq() { TOTAL=$((TOTAL+1)); if [ "$1" = "$2" ]; then PASS=$((PASS+1)); else FAIL=$((FAIL+1)); echo "FAIL[$TOTAL]: expected='$2' got='$1' — $3"; fi; }
-assert_contains() { TOTAL=$((TOTAL+1)); if printf '%s' "$1" | grep -qF "$2"; then PASS=$((PASS+1)); else FAIL=$((FAIL+1)); echo "FAIL[$TOTAL]: output missing '$2' — $3"; fi; }
+assert_contains() { TOTAL=$((TOTAL+1)); if grep -qF "$2" <<< "$1"; then PASS=$((PASS+1)); else FAIL=$((FAIL+1)); echo "FAIL[$TOTAL]: output missing '$2' — $3"; fi; }
 assert_file_exists() { TOTAL=$((TOTAL+1)); if [ -f "$1" ]; then PASS=$((PASS+1)); else FAIL=$((FAIL+1)); echo "FAIL[$TOTAL]: file not found '$1' — $2"; fi; }
 
 # Isolated POLARIS_HOME
@@ -191,22 +191,21 @@ SEL_COUNT=$(echo "$SEL" | python3 -c "import json,sys; d=json.load(sys.stdin); p
 assert_eq "$SEL_COUNT" "0" "R2-6: stale pattern not selected"
 rm -f "$PFILE"
 
-# --- R2-7: prefer and avoid hints coexist, avoid takes precedence ---
+# --- R2-7: Platform 3A — avoid hints only in failure path, prefer hints on success path ---
+# With 3A, avoid hints are NOT loaded pre-execution (zero overhead success path).
+# This test verifies prefer hints work correctly on the success path.
 RTDIR=$(mktemp -d)
 rm -rf "$POLARIS_HOME/experience"
-# First run: fail to create avoid hints
-python3 "$SCRIPTS/polaris_cli.py" run "python3 -c 'import os; exit(1 if not os.environ.get(\"R2_TEST_VAR\") else 0)'" --runtime-dir "$RTDIR" 2>&1 || true
-# Create a success pattern with a prefer hint of same kind (set_env) in a second runtime
-RTDIR_S=$(mktemp -d)
-R2_TEST_VAR=hello python3 "$SCRIPTS/polaris_cli.py" run "python3 -c 'import os; exit(1 if not os.environ.get(\"R2_TEST_VAR\") else 0)'" --runtime-dir "$RTDIR_S" 2>&1 || true
-# Third run: both prefer (from success) and avoid (from failure) should exist
-RTDIR3=$(mktemp -d)
-python3 "$SCRIPTS/polaris_cli.py" run "python3 -c 'import os; exit(1 if not os.environ.get(\"R2_TEST_VAR\") else 0)'" --runtime-dir "$RTDIR3" 2>&1 || true
-# Check that adapter rejects prefer hint when avoid of same kind exists, OR that avoid hints are present
+SHARED_CWD7=$(mktemp -d)
+# First run: succeed → capture prefer hints
+python3 "$SCRIPTS/polaris_cli.py" run "echo r2-7-test" --profile standard --cwd "$SHARED_CWD7" --runtime-dir "$RTDIR" 2>&1 || true
+# Second run: prefer hints injected, avoid empty (3A contract)
+RTDIR2=$(mktemp -d)
+python3 "$SCRIPTS/polaris_cli.py" run "echo r2-7-test" --profile standard --cwd "$SHARED_CWD7" --runtime-dir "$RTDIR2" 2>&1 || true
 COEXIST=$(python3 -c "
 import json
 try:
-    state = json.load(open('$RTDIR3/execution-state.json'))
+    state = json.load(open('$RTDIR2/execution-state.json'))
     hints_raw = state.get('artifacts', {}).get('experience_hints')
     if isinstance(hints_raw, str):
         hints = json.loads(hints_raw)
@@ -214,19 +213,18 @@ try:
         hints = hints_raw or {}
     avoid = hints.get('avoid', [])
     prefer = hints.get('prefer', [])
-    # If both exist, the adapter should have handled precedence
-    # At minimum, avoid hints must be present
-    if len(avoid) > 0:
+    # 3A: prefer hints present, avoid empty on success path
+    if len(prefer) > 0 and len(avoid) == 0:
         print('ok')
     else:
-        print('no_avoid')
-except:
-    print('error')
+        print(f'prefer={len(prefer)},avoid={len(avoid)}')
+except Exception as e:
+    print(f'error:{e}')
 ")
-assert_eq "$COEXIST" "ok" "R2-7: prefer and avoid hints coexist, avoid present"
-rm -rf "$RTDIR" "$RTDIR_S" "$RTDIR3"
+assert_eq "$COEXIST" "ok" "R2-7: 3A success path has prefer hints, no avoid hints"
+rm -rf "$RTDIR" "$RTDIR2" "$SHARED_CWD7"
 
-# --- R2-8: stderr shows reuse message with confidence ---
+# --- R2-8: stderr shows experience hit on reuse ---
 rm -rf "$POLARIS_HOME/experience"
 SHARED_CWD8=$(mktemp -d)
 RTDIR1=$(mktemp -d)
@@ -234,9 +232,10 @@ python3 "$SCRIPTS/polaris_cli.py" run "echo r2-stderr-test" --profile standard -
 RTDIR2=$(mktemp -d)
 R28_OUTFILE=$(mktemp)
 python3 "$SCRIPTS/polaris_cli.py" run "echo r2-stderr-test" --profile standard --cwd "$SHARED_CWD8" --runtime-dir "$RTDIR2" >"$R28_OUTFILE" 2>&1 || true
-# Use file-based grep to avoid large-variable issues
-TOTAL=$((TOTAL+1)); if grep -qF "reusing verified strategy" "$R28_OUTFILE"; then PASS=$((PASS+1)); else FAIL=$((FAIL+1)); echo "FAIL[$TOTAL]: output missing 'reusing verified strategy' — R2-8: stderr shows reuse message"; fi
-TOTAL=$((TOTAL+1)); if grep -qF "confidence" "$R28_OUTFILE"; then PASS=$((PASS+1)); else FAIL=$((FAIL+1)); echo "FAIL[$TOTAL]: output missing 'confidence' — R2-8: stderr shows confidence"; fi
+# When prefer hints are applied, message is "succeeded on first try (experience hit: ...)"
+# When prefer hints exist but not applied, message is "reusing verified strategy"
+TOTAL=$((TOTAL+1)); if grep -qE "(succeeded on first try|reusing verified strategy)" "$R28_OUTFILE"; then PASS=$((PASS+1)); else FAIL=$((FAIL+1)); echo "FAIL[$TOTAL]: output missing experience reuse message — R2-8: stderr shows reuse/experience hit"; fi
+TOTAL=$((TOTAL+1)); if grep -qE "(experience hit|confidence)" "$R28_OUTFILE"; then PASS=$((PASS+1)); else FAIL=$((FAIL+1)); echo "FAIL[$TOTAL]: output missing 'experience hit' or 'confidence' — R2-8: stderr shows experience detail"; fi
 rm -f "$R28_OUTFILE"
 rm -rf "$RTDIR1" "$RTDIR2" "$SHARED_CWD8"
 

@@ -1,0 +1,20 @@
+{
+  "ecosystem": "rust",
+  "error_class": "permission_denial",
+  "shard_version": "3.0",
+  "records": [
+    {
+      "stderr_pattern": "Permission denied.*\\.cargo|error:.*permission denied.*registry",
+      "avoidance_hints": [{"kind": "set_env", "vars": {"CARGO_HOME": "/tmp/.cargo"}}],
+      "description": "Cargo registry permission denied — redirect CARGO_HOME to writable dir",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "cargo fetch 2>&1 || true",
+        "trigger_env": {"CARGO_HOME": "/root/.cargo-readonly"},
+        "expected_stderr_match": "permission denied",
+        "fix_env": {"CARGO_HOME": "/tmp/.cargo"},
+        "expected_fix_outcome": "different_error_or_success"
+      }
+    }
+  ]
+}

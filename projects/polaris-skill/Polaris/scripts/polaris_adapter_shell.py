@@ -14,9 +14,25 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 
-SUPPORTED_HINT_KINDS = {"append_flags", "set_env", "rewrite_cwd", "set_timeout"}
+SUPPORTED_HINT_KINDS = {"append_flags", "set_env", "rewrite_cwd", "set_timeout",
+                        "set_locale", "create_dir", "retry_with_backoff", "install_package"}
 
 DEFAULT_TIMEOUT_MS = 60000
+
+# 3B: append_flags allowlist — only these flags may be appended
+SAFE_APPEND_FLAGS = {
+    "--yes", "-y",
+    "--force", "-f",
+    "--no-interactive",
+    "--non-interactive",
+    "--batch",
+    "--quiet", "-q",
+    "--no-color",
+    "--no-progress",
+}
+
+# 3B: create_dir max depth
+CREATE_DIR_MAX_DEPTH = 3
 
 
 def now() -> str:
@@ -55,9 +71,14 @@ def apply_hints(command: str, cwd: str, timeout_ms: int,
 
         if kind == "append_flags":
             flags = hint.get("flags", [])
-            if flags:
-                command = command + " " + " ".join(shlex.quote(f) for f in flags)
-                applied.append({"kind": "append_flags", "flags": flags})
+            # 3B: allowlist enforcement — reject any flag not in SAFE_APPEND_FLAGS
+            safe_flags = [f for f in flags if f in SAFE_APPEND_FLAGS]
+            unsafe_flags = [f for f in flags if f not in SAFE_APPEND_FLAGS]
+            if unsafe_flags:
+                rejected.append({"hint": hint, "reason": f"flags not in allowlist: {unsafe_flags}"})
+            if safe_flags:
+                command = command + " " + " ".join(shlex.quote(f) for f in safe_flags)
+                applied.append({"kind": "append_flags", "flags": safe_flags})
 
         elif kind == "set_env":
             new_vars = hint.get("vars", {})
@@ -75,6 +96,49 @@ def apply_hints(command: str, cwd: str, timeout_ms: int,
             if new_timeout and isinstance(new_timeout, (int, float)):
                 timeout_ms = int(new_timeout)
                 applied.append({"kind": "set_timeout", "timeout_ms": timeout_ms})
+
+        elif kind == "set_locale":
+            # 3B: set LC_ALL/LANG for encoding errors
+            locale_val = hint.get("locale", "C.UTF-8")
+            env_vars["LC_ALL"] = locale_val
+            env_vars["LANG"] = locale_val
+            applied.append({"kind": "set_locale", "locale": locale_val})
+
+        elif kind == "create_dir":
+            # 3B: mkdir -p with scoping contract
+            import os
+            target = hint.get("target", "")
+            if not target:
+                rejected.append({"hint": hint, "reason": "empty target"})
+            elif os.path.isabs(target):
+                rejected.append({"hint": hint, "reason": "absolute path not allowed"})
+            else:
+                resolved = os.path.realpath(os.path.join(cwd, target))
+                cwd_resolved = os.path.realpath(cwd)
+                # Use os.path.commonpath to avoid startswith prefix confusion
+                # (e.g. /tmp/foo2 is NOT inside /tmp/foo)
+                try:
+                    common = os.path.commonpath([resolved, cwd_resolved])
+                except ValueError:
+                    common = ""
+                if common != cwd_resolved:
+                    rejected.append({"hint": hint, "reason": "target escapes cwd subtree"})
+                elif len(Path(target).parts) > CREATE_DIR_MAX_DEPTH:
+                    rejected.append({"hint": hint, "reason": f"depth {len(Path(target).parts)} > max {CREATE_DIR_MAX_DEPTH}"})
+                else:
+                    os.makedirs(resolved, exist_ok=True)
+                    applied.append({"kind": "create_dir", "target": target, "resolved": resolved})
+
+        elif kind == "retry_with_backoff":
+            # 3B: retry hint — adapter records intent, orchestrator handles actual retry
+            backoff_ms = hint.get("backoff_ms", 1000)
+            max_retries = hint.get("max_retries", 1)
+            applied.append({"kind": "retry_with_backoff", "backoff_ms": backoff_ms, "max_retries": max_retries})
+
+        elif kind == "install_package":
+            # 3B: always rejected by default — only allowed with explicit opt-in
+            # The CLI must set a flag; adapter never auto-applies install
+            rejected.append({"hint": hint, "reason": "install_package requires explicit opt-in (--allow-install)"})
 
     return command, cwd, timeout_ms, applied, rejected
 

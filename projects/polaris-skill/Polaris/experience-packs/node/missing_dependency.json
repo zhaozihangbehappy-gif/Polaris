@@ -1,0 +1,34 @@
+{
+  "ecosystem": "node",
+  "error_class": "missing_dependency",
+  "shard_version": "3.0",
+  "records": [
+    {
+      "stderr_pattern": "Cannot find module '([^']+)'|MODULE_NOT_FOUND",
+      "avoidance_hints": [{"kind": "set_env", "vars": {"NODE_PATH": "./node_modules"}}],
+      "description": "Node.js module resolution failure — ensure NODE_PATH includes local node_modules",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "mkdir -p /tmp/_polaris_repro_nodemod/_polaris_test_mod && echo 'module.exports = 42;' > /tmp/_polaris_repro_nodemod/_polaris_test_mod/index.js && node -e \"require('_polaris_test_mod')\" 2>&1 || true",
+        "trigger_env": {"NODE_PATH": "/nonexistent_path_only"},
+        "expected_stderr_match": "Cannot find module",
+        "fix_env": {"NODE_PATH": "/tmp/_polaris_repro_nodemod"},
+        "expected_fix_outcome": "different_error_or_success"
+      }
+    },
+    {
+      "stderr_pattern": "ERR_MODULE_NOT_FOUND|Cannot find package '([^']+)'",
+      "avoidance_hints": [{"kind": "set_env", "vars": {"NODE_PATH": "./node_modules", "NODE_OPTIONS": "--experimental-specifier-resolution=node"}}],
+      "description": "ESM module resolution failure — set NODE_PATH and enable node resolution",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "node --input-type=module -e \"import x from '_polaris_nonexistent_esm'\" 2>&1 || true",
+        "trigger_env": {"NODE_PATH": ""},
+        "expected_stderr_match": "ERR_MODULE_NOT_FOUND",
+        "fix_command": "echo 'export default 42;' > /tmp/_polaris_repro_esm.mjs && node --input-type=module -e \"import x from '/tmp/_polaris_repro_esm.mjs'; console.log(x)\" 2>&1 || true",
+        "fix_env": {},
+        "expected_fix_outcome": "different_error_or_success"
+      }
+    }
+  ]
+}

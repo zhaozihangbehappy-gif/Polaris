@@ -1,0 +1,20 @@
+{
+  "ecosystem": "java",
+  "error_class": "resource_exhaustion",
+  "shard_version": "3.0",
+  "records": [
+    {
+      "stderr_pattern": "java\\.lang\\.OutOfMemoryError|GC overhead limit exceeded",
+      "avoidance_hints": [{"kind": "set_env", "vars": {"JAVA_OPTS": "-Xmx2g -Xms512m", "MAVEN_OPTS": "-Xmx2g"}}],
+      "description": "Java OOM — increase heap size",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "java -Xmx8m -cp . OOM 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "OutOfMemoryError",
+        "fix_env": {"JAVA_OPTS": "-Xmx2g"},
+        "expected_fix_outcome": "different_error_or_success"
+      }
+    }
+  ]
+}

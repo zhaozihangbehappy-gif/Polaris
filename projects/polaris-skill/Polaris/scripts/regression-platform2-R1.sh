@@ -4,7 +4,7 @@ PASS=0; FAIL=0; TOTAL=0
 SCRIPTS=Polaris/scripts
 
 assert_eq() { TOTAL=$((TOTAL+1)); if [ "$1" = "$2" ]; then PASS=$((PASS+1)); else FAIL=$((FAIL+1)); echo "FAIL[$TOTAL]: expected='$2' got='$1' — $3"; fi; }
-assert_contains() { TOTAL=$((TOTAL+1)); if printf '%s' "$1" | grep -qF "$2"; then PASS=$((PASS+1)); else FAIL=$((FAIL+1)); echo "FAIL[$TOTAL]: output missing '$2' — $3"; fi; }
+assert_contains() { TOTAL=$((TOTAL+1)); if grep -qF "$2" <<< "$1"; then PASS=$((PASS+1)); else FAIL=$((FAIL+1)); echo "FAIL[$TOTAL]: output missing '$2' — $3"; fi; }
 assert_file_exists() { TOTAL=$((TOTAL+1)); if [ -f "$1" ]; then PASS=$((PASS+1)); else FAIL=$((FAIL+1)); echo "FAIL[$TOTAL]: file not found '$1' — $2"; fi; }
 
 # Use isolated POLARIS_HOME for all tests (don't touch user's real ~/.polaris)
@@ -27,22 +27,26 @@ except: print(0)
 assert_eq "$((GLOBAL_COUNT > 0 ? 1 : 0))" "1" "R1-1: global store has failure record"
 
 # New session (different runtime-dir) should pick up global experience
+# Platform 3A: avoid hints no longer loaded pre-execution; they arrive via R4a auto-fix
 RTDIR2=$(mktemp -d)
 OUT2=$(python3 "$SCRIPTS/polaris_cli.py" run "false" --runtime-dir "$RTDIR2" 2>&1) || true
-# Check that experience hints were loaded from global
+# Check that R4a auto-fix used experience from global library
 HINTS=$(python3 -c "
 import json
 try:
     state = json.load(open('$RTDIR2/execution-state.json'))
-    hints_raw = state.get('artifacts', {}).get('experience_hints')
+    # 3A: avoid hints arrive via R4a autofix_hints, not pre-execution experience_hints
+    hints_raw = state.get('artifacts', {}).get('autofix_hints')
     if isinstance(hints_raw, str):
         hints = json.loads(hints_raw)
+    elif isinstance(hints_raw, list):
+        hints = hints_raw
     else:
-        hints = hints_raw or {}
-    print(len(hints.get('avoid', [])))
+        hints = hints_raw or []
+    print(len(hints) if isinstance(hints, list) else 0)
 except: print(0)
 ")
-assert_eq "$((HINTS > 0 ? 1 : 0))" "1" "R1-1: new session gets experience from global library"
+assert_eq "$((HINTS > 0 ? 1 : 0))" "1" "R1-1: new session gets experience from global library (via R4a)"
 rm -rf "$RTDIR1" "$RTDIR2"
 
 # --- Test 2: POLARIS_HOME 覆盖 ---
@@ -129,21 +133,23 @@ else:
 print(fp.get('matching_key', ''))
 ")
 # Second: new runtime-dir, same command → should hit global experience
+# Platform 3A: avoid hints arrive via R4a autofix_hints
 RTDIR_B=$(mktemp -d)
 python3 "$SCRIPTS/polaris_cli.py" run "python3 -c 'import nonexistent_xyz'" --runtime-dir "$RTDIR_B" 2>&1 || true
-# Check experience_hints come from global (the record's matching_key matches)
+# Check R4a auto-fix used experience from global (the record's matching_key matches)
 HINTS_B=$(python3 -c "
 import json
 state = json.load(open('$RTDIR_B/execution-state.json'))
-hints_raw = state.get('artifacts', {}).get('experience_hints')
+hints_raw = state.get('artifacts', {}).get('autofix_hints')
 if isinstance(hints_raw, str):
     hints = json.loads(hints_raw)
+elif isinstance(hints_raw, list):
+    hints = hints_raw
 else:
-    hints = hints_raw or {}
-avoid = hints.get('avoid', [])
-print(len(avoid))
+    hints = hints_raw or []
+print(len(hints) if isinstance(hints, list) else 0)
 ")
-assert_eq "$((HINTS_B > 0 ? 1 : 0))" "1" "R1-6: new session hits global library by matching_key"
+assert_eq "$((HINTS_B > 0 ? 1 : 0))" "1" "R1-6: new session hits global library by matching_key (via R4a)"
 rm -rf "$RTDIR_A" "$RTDIR_B"
 
 # --- Test 7: stderr 经验摘要显示 global library 来源 ---
@@ -152,7 +158,8 @@ RTDIR_C=$(mktemp -d)
 python3 "$SCRIPTS/polaris_cli.py" run "false" --runtime-dir "$RTDIR_C" 2>&1 || true
 RTDIR_D=$(mktemp -d)
 OUT_D=$(python3 "$SCRIPTS/polaris_cli.py" run "false" --runtime-dir "$RTDIR_D" 2>&1) || true
-assert_contains "$OUT_D" "global library" "R1-7: stderr mentions global library source"
+# Platform 3A: experience source shown as "from experience" in auto-fix output
+assert_contains "$OUT_D" "from experience" "R1-7: stderr mentions experience source"
 rm -rf "$RTDIR_C" "$RTDIR_D"
 
 # --- Test 8: 成功命令也同步到全局库 ---

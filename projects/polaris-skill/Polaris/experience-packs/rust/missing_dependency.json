@@ -1,0 +1,46 @@
+{
+  "ecosystem": "rust",
+  "error_class": "missing_dependency",
+  "shard_version": "3.0",
+  "records": [
+    {
+      "stderr_pattern": "error\\[E0432\\]: unresolved import",
+      "avoidance_hints": [{"kind": "set_env", "vars": {"CARGO_INCREMENTAL": "0"}}],
+      "description": "Rust unresolved import — clear incremental build state",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "cargo check 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "E0432",
+        "fix_env": {"CARGO_INCREMENTAL": "0"},
+        "expected_fix_outcome": "different_error_or_success"
+      }
+    },
+    {
+      "stderr_pattern": "error: failed to load source for dependency",
+      "avoidance_hints": [{"kind": "set_env", "vars": {"CARGO_NET_GIT_FETCH_WITH_CLI": "true"}}],
+      "description": "Cargo source fetch failure — use CLI git for fetch",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "cargo fetch 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "failed to load source",
+        "fix_env": {"CARGO_NET_GIT_FETCH_WITH_CLI": "true"},
+        "expected_fix_outcome": "different_error_or_success"
+      }
+    },
+    {
+      "stderr_pattern": "can't find crate for",
+      "avoidance_hints": [{"kind": "set_env", "vars": {"RUSTFLAGS": "", "CARGO_INCREMENTAL": "0"}}],
+      "description": "Missing crate — reset RUSTFLAGS and incremental state",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "rustc --edition 2021 missing.rs 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "can't find crate",
+        "fix_env": {"RUSTFLAGS": "", "CARGO_INCREMENTAL": "0"},
+        "expected_fix_outcome": "different_error_or_success"
+      }
+    }
+  ]
+}

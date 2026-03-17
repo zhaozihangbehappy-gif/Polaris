@@ -1,0 +1,20 @@
+{
+  "ecosystem": "ruby",
+  "error_class": "encoding_error",
+  "shard_version": "3.0",
+  "records": [
+    {
+      "stderr_pattern": "Encoding::InvalidByteSequenceError|invalid byte sequence in (US-ASCII|UTF-8)",
+      "avoidance_hints": [{"kind": "set_locale", "locale": "C.UTF-8"}],
+      "description": "Ruby encoding error — set locale to UTF-8",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "ruby -e \"'\\xFF'.encode('UTF-8')\" 2>&1 || true",
+        "trigger_env": {"LC_ALL": "C"},
+        "expected_stderr_match": "InvalidByteSequenceError|invalid byte sequence",
+        "fix_env": {"LC_ALL": "C.UTF-8"},
+        "expected_fix_outcome": "different_error_or_success"
+      }
+    }
+  ]
+}

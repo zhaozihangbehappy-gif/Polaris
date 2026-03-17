@@ -13,8 +13,10 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 
-HINT_KINDS = {"append_flags", "set_env", "rewrite_cwd", "set_timeout"}
+HINT_KINDS = {"append_flags", "set_env", "rewrite_cwd", "set_timeout",
+              "set_locale", "create_dir", "retry_with_backoff", "install_package"}
 DEFAULT_TTL_DAYS = 30
+_index_cache: dict | None = None
 
 # Query priority: higher number = higher priority
 SOURCE_PRIORITY = {"prebuilt": 0, "auto": 1, "user_correction": 2}
@@ -204,6 +206,118 @@ def query(store: dict, matching_key: str | None = None,
     return {"avoidance_hints": [], "match_tier": "none", "matched_count": 0}
 
 
+def load_index(packs_dir: Path) -> dict | None:
+    """Load the shard index from packs_dir/index.json. Returns None if missing or invalid.
+    Result is cached in-process for repeated calls."""
+    global _index_cache
+    if _index_cache is not None:
+        return _index_cache
+    index_path = packs_dir / "index.json"
+    if not index_path.exists():
+        return None
+    try:
+        data = json.loads(index_path.read_text())
+        if data.get("schema_version", 0) >= 3:
+            _index_cache = data
+            return data
+    except (json.JSONDecodeError, OSError):
+        pass
+    return None
+
+
+def load_shard(packs_dir: Path, ecosystem: str, error_class: str) -> list[dict]:
+    """Load records from a single shard file. Returns [] on missing/corrupt."""
+    shard_path = packs_dir / ecosystem / f"{error_class}.json"
+    if not shard_path.exists():
+        return []
+    try:
+        data = json.loads(shard_path.read_text())
+        records = data.get("records", [])
+        for r in records:
+            r.setdefault("source", "prebuilt")
+            r.setdefault("ecosystem", ecosystem)
+            r.setdefault("error_class", error_class)
+            r.setdefault("stale", False)
+            r.setdefault("applied_count", 0)
+            r.setdefault("applied_fail_count", 0)
+        return records
+    except (json.JSONDecodeError, OSError):
+        return []
+
+
+def _load_all_shards(packs_dir: Path, ecosystem: str, eco_info: dict) -> list[dict]:
+    """Load all shard files for an ecosystem."""
+    all_records = []
+    for ec in eco_info.get("error_classes", []):
+        all_records.extend(load_shard(packs_dir, ecosystem, ec))
+    return all_records
+
+
+def query_sharded(local_store: dict, packs_dir: Path | None = None,
+                  matching_key: str | None = None,
+                  command_key: str | None = None,
+                  ttl_days: int = DEFAULT_TTL_DAYS,
+                  ecosystem: str | None = None,
+                  error_class: str | None = None,
+                  stderr_text: str | None = None) -> dict:
+    """Query with sharded pack support.
+
+    Tier 1+2: local_store only (exact match, command_key fallback).
+    Tier 3: sharded packs on disk (ecosystem → error_class → stderr pattern).
+    Falls back to legacy query() if no index.json found.
+    """
+    if not matching_key:
+        return {"avoidance_hints": [], "match_tier": "none", "matched_count": 0}
+
+    # Tier 1+2: local store
+    local_result = query(local_store, matching_key=matching_key,
+                         command_key=command_key, ttl_days=ttl_days)
+    if local_result["match_tier"] in ("exact", "command_only"):
+        return local_result
+
+    # Tier 3: sharded packs
+    if not packs_dir or not ecosystem:
+        return local_result
+
+    index = load_index(packs_dir)
+    if index is None:
+        # Fallback: old-format packs merged into local store (Platform 2 compat)
+        return query(local_store, matching_key=matching_key,
+                     command_key=command_key, ttl_days=ttl_days,
+                     ecosystem=ecosystem, error_class=error_class,
+                     stderr_text=stderr_text)
+
+    eco_info = index.get("ecosystems", {}).get(ecosystem)
+    if not eco_info:
+        return {"avoidance_hints": [], "match_tier": "none", "matched_count": 0}
+
+    # 3a: known error_class → load single shard
+    if error_class and error_class in eco_info.get("error_classes", []):
+        shard_records = load_shard(packs_dir, ecosystem, error_class)
+        if stderr_text and shard_records:
+            pattern_matched = [r for r in shard_records if _stderr_pattern_matches(r, stderr_text)]
+            if pattern_matched:
+                hints = _build_prioritized_hints(pattern_matched, confidence_discount=0.7)
+                return {"avoidance_hints": hints, "match_tier": "ecosystem_pattern", "matched_count": len(pattern_matched)}
+        if shard_records:
+            hints = _build_prioritized_hints(shard_records, confidence_discount=0.5)
+            return {"avoidance_hints": hints, "match_tier": "ecosystem", "matched_count": len(shard_records)}
+
+    # 3b: unknown error_class or no match in shard → load all shards for ecosystem
+    if stderr_text:
+        all_records = _load_all_shards(packs_dir, ecosystem, eco_info)
+        if all_records:
+            pattern_matched = [r for r in all_records if _stderr_pattern_matches(r, stderr_text)]
+            if pattern_matched:
+                hints = _build_prioritized_hints(pattern_matched, confidence_discount=0.7)
+                return {"avoidance_hints": hints, "match_tier": "ecosystem_pattern", "matched_count": len(pattern_matched)}
+            # ecosystem-only fallback (low confidence)
+            hints = _build_prioritized_hints(all_records, confidence_discount=0.4)
+            return {"avoidance_hints": hints, "match_tier": "ecosystem", "matched_count": len(all_records)}
+
+    return {"avoidance_hints": [], "match_tier": "none", "matched_count": 0}
+
+
 def _build_prioritized_hints(records: list[dict], confidence_discount: float) -> list[dict]:
     """Build deduplicated hints sorted by source priority (C2)."""
     # Sort by source priority descending
@@ -217,6 +331,9 @@ def _build_prioritized_hints(records: list[dict], confidence_discount: float) ->
                 seen.add(key)
                 h = dict(hint)
                 h["confidence_discount"] = confidence_discount
+                # 3E: carry source and applied_count for display layer
+                h["_source"] = rec.get("source", "auto")
+                h["_applied_count"] = rec.get("applied_count", 0)
                 hints.append(h)
     return hints
 

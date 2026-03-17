@@ -1,0 +1,20 @@
+{
+  "ecosystem": "java",
+  "error_class": "permission_denial",
+  "shard_version": "3.0",
+  "records": [
+    {
+      "stderr_pattern": "java\\.security\\.AccessControlException|Permission denied.*\\.m2",
+      "avoidance_hints": [{"kind": "set_env", "vars": {"MAVEN_OPTS": "-Dmaven.repo.local=/tmp/.m2"}}],
+      "description": "Maven repository permission denied — redirect to writable /tmp",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "mvn compile 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "Permission denied",
+        "fix_env": {"MAVEN_OPTS": "-Dmaven.repo.local=/tmp/.m2"},
+        "expected_fix_outcome": "different_error_or_success"
+      }
+    }
+  ]
+}

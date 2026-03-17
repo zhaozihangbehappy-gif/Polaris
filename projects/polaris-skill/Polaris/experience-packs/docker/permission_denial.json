@@ -1,0 +1,33 @@
+{
+  "ecosystem": "docker",
+  "error_class": "permission_denial",
+  "shard_version": "3.0",
+  "records": [
+    {
+      "stderr_pattern": "Got permission denied while trying to connect to the Docker daemon|permission denied.*docker\\.sock",
+      "avoidance_hints": [{"kind": "set_env", "vars": {"DOCKER_HOST": "unix:///run/user/1000/docker.sock"}}],
+      "description": "Docker daemon permission denied — use rootless Docker socket",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "docker ps 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "permission denied.*docker",
+        "fix_env": {"DOCKER_HOST": "unix:///run/user/1000/docker.sock"},
+        "expected_fix_outcome": "different_error_or_success"
+      }
+    },
+    {
+      "stderr_pattern": "denied: requested access to the resource is denied",
+      "avoidance_hints": [{"kind": "set_env", "vars": {"DOCKER_CONFIG": "/tmp/.docker"}}],
+      "description": "Docker registry access denied — redirect config to writable dir",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "docker pull private/image 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "denied.*access",
+        "fix_env": {"DOCKER_CONFIG": "/tmp/.docker"},
+        "expected_fix_outcome": "different_error_or_success"
+      }
+    }
+  ]
+}

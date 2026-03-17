@@ -1,0 +1,20 @@
+{
+  "ecosystem": "python",
+  "error_class": "missing_dependency",
+  "shard_version": "3.0",
+  "records": [
+    {
+      "stderr_pattern": "ModuleNotFoundError: No module named '([^']+)'",
+      "avoidance_hints": [{"kind": "set_env", "vars": {"PYTHONPATH": ".:src"}}],
+      "description": "Python cannot import module — add cwd and src to PYTHONPATH",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "mkdir -p /tmp/_polaris_repro_pymod && echo 'X=1' > /tmp/_polaris_repro_pymod/_polaris_test_mod.py && python3 -c 'import _polaris_test_mod' 2>&1 || true",
+        "trigger_env": {"PYTHONPATH": "/nonexistent_path_only"},
+        "expected_stderr_match": "ModuleNotFoundError",
+        "fix_env": {"PYTHONPATH": "/tmp/_polaris_repro_pymod"},
+        "expected_fix_outcome": "different_error_or_success"
+      }
+    }
+  ]
+}

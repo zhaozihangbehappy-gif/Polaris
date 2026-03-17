@@ -1,0 +1,46 @@
+{
+  "ecosystem": "java",
+  "error_class": "missing_dependency",
+  "shard_version": "3.0",
+  "records": [
+    {
+      "stderr_pattern": "java\\.lang\\.ClassNotFoundException:",
+      "avoidance_hints": [{"kind": "set_env", "vars": {"CLASSPATH": ".:lib/*"}}],
+      "description": "Java ClassNotFoundException — add cwd and lib to CLASSPATH",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "java MissingClass 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "ClassNotFoundException",
+        "fix_env": {"CLASSPATH": ".:lib/*"},
+        "expected_fix_outcome": "different_error_or_success"
+      }
+    },
+    {
+      "stderr_pattern": "java\\.lang\\.NoClassDefFoundError:",
+      "avoidance_hints": [{"kind": "set_env", "vars": {"CLASSPATH": ".:lib/*:target/classes"}}],
+      "description": "Java NoClassDefFoundError — extend CLASSPATH to include build output",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "java -cp . Main 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "NoClassDefFoundError",
+        "fix_env": {"CLASSPATH": ".:lib/*:target/classes"},
+        "expected_fix_outcome": "different_error_or_success"
+      }
+    },
+    {
+      "stderr_pattern": "Could not resolve dependencies|Could not find artifact",
+      "avoidance_hints": [{"kind": "set_env", "vars": {"MAVEN_OPTS": "-Dmaven.repo.local=.m2"}}],
+      "description": "Maven dependency resolution failure — use local repo",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "mvn compile 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "Could not resolve",
+        "fix_env": {"MAVEN_OPTS": "-Dmaven.repo.local=.m2"},
+        "expected_fix_outcome": "different_error_or_success"
+      }
+    }
+  ]
+}

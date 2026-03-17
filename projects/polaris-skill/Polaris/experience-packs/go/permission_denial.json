@@ -1,0 +1,20 @@
+{
+  "ecosystem": "go",
+  "error_class": "permission_denial",
+  "shard_version": "3.0",
+  "records": [
+    {
+      "stderr_pattern": "permission denied|EPERM|go: writing go\\.mod: permission denied",
+      "avoidance_hints": [{"kind": "set_env", "vars": {"GOPATH": "/tmp/go", "GOCACHE": "/tmp/go-cache"}}],
+      "description": "Go build cache or module permission denied — redirect to writable /tmp directories",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "go env 2>&1 || true",
+        "trigger_env": {"GOPATH": "/root/go-readonly"},
+        "expected_stderr_match": "permission denied",
+        "fix_env": {"GOPATH": "/tmp/go", "GOCACHE": "/tmp/go-cache"},
+        "expected_fix_outcome": "different_error_or_success"
+      }
+    }
+  ]
+}

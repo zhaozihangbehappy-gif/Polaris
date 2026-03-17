@@ -1,0 +1,20 @@
+{
+  "ecosystem": "docker",
+  "error_class": "config_error",
+  "shard_version": "3.0",
+  "records": [
+    {
+      "stderr_pattern": "invalid reference format|invalid image name",
+      "avoidance_hints": [{"kind": "set_env", "vars": {"DOCKER_DEFAULT_PLATFORM": "linux/amd64"}}],
+      "description": "Docker invalid reference — set default platform explicitly",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "docker run --platform '' ubuntu echo hi 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "invalid",
+        "fix_env": {"DOCKER_DEFAULT_PLATFORM": "linux/amd64"},
+        "expected_fix_outcome": "different_error_or_success"
+      }
+    }
+  ]
+}

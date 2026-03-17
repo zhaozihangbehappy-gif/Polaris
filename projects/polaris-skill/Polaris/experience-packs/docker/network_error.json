@@ -1,0 +1,20 @@
+{
+  "ecosystem": "docker",
+  "error_class": "network_error",
+  "shard_version": "3.0",
+  "records": [
+    {
+      "stderr_pattern": "error during connect|Cannot connect to the Docker daemon|Is the docker daemon running",
+      "avoidance_hints": [{"kind": "retry_with_backoff", "backoff_ms": 2000, "max_retries": 1}],
+      "description": "Docker daemon not responding — retry after brief wait",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "docker info 2>&1 || true",
+        "trigger_env": {"DOCKER_HOST": "tcp://localhost:99999"},
+        "expected_stderr_match": "Cannot connect|error during connect",
+        "fix_env": {},
+        "expected_fix_outcome": "different_error_or_success"
+      }
+    }
+  ]
+}

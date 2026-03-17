@@ -10,6 +10,7 @@ Usage:
     polaris_cli.py feedback reject <index> [--store PATH]
     polaris_cli.py feedback correct <index> --hint-kind KIND --hint-value JSON [--store PATH]
     polaris_cli.py feedback list [--store PATH]
+    polaris_cli.py experience contribute [--dry-run] [--output FILE]
 
 Internally delegates to the same module path as polaris_runtime_demo.sh:
     compat check → bootstrap → orchestrator
@@ -169,14 +170,38 @@ def _emit_experience_summary(state: dict, runtime_dir: Path, had_prior_experienc
                 _autofix_hints = []
         for _afh in _autofix_hints:
             _afk = _afh.get("kind", "?")
+            # 3E: source-aware display label
+            _afsrc = _afh.get("_source", "auto")
+            _afcount = _afh.get("_applied_count", 0)
+            if _afsrc == "prebuilt":
+                _src_label = "from community knowledge base"
+            elif _afsrc == "contributed":
+                if _afcount > 0:
+                    _src_label = f"verified in {_afcount:,} deployments"
+                else:
+                    _src_label = "community contributed"
+            else:
+                _src_label = "from experience"
             if _afk == "set_env":
                 _vars = _afh.get("vars", {})
                 _var_str = ", ".join(f'{k}="{v}"' for k, v in _vars.items())
-                lines.append(f"[polaris] \u26a1 auto-fix: set {_var_str} (from experience)")
+                lines.append(f"[polaris] \u26a1 auto-fix: set {_var_str} ({_src_label})")
             elif _afk == "rewrite_cwd":
-                lines.append(f"[polaris] \u26a1 auto-fix: cwd \u2192 {_afh.get('cwd', '?')} (from experience)")
+                lines.append(f"[polaris] \u26a1 auto-fix: cwd \u2192 {_afh.get('cwd', '?')} ({_src_label})")
             elif _afk == "set_timeout":
-                lines.append(f"[polaris] \u26a1 auto-fix: timeout \u2192 {_afh.get('timeout_ms', '?')}ms (from experience)")
+                lines.append(f"[polaris] \u26a1 auto-fix: timeout \u2192 {_afh.get('timeout_ms', '?')}ms ({_src_label})")
+            elif _afk == "append_flags":
+                _flags = _afh.get("flags", "?")
+                lines.append(f"[polaris] \u26a1 auto-fix: append {_flags} ({_src_label})")
+            elif _afk == "set_locale":
+                _locale = _afh.get("locale", _afh.get("vars", {}).get("LC_ALL", "?"))
+                lines.append(f"[polaris] \u26a1 auto-fix: set LC_ALL=\"{_locale}\" ({_src_label})")
+            elif _afk == "create_dir":
+                _dir = _afh.get("target", _afh.get("path", "?"))
+                lines.append(f"[polaris] \u26a1 auto-fix: create {_dir} ({_src_label})")
+            elif _afk == "retry_with_backoff":
+                _ms = _afh.get("backoff_ms", "?")
+                lines.append(f"[polaris] \u26a1 auto-fix: retry with {_ms}ms backoff ({_src_label})")
         if autofix_result == "success":
             lines.append(f"[polaris] \u2713 auto-fix succeeded (recording as verified strategy)")
         elif autofix_result == "failed":
@@ -250,6 +275,11 @@ ECOSYSTEM_PATTERNS = {
     "node": re.compile(r"\b(npm|node|npx|yarn|pnpm)\b"),
     "python": re.compile(r"\b(python3?|pip3?|pytest|poetry|uv)\b"),
     "go": re.compile(r"\bgo\s"),
+    "rust": re.compile(r"\b(cargo|rustc|rustup)\b"),
+    "java": re.compile(r"\b(java|javac|mvn|maven|gradle)\b"),
+    "ruby": re.compile(r"\b(ruby|gem|bundle|bundler|rake)\b"),
+    "docker": re.compile(r"\b(docker|docker-compose|podman)\b"),
+    "terraform": re.compile(r"\b(terraform|tf)\b"),
 }
 
 
@@ -263,10 +293,24 @@ def _detect_ecosystem(command: str) -> str | None:
 
 def _load_prebuilt_pack(runtime_dir: Path, ecosystem: str) -> int:
     """Load a prebuilt experience pack into failure-records.json. Idempotent.
-    Returns number of records added."""
+
+    Platform 3A: If sharded index.json exists, skip merging — query_sharded
+    reads shard files directly at query time. Only merge for legacy flat packs.
+    Returns number of records added (0 for sharded packs)."""
     sys.path.insert(0, str(SCRIPTS))
     import polaris_failure_records as pfr
 
+    # Platform 3A: sharded packs are queried on-demand, no merge needed
+    index_path = PACKS_DIR / "index.json"
+    if index_path.exists():
+        try:
+            idx = json.loads(index_path.read_text())
+            if idx.get("schema_version", 0) >= 3 and ecosystem in idx.get("ecosystems", {}):
+                return 0  # sharded — no merge
+        except (json.JSONDecodeError, OSError):
+            pass
+
+    # Legacy: flat pack file → merge into local store
     pack_path = PACKS_DIR / f"{ecosystem}.json"
     if not pack_path.exists():
         return 0
@@ -762,6 +806,144 @@ def cmd_experience_reset_prebuilt(args: argparse.Namespace) -> None:
     print(f"Removed {removed} prebuilt records")
 
 
+def _get_machine_id() -> str:
+    """Get a stable machine identifier for contributor hashing.
+
+    Uses a per-install random salt (created once, persisted) so that the
+    hash cannot be reversed to hostname/uid by brute force.
+    """
+    import platform
+    polaris_home = Path(os.environ.get("POLARIS_HOME", Path.home() / ".polaris"))
+    salt_path = polaris_home / "experience" / ".contributor_salt"
+    if salt_path.exists():
+        salt = salt_path.read_text().strip()
+    else:
+        import secrets
+        salt = secrets.token_hex(16)
+        salt_path.parent.mkdir(parents=True, exist_ok=True)
+        salt_path.write_text(salt)
+    raw = f"{salt}-{platform.node()}-{os.getuid() if hasattr(os, 'getuid') else 'win'}"
+    return raw
+
+
+def _is_contributable(rec: dict) -> bool:
+    """Check if a failure record qualifies for contribution (3D)."""
+    return (
+        rec.get("source") in ("auto", "user_correction")
+        and rec.get("applied_count", 0) >= 1
+        and rec.get("applied_fail_count", 0) == 0
+        and not rec.get("stale", False)
+        and bool(rec.get("stderr_pattern"))
+        and bool(rec.get("avoidance_hints"))
+        and bool(rec.get("ecosystem"))
+    )
+
+
+# Fields that must NOT appear in contribution output (sensitive data)
+_SENSITIVE_FIELDS = {"stderr_summary", "command", "fingerprint", "matching_key",
+                     "command_key", "first_seen", "last_seen", "created_at"}
+
+
+def _sanitize(rec: dict) -> dict:
+    """Sanitize a record for contribution — strip all sensitive fields (3D)."""
+    contributor_hash = hashlib.sha256(_get_machine_id().encode()).hexdigest()[:12]
+    return {
+        "ecosystem": rec["ecosystem"],
+        "error_class": rec.get("error_class", "unknown"),
+        "stderr_pattern": rec["stderr_pattern"],
+        "avoidance_hints": rec["avoidance_hints"],
+        "description": rec.get("description", ""),
+        "applied_count": rec.get("applied_count", 0),
+        "contributor_hash": contributor_hash,
+        "source": "contributed",
+    }
+
+
+def _find_duplicates(sanitized: list[dict], packs_dir: Path) -> list[dict]:
+    """Check sanitized records against existing packs for duplicates (3D-G6)."""
+    sys.path.insert(0, str(SCRIPTS))
+    import polaris_failure_records as pfr
+
+    idx = pfr.load_index(packs_dir)
+    existing_keys: set[tuple[str, str, str]] = set()
+    if idx:
+        for eco, info in idx.get("ecosystems", {}).items():
+            for ec in info.get("error_classes", []):
+                shard_records = pfr.load_shard(packs_dir, eco, ec)
+                for rec in shard_records:
+                    existing_keys.add((eco, ec, rec.get("stderr_pattern", "")))
+
+    duplicates = []
+    for rec in sanitized:
+        key = (rec.get("ecosystem", ""), rec.get("error_class", ""), rec["stderr_pattern"])
+        if key in existing_keys:
+            rec["_duplicate"] = True
+            duplicates.append(rec)
+    return duplicates
+
+
+def cmd_experience_contribute(args: argparse.Namespace) -> None:
+    """Export verified local experience for contribution (3D)."""
+    sys.path.insert(0, str(SCRIPTS))
+    import polaris_failure_records as pfr
+
+    # Load global failure store
+    polaris_home = Path(os.environ.get("POLARIS_HOME", Path.home() / ".polaris"))
+    global_store_path = polaris_home / "experience" / "failure-records.json"
+    if not global_store_path.exists():
+        print("[polaris] No experience store found. Run some commands first.", file=sys.stderr)
+        sys.exit(1)
+
+    store = pfr.load_store(global_store_path)
+    records = store.get("records", [])
+
+    # Filter to contributable records
+    contributable = [r for r in records if _is_contributable(r)]
+    if not contributable:
+        print("[polaris] No verified experience records qualify for contribution.")
+        print("[polaris] Records must: have source=auto/user_correction, applied_count>=1, applied_fail_count==0, ecosystem set.")
+        return
+
+    # Sanitize
+    sanitized = [_sanitize(r) for r in contributable]
+
+    # Check for duplicates
+    duplicates = _find_duplicates(sanitized, PACKS_DIR)
+
+    # Build contribution output
+    contribution = {
+        "schema_version": 1,
+        "contributed_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "records": sanitized,
+        "duplicate_count": len(duplicates),
+    }
+
+    if args.dry_run:
+        print(f"[polaris] Dry run: {len(sanitized)} records qualify for contribution")
+        for rec in sanitized:
+            dup = " (DUPLICATE)" if rec.get("_duplicate") else ""
+            print(f"  {'✓' if not rec.get('_duplicate') else '⚠'} {rec['ecosystem']}/{rec['error_class']}: {rec.get('description', rec['stderr_pattern'][:50])}{dup}")
+        if duplicates:
+            print(f"[polaris] {len(duplicates)} duplicate(s) found — will be flagged for review")
+        return
+
+    # Remove internal flags before writing
+    for rec in sanitized:
+        rec.pop("_duplicate", None)
+
+    output_path = Path(args.output) if args.output else polaris_home / "experience" / "contribution.json"
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    with open(output_path, "w") as f:
+        json.dump(contribution, f, indent=2, sort_keys=True)
+
+    print(f"[polaris] Exported {len(sanitized)} verified records to {output_path}")
+    for rec in sanitized:
+        print(f"  ✓ {rec['ecosystem']}/{rec['error_class']}: {rec.get('description', rec['stderr_pattern'][:50])}")
+    if duplicates:
+        print(f"[polaris] {len(duplicates)} duplicate(s) flagged for review")
+    print("[polaris] Submit this file to contribute your experience to the community.")
+
+
 def cmd_feedback_reject(args: argparse.Namespace) -> None:
     """Mark a failure record as rejected (C2)."""
     sys.path.insert(0, str(SCRIPTS))
@@ -844,6 +1026,10 @@ def main() -> None:
     reset_parser.add_argument("--runtime-dir", required=True, help="Runtime directory")
     reset_parser.add_argument("--ecosystem", default=None, choices=["node", "python", "go"], help="Only reset this ecosystem")
 
+    contribute_parser = exp_sub.add_parser("contribute", help="Export verified experience for contribution (3D)")
+    contribute_parser.add_argument("--dry-run", action="store_true", default=False, help="Preview without writing files")
+    contribute_parser.add_argument("--output", default=None, help="Output file path (default: $POLARIS_HOME/experience/contribution.json)")
+
     # --- feedback ---
     fb_parser = subparsers.add_parser("feedback", help="User feedback on experience records")
     fb_sub = fb_parser.add_subparsers(dest="fb_command")
@@ -873,6 +1059,8 @@ def main() -> None:
     elif args.subcommand == "experience":
         if args.exp_command == "reset-prebuilt":
             cmd_experience_reset_prebuilt(args)
+        elif args.exp_command == "contribute":
+            cmd_experience_contribute(args)
         else:
             exp_parser.print_help()
             sys.exit(2)

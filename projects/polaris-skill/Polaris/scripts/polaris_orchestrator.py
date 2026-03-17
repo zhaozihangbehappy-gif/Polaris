@@ -582,6 +582,7 @@ def _build_failure_avoidance_hints(error_text: str, error_class: str, command: s
     so each hint should change the command, env, cwd, or timeout in a way
     that has a realistic chance of avoiding the same failure on retry.
     """
+    import re as _re
     hints = []
     text = error_text.lower()
     if error_class == "missing_dependency" and "no module named" in text:
@@ -590,16 +591,29 @@ def _build_failure_avoidance_hints(error_text: str, error_class: str, command: s
             module = parts[1].strip().strip("'\"").split()[0]
             hints.append({"kind": "set_env", "vars": {"POLARIS_HINT_INSTALL": module}})
     if error_class == "missing_dependency" and "required env" in text:
-        # Extract env var name from original error text to preserve case
-        import re
-        m = re.search(r"required env (\w+)", error_text, re.IGNORECASE)
+        m = _re.search(r"required env (\w+)", error_text, _re.IGNORECASE)
         if m:
             hints.append({"kind": "set_env", "vars": {m.group(1): "polaris-provided"}})
     if error_class == "permission_denial":
         hints.append({"kind": "set_env", "vars": {"POLARIS_HINT_PERMISSION_ERROR": "true"}})
     if error_class == "path_or_missing_file":
-        # Rewrite cwd to /tmp as a safe fallback for path-dependent failures
         hints.append({"kind": "rewrite_cwd", "cwd": "/tmp"})
+    # 3B: encoding/locale errors → set_locale
+    if error_class == "encoding_error" or "unicode" in text or "codec can't decode" in text or "charmap" in text:
+        hints.append({"kind": "set_locale", "locale": "C.UTF-8"})
+    # 3B: missing directory → create_dir (scoped)
+    if error_class == "path_or_missing_file" and ("no such file or directory" in text or "enoent" in text):
+        m = _re.search(r"(?:open|stat|access)\s+'([^']+)'", error_text, _re.IGNORECASE)
+        if m:
+            from pathlib import PurePosixPath
+            target_dir = str(PurePosixPath(m.group(1)).parent)
+            if target_dir and target_dir != ".":
+                hints.append({"kind": "create_dir", "target": target_dir})
+    # 3B: rate limit / network retry → retry_with_backoff
+    if error_class == "rate_limit" or "429" in text or "rate limit" in text:
+        hints.append({"kind": "retry_with_backoff", "backoff_ms": 2000, "max_retries": 1})
+    if error_class == "network_error" or "connection refused" in text or "etimedout" in text:
+        hints.append({"kind": "retry_with_backoff", "backoff_ms": 1000, "max_retries": 1})
     if "timeout" in text:
         hints.append({"kind": "set_timeout", "timeout_ms": 120000})
     if not hints:
@@ -1666,34 +1680,19 @@ def main() -> None:
             "node": _re.compile(r"\b(npm|node|npx|yarn|pnpm)\b"),
             "python": _re.compile(r"\b(python3?|pip3?|pytest|poetry|uv)\b"),
             "go": _re.compile(r"\bgo\s"),
+            "rust": _re.compile(r"\b(cargo|rustc|rustup)\b"),
+            "java": _re.compile(r"\b(java|javac|mvn|maven|gradle)\b"),
+            "ruby": _re.compile(r"\b(ruby|gem|bundle|bundler|rake)\b"),
+            "docker": _re.compile(r"\b(docker|docker-compose|podman)\b"),
+            "terraform": _re.compile(r"\b(terraform|tf)\b"),
         }
         _detected_ecosystem = None
         for _eco, _pat in _ECO_PATTERNS.items():
             if _pat.search(shell_cmd):
                 _detected_ecosystem = _eco
                 break
-        # Query failure records for avoidance hints (Platform 2: three-tier matching)
-        failure_store_path = Path(args.patterns).parent / "failure-records.json"
-        failure_store = pfr.load_store(failure_store_path)
-        # Look up the most recent error_class for this task from prior failures.
-        # This lets ecosystem tier match prebuilt records by error_class (discount 0.5)
-        # instead of blindly returning all ecosystem hints (discount 0.4, below apply threshold).
-        _prior_error_class = None
-        _prior_stderr = None
-        _mk = task_fingerprint.get("matching_key")
-        if _mk:
-            for _rec in reversed(failure_store.get("records", [])):
-                if _rec.get("task_fingerprint", {}).get("matching_key") == _mk:
-                    _prior_error_class = _rec.get("error_class")
-                    _prior_stderr = _rec.get("stderr_summary")
-                    break
-        query_result = pfr.query(failure_store, matching_key=_mk,
-                                 command_key=task_fingerprint.get("command_key"),
-                                 ecosystem=_detected_ecosystem,
-                                 error_class=_prior_error_class,
-                                 stderr_text=_prior_stderr)
-        avoid_hints = query_result.get("avoidance_hints", [])
-        experience_hints["avoid"] = avoid_hints
+        # Platform 3A: failure store NOT loaded on success path (zero overhead).
+        # Avoid hints are populated only after failure, in the R4a auto-fix block.
         # Query success patterns for prefer hints
         if selected_pattern_record:
             strategy_hints = selected_pattern_record.get("strategy_hints", {})
@@ -1701,7 +1700,7 @@ def main() -> None:
                 if hint.get("kind") in {"append_flags", "set_env", "rewrite_cwd", "set_timeout"}:
                     experience_hints["prefer"].append(hint)
         # Filter hints to adapter's supported kinds
-        adapter_supported = set(adapter_record.get("supported_hint_kinds", ["append_flags", "set_env", "rewrite_cwd", "set_timeout"]))
+        adapter_supported = set(adapter_record.get("supported_hint_kinds", ["append_flags", "set_env", "rewrite_cwd", "set_timeout", "set_locale", "create_dir", "retry_with_backoff", "install_package"]))
         experience_hints["prefer"] = [h for h in experience_hints["prefer"] if h.get("kind") in adapter_supported]
         experience_hints["avoid"] = [h for h in experience_hints["avoid"] if h.get("kind") in adapter_supported]
         history.append(run_checked([sys.executable, str(base / "polaris_state.py"), "artifact", "--state", args.state, "--key", "task_fingerprint", "--value", json.dumps(task_fingerprint, sort_keys=True)], "record task fingerprint"))
@@ -1838,7 +1837,8 @@ def main() -> None:
         # If the failure produced safe avoidance hints (set_env, rewrite_cwd,
         # set_timeout) that weren't already applied in the first attempt,
         # auto-apply them and retry once before blocking.
-        _SAFE_AUTOFIX_KINDS = {"set_env", "rewrite_cwd", "set_timeout"}
+        _SAFE_AUTOFIX_KINDS = {"set_env", "rewrite_cwd", "set_timeout",
+                                "append_flags", "set_locale", "create_dir", "retry_with_backoff"}
         _r4a_applied = False
         _r4a_nonrepair_stop = repair_report.get("parsed", {}).get("nonrepair_stop", False)
         if execution_profile != "deep" and execution_kind == "shell_command" and not _r4a_nonrepair_stop:
@@ -1847,8 +1847,10 @@ def main() -> None:
             _r4a_fstore_path = Path(args.patterns).parent / "failure-records.json"
             _r4a_fstore = _pfr_r4a.load_store(_r4a_fstore_path)
             _r4a_mk = task_fingerprint.get("matching_key") if task_fingerprint else None
-            _r4a_query = _pfr_r4a.query(
-                _r4a_fstore, matching_key=_r4a_mk,
+            _r4a_packs_dir = base.parent / "experience-packs"
+            _r4a_query = _pfr_r4a.query_sharded(
+                _r4a_fstore, packs_dir=_r4a_packs_dir,
+                matching_key=_r4a_mk,
                 command_key=task_fingerprint.get("command_key") if task_fingerprint else None,
                 ecosystem=_detected_ecosystem if '_detected_ecosystem' in dir() else None,
                 error_class=error_class if 'error_class' in dir() else None,

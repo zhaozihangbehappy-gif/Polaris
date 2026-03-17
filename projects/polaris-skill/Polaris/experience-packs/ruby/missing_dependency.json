@@ -1,0 +1,46 @@
+{
+  "ecosystem": "ruby",
+  "error_class": "missing_dependency",
+  "shard_version": "3.0",
+  "records": [
+    {
+      "stderr_pattern": "cannot load such file -- ([^ ]+)|LoadError.*require",
+      "avoidance_hints": [{"kind": "set_env", "vars": {"RUBYLIB": ".:lib"}}],
+      "description": "Ruby LoadError — add cwd and lib to RUBYLIB",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "ruby -e \"require 'nonexistent_local_gem'\" 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "cannot load such file",
+        "fix_env": {"RUBYLIB": ".:lib"},
+        "expected_fix_outcome": "different_error_or_success"
+      }
+    },
+    {
+      "stderr_pattern": "Could not find gem|Bundler::GemNotFound",
+      "avoidance_hints": [{"kind": "set_env", "vars": {"BUNDLE_PATH": "vendor/bundle"}}],
+      "description": "Bundler gem not found — set BUNDLE_PATH to local vendor",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "bundle exec ruby -e 'puts 1' 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "Could not find gem",
+        "fix_env": {"BUNDLE_PATH": "vendor/bundle"},
+        "expected_fix_outcome": "different_error_or_success"
+      }
+    },
+    {
+      "stderr_pattern": "Gem::MissingSpecError|Could not find '([^']+)'.*in locally installed gems",
+      "avoidance_hints": [{"kind": "set_env", "vars": {"GEM_HOME": "/tmp/.gems", "GEM_PATH": "/tmp/.gems"}}],
+      "description": "Ruby gem missing — redirect GEM_HOME to writable directory",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "gem list nonexistent 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "MissingSpecError",
+        "fix_env": {"GEM_HOME": "/tmp/.gems"},
+        "expected_fix_outcome": "different_error_or_success"
+      }
+    }
+  ]
+}

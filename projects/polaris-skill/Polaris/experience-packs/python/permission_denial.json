@@ -1,0 +1,21 @@
+{
+  "ecosystem": "python",
+  "error_class": "permission_denial",
+  "shard_version": "3.0",
+  "records": [
+    {
+      "stderr_pattern": "PermissionError: \\[Errno 13\\]",
+      "avoidance_hints": [{"kind": "rewrite_cwd", "target": "/tmp"}],
+      "description": "Write permission denied — rewrite cwd to writable directory",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "python3 -c \"open('/root/test_polaris_repro.txt','w')\" 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "PermissionError",
+        "fix_command": "python3 -c \"open('/tmp/test_polaris_repro.txt','w'); print('ok')\" 2>&1 || true",
+        "fix_env": {},
+        "expected_fix_outcome": "different_error_or_success"
+      }
+    }
+  ]
+}

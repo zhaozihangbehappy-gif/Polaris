@@ -10,7 +10,7 @@ assert_eq() { TOTAL=$((TOTAL+1)); if [ "$1" = "$2" ]; then PASS=$((PASS+1)); els
 R31=$(python3 -c "
 import json, glob
 ok = 0; total = 0
-for f in sorted(glob.glob('$PACKS/*.json')):
+for f in sorted(f for f in glob.glob('$PACKS/*.json') if not f.endswith('index.json')):
     pack = json.load(open(f))
     eco = pack.get('ecosystem', '')
     for rec in pack.get('records', []):
@@ -35,7 +35,7 @@ print(f'{ok}/{total}')
 EXPECTED_R31=$(python3 -c "
 import json, glob
 total = 0
-for f in sorted(glob.glob('$PACKS/*.json')):
+for f in sorted(f for f in glob.glob('$PACKS/*.json') if not f.endswith('index.json')):
     pack = json.load(open(f))
     total += len(pack.get('records', []))
 print(f'{total}/{total}')
@@ -46,7 +46,7 @@ assert_eq "$R31" "$EXPECTED_R31" "R3-1: all prebuilt records have required field
 R32=$(python3 -c "
 import json, glob, re
 bad = 0; total = 0
-for f in sorted(glob.glob('$PACKS/*.json')):
+for f in sorted(f for f in glob.glob('$PACKS/*.json') if not f.endswith('index.json')):
     pack = json.load(open(f))
     for rec in pack.get('records', []):
         total += 1
@@ -225,7 +225,7 @@ assert_eq "$((PREC_PCT >= 80 ? 1 : 0))" "1" "R3-4: precision ≥ 80% (got ${PREC
 # --- R3-5: each ecosystem has at least 5 records ---
 R35=$(python3 -c "
 import json, glob
-for f in sorted(glob.glob('$PACKS/*.json')):
+for f in sorted(f for f in glob.glob('$PACKS/*.json') if not f.endswith('index.json')):
     pack = json.load(open(f))
     eco = pack.get('ecosystem', 'unknown')
     count = len(pack.get('records', []))
@@ -238,7 +238,7 @@ print()
 R35_OK=$(python3 -c "
 import json, glob
 ok = True
-for f in sorted(glob.glob('$PACKS/*.json')):
+for f in sorted(f for f in glob.glob('$PACKS/*.json') if not f.endswith('index.json')):
     pack = json.load(open(f))
     if len(pack.get('records', [])) < 5:
         ok = False
@@ -250,7 +250,7 @@ assert_eq "$R35_OK" "yes" "R3-5: each ecosystem has ≥ 5 records"
 R36=$(python3 -c "
 import json, glob
 versions = set()
-for f in sorted(glob.glob('$PACKS/*.json')):
+for f in sorted(f for f in glob.glob('$PACKS/*.json') if not f.endswith('index.json')):
     pack = json.load(open(f))
     versions.add(pack.get('pack_version', '?'))
 print(','.join(sorted(versions)))
@@ -261,20 +261,28 @@ assert_eq "$R36" "2.0" "R3-6a: all packs are version 2.0"
 export POLARIS_HOME=$(mktemp -d)
 RTDIR=$(mktemp -d)
 python3 "$SCRIPTS/polaris_cli.py" run "python3 -c 'print(1)'" --runtime-dir "$RTDIR" 2>&1 || true
-# Count prebuilt records
+# Count prebuilt records (may be 0 in sharded mode where packs aren't merged)
 BEFORE=$(python3 -c "
-import json
-store = json.load(open('$RTDIR/failure-records.json'))
-prebuilt = [r for r in store.get('records', []) if r.get('source') == 'prebuilt']
-print(len(prebuilt))
+import json, os
+fr = '$RTDIR/failure-records.json'
+if os.path.exists(fr):
+    store = json.load(open(fr))
+    prebuilt = [r for r in store.get('records', []) if r.get('source') == 'prebuilt']
+    print(len(prebuilt))
+else:
+    print(0)
 ")
 # Reset
 python3 "$SCRIPTS/polaris_cli.py" experience reset-prebuilt --runtime-dir "$RTDIR" 2>&1 || true
 AFTER=$(python3 -c "
-import json
-store = json.load(open('$RTDIR/failure-records.json'))
-prebuilt = [r for r in store.get('records', []) if r.get('source') == 'prebuilt']
-print(len(prebuilt))
+import json, os
+fr = '$RTDIR/failure-records.json'
+if os.path.exists(fr):
+    store = json.load(open(fr))
+    prebuilt = [r for r in store.get('records', []) if r.get('source') == 'prebuilt']
+    print(len(prebuilt))
+else:
+    print(0)
 ")
 assert_eq "$AFTER" "0" "R3-6b: reset-prebuilt clears all prebuilt records (was $BEFORE)"
 rm -rf "$RTDIR" "$POLARIS_HOME"

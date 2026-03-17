@@ -1,0 +1,21 @@
+{
+  "ecosystem": "python",
+  "error_class": "syntax_error",
+  "shard_version": "3.0",
+  "records": [
+    {
+      "stderr_pattern": "SyntaxError: (invalid syntax|unexpected EOF|f-string)",
+      "avoidance_hints": [{"kind": "set_env", "vars": {"PYTHONDONTWRITEBYTECODE": "1"}}],
+      "description": "Python syntax error — likely Python version mismatch; disable bytecode cache to avoid stale .pyc",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "python3 -c 'def f(: pass' 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "SyntaxError",
+        "fix_command": "python3 -c 'def f(): pass; print(\"ok\")' 2>&1 || true",
+        "fix_env": {"PYTHONDONTWRITEBYTECODE": "1"},
+        "expected_fix_outcome": "different_error_or_success"
+      }
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "schema_version": 3,
+  "ecosystems": {
+    "python": {
+      "error_classes": ["missing_dependency", "syntax_error", "permission_denial", "file_not_found", "encoding_error"],
+      "total_records": 5,
+      "pack_version": "3.0"
+    },
+    "node": {
+      "error_classes": ["missing_dependency", "file_not_found", "permission_denial", "resource_exhaustion"],
+      "total_records": 5,
+      "pack_version": "3.0"
+    },
+    "go": {
+      "error_classes": ["missing_dependency", "build_error", "permission_denial"],
+      "total_records": 5,
+      "pack_version": "3.0"
+    },
+    "rust": {
+      "error_classes": ["missing_dependency", "build_error", "permission_denial"],
+      "total_records": 6,
+      "pack_version": "3.0"
+    },
+    "java": {
+      "error_classes": ["missing_dependency", "build_error", "permission_denial", "resource_exhaustion"],
+      "total_records": 6,
+      "pack_version": "3.0"
+    },
+    "ruby": {
+      "error_classes": ["missing_dependency", "permission_denial", "encoding_error"],
+      "total_records": 5,
+      "pack_version": "3.0"
+    },
+    "docker": {
+      "error_classes": ["permission_denial", "network_error", "resource_exhaustion", "config_error"],
+      "total_records": 5,
+      "pack_version": "3.0"
+    },
+    "terraform": {
+      "error_classes": ["auth_error", "config_error", "permission_denial"],
+      "total_records": 5,
+      "pack_version": "3.0"
+    }
+  }
+}
