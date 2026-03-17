@@ -127,8 +127,10 @@ def _emit_experience_summary(state: dict, runtime_dir: Path, had_prior_experienc
     elif avoid_count > 0 and _actual_applied == 0:
         # Hints were offered but all rejected by adapter (low confidence etc.)
         pass
-    if prefer_count > 0:
-        # R2: Show reuse message with confidence from the source pattern
+    # Show reuse line only when experience wasn't actually applied —
+    # otherwise the "succeeded on first try (experience hit: ...)" result line
+    # already conveys reuse, making this line redundant noise.
+    if prefer_count > 0 and _actual_applied == 0:
         _reuse_conf_str = ""
         try:
             sp_path = runtime_dir / "success-patterns.json"
@@ -147,8 +149,8 @@ def _emit_experience_summary(state: dict, runtime_dir: Path, had_prior_experienc
         except (json.JSONDecodeError, OSError, TypeError):
             pass
         lines.append(f"[polaris] \u21bb reusing verified strategy{_reuse_conf_str}")
-    if _actual_applied == 0 and prefer_count == 0 and not had_prior_experience:
-        lines.append("[polaris] first run for this task, no prior experience")
+    # "no prior experience" is already conveyed by the result line
+    # "succeeded (no prior experience for this task)" — don't duplicate.
 
     status = state.get("status")
     failure_written = artifacts.get("failure_record_written")
@@ -183,9 +185,12 @@ def _emit_experience_summary(state: dict, runtime_dir: Path, had_prior_experienc
         learning = _safe_json_obj(artifacts.get("learning_summary"))
         promoted = learning.get("promoted_patterns", [])
         merged = learning.get("merged_patterns", [])
+        # Show "learned" only when there's genuinely new information for the user:
+        # suppress when experience was already applied (the user is already reusing
+        # this pattern — telling them it was "captured" again is noise).
         captured = (isinstance(promoted, list) and len(promoted) > 0) or \
                    (isinstance(merged, list) and len(merged) > 0)
-        if captured:
+        if captured and _actual_applied == 0:
             fp = _safe_json_obj(artifacts.get("task_fingerprint"))
             fp_key = fp.get("matching_key", "")[:12]
             adapter = artifacts.get("selected_adapter", "unknown")
