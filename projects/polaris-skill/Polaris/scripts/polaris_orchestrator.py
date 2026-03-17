@@ -1744,6 +1744,16 @@ def main() -> None:
     history.append(execution_result)
     history.append(run_checked([sys.executable, str(base / "polaris_state.py"), "artifact", "--state", args.state, "--key", "execution_result", "--value", execution_contract.get("output_file", "")], "record execution result artifact"))
     history.append(run_checked([sys.executable, str(base / "polaris_state.py"), "artifact", "--state", args.state, "--key", "executor_result", "--value", "runtime-executor-result.json"], "record executor result artifact"))
+    # R5: Record actual experience application from adapter output (not just intent)
+    _exec_output_file = execution_contract.get("output_file", "")
+    _experience_actually_applied = 0
+    if _exec_output_file and Path(_exec_output_file).exists():
+        try:
+            _exec_output = json.loads(Path(_exec_output_file).read_text())
+            _experience_actually_applied = len(_exec_output.get("experience_applied", []))
+        except (json.JSONDecodeError, OSError):
+            pass
+    history.append(run_checked([sys.executable, str(base / "polaris_state.py"), "artifact", "--state", args.state, "--key", "experience_applied_count", "--value", str(_experience_actually_applied)], "record experience applied count"))
 
     validation_result = validate_contract(base, execution_contract, execution_result.get("parsed", execution_result))
     history.append(validation_result)

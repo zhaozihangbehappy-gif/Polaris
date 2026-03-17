@@ -115,9 +115,18 @@ def _emit_experience_summary(state: dict, runtime_dir: Path, had_prior_experienc
     hints = _safe_json_obj(artifacts.get("experience_hints"))
     avoid_count = len(hints.get("avoid", []))
     prefer_count = len(hints.get("prefer", []))
-    if avoid_count > 0:
+    # R5: Use experience_applied_count for truthful "actually applied" messages
+    _applied_count_raw = artifacts.get("experience_applied_count", "0")
+    try:
+        _actual_applied = int(_applied_count_raw)
+    except (ValueError, TypeError):
+        _actual_applied = 0
+    if _actual_applied > 0 and avoid_count > 0:
         source_note = " (includes global library)" if global_experience_loaded else ""
-        lines.append(f"[polaris] \u21bb applied {avoid_count} avoidance hints from previous failures{source_note}")
+        lines.append(f"[polaris] \u21bb applied {_actual_applied} experience hints from previous failures{source_note}")
+    elif avoid_count > 0 and _actual_applied == 0:
+        # Hints were offered but all rejected by adapter (low confidence etc.)
+        pass
     if prefer_count > 0:
         # R2: Show reuse message with confidence from the source pattern
         _reuse_conf_str = ""
@@ -138,7 +147,7 @@ def _emit_experience_summary(state: dict, runtime_dir: Path, had_prior_experienc
         except (json.JSONDecodeError, OSError, TypeError):
             pass
         lines.append(f"[polaris] \u21bb reusing verified strategy{_reuse_conf_str}")
-    if avoid_count == 0 and prefer_count == 0 and not had_prior_experience:
+    if _actual_applied == 0 and prefer_count == 0 and not had_prior_experience:
         lines.append("[polaris] first run for this task, no prior experience")
 
     status = state.get("status")
@@ -166,8 +175,8 @@ def _emit_experience_summary(state: dict, runtime_dir: Path, had_prior_experienc
                 pass
         hint_kinds_str = ", ".join(hint_kinds) if hint_kinds else "general"
         lines.append(f"[polaris] \u2717 learned: {error_class} \u2192 avoidance hints [{hint_kinds_str}] stored for next run")
-        # R5: experience hit but still failed
-        if avoid_count > 0 or prefer_count > 0:
+        # R5: experience actually applied but still failed
+        if _actual_applied > 0:
             lines.append(f"[polaris] \u2717 failed despite experience hints (recording for improvement)")
 
     elif status == "completed":
@@ -181,8 +190,8 @@ def _emit_experience_summary(state: dict, runtime_dir: Path, had_prior_experienc
             fp_key = fp.get("matching_key", "")[:12]
             adapter = artifacts.get("selected_adapter", "unknown")
             lines.append(f"[polaris] \u2713 learned: success pattern captured (fingerprint: {fp_key}, adapter: {adapter})")
-        # R5: success + experience hit = first-try success message
-        if (avoid_count > 0 or prefer_count > 0) and not artifacts.get("resumed_execution_contract"):
+        # R5: success + experience actually applied = first-try success message
+        if _actual_applied > 0 and not artifacts.get("resumed_execution_contract"):
             # Find what error_class was avoided (from avoidance hints)
             avoided_classes = []
             for h in hints.get("avoid", []):
@@ -191,7 +200,7 @@ def _emit_experience_summary(state: dict, runtime_dir: Path, had_prior_experienc
                     avoided_classes.append(ec)
             avoided_str = ", ".join(avoided_classes[:3]) if avoided_classes else "known failure patterns"
             lines.append(f"[polaris] \u2713 succeeded on first try (experience hit: avoided {avoided_str})")
-        elif avoid_count == 0 and prefer_count == 0 and status == "completed":
+        elif _actual_applied == 0 and prefer_count == 0 and status == "completed":
             lines.append(f"[polaris] \u2713 succeeded (no prior experience for this task)")
 
     for line in lines:
@@ -413,24 +422,26 @@ def cmd_run(args: argparse.Namespace) -> None:
             "error_class": error_class,
         })
 
-        # R5: experience_hit event — tracks whether experience was applied and outcome
-        hints = _safe_json_obj(artifacts.get("experience_hints"))
-        avoid_count = len(hints.get("avoid", []))
-        prefer_count = len(hints.get("prefer", []))
-        experience_applied = avoid_count > 0 or prefer_count > 0
-        # direct_hit: experience applied AND first-try success (no repair branch)
+        # R5: experience_hit event — use experience_applied_count from adapter output
+        # (not experience_hints existence, which includes rejected low-confidence hints)
+        _applied_count_raw = artifacts.get("experience_applied_count", "0")
+        try:
+            _applied_count = int(_applied_count_raw)
+        except (ValueError, TypeError):
+            _applied_count = 0
+        experience_actually_applied = _applied_count > 0
+        # direct_hit: experience actually applied AND first-try success (no repair branch)
         repaired = bool(artifacts.get("resumed_execution_contract"))
-        direct_hit = experience_applied and success and not repaired
+        direct_hit = experience_actually_applied and success and not repaired
         # repair_rounds: 0 if clean success, 1 if repair branch was entered
         repair_rounds = 1 if repaired else 0
-        if experience_applied:
+        if experience_actually_applied:
             _write_event(runtime_dir, {
                 "type": "experience_hit",
                 "hit": True,
                 "direct_hit": direct_hit,
                 "success": success,
-                "avoid_count": avoid_count,
-                "prefer_count": prefer_count,
+                "applied_count": _applied_count,
                 "repair_rounds": repair_rounds,
                 "task_matching_key": task_matching_key,
                 "command": args.command,
@@ -438,7 +449,7 @@ def cmd_run(args: argparse.Namespace) -> None:
         # Also emit experience_query event for every run (hit or miss)
         _write_event(runtime_dir, {
             "type": "experience_query",
-            "had_experience": experience_applied,
+            "had_experience": experience_actually_applied,
             "success": success,
             "repair_rounds": repair_rounds,
             "task_matching_key": task_matching_key,

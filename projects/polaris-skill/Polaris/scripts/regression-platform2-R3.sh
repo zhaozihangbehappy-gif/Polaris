@@ -205,11 +205,15 @@ for eco, cases in fixtures.items():
                            stderr_text=stderr_text)
         if result.get('match_tier') == 'ecosystem_pattern' and result.get('avoidance_hints'):
             total_hits += 1
-            # Check: the matched records' error_class should match expected
-            # We check by looking at what hints were returned — they should be from
-            # records whose error_class matches
-            # Simpler: just check that the returned hints are non-empty and from right class
-            correct_hits += 1  # pattern match implies the regex matched, which is class-specific
+            # True precision: verify matched records' error_class == expected_class
+            # Re-query with full store to find which records matched the pattern
+            matched_classes = set()
+            for rec in store['records']:
+                pat = rec.get('stderr_pattern', '')
+                if pat and re.search(pat, stderr_text, re.IGNORECASE):
+                    matched_classes.add(rec.get('error_class'))
+            if expected_class in matched_classes:
+                correct_hits += 1
 
 precision = correct_hits / total_hits if total_hits > 0 else 0
 print(f'{precision:.2f},{correct_hits},{total_hits}')
