@@ -1914,6 +1914,10 @@ def main() -> None:
                     execution_error = None
                     resumed_after_repair = True
                     _r4a_applied = True
+                    # R4a: record positive feedback so stale-tracking is balanced
+                    if _r4a_mk:
+                        _pfr_r4a.update_applied(_r4a_fstore, _r4a_mk, True)
+                        _pfr_r4a.write_store(_r4a_fstore_path, _r4a_fstore)
                 else:
                     # Auto-fix failed — record and fall through to normal blocking
                     history.append(run_checked([sys.executable, str(base / "polaris_state.py"), "attempt", "--state", args.state, "--step", "autofix_retry", "--status", "failed", "--summary", "R4a auto-fix failed", "--evidence", _r4a_retry_contract.get("output_file", ""), "--branch-id", execution_branch], "record autofix failure"))
@@ -2013,70 +2017,72 @@ def main() -> None:
             )
             return
 
-        history.append(run_checked([sys.executable, str(base / "polaris_state.py"), "branch", "--state", args.state, "--branch-id", repair_branch, "--label", "Local repair branch", "--kind", "repair", "--summary", "Execution failure triggered repair branch", "--references", "runtime-repair-report.json,runtime-repair-plan.json,runtime-repair-results.json"], "open repair branch"))
-        history.append(run_checked([sys.executable, str(base / "polaris_state.py"), "transition", "--state", args.state, "--to", "repairing", "--summary", "Execution failure triggered repair branch", "--branch-id", repair_branch], "transition deep repair"))
-        append(
-            history,
-            emit_progress(
-                base,
-                policy,
-                "repair",
-                run_id,
-                "repair",
-                "in_progress",
-                "Failure classified and routed through the deep local repair tree",
-                60,
-                "Diagnose failure",
-                "Record validated fix strategy",
-                "repairing",
-                layers,
-                adapter_name,
-                repair_branch,
-                None,
-                args.state,
-            ),
-        )
-        history.append(run_checked([sys.executable, str(base / "polaris_state.py"), "heartbeat", "--state", args.state, "--summary", "repair surfaces updated"], "repair heartbeat"))
-        append(history, emit_runtime_surface(base, policy, "repair", args.state, "repair"))
-        repair_learning = build_repair_learning_items(repair_report, resolved_repair_depth, execution_profile, args.mode, adapter_name)
-        if repair_learning is not None:
-            rule_candidate, repair_marker = repair_learning
-            history.append(queue_learning_item(base, args.state, "rule_candidate", rule_candidate))
-            history.append(queue_learning_item(base, args.state, "success_marker", repair_marker))
-            history.append(run_checked([sys.executable, str(base / "polaris_state.py"), "success", "--state", args.state, "--pattern-id", repair_marker["pattern_id"], "--summary", "Repair branch queued deferred local recovery learning", "--evidence", "runtime-repair-results.json,runtime-repair-plan.json", "--confidence", str(repair_marker["confidence"])], "record repair learning success"))
-        history.append(run_checked([sys.executable, str(base / "polaris_state.py"), "recover", "--state", args.state, "--branch-id", repair_branch, "--to", "ready", "--summary", "Repair branch completed and run is ready to continue", "--references", "runtime-repair-results.json,runtime-repair-report.json"], "recover from repair"))
-        history.append(run_checked([sys.executable, str(base / "polaris_state.py"), "attempt", "--state", args.state, "--step", "repair_guidance_recorded", "--status", "passed", "--summary", "Repair guidance captured and rule stored", "--evidence", "runtime-repair-results.json", "--branch-id", repair_branch], "record repair attempt"))
-        history.append(run_checked([sys.executable, str(base / "polaris_state.py"), "branch", "--state", args.state, "--branch-id", execution_branch, "--label", "Primary execution path", "--kind", "primary", "--summary", "Execution resumed after repair branch", "--references", args.state], "reopen execution branch"))
-        history.append(run_checked([sys.executable, str(base / "polaris_state.py"), "transition", "--state", args.state, "--to", "executing", "--summary", "Execution resumed after repair branch", "--branch-id", execution_branch], "transition resumed execute"))
-        append(history, record_adapter_outcome(base, sticky_cache, policy, execution_profile, adapter_name, "failure", adapter_score))
-        resumed_contract = build_execution_contract(base, args.goal, args.state, adapter_record, execution_profile, args.mode, applied_rules, selected_pattern_record, args.resumed_simulate_error, execution_kind, analysis_target=getattr(args, "analysis_target", None))
-        history.append(run_checked([sys.executable, str(base / "polaris_state.py"), "artifact", "--state", args.state, "--key", "resumed_execution_contract", "--value", json.dumps(resumed_contract, sort_keys=True)], "record resumed execution contract"))
-        resumed_result = execute_contract(base, adapter_record, resumed_contract, "runtime-resumed-executor-result.json")
-        history.append(resumed_result)
-        history.append(run_checked([sys.executable, str(base / "polaris_state.py"), "artifact", "--state", args.state, "--key", "execution_result", "--value", resumed_contract.get("output_file", "")], "record resumed execution result artifact"))
-        history.append(run_checked([sys.executable, str(base / "polaris_state.py"), "artifact", "--state", args.state, "--key", "resumed_executor_result", "--value", "runtime-resumed-executor-result.json"], "record resumed executor result artifact"))
-        resumed_validation = validate_contract(base, resumed_contract, resumed_result.get("parsed", resumed_result), "runtime-resumed-validation-result.json")
-        history.append(resumed_validation)
-        history.append(run_checked([sys.executable, str(base / "polaris_state.py"), "artifact", "--state", args.state, "--key", "resumed_validation_result", "--value", "runtime-resumed-validation-result.json"], "record resumed validation result artifact"))
-        resumed_ok = resumed_validation.get("parsed", {}).get("status") == "ok"
-        resumed_validation_error = resumed_validation.get("parsed", {}).get("reason")
-        resumed_payload = resumed_validation.get("parsed", {}).get("payload")
-        if resumed_result.get("parsed", {}).get("returncode") != 0 or not resumed_ok:
-            resumed_error = resumed_result.get("parsed", {}).get("stderr") or resumed_result.get("parsed", {}).get("stdout") or resumed_validation_error or "execution failed after repair"
-            history.append(run_checked([sys.executable, str(base / "polaris_state.py"), "attempt", "--state", args.state, "--step", "execute_after_repair", "--status", "failed", "--summary", resumed_error, "--evidence", resumed_contract.get("output_file", ""), "--branch-id", execution_branch], "record resumed execution failure"))
-            history.append(run_checked([sys.executable, str(base / "polaris_state.py"), "block", "--state", args.state, "--reason", resumed_error, "--references", "runtime-repair-report.json,runtime-repair-plan.json,runtime-repair-results.json"], "block after failed resumed execution"))
-            history.append(run_checked([sys.executable, str(base / "polaris_state.py"), "set", "--state", args.state, "--status", "blocked", "--progress-pct", "70", "--current-step", "Execution failed after repair", "--next-action", "Inspect repaired environment and retry with fresh evidence", "--phase", "blocked", "--summary-outcome", resumed_error], "set resumed blocked summary"))
-            resumed_blocked_state = json.loads(Path(args.state).read_text())
-            history.append(persist_efficiency_metrics(base, args.state, runtime_dir, build_runtime_efficiency_metrics(resumed_blocked_state, resumed_contract, resumed_payload, True, repair_probe_steps, family_transfer_applied)))
-            append(history, emit_runtime_surface(base, policy, "complete", args.state, "blocked"))
-            print(json.dumps({"status": "blocked", "execution_profile": execution_profile, "selected_rules": selected_rules.get("parsed", {}), "selected_adapter": selected_adapter.get("parsed", {}), "selected_patterns": selected_patterns.get("parsed", selected_patterns), "history": history}, indent=2, sort_keys=True))
-            return
-        history.append(run_checked([sys.executable, str(base / "polaris_state.py"), "attempt", "--state", args.state, "--step", "execute_after_repair", "--status", "passed", "--summary", "Adapter contract executed successfully after repair", "--evidence", resumed_contract.get("output_file", ""), "--branch-id", execution_branch], "record resumed execution success"))
-        execution_contract = resumed_contract
-        execution_result = resumed_result
-        execution_payload = resumed_payload
-        execution_error = None
-        resumed_after_repair = True
+        if not _r4a_applied:
+            # Deep profile repair path (R4a success skips this entirely)
+            history.append(run_checked([sys.executable, str(base / "polaris_state.py"), "branch", "--state", args.state, "--branch-id", repair_branch, "--label", "Local repair branch", "--kind", "repair", "--summary", "Execution failure triggered repair branch", "--references", "runtime-repair-report.json,runtime-repair-plan.json,runtime-repair-results.json"], "open repair branch"))
+            history.append(run_checked([sys.executable, str(base / "polaris_state.py"), "transition", "--state", args.state, "--to", "repairing", "--summary", "Execution failure triggered repair branch", "--branch-id", repair_branch], "transition deep repair"))
+            append(
+                history,
+                emit_progress(
+                    base,
+                    policy,
+                    "repair",
+                    run_id,
+                    "repair",
+                    "in_progress",
+                    "Failure classified and routed through the deep local repair tree",
+                    60,
+                    "Diagnose failure",
+                    "Record validated fix strategy",
+                    "repairing",
+                    layers,
+                    adapter_name,
+                    repair_branch,
+                    None,
+                    args.state,
+                ),
+            )
+            history.append(run_checked([sys.executable, str(base / "polaris_state.py"), "heartbeat", "--state", args.state, "--summary", "repair surfaces updated"], "repair heartbeat"))
+            append(history, emit_runtime_surface(base, policy, "repair", args.state, "repair"))
+            repair_learning = build_repair_learning_items(repair_report, resolved_repair_depth, execution_profile, args.mode, adapter_name)
+            if repair_learning is not None:
+                rule_candidate, repair_marker = repair_learning
+                history.append(queue_learning_item(base, args.state, "rule_candidate", rule_candidate))
+                history.append(queue_learning_item(base, args.state, "success_marker", repair_marker))
+                history.append(run_checked([sys.executable, str(base / "polaris_state.py"), "success", "--state", args.state, "--pattern-id", repair_marker["pattern_id"], "--summary", "Repair branch queued deferred local recovery learning", "--evidence", "runtime-repair-results.json,runtime-repair-plan.json", "--confidence", str(repair_marker["confidence"])], "record repair learning success"))
+            history.append(run_checked([sys.executable, str(base / "polaris_state.py"), "recover", "--state", args.state, "--branch-id", repair_branch, "--to", "ready", "--summary", "Repair branch completed and run is ready to continue", "--references", "runtime-repair-results.json,runtime-repair-report.json"], "recover from repair"))
+            history.append(run_checked([sys.executable, str(base / "polaris_state.py"), "attempt", "--state", args.state, "--step", "repair_guidance_recorded", "--status", "passed", "--summary", "Repair guidance captured and rule stored", "--evidence", "runtime-repair-results.json", "--branch-id", repair_branch], "record repair attempt"))
+            history.append(run_checked([sys.executable, str(base / "polaris_state.py"), "branch", "--state", args.state, "--branch-id", execution_branch, "--label", "Primary execution path", "--kind", "primary", "--summary", "Execution resumed after repair branch", "--references", args.state], "reopen execution branch"))
+            history.append(run_checked([sys.executable, str(base / "polaris_state.py"), "transition", "--state", args.state, "--to", "executing", "--summary", "Execution resumed after repair branch", "--branch-id", execution_branch], "transition resumed execute"))
+            append(history, record_adapter_outcome(base, sticky_cache, policy, execution_profile, adapter_name, "failure", adapter_score))
+            resumed_contract = build_execution_contract(base, args.goal, args.state, adapter_record, execution_profile, args.mode, applied_rules, selected_pattern_record, args.resumed_simulate_error, execution_kind, analysis_target=getattr(args, "analysis_target", None))
+            history.append(run_checked([sys.executable, str(base / "polaris_state.py"), "artifact", "--state", args.state, "--key", "resumed_execution_contract", "--value", json.dumps(resumed_contract, sort_keys=True)], "record resumed execution contract"))
+            resumed_result = execute_contract(base, adapter_record, resumed_contract, "runtime-resumed-executor-result.json")
+            history.append(resumed_result)
+            history.append(run_checked([sys.executable, str(base / "polaris_state.py"), "artifact", "--state", args.state, "--key", "execution_result", "--value", resumed_contract.get("output_file", "")], "record resumed execution result artifact"))
+            history.append(run_checked([sys.executable, str(base / "polaris_state.py"), "artifact", "--state", args.state, "--key", "resumed_executor_result", "--value", "runtime-resumed-executor-result.json"], "record resumed executor result artifact"))
+            resumed_validation = validate_contract(base, resumed_contract, resumed_result.get("parsed", resumed_result), "runtime-resumed-validation-result.json")
+            history.append(resumed_validation)
+            history.append(run_checked([sys.executable, str(base / "polaris_state.py"), "artifact", "--state", args.state, "--key", "resumed_validation_result", "--value", "runtime-resumed-validation-result.json"], "record resumed validation result artifact"))
+            resumed_ok = resumed_validation.get("parsed", {}).get("status") == "ok"
+            resumed_validation_error = resumed_validation.get("parsed", {}).get("reason")
+            resumed_payload = resumed_validation.get("parsed", {}).get("payload")
+            if resumed_result.get("parsed", {}).get("returncode") != 0 or not resumed_ok:
+                resumed_error = resumed_result.get("parsed", {}).get("stderr") or resumed_result.get("parsed", {}).get("stdout") or resumed_validation_error or "execution failed after repair"
+                history.append(run_checked([sys.executable, str(base / "polaris_state.py"), "attempt", "--state", args.state, "--step", "execute_after_repair", "--status", "failed", "--summary", resumed_error, "--evidence", resumed_contract.get("output_file", ""), "--branch-id", execution_branch], "record resumed execution failure"))
+                history.append(run_checked([sys.executable, str(base / "polaris_state.py"), "block", "--state", args.state, "--reason", resumed_error, "--references", "runtime-repair-report.json,runtime-repair-plan.json,runtime-repair-results.json"], "block after failed resumed execution"))
+                history.append(run_checked([sys.executable, str(base / "polaris_state.py"), "set", "--state", args.state, "--status", "blocked", "--progress-pct", "70", "--current-step", "Execution failed after repair", "--next-action", "Inspect repaired environment and retry with fresh evidence", "--phase", "blocked", "--summary-outcome", resumed_error], "set resumed blocked summary"))
+                resumed_blocked_state = json.loads(Path(args.state).read_text())
+                history.append(persist_efficiency_metrics(base, args.state, runtime_dir, build_runtime_efficiency_metrics(resumed_blocked_state, resumed_contract, resumed_payload, True, repair_probe_steps, family_transfer_applied)))
+                append(history, emit_runtime_surface(base, policy, "complete", args.state, "blocked"))
+                print(json.dumps({"status": "blocked", "execution_profile": execution_profile, "selected_rules": selected_rules.get("parsed", {}), "selected_adapter": selected_adapter.get("parsed", {}), "selected_patterns": selected_patterns.get("parsed", selected_patterns), "history": history}, indent=2, sort_keys=True))
+                return
+            history.append(run_checked([sys.executable, str(base / "polaris_state.py"), "attempt", "--state", args.state, "--step", "execute_after_repair", "--status", "passed", "--summary", "Adapter contract executed successfully after repair", "--evidence", resumed_contract.get("output_file", ""), "--branch-id", execution_branch], "record resumed execution success"))
+            execution_contract = resumed_contract
+            execution_result = resumed_result
+            execution_payload = resumed_payload
+            execution_error = None
+            resumed_after_repair = True
 
     if execution_error is None and not resumed_after_repair:
         history.append(run_checked([sys.executable, str(base / "polaris_state.py"), "attempt", "--state", args.state, "--step", "execute_adapter_contract", "--status", "passed", "--summary", "Adapter contract executed successfully", "--evidence", execution_contract.get("output_file", ""), "--branch-id", execution_branch], "record execution success attempt"))

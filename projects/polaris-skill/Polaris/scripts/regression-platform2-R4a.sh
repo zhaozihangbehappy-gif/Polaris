@@ -117,5 +117,19 @@ print(status)
 assert_eq "$R4A7" "blocked" "R4a-7: repeated failure → blocked (auto-fix or experience can't fix exit 1)"
 rm -rf "$RTDIR7A" "$RTDIR7B" "$SHARED_CWD7"
 
+# --- R4a-8: Success path — command that fails without env, succeeds with set_env auto-fix ---
+RTDIR8=$(mktemp -d)
+python3 "$SCRIPTS/polaris_cli.py" run 'bash -c "test -n \"$POLARIS_TEST_VAR\" || (echo \"required env POLARIS_TEST_VAR is not set\" >&2; exit 1)"' --profile standard --runtime-dir "$RTDIR8" 2>&1 || true
+R4A8=$(python3 -c "
+import json
+state = json.load(open('$RTDIR8/execution-state.json'))
+arts = state.get('artifacts', {})
+af = arts.get('autofix_result', 'none')
+status = state.get('status', 'unknown')
+print(f'{af}:{status}')
+")
+assert_eq "$R4A8" "success:completed" "R4a-8: set_env auto-fix succeeds → completed"
+rm -rf "$RTDIR8"
+
 echo "=== R4a Results: $PASS/$TOTAL passed, $FAIL failed ==="
 [ "$FAIL" -eq 0 ] || exit 1
