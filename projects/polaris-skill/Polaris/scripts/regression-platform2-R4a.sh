@@ -129,6 +129,33 @@ status = state.get('status', 'unknown')
 print(f'{af}:{status}')
 ")
 assert_eq "$R4A8" "success:completed" "R4a-8: set_env auto-fix succeeds → completed"
+
+# R4a-8b: deep repair path was NOT entered (no resumed_executor_result artifact)
+R4A8B=$(python3 -c "
+import json
+state = json.load(open('$RTDIR8/execution-state.json'))
+arts = state.get('artifacts', {})
+has_deep = arts.get('resumed_executor_result') is not None
+# State machine should not have a repair-branch transition
+sm = state.get('state_machine', {})
+branches = sm.get('branches', [])
+repair_branches = [b for b in branches if b.get('kind') == 'repair']
+print(f'deep={has_deep},repair_branches={len(repair_branches)}')
+")
+assert_eq "$R4A8B" "deep=False,repair_branches=0" "R4a-8b: auto-fix success did not enter deep repair path"
+
+# R4a-8c: update_applied(True) landed in failure store
+R4A8C=$(python3 -c "
+import json, pathlib
+store = json.load(open('$RTDIR8/failure-records.json'))
+recs = [r for r in store.get('records', []) if r.get('source') != 'prebuilt']
+if recs:
+    r = recs[-1]
+    print(f'ac={r.get(\"applied_count\",0)},afc={r.get(\"applied_fail_count\",0)},stale={r.get(\"stale\",\"?\")}')
+else:
+    print('no_records')
+")
+assert_eq "$R4A8C" "ac=1,afc=0,stale=False" "R4a-8c: update_applied(True) recorded in failure store"
 rm -rf "$RTDIR8"
 
 echo "=== R4a Results: $PASS/$TOTAL passed, $FAIL failed ==="
