@@ -8,6 +8,7 @@ Schema v2 adds: applied_count, applied_fail_count, stale, rejected_by, source.
 """
 import argparse
 import json
+import re
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
@@ -112,26 +113,44 @@ def _is_expired(rec: dict, ttl_days: int) -> bool:
 
 
 def _is_active(rec: dict, ttl_days: int) -> bool:
-    """A record is active if not stale, not expired, and not rejected."""
+    """A record is active if not stale, not expired, and not rejected.
+
+    Prebuilt records (source=prebuilt) are exempt from TTL expiry — they
+    represent curated knowledge that doesn't age out.
+    """
     if rec.get("stale", False):
         return False
-    if _is_expired(rec, ttl_days):
+    if rec.get("source") != "prebuilt" and _is_expired(rec, ttl_days):
         return False
     return True
 
 
+def _stderr_pattern_matches(record: dict, stderr_text: str) -> bool:
+    """Check if a record's stderr_pattern regex matches the given stderr text."""
+    pattern = record.get("stderr_pattern")
+    if not pattern or not stderr_text:
+        return False
+    try:
+        return bool(re.search(pattern, stderr_text, re.IGNORECASE))
+    except re.error:
+        return False
+
+
 def query(store: dict, matching_key: str | None = None,
           command_key: str | None = None, ttl_days: int = DEFAULT_TTL_DAYS,
-          ecosystem: str | None = None, error_class: str | None = None) -> dict:
+          ecosystem: str | None = None, error_class: str | None = None,
+          stderr_text: str | None = None) -> dict:
     """Query failure records with three-tier matching and source priority.
 
     Tiers:
       1. exact: matching_key match → confidence 1.0
       2. command_only: command_key match (different cwd) → confidence 0.6
-      3. ecosystem: source=prebuilt + ecosystem + error_class match → confidence 0.5
-         (without error_class match: confidence 0.4, below apply threshold)
+      3. ecosystem: source=prebuilt + ecosystem → sub-tiers:
+         a. stderr_pattern regex match → confidence 0.7 (precise)
+         b. error_class match → confidence 0.5
+         c. ecosystem-only → confidence 0.4 (informational)
 
-    Returns: {"avoidance_hints": [...], "match_tier": "exact"|"command_only"|"ecosystem"|"none", "matched_count": N}
+    Returns: {"avoidance_hints": [...], "match_tier": "exact"|"command_only"|"ecosystem"|"ecosystem_pattern"|"none", "matched_count": N}
     """
     if not matching_key:
         return {"avoidance_hints": [], "match_tier": "none", "matched_count": 0}
@@ -156,22 +175,28 @@ def query(store: dict, matching_key: str | None = None,
             hints = _build_prioritized_hints(fallback, confidence_discount=0.6)
             return {"avoidance_hints": hints, "match_tier": "command_only", "matched_count": len(fallback)}
 
-    # Tier 3: ecosystem fallback for prebuilt records (C1)
-    # With error_class: only return prebuilt records whose error_class matches → discount 0.5 (at apply threshold)
-    # Without error_class: return all ecosystem prebuilt → discount 0.4 (below apply threshold, informational only)
+    # Tier 3: ecosystem fallback for prebuilt records (C1 + R3)
     if ecosystem:
         eco_all = [r for r in records
                    if r.get("source") == "prebuilt"
                    and r.get("ecosystem") == ecosystem
                    and _is_active(r, ttl_days)]
 
+        # R3: sub-tier 3a — stderr_pattern regex match (most precise)
+        if stderr_text and eco_all:
+            pattern_matched = [r for r in eco_all if _stderr_pattern_matches(r, stderr_text)]
+            if pattern_matched:
+                hints = _build_prioritized_hints(pattern_matched, confidence_discount=0.7)
+                return {"avoidance_hints": hints, "match_tier": "ecosystem_pattern", "matched_count": len(pattern_matched)}
+
+        # Sub-tier 3b — error_class match
         if error_class and eco_all:
             eco_matched = [r for r in eco_all if r.get("error_class") == error_class]
             if eco_matched:
                 hints = _build_prioritized_hints(eco_matched, confidence_discount=0.5)
                 return {"avoidance_hints": hints, "match_tier": "ecosystem", "matched_count": len(eco_matched)}
 
-        # No error_class filter or no error_class match → return all but at low confidence
+        # Sub-tier 3c — ecosystem-only (informational, low confidence)
         if eco_all:
             hints = _build_prioritized_hints(eco_all, confidence_discount=0.4)
             return {"avoidance_hints": hints, "match_tier": "ecosystem", "matched_count": len(eco_all)}
@@ -310,6 +335,8 @@ def main() -> None:
     q.add_argument("--ttl-days", type=int, default=DEFAULT_TTL_DAYS)
     q.add_argument("--ecosystem", default=None)
     q.add_argument("--error-class", default=None)
+    q.add_argument("--stderr", default=None, dest="stderr_text",
+                   help="Actual stderr text for R3 pattern matching")
 
     ua = sub.add_parser("update-applied")
     ua.add_argument("--store", required=True)
@@ -333,7 +360,8 @@ def main() -> None:
         store = load_store(store_path)
         result = query(store, matching_key=args.matching_key,
                        command_key=args.command_key, ttl_days=args.ttl_days,
-                       ecosystem=args.ecosystem, error_class=args.error_class)
+                       ecosystem=args.ecosystem, error_class=args.error_class,
+                       stderr_text=getattr(args, "stderr_text", None))
         # Write back in case migration happened
         write_store(store_path, store)
         print(json.dumps(result, sort_keys=True))

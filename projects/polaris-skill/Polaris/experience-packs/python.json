@@ -1,24 +1,36 @@
 {
   "ecosystem": "python",
-  "pack_version": "1.0",
+  "pack_version": "2.0",
   "records": [
     {
       "error_class": "missing_dependency",
-      "stderr_pattern": "ModuleNotFoundError",
-      "avoidance_hints": [{"kind": "set_env", "vars": {"PYTHONPATH": "."}}],
-      "description": "Python cannot import module — add cwd to PYTHONPATH"
+      "stderr_pattern": "ModuleNotFoundError: No module named '([^']+)'",
+      "avoidance_hints": [{"kind": "set_env", "vars": {"PYTHONPATH": ".:src"}}],
+      "description": "Python cannot import module — add cwd and src to PYTHONPATH"
     },
     {
-      "error_class": "missing_dependency",
-      "stderr_pattern": "venv",
-      "avoidance_hints": [{"kind": "set_env", "vars": {"VIRTUAL_ENV": ".venv", "PATH": ".venv/bin:$PATH"}}],
-      "description": "venv not activated — set VIRTUAL_ENV and prepend bin to PATH"
+      "error_class": "syntax_error",
+      "stderr_pattern": "SyntaxError: (invalid syntax|unexpected EOF|f-string)",
+      "avoidance_hints": [{"kind": "set_env", "vars": {"PYTHONDONTWRITEBYTECODE": "1"}}],
+      "description": "Python syntax error — likely Python version mismatch; disable bytecode cache to avoid stale .pyc"
+    },
+    {
+      "error_class": "permission_denial",
+      "stderr_pattern": "PermissionError: \\[Errno 13\\]",
+      "avoidance_hints": [{"kind": "rewrite_cwd", "target": "/tmp"}],
+      "description": "Write permission denied — rewrite cwd to writable directory"
+    },
+    {
+      "error_class": "file_not_found",
+      "stderr_pattern": "FileNotFoundError: \\[Errno 2\\]",
+      "avoidance_hints": [{"kind": "rewrite_cwd", "target": "."}],
+      "description": "File not found — cwd may be wrong; rewrite to project root"
     },
     {
       "error_class": "encoding_error",
-      "stderr_pattern": "UnicodeDecodeError",
-      "avoidance_hints": [{"kind": "set_env", "vars": {"PYTHONIOENCODING": "utf-8"}}],
-      "description": "Unicode decode error — force UTF-8 IO encoding"
+      "stderr_pattern": "UnicodeDecodeError: '(utf-?8|ascii|latin-?1)' codec can't decode",
+      "avoidance_hints": [{"kind": "set_env", "vars": {"PYTHONIOENCODING": "utf-8", "LC_ALL": "C.UTF-8"}}],
+      "description": "Unicode decode error — force UTF-8 IO encoding and locale"
     }
   ]
 }

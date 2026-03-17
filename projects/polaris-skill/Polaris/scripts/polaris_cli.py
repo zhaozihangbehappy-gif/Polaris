@@ -166,6 +166,9 @@ def _emit_experience_summary(state: dict, runtime_dir: Path, had_prior_experienc
                 pass
         hint_kinds_str = ", ".join(hint_kinds) if hint_kinds else "general"
         lines.append(f"[polaris] \u2717 learned: {error_class} \u2192 avoidance hints [{hint_kinds_str}] stored for next run")
+        # R5: experience hit but still failed
+        if avoid_count > 0 or prefer_count > 0:
+            lines.append(f"[polaris] \u2717 failed despite experience hints (recording for improvement)")
 
     elif status == "completed":
         learning = _safe_json_obj(artifacts.get("learning_summary"))
@@ -178,6 +181,18 @@ def _emit_experience_summary(state: dict, runtime_dir: Path, had_prior_experienc
             fp_key = fp.get("matching_key", "")[:12]
             adapter = artifacts.get("selected_adapter", "unknown")
             lines.append(f"[polaris] \u2713 learned: success pattern captured (fingerprint: {fp_key}, adapter: {adapter})")
+        # R5: success + experience hit = first-try success message
+        if (avoid_count > 0 or prefer_count > 0) and not artifacts.get("resumed_execution_contract"):
+            # Find what error_class was avoided (from avoidance hints)
+            avoided_classes = []
+            for h in hints.get("avoid", []):
+                ec = h.get("error_class")
+                if ec and ec not in avoided_classes:
+                    avoided_classes.append(ec)
+            avoided_str = ", ".join(avoided_classes[:3]) if avoided_classes else "known failure patterns"
+            lines.append(f"[polaris] \u2713 succeeded on first try (experience hit: avoided {avoided_str})")
+        elif avoid_count == 0 and prefer_count == 0 and status == "completed":
+            lines.append(f"[polaris] \u2713 succeeded (no prior experience for this task)")
 
     for line in lines:
         print(line, file=sys.stderr)
@@ -228,13 +243,16 @@ def _load_prebuilt_pack(runtime_dir: Path, ecosystem: str) -> int:
               "command_key": f"prebuilt-{ecosystem}",
               "raw_descriptor": prec.get("stderr_pattern", ""),
               "normalized_descriptor": prec.get("stderr_pattern", "")}
-        pfr.record(store, fp, f"prebuilt-{ecosystem}",
-                   prec.get("error_class", "unknown"),
-                   prec.get("description", ""),
-                   "prebuilt",
-                   prec.get("avoidance_hints", []),
-                   source="prebuilt",
-                   ecosystem=ecosystem)
+        entry = pfr.record(store, fp, f"prebuilt-{ecosystem}",
+                           prec.get("error_class", "unknown"),
+                           prec.get("description", ""),
+                           "prebuilt",
+                           prec.get("avoidance_hints", []),
+                           source="prebuilt",
+                           ecosystem=ecosystem)
+        # R3: Store stderr_pattern for regex matching in query tier 3a
+        if prec.get("stderr_pattern"):
+            entry["stderr_pattern"] = prec["stderr_pattern"]
         added += 1
 
     pfr.write_store(store_path, store)
@@ -395,6 +413,37 @@ def cmd_run(args: argparse.Namespace) -> None:
             "error_class": error_class,
         })
 
+        # R5: experience_hit event — tracks whether experience was applied and outcome
+        hints = _safe_json_obj(artifacts.get("experience_hints"))
+        avoid_count = len(hints.get("avoid", []))
+        prefer_count = len(hints.get("prefer", []))
+        experience_applied = avoid_count > 0 or prefer_count > 0
+        # direct_hit: experience applied AND first-try success (no repair branch)
+        repaired = bool(artifacts.get("resumed_execution_contract"))
+        direct_hit = experience_applied and success and not repaired
+        # repair_rounds: 0 if clean success, 1 if repair branch was entered
+        repair_rounds = 1 if repaired else 0
+        if experience_applied:
+            _write_event(runtime_dir, {
+                "type": "experience_hit",
+                "hit": True,
+                "direct_hit": direct_hit,
+                "success": success,
+                "avoid_count": avoid_count,
+                "prefer_count": prefer_count,
+                "repair_rounds": repair_rounds,
+                "task_matching_key": task_matching_key,
+                "command": args.command,
+            })
+        # Also emit experience_query event for every run (hit or miss)
+        _write_event(runtime_dir, {
+            "type": "experience_query",
+            "had_experience": experience_applied,
+            "success": success,
+            "repair_rounds": repair_rounds,
+            "task_matching_key": task_matching_key,
+        })
+
         # R1: Sync runtime experience back to global library
         try:
             runtime_fstore, _ = pes.safe_load(
@@ -439,15 +488,20 @@ def _load_safe_list(path: Path, key: str) -> list[dict]:
 
 
 def _parse_event_log(path: Path) -> dict:
-    """Parse runtime-events.jsonl for run statistics and adapter performance."""
+    """Parse runtime-events.jsonl for run statistics, adapter performance, and experience metrics."""
     result = {
         "total_runs": 0,
         "total_queries": 0,
         "total_hits": 0,
+        "direct_hits": 0,
+        "experience_hit_events": 0,
         "task_hits": {},
         "adapter_stats": {},
         "adapter_selections": 0,
         "adapter_cache_hits": 0,
+        # R5: repair efficiency tracking
+        "repair_rounds_with_experience": [],
+        "repair_rounds_without_experience": [],
     }
     if not path.exists():
         return result
@@ -481,6 +535,27 @@ def _parse_event_log(path: Path) -> dict:
                     stats["successes"] += 1
                 stats["total_duration_ms"] += event.get("duration_ms", 0)
 
+            elif etype == "experience_hit":
+                result["experience_hit_events"] += 1
+                result["total_hits"] += 1
+                if event.get("direct_hit"):
+                    result["direct_hits"] += 1
+                task_key = event.get("task_matching_key", "")
+                cmd = event.get("command", "unknown")
+                if task_key not in result["task_hits"]:
+                    result["task_hits"][task_key] = {"command": cmd, "hits": 0, "direct_hits": 0}
+                result["task_hits"][task_key]["hits"] += 1
+                if event.get("direct_hit"):
+                    result["task_hits"][task_key]["direct_hits"] += 1
+
+            elif etype == "experience_query":
+                result["total_queries"] += 1
+                repair_rounds = int(event.get("repair_rounds", 0))
+                if event.get("had_experience"):
+                    result["repair_rounds_with_experience"].append(repair_rounds)
+                else:
+                    result["repair_rounds_without_experience"].append(repair_rounds)
+
             elif event.get("status") == "completed":
                 result["total_runs"] += 1
     except OSError:
@@ -511,6 +586,20 @@ def _build_stats(runtime_dir: Path) -> dict:
         ad = pat.get("adapter") or "unknown"
         adapters[ad] = adapters.get(ad, 0) + 1
 
+    # R5: Compute repair efficiency metrics
+    rr_with = event_stats["repair_rounds_with_experience"]
+    rr_without = event_stats["repair_rounds_without_experience"]
+    avg_repair_with = (sum(rr_with) / len(rr_with)) if rr_with else 0.0
+    avg_repair_without = (sum(rr_without) / len(rr_without)) if rr_without else 0.0
+    # tokens_saved estimate: each avoided repair round ≈ 1 LLM call saved
+    repair_cycles_avoided = max(0, int((avg_repair_without - avg_repair_with) * len(rr_with)))
+
+    # R5: Top experienced tasks (sorted by hits descending)
+    top_tasks = sorted(
+        event_stats["task_hits"].values(),
+        key=lambda t: (-t["hits"], -t["direct_hits"]),
+    )[:10]
+
     return {
         "failure_records": len(failures),
         "failure_by_error_class": error_classes,
@@ -523,6 +612,15 @@ def _build_stats(runtime_dir: Path) -> dict:
         "adapter_stats": event_stats["adapter_stats"],
         "adapter_selections": event_stats["adapter_selections"],
         "adapter_cache_hits": event_stats["adapter_cache_hits"],
+        # R5: experience observability
+        "hits": event_stats["total_hits"],
+        "direct_hits": event_stats["direct_hits"],
+        "experience_queries": event_stats["total_queries"],
+        "experience_hit_events": event_stats["experience_hit_events"],
+        "repair_rounds_avg_with_experience": round(avg_repair_with, 2),
+        "repair_rounds_avg_without_experience": round(avg_repair_without, 2),
+        "tokens_saved": {"estimate": True, "repair_cycles_avoided": repair_cycles_avoided},
+        "top_tasks": top_tasks,
     }
 
 
@@ -552,6 +650,40 @@ def cmd_stats(args: argparse.Namespace) -> None:
         tr = stats["total_runs"]
         print(f"Runs:             {tr} completed" if tr > 0 else "Runs:             0")
 
+        # R5: Experience Hits section
+        queries = stats.get("experience_queries", 0)
+        hits = stats.get("hits", 0)
+        direct_hits = stats.get("direct_hits", 0)
+        if queries > 0:
+            hit_pct = (hits / queries * 100) if queries > 0 else 0.0
+            print(f"Experience Hits:  {queries} queries \u2192 {hits} hits ({hit_pct:.1f}%)")
+            print(f"  Direct hits (first-try success): {direct_hits}")
+            error_avoidance = hits - direct_hits
+            print(f"  Error avoidance hits:            {error_avoidance}")
+
+        # R5: Repair Efficiency section
+        avg_with = stats.get("repair_rounds_avg_with_experience", 0.0)
+        avg_without = stats.get("repair_rounds_avg_without_experience", 0.0)
+        tokens_saved = stats.get("tokens_saved", {})
+        cycles_avoided = tokens_saved.get("repair_cycles_avoided", 0)
+        if avg_with > 0 or avg_without > 0:
+            print("Repair Efficiency:")
+            print(f"  With experience:    avg {avg_with:.1f} repair rounds")
+            print(f"  Without experience: avg {avg_without:.1f} repair rounds")
+            print(f"  Estimated savings:  ~{cycles_avoided} repair cycles avoided")
+
+        # R5: Top Experienced Tasks
+        top_tasks = stats.get("top_tasks", [])
+        if top_tasks:
+            print()
+            print("Top Experienced Tasks:")
+            for i, t in enumerate(top_tasks[:5], 1):
+                cmd = t.get("command", "unknown")
+                # Truncate long commands
+                if len(cmd) > 40:
+                    cmd = cmd[:37] + "..."
+                print(f"  {i}. {cmd:<40s} \u2014 {t['hits']} hits, {t['direct_hits']} direct successes")
+
         # D1: Adapter Performance section
         adapter_stats = stats.get("adapter_stats", {})
         if adapter_stats:
@@ -565,8 +697,8 @@ def cmd_stats(args: argparse.Namespace) -> None:
                 avg_ms = (st["total_duration_ms"] / calls / 1000) if calls > 0 else 0.0
                 print(f"{name}:  {calls} calls, {successes} success ({rate:.1f}%), avg {avg_ms:.1f}s")
             sels = stats["adapter_selections"]
-            hits = stats["adapter_cache_hits"]
-            hit_rate = (hits / sels * 100) if sels > 0 else 0.0
+            cache_hits = stats["adapter_cache_hits"]
+            hit_rate = (cache_hits / sels * 100) if sels > 0 else 0.0
             print(f"Cache hit rate: {hit_rate:.1f}% (out of {sels} selections)")
 
 

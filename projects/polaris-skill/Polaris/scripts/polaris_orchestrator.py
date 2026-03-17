@@ -1679,16 +1679,19 @@ def main() -> None:
         # This lets ecosystem tier match prebuilt records by error_class (discount 0.5)
         # instead of blindly returning all ecosystem hints (discount 0.4, below apply threshold).
         _prior_error_class = None
+        _prior_stderr = None
         _mk = task_fingerprint.get("matching_key")
         if _mk:
             for _rec in reversed(failure_store.get("records", [])):
                 if _rec.get("task_fingerprint", {}).get("matching_key") == _mk:
                     _prior_error_class = _rec.get("error_class")
+                    _prior_stderr = _rec.get("stderr_summary")
                     break
         query_result = pfr.query(failure_store, matching_key=_mk,
                                  command_key=task_fingerprint.get("command_key"),
                                  ecosystem=_detected_ecosystem,
-                                 error_class=_prior_error_class)
+                                 error_class=_prior_error_class,
+                                 stderr_text=_prior_stderr)
         avoid_hints = query_result.get("avoidance_hints", [])
         experience_hints["avoid"] = avoid_hints
         # Query success patterns for prefer hints

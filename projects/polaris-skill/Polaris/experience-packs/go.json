@@ -1,21 +1,36 @@
 {
   "ecosystem": "go",
-  "pack_version": "1.0",
+  "pack_version": "2.0",
   "records": [
     {
       "error_class": "missing_dependency",
-      "stderr_pattern": "go mod tidy",
-      "avoidance_hints": [
-        {"kind": "append_flags", "flags": ["-v"]},
-        {"kind": "set_env", "vars": {"GOFLAGS": "-mod=mod"}}
-      ],
-      "description": "go mod tidy failure — enable verbose and mod=mod"
+      "stderr_pattern": "cannot find module providing package|go: module .* found .* but does not contain",
+      "avoidance_hints": [{"kind": "set_env", "vars": {"GOFLAGS": "-mod=mod"}}],
+      "description": "go module not found — enable module-aware mode to auto-download"
     },
     {
       "error_class": "build_error",
-      "stderr_pattern": "CGO_ENABLED",
+      "stderr_pattern": "build constraints exclude all Go files in|no Go files in",
       "avoidance_hints": [{"kind": "set_env", "vars": {"CGO_ENABLED": "0"}}],
-      "description": "CGO build issue — disable CGO"
+      "description": "CGO or platform build constraint failure — disable CGO"
+    },
+    {
+      "error_class": "missing_dependency",
+      "stderr_pattern": "missing go\\.sum entry for module|go\\.sum: checksum mismatch",
+      "avoidance_hints": [{"kind": "set_env", "vars": {"GONOSUMCHECK": "*", "GOFLAGS": "-mod=mod"}}],
+      "description": "go.sum incomplete or mismatch — disable sum check and enable mod download"
+    },
+    {
+      "error_class": "missing_dependency",
+      "stderr_pattern": "cannot find package|no required module provides package",
+      "avoidance_hints": [{"kind": "set_env", "vars": {"GOPATH": ".", "GOFLAGS": "-mod=mod"}}],
+      "description": "Package not found — set GOPATH to cwd and enable module mode"
+    },
+    {
+      "error_class": "permission_denial",
+      "stderr_pattern": "permission denied|EPERM|go: writing go\\.mod: permission denied",
+      "avoidance_hints": [{"kind": "set_env", "vars": {"GOPATH": "/tmp/go", "GOCACHE": "/tmp/go-cache"}}],
+      "description": "Go build cache or module permission denied — redirect to writable /tmp directories"
     }
   ]
 }
