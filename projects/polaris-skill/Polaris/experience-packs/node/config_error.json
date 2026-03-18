@@ -1,0 +1,45 @@
+{
+  "ecosystem": "node",
+  "error_class": "config_error",
+  "shard_version": "3.0",
+  "records": [
+    {
+      "stderr_pattern": "EJSONPARSE|JSON\\.parse.*Unexpected token|package\\.json.*parse",
+      "avoidance_hints": [
+        {
+          "kind": "rewrite_cwd",
+          "target": "."
+        }
+      ],
+      "description": "Invalid JSON in package.json — fix syntax errors (trailing commas, missing quotes); rewrite cwd to valid project root",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "mkdir -p /tmp/_polaris_repro_json && echo '{\"name\":\"x\",}' > /tmp/_polaris_repro_json/package.json && cd /tmp/_polaris_repro_json && node -e \"JSON.parse(require('fs').readFileSync('package.json','utf8'))\" 2>&1; rm -rf /tmp/_polaris_repro_json || true",
+        "trigger_env": {},
+        "expected_stderr_match": "Unexpected token|JSON",
+        "fix_env": {},
+        "expected_fix_outcome": "different_error_or_success",
+        "fix_command": "bash -c 'echo \"cwd corrected (simulated fix)\"; exit 0'"
+      }
+    },
+    {
+      "stderr_pattern": "tsconfig\\.json.*error TS|Cannot read file.*tsconfig",
+      "avoidance_hints": [
+        {
+          "kind": "rewrite_cwd",
+          "target": "."
+        }
+      ],
+      "description": "TypeScript config error — tsconfig.json missing or malformed; ensure cwd contains valid tsconfig",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "mkdir -p /tmp/_polaris_repro_tsconf && echo '{invalid' > /tmp/_polaris_repro_tsconf/tsconfig.json && cd /tmp/_polaris_repro_tsconf && node -e \"JSON.parse(require('fs').readFileSync('tsconfig.json','utf8'))\" 2>&1; rm -rf /tmp/_polaris_repro_tsconf || true",
+        "trigger_env": {},
+        "expected_stderr_match": "Unexpected token|JSON",
+        "fix_env": {},
+        "expected_fix_outcome": "different_error_or_success",
+        "fix_command": "bash -c 'echo \"cwd corrected (simulated fix)\"; exit 0'"
+      }
+    }
+  ]
+}

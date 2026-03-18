@@ -1,0 +1,5 @@
+{
+  "stderr": "TCPServer Error: Address already in use - bind(2) (Errno::EADDRINUSE)\nwebrick/utils.rb:65:in `initialize': Address already in use - bind(2) for 0.0.0.0 port 8080 (Errno::EADDRINUSE)\n\tfrom webrick/utils.rb:65:in `new'\n\tfrom webrick/server.rb:117:in `listen'",
+  "error_class": "port_conflict",
+  "source": "WEBrick EADDRINUSE on port 8080"
+}

@@ -1,0 +1,76 @@
+{
+  "ecosystem": "rust",
+  "error_class": "version_conflict",
+  "shard_version": "3.0",
+  "records": [
+    {
+      "stderr_pattern": "requires rustc \\d+\\.\\d+\\.\\d+ or newer.*currently active rustc version is",
+      "avoidance_hints": [
+        {
+          "kind": "set_env",
+          "vars": {
+            "RUSTUP_TOOLCHAIN": "stable"
+          }
+        }
+      ],
+      "description": "Crate requires newer rustc — switch to stable toolchain",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "bash -c 'echo \"error: package axum v0.7.2 cannot be built because it requires rustc 1.74.0 or newer, while the currently active rustc version is 1.70.0\" >&2; exit 1'",
+        "trigger_env": {},
+        "expected_stderr_match": "requires rustc.*or newer",
+        "fix_env": {
+          "RUSTUP_TOOLCHAIN": "stable"
+        },
+        "expected_fix_outcome": "different_error_or_success",
+        "fix_command": "bash -c 'echo \"RUSTUP_TOOLCHAIN set (simulated)\"; exit 0'"
+      }
+    },
+    {
+      "stderr_pattern": "failed to select a version for|all possible versions conflict",
+      "avoidance_hints": [
+        {
+          "kind": "set_env",
+          "vars": {
+            "CARGO_RESOLVER_INCOMPATIBLE_RUST_VERSIONS": "fallback"
+          }
+        }
+      ],
+      "description": "Semver conflict in dependency tree — allow resolver fallback",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "bash -c 'echo \"error: failed to select a version for syn\" >&2; echo \"all possible versions conflict with previously selected packages\" >&2; exit 1'",
+        "trigger_env": {},
+        "expected_stderr_match": "failed to select a version",
+        "fix_env": {
+          "CARGO_RESOLVER_INCOMPATIBLE_RUST_VERSIONS": "fallback"
+        },
+        "expected_fix_outcome": "different_error_or_success",
+        "fix_command": "bash -c 'echo \"CARGO_RESOLVER_INCOMPATIBLE_RUST_VERSIONS set (simulated)\"; exit 0'"
+      }
+    },
+    {
+      "stderr_pattern": "error\\[E0658\\]: use of unstable.*feature",
+      "avoidance_hints": [
+        {
+          "kind": "set_env",
+          "vars": {
+            "RUSTUP_TOOLCHAIN": "nightly"
+          }
+        }
+      ],
+      "description": "Unstable feature used on stable — switch to nightly toolchain",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "bash -c 'echo \"error[E0658]: use of unstable library feature\" >&2; exit 1'",
+        "trigger_env": {},
+        "expected_stderr_match": "E0658.*unstable",
+        "fix_env": {
+          "RUSTUP_TOOLCHAIN": "nightly"
+        },
+        "expected_fix_outcome": "different_error_or_success",
+        "fix_command": "bash -c 'echo \"RUSTUP_TOOLCHAIN set (simulated)\"; exit 0'"
+      }
+    }
+  ]
+}

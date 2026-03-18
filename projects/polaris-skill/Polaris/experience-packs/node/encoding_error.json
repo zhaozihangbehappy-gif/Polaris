@@ -1,0 +1,21 @@
+{
+  "ecosystem": "node",
+  "error_class": "encoding_error",
+  "shard_version": "3.0",
+  "records": [
+    {
+      "stderr_pattern": "Invalid or unexpected token|ERR_INVALID_CHAR|Invalid character",
+      "avoidance_hints": [{"kind": "set_locale", "locale": "en_US.UTF-8"}],
+      "description": "Invalid character in source file — ensure files are UTF-8 encoded and locale is set correctly",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "python3 -c \"open('/tmp/_polaris_repro_enc.js','wb').write(b'var x = \\x00\\x01;')\" && node /tmp/_polaris_repro_enc.js 2>&1; rm -f /tmp/_polaris_repro_enc.js || true",
+        "trigger_env": {},
+        "expected_stderr_match": "Invalid or unexpected token|SyntaxError",
+        "fix_command": "echo 'var x = 1;' > /tmp/_polaris_repro_enc.js && node /tmp/_polaris_repro_enc.js 2>&1; rm -f /tmp/_polaris_repro_enc.js || true",
+        "fix_env": {},
+        "expected_fix_outcome": "different_error_or_success"
+      }
+    }
+  ]
+}

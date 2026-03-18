@@ -1,0 +1,5 @@
+{
+  "stderr": "error: failed to open: /opt/cargo/bin/.crates.toml\n\nCaused by:\n  Permission denied (os error 13)\n\nerror: failed to install package `cargo-watch v8.4.1`",
+  "error_class": "permission_denial",
+  "source": "cargo install cargo-watch with CARGO_HOME=/opt/cargo owned by root"
+}

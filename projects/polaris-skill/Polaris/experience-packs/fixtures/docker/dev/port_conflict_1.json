@@ -1,0 +1,5 @@
+{
+  "stderr": "Error response from daemon: driver failed programming external connectivity on endpoint my-nginx-1 (a1b2c3d4e5f6): Bind for 0.0.0.0:8080 failed: port is already allocated",
+  "error_class": "port_conflict",
+  "source": "docker run -p 8080:80 when port 8080 already bound by another container"
+}

@@ -1,0 +1,1 @@
+{"stderr": "Error: Failed to install provider\n\nError while installing hashicorp/google v5.20.0: Get\n\"https://releases.hashicorp.com/terraform-provider-google/5.20.0/terraform-provider-google_5.20.0_linux_amd64.zip\":\ncontext deadline exceeded (Client.Timeout exceeded while awaiting headers)\n", "error_class": "network_error", "source": "terraform-core-1.7.0"}

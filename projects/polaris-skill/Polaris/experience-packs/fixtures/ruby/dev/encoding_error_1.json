@@ -1,0 +1,5 @@
+{
+  "stderr": "/home/user/project/lib/parser.rb:12:in `encode': \"\\xC0\" from ASCII-8BIT to UTF-8 (Encoding::InvalidByteSequenceError)\n\tfrom /home/user/project/lib/parser.rb:12:in `process'\n\tfrom /home/user/project/lib/parser.rb:5:in `<main>'",
+  "error_class": "encoding_error",
+  "source": "Encoding::InvalidByteSequenceError on binary data"
+}

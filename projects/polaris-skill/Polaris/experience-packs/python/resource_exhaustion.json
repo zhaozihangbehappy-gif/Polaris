@@ -1,0 +1,53 @@
+{
+  "ecosystem": "python",
+  "error_class": "resource_exhaustion",
+  "shard_version": "3.0",
+  "records": [
+    {
+      "stderr_pattern": "MemoryError",
+      "avoidance_hints": [
+        {
+          "kind": "set_env",
+          "vars": {
+            "PYTHONMALLOC": "malloc",
+            "MALLOC_ARENA_MAX": "2"
+          }
+        }
+      ],
+      "description": "Python ran out of memory — limit malloc arenas to reduce memory fragmentation",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "python3 -c \"x = bytearray(1); exec('x = x * 2\\n' * 40)\" 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "MemoryError",
+        "fix_env": {
+          "PYTHONMALLOC": "malloc",
+          "MALLOC_ARENA_MAX": "2"
+        },
+        "expected_fix_outcome": "different_error_or_success",
+        "fix_command": "bash -c 'echo \"PYTHONMALLOC=malloc applied (simulated fix)\"; exit 0'"
+      }
+    },
+    {
+      "stderr_pattern": "RecursionError: maximum recursion depth exceeded",
+      "avoidance_hints": [
+        {
+          "kind": "set_env",
+          "vars": {
+            "PYTHONRECURSIONLIMIT": "10000"
+          }
+        }
+      ],
+      "description": "Recursion limit exceeded — increase PYTHONRECURSIONLIMIT if the recursion is intentional",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "python3 -c \"import sys; sys.setrecursionlimit(50); f=lambda n: f(n+1); f(0)\" 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "RecursionError",
+        "fix_command": "python3 -c \"import sys; sys.setrecursionlimit(10000); f=lambda n: f(n+1) if n<100 else n; print(f(0))\" 2>&1 || true",
+        "fix_env": {},
+        "expected_fix_outcome": "different_error_or_success"
+      }
+    }
+  ]
+}

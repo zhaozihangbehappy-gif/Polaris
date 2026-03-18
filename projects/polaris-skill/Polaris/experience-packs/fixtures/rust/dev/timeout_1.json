@@ -1,0 +1,5 @@
+{
+  "stderr": "error: build of `myproject v0.1.0 (/home/user/project)` timed out after 1800 seconds\n\nCaused by:\n  process didn't exit successfully: `rustc --crate-name myproject --edition=2021 src/main.rs ...` (signal: 9, SIGKILL)\n  note: build was killed due to exceeding the configured timeout\n  help: try setting `CARGO_BUILD_JOBS=1` to reduce parallelism or increase the timeout",
+  "error_class": "timeout",
+  "source": "CI build hitting 30-minute timeout on resource-constrained runner"
+}

@@ -1,0 +1,5 @@
+{
+  "stderr": "Traceback (most recent call last):\n  File \"/home/user/project/cache.py\", line 19, in init_cache\n    os.makedirs(cache_dir, exist_ok=True)\n  File \"/usr/lib/python3.10/os.py\", line 225, in makedirs\n    mkdir(name, mode)\nPermissionError: [Errno 13] Permission denied: '/opt/myapp/cache'",
+  "error_class": "permission_denial",
+  "source": "creating cache directory in protected path"
+}

@@ -1,0 +1,5 @@
+{
+  "stderr": "Error: JAVA_HOME is not set and no 'java' command could be found in your PATH.\n\nPlease set the JAVA_HOME variable in your environment to match the\nlocation of your Java installation.",
+  "error_class": "config_error",
+  "source": "gradle wrapper cannot find java"
+}

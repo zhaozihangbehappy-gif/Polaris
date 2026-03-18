@@ -1,0 +1,5 @@
+{
+  "stderr": "node:internal/fs/utils:348\n    throw err;\n    ^\n\nError: ENOENT: no such file or directory, open '/home/user/project/config/settings.json'\n    at Object.openSync (node:fs:603:3)\n    at Object.readFileSync (node:fs:471:35)\n    at Object.<anonymous> (/home/user/project/src/config.js:5:23)\n    at Module._compile (node:internal/modules/cjs/loader:1256:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1310:10)\n    at Module.load (node:internal/modules/cjs/loader:1119:32)\n    at Module._load (node:internal/modules/cjs/loader:960:12)\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:86:12)\n    at node:internal/main/run_main_module:28:49 {\n  errno: -2,\n  syscall: 'open',\n  code: 'ENOENT',\n  path: '/home/user/project/config/settings.json'\n}",
+  "error_class": "file_not_found",
+  "source": "fs.readFileSync on missing config file"
+}

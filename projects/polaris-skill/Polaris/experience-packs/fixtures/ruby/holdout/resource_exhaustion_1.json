@@ -1,0 +1,5 @@
+{
+  "stderr": "/home/user/project/lib/generator.rb:18:in `generate': failed to allocate memory (NoMemoryError)\n\tfrom /home/user/project/lib/generator.rb:10:in `build_report'\n\tfrom /home/user/project/app.rb:12:in `<main>'",
+  "error_class": "resource_exhaustion",
+  "source": "NoMemoryError during large report generation"
+}

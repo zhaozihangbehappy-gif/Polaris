@@ -1,0 +1,5 @@
+{
+  "stderr": "Error response from daemon: Head \"https://registry-1.docker.io/v2/mycompany/backend/manifests/latest\": unauthorized: authentication required",
+  "error_class": "auth_error",
+  "source": "docker pull from private registry without docker login"
+}

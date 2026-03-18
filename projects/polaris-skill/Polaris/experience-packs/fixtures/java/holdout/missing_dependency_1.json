@@ -1,0 +1,5 @@
+{
+  "stderr": "Exception in thread \"main\" java.lang.ClassNotFoundException: org.apache.kafka.clients.producer.KafkaProducer\n\tat java.base/jdk.internal.loader.BuiltinClassLoader.loadClass(BuiltinClassLoader.java:641)\n\tat java.base/jdk.internal.loader.ClassLoaders$AppClassLoader.loadClass(ClassLoaders.java:188)\n\tat java.base/java.lang.ClassLoader.loadClass(ClassLoader.java:525)\n\tat com.myapp.messaging.EventPublisher.<init>(EventPublisher.java:18)\n\tat com.myapp.Main.main(Main.java:25)",
+  "error_class": "missing_dependency",
+  "source": "kafka-clients jar not on classpath"
+}

@@ -1,0 +1,5 @@
+{
+  "stderr": "npm ERR! code EPERM\nnpm ERR! syscall rename\nnpm ERR! path /home/user/.npm/_cacache/tmp/a1b2c3d4\nnpm ERR! dest /home/user/.npm/_cacache/content-v2/sha512/ab/cd/ef0123456789\nnpm ERR! errno -1\nnpm ERR! Error: EPERM: operation not permitted, rename '/home/user/.npm/_cacache/tmp/a1b2c3d4' -> '/home/user/.npm/_cacache/content-v2/sha512/ab/cd/ef0123456789'\nnpm ERR!  [OperationalError: EPERM: operation not permitted, rename] {\nnpm ERR!   cause: [Error: EPERM: operation not permitted, rename],\nnpm ERR!   errno: -1,\nnpm ERR!   code: 'EPERM',\nnpm ERR!   syscall: 'rename'\nnpm ERR! }\nnpm ERR! \nnpm ERR! The operation was rejected by your operating system.\n\nnpm ERR! A complete log of this run can be found in: /home/user/.npm/_logs/2024-03-10T14_22_33_789Z-debug-0.log",
+  "error_class": "permission_denial",
+  "source": "npm cache corruption or permission issue"
+}

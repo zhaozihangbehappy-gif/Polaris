@@ -1,0 +1,5 @@
+{
+  "stderr": "Traceback (most recent call last):\n  File \"/home/user/project/app.py\", line 3, in <module>\n    import requests\nModuleNotFoundError: No module named 'requests'",
+  "error_class": "missing_dependency",
+  "source": "common third-party package not installed"
+}

@@ -1,0 +1,5 @@
+{
+  "stderr": "Traceback (most recent call last):\n  File \"/home/user/project/app.py\", line 11, in <module>\n    db_host = config.get('database', 'host')\n  File \"/usr/lib/python3.10/configparser.py\", line 781, in get\n    d = self._unify_values(section, vars)\n  File \"/usr/lib/python3.10/configparser.py\", line 1149, in _unify_values\n    raise NoSectionError(section) from None\nconfigparser.NoSectionError: No section: 'database'",
+  "error_class": "config_error",
+  "source": "configparser missing section in INI file"
+}

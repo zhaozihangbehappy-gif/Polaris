@@ -1,0 +1,5 @@
+{
+  "stderr": "error: failed to write /root/.cargo/registry/cache/index.crates.io-6f17d22bba15001f/serde-1.0.193.crate\n\nCaused by:\n  Permission denied (os error 13)",
+  "error_class": "permission_denial",
+  "source": "cargo fetch running as non-root with CARGO_HOME pointing to /root/.cargo"
+}

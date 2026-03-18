@@ -128,7 +128,7 @@ for eco in ['node', 'python', 'go']:
     pack = json.load(open(f'Polaris/experience-packs/{eco}.json'))
     assert 'ecosystem' in pack, f'{eco}: missing ecosystem field'
     assert 'pack_version' in pack, f'{eco}: missing pack_version'
-    valid_kinds = {'append_flags', 'set_env', 'rewrite_cwd', 'set_timeout'}
+    valid_kinds = {'append_flags', 'set_env', 'rewrite_cwd', 'set_timeout', 'set_locale', 'create_dir', 'retry_with_backoff', 'install_package'}
     for rec in pack['records']:
         for hint in rec.get('avoidance_hints', []):
             assert hint['kind'] in valid_kinds, f'{eco}: invalid hint kind {hint[\"kind\"]}'

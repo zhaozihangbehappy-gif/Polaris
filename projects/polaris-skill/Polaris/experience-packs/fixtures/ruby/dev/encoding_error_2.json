@@ -1,0 +1,5 @@
+{
+  "stderr": "/home/user/project/app.rb:8:in `+': incompatible character encodings: UTF-8 and ASCII-8BIT (Encoding::CompatibilityError)\n\tfrom /home/user/project/app.rb:8:in `render'\n\tfrom /home/user/project/app.rb:3:in `<main>'",
+  "error_class": "encoding_error",
+  "source": "Encoding::CompatibilityError from string concatenation"
+}

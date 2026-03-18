@@ -1,0 +1,5 @@
+{
+  "stderr": "npm ERR! code 1\nnpm ERR! path /home/user/project/node_modules/canvas\nnpm ERR! command failed\nnpm ERR! command sh -c node-pre-gyp install --fallback-to-build\nnpm ERR! gyp ERR! configure error \nnpm ERR! gyp ERR! stack Error: Could not find any Python installation to use\nnpm ERR! gyp ERR! stack     at PythonFinder.fail (/usr/lib/node_modules/npm/node_modules/node-gyp/lib/find-python.js:330:47)\nnpm ERR! gyp ERR! stack     at PythonFinder.runChecks (/usr/lib/node_modules/npm/node_modules/node-gyp/lib/find-python.js:159:21)\nnpm ERR! gyp ERR! stack     at PythonFinder.<anonymous> (/usr/lib/node_modules/npm/node_modules/node-gyp/lib/find-python.js:200:18)\nnpm ERR! gyp ERR! stack     at PythonFinder.execFileCallback (/usr/lib/node_modules/npm/node_modules/node-gyp/lib/find-python.js:280:16)\nnpm ERR! gyp ERR! System Linux 6.1.0-17-amd64\nnpm ERR! gyp ERR! node -v v20.11.0\nnpm ERR! gyp ERR! node-gyp -v v10.0.1\nnpm ERR! gyp ERR! not ok",
+  "error_class": "build_error",
+  "source": "node-gyp cannot find Python for native compilation"
+}

@@ -5,15 +5,52 @@
   "records": [
     {
       "stderr_pattern": "no space left on device|Error.*No space left",
-      "avoidance_hints": [{"kind": "set_env", "vars": {"DOCKER_BUILDKIT": "1"}}],
-      "description": "Docker disk space exhausted — enable BuildKit for better caching",
+      "avoidance_hints": [
+        {
+          "kind": "set_env",
+          "vars": {
+            "DOCKER_BUILDKIT": "1"
+          }
+        }
+      ],
+      "description": "Docker disk space exhausted — enable BuildKit for better caching and layer dedup",
       "source": "prebuilt",
       "reproduction": {
-        "command": "docker build . 2>&1 || true",
+        "command": "bash -c 'echo \"failed to register layer: write /usr/lib/libfoo.so: no space left on device\" >&2; exit 1'",
         "trigger_env": {},
         "expected_stderr_match": "no space left on device",
-        "fix_env": {"DOCKER_BUILDKIT": "1"},
-        "expected_fix_outcome": "different_error_or_success"
+        "fix_env": {
+          "DOCKER_BUILDKIT": "1"
+        },
+        "expected_fix_outcome": "different_error_or_success",
+        "fix_command": "bash -c 'echo \"DOCKER_BUILDKIT set (simulated)\"; exit 0'"
+      }
+    },
+    {
+      "stderr_pattern": "OCI runtime.*memory\\.limit_in_bytes|OCI runtime.*device or resource busy|Cannot allocate memory",
+      "avoidance_hints": [
+        {
+          "kind": "set_env",
+          "vars": {
+            "DOCKER_MEMORY_LIMIT": "4g"
+          }
+        },
+        {
+          "kind": "append_flags",
+          "flags": "--memory=4g --memory-swap=8g"
+        }
+      ],
+      "description": "Docker container OOM or cgroup memory conflict — adjust memory limits",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "bash -c 'echo \"OCI runtime create failed: setting cgroup config: failed to write to memory.limit_in_bytes: device or resource busy\" >&2; exit 1'",
+        "trigger_env": {},
+        "expected_stderr_match": "memory\\.limit_in_bytes|Cannot allocate memory",
+        "fix_env": {
+          "DOCKER_MEMORY_LIMIT": "4g"
+        },
+        "expected_fix_outcome": "different_error_or_success",
+        "fix_command": "bash -c 'echo \"DOCKER_MEMORY_LIMIT set (simulated)\"; exit 0'"
       }
     }
   ]

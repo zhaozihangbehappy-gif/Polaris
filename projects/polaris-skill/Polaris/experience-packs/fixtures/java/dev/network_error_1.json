@@ -1,0 +1,5 @@
+{
+  "stderr": "[ERROR] Failed to execute goal on project myapp: Could not resolve dependencies for project com.myapp:myapp:jar:1.0-SNAPSHOT: Failed to collect dependencies at org.springframework.boot:spring-boot-starter-web:jar:3.2.1: Failed to read artifact descriptor for org.springframework.boot:spring-boot-starter-web:jar:3.2.1: Could not transfer artifact org.springframework.boot:spring-boot-starter-web:pom:3.2.1 from/to central (https://repo.maven.apache.org/maven2): Transfer failed for https://repo.maven.apache.org/maven2/org/springframework/boot/spring-boot-starter-web/3.2.1/spring-boot-starter-web-3.2.1.pom: Connection refused",
+  "error_class": "network_error",
+  "source": "maven central unreachable behind corporate firewall"
+}

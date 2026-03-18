@@ -1,0 +1,5 @@
+{
+  "stderr": "  File \"/home/user/project/config.py\", line 8\n    \tname = \"test\"\n                     ^\nTabError: inconsistent use of tabs and spaces in indentation",
+  "error_class": "syntax_error",
+  "source": "mixed tabs and spaces"
+}

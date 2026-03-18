@@ -1,0 +1,5 @@
+{
+  "stderr": "error[E0308]: mismatched types\n  --> src/lib.rs:42:20\n   |\n42 |     let result: u32 = compute_value();\n   |                ---   ^^^^^^^^^^^^^^^ expected `u32`, found `i64`\n   |                |\n   |                expected due to this\n\nerror: could not compile `mylib` (lib) due to previous error\nwarning: build failed, waiting for other jobs to finish...",
+  "error_class": "build_error",
+  "source": "cargo build with type mismatch in user code"
+}

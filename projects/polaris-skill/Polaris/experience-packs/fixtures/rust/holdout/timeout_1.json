@@ -1,0 +1,5 @@
+{
+  "stderr": "error: failed to download `serde v1.0.193`\n\nCaused by:\n  operation timed out after 60 seconds\n  [28] Timeout was reached\n\nnote: this may be a transient network issue; you can retry with `cargo fetch --retry 5` or set CARGO_NET_RETRY=5",
+  "error_class": "timeout",
+  "source": "cargo fetch timing out on individual crate download in slow network"
+}

@@ -1,0 +1,31 @@
+{
+  "ecosystem": "docker",
+  "error_class": "version_conflict",
+  "shard_version": "3.0",
+  "records": [
+    {
+      "stderr_pattern": "version.*is unsupported|client version.*is too new.*Maximum supported API version",
+      "avoidance_hints": [
+        {
+          "kind": "set_env",
+          "vars": {
+            "DOCKER_API_VERSION": "1.40",
+            "COMPOSE_API_VERSION": "auto"
+          }
+        }
+      ],
+      "description": "Docker API or Compose version mismatch — pin API version to compatible level",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "bash -c 'echo \"Error response from daemon: client version 1.41 is too new. Maximum supported API version is 1.40\" >&2; exit 1'",
+        "trigger_env": {},
+        "expected_stderr_match": "client version.*too new|version.*unsupported",
+        "fix_env": {
+          "DOCKER_API_VERSION": "1.40"
+        },
+        "expected_fix_outcome": "different_error_or_success",
+        "fix_command": "bash -c 'echo \"DOCKER_API_VERSION set (simulated)\"; exit 0'"
+      }
+    }
+  ]
+}

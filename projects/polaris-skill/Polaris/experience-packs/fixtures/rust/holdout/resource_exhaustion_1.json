@@ -1,0 +1,5 @@
+{
+  "stderr": "error: could not compile `aws-sdk-s3` (lib)\n\nCaused by:\n  process didn't exit successfully: `rustc --crate-name aws_sdk_s3 ...` (signal: 9, SIGKILL)\n  note: the compiler was killed, likely due to running out of memory\n  help: consider reducing `codegen-units` in your Cargo profile or setting `CARGO_BUILD_JOBS=1`",
+  "error_class": "resource_exhaustion",
+  "source": "cargo build of AWS SDK on 512MB RAM GitHub Actions runner"
+}

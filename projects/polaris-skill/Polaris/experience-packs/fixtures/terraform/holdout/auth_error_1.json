@@ -1,0 +1,1 @@
+{"stderr": "Error: ExpiredToken: The security token included in the request is expired\n\tstatus code: 403, request id: XYZABC123\n\n  with data.aws_caller_identity.current,\n  on data.tf line 1, in data \"aws_caller_identity\" \"current\":\n   1: data \"aws_caller_identity\" \"current\" {}\n", "error_class": "auth_error", "source": "terraform-aws-provider-5.38"}

@@ -184,5 +184,58 @@ print(f'index={idx is None}:tier={result[\"match_tier\"]}')
 assert_eq "$G5" "index=True:tier=none" "3A-G5: corrupt index.json → graceful fallback (no crash)"
 rm -rf "$G5_TMPDIR"
 
+# --- 3A-G6: Final release-pack benchmark (167 patterns, all 8 ecosystems) ---
+# The plan requires "在最终 pack 规模下重跑 3A benchmark": query < 2ms, memory < 1MB.
+# Unlike G2 (synthetic 500-record shard), this uses the ACTUAL release packs.
+G6=$(python3 -c "
+import sys, time, json, tracemalloc
+sys.path.insert(0, '$SCRIPTS')
+import polaris_failure_records as pfr
+from pathlib import Path
+
+pfr._index_cache = None
+packs = Path('$PACKS')
+local_store = {'schema_version': 2, 'records': []}
+idx = json.load(open('$PACKS/index.json'))
+
+# Prepare a representative query per ecosystem
+queries = []
+for eco, info in idx['ecosystems'].items():
+    ec = info['error_classes'][0]
+    queries.append((eco, ec, f'Test error for {eco}/{ec} benchmark probe'))
+
+# --- Query latency: average over 50 full sweeps ---
+start = time.perf_counter()
+for _ in range(50):
+    for eco, ec, stderr_text in queries:
+        pfr._index_cache = None
+        pfr.query_sharded(local_store, packs_dir=packs, matching_key='bench-final',
+                          ecosystem=eco, error_class=ec, stderr_text=stderr_text)
+elapsed = time.perf_counter() - start
+total_queries = 50 * len(queries)
+avg_ms = (elapsed / total_queries) * 1000
+
+# --- Peak memory: single sweep with tracemalloc ---
+pfr._index_cache = None
+tracemalloc.start()
+for eco, ec, stderr_text in queries:
+    pfr._index_cache = None
+    pfr.query_sharded(local_store, packs_dir=packs, matching_key='bench-final-mem',
+                      ecosystem=eco, error_class=ec, stderr_text=stderr_text)
+_, peak = tracemalloc.get_traced_memory()
+tracemalloc.stop()
+peak_kb = peak / 1024
+
+print(f'{avg_ms:.3f},{peak_kb:.1f},{len(queries)},{total_queries}')
+")
+G6_MS=$(echo "$G6" | cut -d, -f1)
+G6_KB=$(echo "$G6" | cut -d, -f2)
+G6_ECOS=$(echo "$G6" | cut -d, -f3)
+G6_TOTAL=$(echo "$G6" | cut -d, -f4)
+G6_QUERY_OK=$(python3 -c "print('yes' if float('$G6_MS') < 2.0 else 'no')")
+G6_MEM_OK=$(python3 -c "print('yes' if float('$G6_KB') < 1024 else 'no')")
+assert_eq "$G6_QUERY_OK" "yes" "3A-G6a: final-pack query < 2ms (actual: ${G6_MS}ms, ${G6_ECOS} ecosystems, ${G6_TOTAL} queries)"
+assert_eq "$G6_MEM_OK" "yes" "3A-G6b: final-pack memory < 1MB (actual: ${G6_KB}KB)"
+
 echo "=== 3A Results: $PASS/$TOTAL passed, $FAIL failed ==="
 [ "$FAIL" -eq 0 ] || exit 1

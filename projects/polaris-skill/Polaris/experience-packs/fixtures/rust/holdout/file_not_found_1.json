@@ -1,0 +1,5 @@
+{
+  "stderr": "error: couldn't read from `build.rs`: No such file or directory (os error 2)\n\nnote: the manifest at `/home/user/project/Cargo.toml` specifies `build = \"build.rs\"` but the file does not exist",
+  "error_class": "file_not_found",
+  "source": "cargo build with build script declared in Cargo.toml but build.rs deleted"
+}

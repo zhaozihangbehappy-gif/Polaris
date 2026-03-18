@@ -1,0 +1,5 @@
+{
+  "stderr": "error: could not compile `ring` (lib)\n\nCaused by:\n  process didn't exit successfully: `rustc --crate-name ring --edition=2021 ...` (exit status: 1)\n  --- stderr\n  error: failed to run custom build command for `ring v0.17.5`\n\n  running: \"cc\" \"-O2\" \"-ffunction-sections\" \"-fdata-sections\" \"-fPIC\" \"-m64\" \"-o\" \"/tmp/build/ring/crypto/fipsmodule/aes-x86_64.o\" \"-c\" \"crypto/fipsmodule/aes-x86_64.S\"\n  --- stderr\n  /bin/sh: 1: cc: not found",
+  "error_class": "build_error",
+  "source": "cargo build of project depending on ring crate, cc toolchain missing"
+}

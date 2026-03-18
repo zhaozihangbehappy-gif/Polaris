@@ -1,0 +1,5 @@
+{
+  "stderr": "[INFO] Scanning for projects...\n[INFO] \n[INFO] ----------------------< com.myapp:myapp >-----------------------\n[INFO] Building myapp 1.0-SNAPSHOT\n[INFO] --------------------------------[ jar ]---------------------------------\n[INFO] --- maven-compiler-plugin:3.11.0:compile (default-compile) @ myapp ---\n[ERROR] COMPILATION ERROR :\n[ERROR] /home/user/project/src/main/java/com/myapp/App.java:[23,9] error: incompatible types: String cannot be converted to int\n[INFO] 1 error\n[INFO] -------------------------------------------------------------\n[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.11.0:compile (default-compile) on project myapp: Compilation failure\n[ERROR] -> [Help 1]",
+  "error_class": "build_error",
+  "source": "type mismatch caught during maven compile phase"
+}

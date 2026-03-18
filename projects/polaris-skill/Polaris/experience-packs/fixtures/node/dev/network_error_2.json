@@ -1,0 +1,5 @@
+{
+  "stderr": "npm ERR! code ETIMEDOUT\nnpm ERR! syscall connect\nnpm ERR! errno ETIMEDOUT\nnpm ERR! network request to https://registry.npmjs.org/webpack/-/webpack-5.90.1.tgz failed, reason: connect ETIMEDOUT 104.16.2.35:443\nnpm ERR! network This is a problem related to network connectivity.\nnpm ERR! network In most cases you are behind a proxy or have bad network settings.\nnpm ERR! network \nnpm ERR! network If you are behind a proxy, please make sure that the\nnpm ERR! network 'proxy' config is set properly.  See: 'npm help config'\n\nnpm ERR! A complete log of this run can be found in: /home/user/.npm/_logs/2024-05-10T20_15_44_222Z-debug-0.log",
+  "error_class": "network_error",
+  "source": "npm fetch timeout on slow or blocked network"
+}

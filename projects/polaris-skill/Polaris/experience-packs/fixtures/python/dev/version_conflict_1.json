@@ -1,0 +1,5 @@
+{
+  "stderr": "ERROR: Package 'numpy' requires a different Python version: 3.8.10 not in '>=3.9'\nERROR: Could not find a version that satisfies the requirement numpy>=1.26.0 (from versions: 1.17.0, 1.17.1, 1.17.2, 1.17.3, 1.17.4, 1.17.5, 1.18.0, 1.18.1, 1.18.2, 1.18.3, 1.18.4, 1.18.5, 1.19.0, 1.19.1, 1.19.2, 1.19.3, 1.19.4, 1.19.5, 1.20.0, 1.20.1, 1.20.2, 1.20.3, 1.21.0, 1.21.1, 1.21.2, 1.21.3, 1.21.4, 1.21.5, 1.21.6, 1.22.0, 1.22.1, 1.22.2, 1.22.3, 1.22.4, 1.23.0, 1.23.1, 1.23.2, 1.23.3, 1.23.4, 1.23.5, 1.24.0, 1.24.1, 1.24.2, 1.24.3, 1.24.4)",
+  "error_class": "version_conflict",
+  "source": "numpy requires Python >=3.9 but system has 3.8"
+}

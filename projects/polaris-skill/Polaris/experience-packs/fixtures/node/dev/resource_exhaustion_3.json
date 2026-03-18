@@ -1,0 +1,5 @@
+{
+  "stderr": "node: errno: 12, code: 'ENOMEM', syscall: 'spawn'\nError: spawn ENOMEM\n    at ChildProcess.spawn (node:internal/child_process:413:11)\n    at Object.spawn (node:child_process:757:9)\n    at /home/user/project/scripts/build-all.js:22:28\n    at Array.map (<anonymous>)\n    at buildAll (/home/user/project/scripts/build-all.js:20:14)\n    at Object.<anonymous> (/home/user/project/scripts/build-all.js:45:1) {\n  errno: -12,\n  code: 'ENOMEM',\n  syscall: 'spawn'\n}",
+  "error_class": "resource_exhaustion",
+  "source": "Out of memory when spawning child processes during parallel build"
+}

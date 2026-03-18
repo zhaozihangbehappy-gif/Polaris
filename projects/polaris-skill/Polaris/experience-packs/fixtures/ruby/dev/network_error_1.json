@@ -1,0 +1,5 @@
+{
+  "stderr": "Retrying fetcher due to error (2/4): Bundler::HTTPError Could not fetch specs from https://rubygems.org/\nCould not fetch specs from https://rubygems.org/ due to underlying error <Net::OpenTimeout: execution expired (https://rubygems.org/specs.4.8.gz)>",
+  "error_class": "network_error",
+  "source": "Bundler fetch timeout from rubygems.org"
+}

@@ -1,0 +1,5 @@
+{
+  "stderr": "OCI runtime create failed: container_linux.go:380: starting container process caused: process_linux.go:545: container init caused: process_linux.go:508: setting cgroup config for procHooks process caused: failed to write \"536870912\" to \"/sys/fs/cgroup/memory/docker/abc123def456/memory.limit_in_bytes\": write /sys/fs/cgroup/memory/docker/abc123def456/memory.limit_in_bytes: device or resource busy: unknown",
+  "error_class": "resource_exhaustion",
+  "source": "docker run with memory limit conflict on cgroup v1 system"
+}

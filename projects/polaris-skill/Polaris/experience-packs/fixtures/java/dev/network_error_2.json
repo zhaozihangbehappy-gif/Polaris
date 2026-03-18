@@ -1,0 +1,5 @@
+{
+  "stderr": "FAILURE: Build failed with an exception.\n\n* What went wrong:\nExecution failed for task ':app:dependencies'.\n> Could not resolve all dependencies for configuration ':app:runtimeClasspath'.\n   > Could not resolve com.fasterxml.jackson.core:jackson-databind:2.16.1.\n     Required by:\n         project :app\n      > Could not resolve com.fasterxml.jackson.core:jackson-databind:2.16.1.\n         > Could not get resource 'https://repo.maven.apache.org/maven2/com/fasterxml/jackson/core/jackson-databind/2.16.1/jackson-databind-2.16.1.pom'.\n            > Could not GET 'https://repo.maven.apache.org/maven2/com/fasterxml/jackson/core/jackson-databind/2.16.1/jackson-databind-2.16.1.pom'. Received status code 503 from server: Service Unavailable",
+  "error_class": "network_error",
+  "source": "maven central returning 503 during gradle dependency resolution"
+}

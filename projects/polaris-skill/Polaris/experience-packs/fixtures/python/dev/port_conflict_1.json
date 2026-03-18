@@ -1,0 +1,5 @@
+{
+  "stderr": "Traceback (most recent call last):\n  File \"/home/user/project/server.py\", line 15, in <module>\n    app.run(host='0.0.0.0', port=8000)\n  File \"/home/user/.local/lib/python3.10/site-packages/flask/app.py\", line 1191, in run\n    run_simple(t.cast(str, host), port, self, **options)\n  File \"/home/user/.local/lib/python3.10/site-packages/werkzeug/serving.py\", line 1070, in run_simple\n    s.bind(server_address)\nOSError: [Errno 98] Address already in use",
+  "error_class": "port_conflict",
+  "source": "Flask dev server port already bound"
+}

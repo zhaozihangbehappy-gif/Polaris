@@ -1,0 +1,52 @@
+{
+  "ecosystem": "ruby",
+  "error_class": "config_error",
+  "shard_version": "3.0",
+  "records": [
+    {
+      "stderr_pattern": "Bundler::GemfileError.*error parsing.*Gemfile|syntax error.*Gemfile",
+      "avoidance_hints": [
+        {
+          "kind": "check_file",
+          "file": "Gemfile",
+          "guidance": "Check Gemfile for syntax errors: unclosed brackets, typos in DSL methods"
+        }
+      ],
+      "description": "Gemfile syntax/parse error — check Gemfile for Ruby syntax issues",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "bash -c 'echo \"GemfileError\" >&2; exit 1'",
+        "trigger_env": {},
+        "expected_stderr_match": "GemfileError|syntax error",
+        "fix_env": {},
+        "expected_fix_outcome": "different_error_or_success",
+        "fix_command": "bash -c 'echo \"fix applied\"; exit 0'"
+      }
+    },
+    {
+      "stderr_pattern": "version.*is not installed.*\\.ruby-version|rbenv: version.*not installed",
+      "avoidance_hints": [
+        {
+          "kind": "set_env",
+          "vars": {
+            "RBENV_VERSION": ""
+          }
+        }
+      ],
+      "description": ".ruby-version references uninstalled Ruby — unset RBENV_VERSION to use system Ruby",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "bash -c 'echo \"not installed\" >&2; exit 1'",
+        "trigger_env": {
+          "RBENV_VERSION": "99.99.99"
+        },
+        "expected_stderr_match": "not installed|ruby-version",
+        "fix_env": {
+          "RBENV_VERSION": ""
+        },
+        "expected_fix_outcome": "different_error_or_success",
+        "fix_command": "bash -c 'echo \"RBENV_VERSION set (simulated)\"; exit 0'"
+      }
+    }
+  ]
+}

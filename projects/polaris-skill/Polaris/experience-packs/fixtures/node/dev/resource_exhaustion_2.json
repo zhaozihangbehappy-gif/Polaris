@@ -1,0 +1,5 @@
+{
+  "stderr": "Error: EMFILE: too many open files, open '/home/user/project/node_modules/.package-lock.json'\n    at Object.openSync (node:fs:603:3)\n    at Object.readFileSync (node:fs:471:35)\n    at /home/user/project/node_modules/npm/lib/utils/read-installed.js:42:18\n    at Array.forEach (<anonymous>)\n    at readInstalled (/home/user/project/node_modules/npm/lib/utils/read-installed.js:38:15) {\n  errno: -24,\n  syscall: 'open',\n  code: 'EMFILE',\n  path: '/home/user/project/node_modules/.package-lock.json'\n}",
+  "error_class": "resource_exhaustion",
+  "source": "File descriptor limit hit during npm operations on large monorepo"
+}

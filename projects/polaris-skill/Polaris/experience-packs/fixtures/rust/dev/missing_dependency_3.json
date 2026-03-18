@@ -1,0 +1,5 @@
+{
+  "stderr": "error: failed to load source for dependency `openssl-sys`\n\nCaused by:\n  Unable to update registry `crates-io`\n\nCaused by:\n  failed to fetch `https://github.com/rust-lang/crates.io-index`",
+  "error_class": "missing_dependency",
+  "source": "cargo build failing to fetch openssl-sys from registry"
+}

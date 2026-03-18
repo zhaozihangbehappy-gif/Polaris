@@ -1,0 +1,1 @@
+{"stderr": "# github.com/myapp/internal/handler\ninternal/handler/auth.go:42:17: cannot use token (variable of type string) as type []byte in argument to jwt.Parse\ninternal/handler/auth.go:58:3: undefined: jwt.MapClaims", "error_class": "build_error", "source": "go build type mismatch and undefined symbol after library upgrade"}

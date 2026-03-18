@@ -1,0 +1,5 @@
+{
+  "stderr": "error: could not compile `zstd-sys` (build script)\n\nCaused by:\n  process didn't exit successfully: `/tmp/target/debug/build/zstd-sys-def456/build-script-main` (exit status: 101)\n  --- stderr\n  /usr/bin/ld: cannot find -lzstd: No such file or directory\n  collect2: error: ld returned 1 exit status",
+  "error_class": "build_error",
+  "source": "cargo build with zstd-sys crate missing libzstd-dev system package"
+}

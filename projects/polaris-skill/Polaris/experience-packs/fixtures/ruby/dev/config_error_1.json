@@ -1,0 +1,5 @@
+{
+  "stderr": "Bundler::GemfileError: There was an error parsing `Gemfile`: syntax error, unexpected end-of-input, expecting '}'\n# from /home/user/project/Gemfile:14\n# ---\n#   gem 'sidekiq', group: [:production\n# ---",
+  "error_class": "config_error",
+  "source": "Gemfile syntax error — unclosed bracket"
+}

@@ -1,0 +1,5 @@
+{
+  "stderr": "------\n > [builder 4/6] COPY go.sum .:\n------\nfailed to solve: failed to compute cache key: failed to calculate checksum of ref moby-fastcopy::randomid123: \"/go.sum\": not found",
+  "error_class": "build_error",
+  "source": "docker build with COPY go.sum before go mod download, go.sum not in context"
+}

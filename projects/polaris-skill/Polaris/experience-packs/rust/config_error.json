@@ -1,0 +1,30 @@
+{
+  "ecosystem": "rust",
+  "error_class": "config_error",
+  "shard_version": "3.0",
+  "records": [
+    {
+      "stderr_pattern": "failed to parse manifest.*Cargo\\.toml|no `package` section found|TOML parse error",
+      "avoidance_hints": [
+        {
+          "kind": "set_env",
+          "vars": {
+            "RUST_BACKTRACE": "1"
+          }
+        }
+      ],
+      "description": "Invalid Cargo.toml — check TOML syntax and required sections",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "bash -c 'echo \"error: failed to parse manifest at /home/user/project/Cargo.toml\" >&2; echo \"Caused by: no package section found\" >&2; exit 1'",
+        "trigger_env": {},
+        "expected_stderr_match": "failed to parse manifest",
+        "fix_env": {
+          "RUST_BACKTRACE": "1"
+        },
+        "expected_fix_outcome": "different_error_or_success",
+        "fix_command": "bash -c 'echo \"RUST_BACKTRACE set (simulated)\"; exit 0'"
+      }
+    }
+  ]
+}

@@ -1,0 +1,5 @@
+{
+  "stderr": "Traceback (most recent call last):\n  File \"/home/user/project/logger.py\", line 18, in setup_logging\n    handler = logging.FileHandler('/var/log/myapp/app.log')\n  File \"/usr/lib/python3.10/logging/__init__.py\", line 1175, in __init__\n    StreamHandler.__init__(self, self._open())\n  File \"/usr/lib/python3.10/logging/__init__.py\", line 1204, in _open\n    return open(self.baseFilename, self.mode, encoding=self.encoding)\nPermissionError: [Errno 13] Permission denied: '/var/log/myapp/app.log'",
+  "error_class": "permission_denial",
+  "source": "log file write to protected directory"
+}

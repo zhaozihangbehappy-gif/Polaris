@@ -1,0 +1,5 @@
+{
+  "stderr": "npm ERR! code CERT_HAS_EXPIRED\nnpm ERR! errno CERT_HAS_EXPIRED\nnpm ERR! request to https://registry.npmjs.org/react failed, reason: certificate has expired\nnpm ERR! \nnpm ERR! network This is a problem related to network connectivity.\nnpm ERR! network In most cases you are behind a proxy or have bad network settings.\nnpm ERR! network \nnpm ERR! network If you are behind a proxy, please make sure that the\nnpm ERR! network 'proxy' config is set properly.  See: 'npm help config'\n\nnpm ERR! A complete log of this run can be found in: /home/user/.npm/_logs/2024-08-15T22_10_33_444Z-debug-0.log",
+  "error_class": "network_error",
+  "source": "SSL certificate issue with npm registry, often corporate MITM proxy"
+}

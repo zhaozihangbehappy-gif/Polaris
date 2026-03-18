@@ -1,0 +1,21 @@
+{
+  "ecosystem": "python",
+  "error_class": "timeout",
+  "shard_version": "3.0",
+  "records": [
+    {
+      "stderr_pattern": "TimeoutExpired:.*timed out after \\d+ seconds|subprocess\\.TimeoutExpired",
+      "avoidance_hints": [{"kind": "set_timeout", "timeout_seconds": 300}],
+      "description": "Subprocess timed out — increase timeout to allow longer execution",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "python3 -c \"import subprocess; subprocess.run(['sleep', '10'], timeout=1)\" 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "TimeoutExpired|timed out",
+        "fix_command": "python3 -c \"import subprocess; subprocess.run(['sleep', '0.1'], timeout=300); print('ok')\" 2>&1 || true",
+        "fix_env": {},
+        "expected_fix_outcome": "different_error_or_success"
+      }
+    }
+  ]
+}

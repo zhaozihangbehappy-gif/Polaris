@@ -1,0 +1,5 @@
+{
+  "stderr": "Exception in thread \"main\" java.security.AccessControlException: access denied (\"java.io.FilePermission\" \"/etc/secrets/db.properties\" \"read\")\n\tat java.base/java.security.AccessControlContext.checkPermission(AccessControlContext.java:485)\n\tat java.base/java.security.AccessController.checkPermission(AccessController.java:1068)\n\tat java.base/java.lang.SecurityManager.checkPermission(SecurityManager.java:416)\n\tat java.base/java.lang.SecurityManager.checkRead(SecurityManager.java:578)",
+  "error_class": "permission_denial",
+  "source": "SecurityManager denying file read access"
+}

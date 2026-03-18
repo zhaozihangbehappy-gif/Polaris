@@ -1,0 +1,5 @@
+{
+  "stderr": "[ERROR] Failed to execute goal org.apache.maven.plugins:maven-install-plugin:3.1.1:install (default-install) on project myapp: Failed to install artifact com.myapp:myapp:jar:1.0-SNAPSHOT: Could not install artifact to /home/user/.m2/repository/com/myapp/myapp/1.0-SNAPSHOT/myapp-1.0-SNAPSHOT.jar: /home/user/.m2/repository/com/myapp/myapp/1.0-SNAPSHOT/myapp-1.0-SNAPSHOT.jar (Permission denied)\n[ERROR] -> [Help 1]",
+  "error_class": "permission_denial",
+  "source": "maven local repository directory not writable"
+}

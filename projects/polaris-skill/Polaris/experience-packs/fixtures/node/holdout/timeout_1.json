@@ -1,0 +1,5 @@
+{
+  "stderr": "FAIL tests/integration/database.test.js (30.123 s)\n  Database Integration\n    ✕ should connect and query users (10005 ms)\n\n  ● Database Integration › should connect and query users\n\n    thrown: \"Exceeded timeout of 10000 ms for a test.\n    Use jest.setTimeout(newTimeout) to increase the timeout value, if this is a long-running test.\"\n\n      at Object.<anonymous> (tests/integration/database.test.js:8:3)\n      at Promise.then.completed (node_modules/jest-circus/build/utils.js:298:28)\n\nTest Suites: 1 failed, 1 total\nTests:       1 failed, 1 total\nSnapshots:   0 total\nTime:        30.456 s\nRan all test suites matching /database/i.",
+  "error_class": "timeout",
+  "source": "Jest integration test timeout on database connection"
+}

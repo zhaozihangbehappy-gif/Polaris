@@ -1,0 +1,5 @@
+{
+  "stderr": "node:internal/errors:496\n    ErrorCaptureStackTrace(err);\n    ^\n\nError [ERR_MODULE_NOT_FOUND]: Cannot find package 'lodash' imported from /home/user/project/src/utils.mjs\n    at new NodeError (node:internal/errors:405:5)\n    at packageResolve (node:internal/modules/esm/resolve:890:9)\n    at moduleResolve (node:internal/modules/esm/resolve:939:20)\n    at defaultResolve (node:internal/modules/esm/resolve:1132:11)\n    at ModuleLoader.defaultResolve (node:internal/modules/esm/loader:396:12)\n    at ModuleLoader.resolve (node:internal/modules/esm/loader:365:25)\n    at ModuleLoader.getModuleJob (node:internal/modules/esm/loader:240:38)\n    at ModuleJob._link (node:internal/modules/esm/module_job:126:49) {\n  code: 'ERR_MODULE_NOT_FOUND'\n}\n\nNode.js v20.11.0",
+  "error_class": "missing_dependency",
+  "source": "ESM import of missing package in Node 20"
+}

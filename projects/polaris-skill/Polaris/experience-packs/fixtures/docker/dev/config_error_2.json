@@ -1,0 +1,5 @@
+{
+  "stderr": "yaml: line 12: did not find expected key\nvalidating /home/user/project/docker-compose.yml: services.web Additional property \"port\" is not allowed",
+  "error_class": "config_error",
+  "source": "docker compose up with YAML syntax error and invalid property"
+}

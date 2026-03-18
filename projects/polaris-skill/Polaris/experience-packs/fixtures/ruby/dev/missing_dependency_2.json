@@ -1,0 +1,5 @@
+{
+  "stderr": "Could not find gem 'rails (~> 7.0)' in locally installed gems.\nRun `bundle install` to install missing gems.",
+  "error_class": "missing_dependency",
+  "source": "Bundler cannot find specified gem version"
+}

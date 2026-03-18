@@ -1,0 +1,5 @@
+{
+  "stderr": "ERROR:  While executing gem ... (Errno::EACCES)\n    Permission denied @ rb_sysopen - /usr/local/lib/ruby/gems/3.2.0/cache/puma-6.4.0.gem",
+  "error_class": "permission_denial",
+  "source": "gem install to system path without sudo"
+}

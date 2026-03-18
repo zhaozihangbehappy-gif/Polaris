@@ -1,0 +1,5 @@
+{
+  "stderr": "Error response from daemon: Get \"https://registry.example.com/v2/\": net/http: TLS handshake timeout",
+  "error_class": "timeout",
+  "source": "docker pull from private registry with TLS handshake timeout"
+}

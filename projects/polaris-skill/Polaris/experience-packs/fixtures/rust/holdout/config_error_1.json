@@ -1,0 +1,5 @@
+{
+  "stderr": "error: failed to parse manifest at `/home/user/project/Cargo.toml`\n\nCaused by:\n  TOML parse error at line 3, column 1\n    |\n  3 | name = myproject\n    | ^^^^^^^^^^^^^^^^^\n  invalid string\n  expected `\"`, `'`",
+  "error_class": "config_error",
+  "source": "cargo build with unquoted string value in Cargo.toml"
+}

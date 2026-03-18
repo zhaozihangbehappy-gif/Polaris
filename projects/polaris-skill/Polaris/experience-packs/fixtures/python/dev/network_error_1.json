@@ -1,0 +1,5 @@
+{
+  "stderr": "WARNING: Retrying (Retry(total=4, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<pip._vendor.urllib3.connection.HTTPSConnection object at 0x7f3b2c1a5d90>: Failed to establish a new connection: [Errno 111] Connection refused')': /simple/flask/\nWARNING: Retrying (Retry(total=3, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<pip._vendor.urllib3.connection.HTTPSConnection object at 0x7f3b2c1a5e50>: Failed to establish a new connection: [Errno 111] Connection refused')': /simple/flask/\nERROR: Could not find a version that satisfies the requirement flask (from versions: none)\nERROR: No matching distribution found for flask",
+  "error_class": "network_error",
+  "source": "pip install with no network / connection refused to PyPI"
+}

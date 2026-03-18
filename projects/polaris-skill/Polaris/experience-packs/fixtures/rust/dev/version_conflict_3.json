@@ -1,0 +1,5 @@
+{
+  "stderr": "error[E0658]: use of unstable library feature 'once_cell'\n  --> src/main.rs:1:5\n   |\n1  | use std::sync::LazyLock;\n   |     ^^^^^^^^^^^^^^^^^^^^\n   |\n   = note: see issue #74465 <https://github.com/rust-lang/rust/issues/74465> for more information\n   = help: add `#![feature(lazy_cell)]` to the crate attributes to enable\n\nerror: aborting due to previous error",
+  "error_class": "version_conflict",
+  "source": "cargo build using LazyLock on rustc 1.72 (stabilized in 1.80)"
+}

@@ -1,0 +1,5 @@
+{
+  "stderr": "npm WARN ERESOLVE overriding peer dependency\nnpm ERR! code ERESOLVE\nnpm ERR! ERESOLVE could not resolve\nnpm ERR! \nnpm ERR! While resolving: react-scripts@5.0.1\nnpm ERR! Found: react@18.2.0\nnpm ERR! node_modules/react\nnpm ERR!   react@\"^18.2.0\" from the root project\nnpm ERR! \nnpm ERR! Could not resolve dependency:\nnpm ERR! peer react@\"^17.0.0\" from react-error-overlay@6.0.11\nnpm ERR! node_modules/react-error-overlay\nnpm ERR!   react-error-overlay@\"^6.0.11\" from react-scripts@5.0.1\nnpm ERR! \nnpm ERR! Conflicting peer dependency: react@17.0.2\nnpm ERR! node_modules/react\nnpm ERR!   peer react@\"^17.0.0\" from react-error-overlay@6.0.11\nnpm ERR! \nnpm ERR! Fix the upstream dependency conflict, or retry\nnpm ERR! this command with --force or --legacy-peer-deps\nnpm ERR! to accept an incorrect (and potentially broken) dependency resolution.\n\nnpm ERR! A complete log of this run can be found in: /home/user/.npm/_logs/2024-01-15T10_30_45_123Z-debug-0.log",
+  "error_class": "missing_dependency",
+  "source": "npm peer dependency conflict during install"
+}

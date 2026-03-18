@@ -1,0 +1,5 @@
+{
+  "stderr": "Error: ENOENT: no such file or directory, open '/home/user/webapp/public/assets/manifest.json'\n    at Object.openSync (node:fs:603:3)\n    at Object.readFileSync (node:fs:471:35)\n    at loadManifest (/home/user/webapp/src/server/render.js:8:25)\n    at Object.<anonymous> (/home/user/webapp/src/server/render.js:32:18) {\n  errno: -2,\n  syscall: 'open',\n  code: 'ENOENT',\n  path: '/home/user/webapp/public/assets/manifest.json'\n}",
+  "error_class": "file_not_found",
+  "source": "Missing webpack asset manifest after incomplete build"
+}

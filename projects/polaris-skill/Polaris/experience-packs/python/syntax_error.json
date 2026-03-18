@@ -16,6 +16,34 @@
         "fix_env": {"PYTHONDONTWRITEBYTECODE": "1"},
         "expected_fix_outcome": "different_error_or_success"
       }
+    },
+    {
+      "stderr_pattern": "IndentationError: (unexpected indent|expected an indented block)",
+      "avoidance_hints": [{"kind": "set_env", "vars": {"PYTHONDONTWRITEBYTECODE": "1"}}],
+      "description": "Indentation error — possibly stale .pyc from prior code version; disable bytecode cache",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "printf 'def f():\\n  x = 1\\n    y = 2\\n' > /tmp/_polaris_repro_indent.py && python3 /tmp/_polaris_repro_indent.py 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "IndentationError",
+        "fix_command": "printf 'def f():\\n  x = 1\\n  y = 2\\nf(); print(\"ok\")\\n' > /tmp/_polaris_repro_indent.py && python3 /tmp/_polaris_repro_indent.py 2>&1 || true",
+        "fix_env": {"PYTHONDONTWRITEBYTECODE": "1"},
+        "expected_fix_outcome": "different_error_or_success"
+      }
+    },
+    {
+      "stderr_pattern": "TabError: inconsistent use of tabs and spaces",
+      "avoidance_hints": [{"kind": "set_env", "vars": {"PYTHONDONTWRITEBYTECODE": "1"}}],
+      "description": "Mixed tabs and spaces — disable bytecode cache to prevent stale .pyc masking the fix",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "printf 'def f():\\n  x = 1\\n\\ty = 2\\n' > /tmp/_polaris_repro_tab.py && python3 /tmp/_polaris_repro_tab.py 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "TabError",
+        "fix_command": "printf 'def f():\\n  x = 1\\n  y = 2\\nf(); print(\"ok\")\\n' > /tmp/_polaris_repro_tab.py && python3 /tmp/_polaris_repro_tab.py 2>&1 || true",
+        "fix_env": {"PYTHONDONTWRITEBYTECODE": "1"},
+        "expected_fix_outcome": "different_error_or_success"
+      }
     }
   ]
 }

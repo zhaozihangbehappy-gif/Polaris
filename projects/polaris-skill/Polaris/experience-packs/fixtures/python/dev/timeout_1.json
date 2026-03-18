@@ -1,0 +1,5 @@
+{
+  "stderr": "Traceback (most recent call last):\n  File \"/home/user/project/runner.py\", line 42, in run_task\n    result = subprocess.run(['python3', 'heavy_computation.py'], timeout=30, capture_output=True)\n  File \"/usr/lib/python3.10/subprocess.py\", line 503, in run\n    stdout, stderr = process.communicate(input, timeout=timeout)\n  File \"/usr/lib/python3.10/subprocess.py\", line 1154, in communicate\n    stdout, stderr = self._communicate(input, endtime, timeout)\n  File \"/usr/lib/python3.10/subprocess.py\", line 2006, in _communicate\n    self._check_timeout(endtime, orig_timeout, stdout, stderr)\n  File \"/usr/lib/python3.10/subprocess.py\", line 1198, in _check_timeout\n    raise TimeoutExpired(\nsubprocess.TimeoutExpired: Command '['python3', 'heavy_computation.py']' timed out after 30 seconds",
+  "error_class": "timeout",
+  "source": "subprocess timeout on long-running script"
+}

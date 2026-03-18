@@ -1,0 +1,1 @@
+{"stderr": "Error: Invalid HCL syntax\n\n  on main.tf line 14:\n  (source code not available)\n\nAn argument definition must end with a newline. Expected a newline but found \"{\".\n", "error_class": "config_error", "source": "terraform-hcl-parser-1.0"}

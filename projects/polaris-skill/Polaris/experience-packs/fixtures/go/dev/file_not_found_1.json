@@ -1,0 +1,1 @@
+{"stderr": "can't load package: package github.com/myapp/cmd/server: cannot find package \"github.com/myapp/cmd/server\" in any of:\n\t/usr/local/go/src/github.com/myapp/cmd/server (from $GOROOT)\n\t/home/user/go/src/github.com/myapp/cmd/server (from $GOPATH)", "error_class": "file_not_found", "source": "go build in GOPATH mode with package not present in GOPATH/src"}

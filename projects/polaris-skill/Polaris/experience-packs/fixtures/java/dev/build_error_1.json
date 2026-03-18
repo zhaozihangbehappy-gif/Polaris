@@ -1,0 +1,5 @@
+{
+  "stderr": "/home/user/project/src/Main.java:12: error: ';' expected\n        System.out.println(\"hello\")\n                                   ^\n/home/user/project/src/Main.java:15: error: reached end of file while parsing\n}\n ^\n2 errors",
+  "error_class": "build_error",
+  "source": "missing semicolon in Java source file"
+}

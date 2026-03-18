@@ -1,0 +1,5 @@
+{
+  "stderr": "npm ERR! code EBADENGINE\nnpm ERR! engine Unsupported engine\nnpm ERR! engine Not compatible with your version of node/npm: gatsby@5.13.0\nnpm ERR! notsup Not compatible with your version of node/npm: gatsby@5.13.0\nnpm ERR! notsup Required: {\"node\":\">=18.0.0\"}\nnpm ERR! notsup Actual:   {\"npm\":\"9.5.0\",\"node\":\"v16.20.2\"}\n\nnpm ERR! A complete log of this run can be found in: /home/user/.npm/_logs/2024-04-01T09_45_12_345Z-debug-0.log",
+  "error_class": "version_conflict",
+  "source": "Node.js engine version requirement mismatch"
+}

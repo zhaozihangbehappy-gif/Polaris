@@ -1,0 +1,5 @@
+{
+  "stderr": "error: couldn't read from `src/lib.rs`: No such file or directory (os error 2)\n\nerror: aborting due to previous error\n\nnote: if you meant to create a binary target, use `[[bin]]` in Cargo.toml\n  If you meant to create a library, create `src/lib.rs`",
+  "error_class": "file_not_found",
+  "source": "cargo build on fresh project with [lib] in Cargo.toml but missing src/lib.rs"
+}

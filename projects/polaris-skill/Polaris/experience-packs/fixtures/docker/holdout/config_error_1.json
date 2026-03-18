@@ -1,0 +1,5 @@
+{
+  "stderr": "failed to solve with frontend dockerfile.v0: failed to create LLB definition: dockerfile parse error line 8: EXPOSE requires at least one argument",
+  "error_class": "config_error",
+  "source": "docker build with empty EXPOSE instruction in Dockerfile"
+}

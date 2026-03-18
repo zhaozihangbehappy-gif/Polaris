@@ -1,0 +1,1 @@
+{"stderr": "Error: timeout while waiting for state to become 'applied' (last state: 'pending', timeout: 30m0s)\n\n  with aws_rds_cluster.main,\n  on database.tf line 1, in resource \"aws_rds_cluster\" \"main\":\n   1: resource \"aws_rds_cluster\" \"main\" {\n", "error_class": "timeout", "source": "terraform-aws-provider-5.40"}

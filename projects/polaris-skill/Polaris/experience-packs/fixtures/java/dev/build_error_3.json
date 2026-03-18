@@ -1,0 +1,5 @@
+{
+  "stderr": "> Task :compileJava FAILED\n/home/user/project/src/main/java/com/myapp/service/OrderService.java:45: error: method processOrder in class OrderProcessor cannot be applied to given types;\n        processor.processOrder(orderId, null);\n                 ^\n  required: String,PaymentInfo\n  found:    String,<null>\n  reason: actual argument <null> cannot be converted to PaymentInfo by method invocation conversion\n1 error\n\nFAILURE: Build failed with an exception.\n\n* What went wrong:\nExecution failed for task ':compileJava'.\n> Compilation failed; see the compiler error output for details.",
+  "error_class": "build_error",
+  "source": "gradle compilation failure due to method signature mismatch"
+}

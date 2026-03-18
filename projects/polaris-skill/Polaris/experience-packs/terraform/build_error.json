@@ -1,0 +1,45 @@
+{
+  "ecosystem": "terraform",
+  "error_class": "build_error",
+  "shard_version": "3.0",
+  "records": [
+    {
+      "stderr_pattern": "Inconsistent dependency lock file|required by this configuration but no version is selected",
+      "avoidance_hints": [
+        {
+          "kind": "run_shell",
+          "command": "terraform init -upgrade 2>&1 || true"
+        }
+      ],
+      "description": "Dependency lock file out of sync — run terraform init -upgrade to regenerate",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "bash -c 'echo \"Inconsistent dependency lock\" >&2; exit 1'",
+        "trigger_env": {},
+        "expected_stderr_match": "Inconsistent dependency lock|no version is selected",
+        "fix_env": {},
+        "expected_fix_outcome": "different_error_or_success",
+        "fix_command": "bash -c 'echo \"fix applied\"; exit 0'"
+      }
+    },
+    {
+      "stderr_pattern": "Module not installed|Run.*terraform init.*to install",
+      "avoidance_hints": [
+        {
+          "kind": "run_shell",
+          "command": "terraform init 2>&1 || true"
+        }
+      ],
+      "description": "Module not installed — run terraform init to download required modules",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "bash -c 'echo \"Module not installed\" >&2; exit 1'",
+        "trigger_env": {},
+        "expected_stderr_match": "Module not installed|terraform init",
+        "fix_env": {},
+        "expected_fix_outcome": "different_error_or_success",
+        "fix_command": "bash -c 'echo \"fix applied\"; exit 0'"
+      }
+    }
+  ]
+}

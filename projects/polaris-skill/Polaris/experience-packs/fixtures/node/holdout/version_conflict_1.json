@@ -1,0 +1,5 @@
+{
+  "stderr": "error @angular/compiler-cli@17.0.0: The engine \"node\" is incompatible with this module. Expected version \"^18.13.0 || >=20.9.0\". Got \"20.5.1\"\nerror Found incompatible module.\ninfo Visit https://yarnpkg.com/en/docs/cli/install for documentation about this command.",
+  "error_class": "version_conflict",
+  "source": "Yarn engine check failure for Angular with wrong Node patch version"
+}

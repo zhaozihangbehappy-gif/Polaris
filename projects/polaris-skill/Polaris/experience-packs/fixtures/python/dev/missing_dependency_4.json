@@ -1,0 +1,5 @@
+{
+  "stderr": "ERROR: Could not find a version that satisfies the requirement torch==2.1.0 (from versions: none)\nERROR: No matching distribution found for torch==2.1.0",
+  "error_class": "missing_dependency",
+  "source": "pip install failure - no matching distribution"
+}

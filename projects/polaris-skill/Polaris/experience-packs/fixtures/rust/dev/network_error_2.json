@@ -1,0 +1,5 @@
+{
+  "stderr": "error: failed to download from `https://static.crates.io/crates/tokio/tokio-1.35.0.crate`\n\nCaused by:\n  [7] Couldn't connect to server; Failed to connect to static.crates.io port 443 after 30013 ms: Connection timed out",
+  "error_class": "network_error",
+  "source": "cargo fetch in air-gapped CI environment with no crate mirror configured"
+}

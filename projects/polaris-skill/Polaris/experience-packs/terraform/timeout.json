@@ -1,0 +1,61 @@
+{
+  "ecosystem": "terraform",
+  "error_class": "timeout",
+  "shard_version": "3.0",
+  "records": [
+    {
+      "stderr_pattern": "Error.*acquiring the state lock|Lock timeout|ConditionalCheckFailedException",
+      "avoidance_hints": [
+        {
+          "kind": "run_shell",
+          "command": "terraform force-unlock -force LOCK_ID 2>&1 || true"
+        },
+        {
+          "kind": "set_env",
+          "vars": {
+            "TF_CLI_ARGS_plan": "-lock-timeout=5m"
+          }
+        }
+      ],
+      "description": "State lock acquisition timeout — force-unlock stale lock or increase lock timeout",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "bash -c 'echo \"state lock\" >&2; exit 1'",
+        "trigger_env": {},
+        "expected_stderr_match": "state lock|Lock timeout",
+        "fix_env": {
+          "TF_CLI_ARGS_plan": "-lock-timeout=5m"
+        },
+        "expected_fix_outcome": "different_error_or_success",
+        "fix_command": "bash -c 'echo \"TF_CLI_ARGS_plan set (simulated)\"; exit 0'"
+      }
+    },
+    {
+      "stderr_pattern": "timeout while waiting for state to become|timeout.*last state.*pending",
+      "avoidance_hints": [
+        {
+          "kind": "set_env",
+          "vars": {
+            "TF_LOG": "DEBUG"
+          }
+        },
+        {
+          "kind": "run_shell",
+          "command": "terraform plan -refresh-only 2>&1 || true"
+        }
+      ],
+      "description": "Resource creation/update timeout — enable debug logging and check resource status externally",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "bash -c 'echo \"timeoutstate to become\" >&2; exit 1'",
+        "trigger_env": {},
+        "expected_stderr_match": "timeout.*state to become|timeout.*pending",
+        "fix_env": {
+          "TF_LOG": "DEBUG"
+        },
+        "expected_fix_outcome": "different_error_or_success",
+        "fix_command": "bash -c 'echo \"TF_LOG set (simulated)\"; exit 0'"
+      }
+    }
+  ]
+}

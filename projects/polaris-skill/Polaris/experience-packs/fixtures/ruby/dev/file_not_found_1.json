@@ -1,0 +1,5 @@
+{
+  "stderr": "/home/user/project/app.rb:4:in `read': No such file or directory @ rb_sysopen - config/database.yml (Errno::ENOENT)\n\tfrom /home/user/project/app.rb:4:in `<main>'",
+  "error_class": "file_not_found",
+  "source": "Errno::ENOENT for missing config file"
+}

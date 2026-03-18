@@ -1,0 +1,5 @@
+{
+  "stderr": "Exception in thread \"main\" java.lang.OutOfMemoryError: Java heap space\n\tat java.base/java.util.Arrays.copyOf(Arrays.java:3512)\n\tat java.base/java.util.ArrayList.grow(ArrayList.java:237)\n\tat java.base/java.util.ArrayList.addAll(ArrayList.java:711)\n\tat com.myapp.batch.DataLoader.loadAll(DataLoader.java:89)\n\tat com.myapp.Main.main(Main.java:22)",
+  "error_class": "resource_exhaustion",
+  "source": "large dataset loaded into memory without streaming"
+}

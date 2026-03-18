@@ -16,6 +16,20 @@
         "fix_env": {},
         "expected_fix_outcome": "different_error_or_success"
       }
+    },
+    {
+      "stderr_pattern": "can't open file '([^']+)': \\[Errno 2\\] No such file or directory",
+      "avoidance_hints": [{"kind": "rewrite_cwd", "target": "."}],
+      "description": "Python script path not found — ensure cwd is the project root so relative script paths resolve",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "rm -f /tmp/_polaris_repro_nosuch_script_xyz.py && python3 /tmp/_polaris_repro_nosuch_script_xyz.py 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "can't open file|No such file or directory",
+        "fix_command": "echo 'print(\"ok\")' > /tmp/_polaris_repro_nosuch_script_xyz.py && python3 /tmp/_polaris_repro_nosuch_script_xyz.py 2>&1 || true",
+        "fix_env": {},
+        "expected_fix_outcome": "different_error_or_success"
+      }
     }
   ]
 }

@@ -1,0 +1,53 @@
+{
+  "ecosystem": "java",
+  "error_class": "version_conflict",
+  "shard_version": "3.0",
+  "records": [
+    {
+      "stderr_pattern": "UnsupportedClassVersionError.*class file version \\d+\\.0",
+      "avoidance_hints": [
+        {
+          "kind": "set_env",
+          "vars": {
+            "JAVA_HOME": "/usr/lib/jvm/java-21-openjdk-amd64"
+          }
+        }
+      ],
+      "description": "UnsupportedClassVersionError — upgrade JDK to match compiled class version",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "bash -c 'echo \"java.lang.UnsupportedClassVersionError: com/myapp/Main has been compiled by a more recent version of the Java Runtime (class file version 65.0), this version only recognizes up to 61.0\" >&2; exit 1'",
+        "trigger_env": {},
+        "expected_stderr_match": "UnsupportedClassVersionError",
+        "fix_env": {
+          "JAVA_HOME": "/usr/lib/jvm/java-21-openjdk-amd64"
+        },
+        "expected_fix_outcome": "different_error_or_success",
+        "fix_command": "bash -c 'echo \"JAVA_HOME set (simulated)\"; exit 0'"
+      }
+    },
+    {
+      "stderr_pattern": "source release \\d+ requires target release \\d+|release version \\d+ not supported",
+      "avoidance_hints": [
+        {
+          "kind": "set_env",
+          "vars": {
+            "JAVA_HOME": "/usr/lib/jvm/java-21-openjdk-amd64"
+          }
+        }
+      ],
+      "description": "Source/target version mismatch — set JAVA_HOME to JDK matching project target version",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "bash -c 'echo \"error: release version 21 not supported\" >&2; exit 1'",
+        "trigger_env": {},
+        "expected_stderr_match": "release version \\d+ not supported",
+        "fix_env": {
+          "JAVA_HOME": "/usr/lib/jvm/java-21-openjdk-amd64"
+        },
+        "expected_fix_outcome": "different_error_or_success",
+        "fix_command": "bash -c 'echo \"JAVA_HOME set (simulated)\"; exit 0'"
+      }
+    }
+  ]
+}

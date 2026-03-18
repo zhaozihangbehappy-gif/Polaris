@@ -1,0 +1,1 @@
+{"stderr": "go: writing go.mod cache: open /home/user/go/pkg/mod/cache/download/sumdb/sum.golang.org/lookup/github.com/prometheus/client_golang@v1.18.0: permission denied\ngo: github.com/prometheus/client_golang@v1.18.0: writing cache entry: permission denied", "error_class": "permission_denial", "source": "go mod download with read-only module cache directory"}

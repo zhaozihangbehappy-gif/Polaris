@@ -1,0 +1,5 @@
+{
+  "stderr": "FAIL src/__tests__/api.test.js\n  API Integration Tests\n    ✕ should fetch user data (5003 ms)\n\n  ● API Integration Tests › should fetch user data\n\n    thrown: \"Exceeded timeout of 5000 ms for a test.\n    Use jest.setTimeout(newTimeout) to increase the timeout value, if this is a long-running test.\"\n\n      at Object.<anonymous> (src/__tests__/api.test.js:15:3)\n      at Promise.then.completed (node_modules/jest-circus/build/utils.js:298:28)\n      at new Promise (<anonymous>)\n      at callAsyncCircusFn (node_modules/jest-circus/build/utils.js:231:10)\n      at _callCircusTest (node_modules/jest-circus/build/run.js:316:40)\n      at _runTest (node_modules/jest-circus/build/run.js:252:3)\n      at _runTestsForDescribeBlock (node_modules/jest-circus/build/run.js:126:9)\n\nTest Suites: 1 failed, 1 total\nTests:       1 failed, 1 total\nSnapshots:   0 total\nTime:        5.234 s\nRan all test suites.",
+  "error_class": "timeout",
+  "source": "Jest test timeout on slow async operation"
+}

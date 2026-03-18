@@ -1,0 +1,5 @@
+{
+  "stderr": "  File \"/home/user/project/app.py\", line 12\n    print(f\"{value!r:>10}\")\n                        ^\nSyntaxError: invalid syntax",
+  "error_class": "syntax_error",
+  "source": "f-string format spec syntax in Python 3.5"
+}

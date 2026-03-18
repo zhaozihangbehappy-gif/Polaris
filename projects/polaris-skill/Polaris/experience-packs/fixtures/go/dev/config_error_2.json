@@ -1,0 +1,1 @@
+{"stderr": "go: GOPATH entry is relative; must be absolute path: \"gopath\".\nFor more details see: 'go help gopath'", "error_class": "config_error", "source": "go env with relative GOPATH value"}

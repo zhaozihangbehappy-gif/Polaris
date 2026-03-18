@@ -1,0 +1,5 @@
+{
+  "stderr": "/home/user/project/lib/recursive.rb:5:in `compute': stack level too deep (SystemStackError)\n\tfrom /home/user/project/lib/recursive.rb:5:in `compute'\n\tfrom /home/user/project/lib/recursive.rb:5:in `compute'\n\t ... 10042 levels...\n\tfrom /home/user/project/app.rb:3:in `<main>'",
+  "error_class": "resource_exhaustion",
+  "source": "SystemStackError from unbounded recursion"
+}

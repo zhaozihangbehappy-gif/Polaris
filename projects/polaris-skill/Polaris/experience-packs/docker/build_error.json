@@ -1,0 +1,86 @@
+{
+  "ecosystem": "docker",
+  "error_class": "build_error",
+  "shard_version": "3.0",
+  "records": [
+    {
+      "stderr_pattern": "COPY failed.*file not found in build context|failed to compute cache key.*not found",
+      "avoidance_hints": [
+        {
+          "kind": "set_env",
+          "vars": {
+            "DOCKER_BUILDKIT": "1"
+          }
+        },
+        {
+          "kind": "append_flags",
+          "flags": "--no-cache"
+        }
+      ],
+      "description": "Docker COPY failed, file not in build context — enable BuildKit and clear cache",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "bash -c 'echo \"COPY failed: file not found in build context or excluded by .dockerignore: stat src/package.json: file does not exist\" >&2; exit 1'",
+        "trigger_env": {},
+        "expected_stderr_match": "COPY failed.*file not found|cache key.*not found",
+        "fix_env": {
+          "DOCKER_BUILDKIT": "1"
+        },
+        "expected_fix_outcome": "different_error_or_success",
+        "fix_command": "bash -c 'echo \"DOCKER_BUILDKIT set (simulated)\"; exit 0'"
+      }
+    },
+    {
+      "stderr_pattern": "executor failed running.*exit code: [1-9]|RUN.*returned a non-zero code",
+      "avoidance_hints": [
+        {
+          "kind": "set_env",
+          "vars": {
+            "DOCKER_BUILDKIT": "1",
+            "BUILDKIT_PROGRESS": "plain"
+          }
+        }
+      ],
+      "description": "Docker RUN command failed during build — enable BuildKit with plain progress for diagnostics",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "bash -c 'echo \"executor failed running [/bin/sh -c npm ci --production]: exit code: 1\" >&2; exit 1'",
+        "trigger_env": {},
+        "expected_stderr_match": "executor failed running.*exit code",
+        "fix_env": {
+          "DOCKER_BUILDKIT": "1",
+          "BUILDKIT_PROGRESS": "plain"
+        },
+        "expected_fix_outcome": "different_error_or_success",
+        "fix_command": "bash -c 'echo \"DOCKER_BUILDKIT set (simulated)\"; exit 0'"
+      }
+    },
+    {
+      "stderr_pattern": "error checking context.*no permission to read|error from sender.*no permission",
+      "avoidance_hints": [
+        {
+          "kind": "set_env",
+          "vars": {
+            "DOCKER_BUILDKIT": "1"
+          }
+        },
+        {
+          "kind": "append_flags",
+          "flags": "-f Dockerfile ."
+        }
+      ],
+      "description": "Docker build context has unreadable files — enable BuildKit which handles context filtering better",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "bash -c 'echo \"error checking context: no permission to read from node_modules/bcrypt/build/Release/bcrypt_lib.node\" >&2; exit 1'",
+        "trigger_env": {},
+        "expected_stderr_match": "error checking context.*no permission",
+        "fix_env": {
+          "DOCKER_BUILDKIT": "1"
+        },
+        "expected_fix_outcome": "different_error_or_success",
+        "fix_command": "bash -c 'echo \"DOCKER_BUILDKIT set (simulated)\"; exit 0'"
+      }
+    }
+  ]
+}

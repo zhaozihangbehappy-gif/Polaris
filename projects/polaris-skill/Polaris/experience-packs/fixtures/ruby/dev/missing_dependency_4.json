@@ -1,0 +1,5 @@
+{
+  "stderr": "Bundler could not find compatible versions for gem \"activesupport\":\n  In Gemfile:\n    rails (~> 7.1.0) was resolved to 7.1.3, which depends on\n      activesupport (= 7.1.3)\n\nCould not find gem 'activesupport (= 7.1.3)' in cached gems or in lockfile.\nRun `bundle install` to install missing gems.",
+  "error_class": "missing_dependency",
+  "source": "bundle install needed for transitive dependency"
+}

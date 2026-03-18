@@ -1,0 +1,5 @@
+{
+  "stderr": "Error response from daemon: Get \"https://registry-1.docker.io/v2/library/python/manifests/3.11-slim\": dial tcp 54.198.211.102:443: i/o timeout",
+  "error_class": "network_error",
+  "source": "docker pull with network firewall blocking outbound HTTPS"
+}

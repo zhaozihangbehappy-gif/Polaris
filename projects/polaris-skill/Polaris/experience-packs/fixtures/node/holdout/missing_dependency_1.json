@@ -1,0 +1,5 @@
+{
+  "stderr": "node:internal/modules/cjs/loader:1080\n  throw err;\n  ^\n\nError: Cannot find module 'dotenv'\nRequire stack:\n- /home/user/myapp/server/index.js\n    at Module._resolveFilename (node:internal/modules/cjs/loader:1077:15)\n    at Module._load (node:internal/modules/cjs/loader:922:27)\n    at Module.require (node:internal/modules/cjs/loader:1143:19)\n    at require (node:internal/modules/helpers:119:18)\n    at Object.<anonymous> (/home/user/myapp/server/index.js:2:1)\n    at Module._compile (node:internal/modules/cjs/loader:1256:14) {\n  code: 'MODULE_NOT_FOUND',\n  requireStack: [\n    '/home/user/myapp/server/index.js'\n  ]\n}\n\nNode.js v18.19.0",
+  "error_class": "missing_dependency",
+  "source": "Missing dotenv module in server startup"
+}

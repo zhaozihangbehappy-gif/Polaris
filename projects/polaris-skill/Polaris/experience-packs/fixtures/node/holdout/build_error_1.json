@@ -1,0 +1,5 @@
+{
+  "stderr": "npm ERR! code 1\nnpm ERR! path /home/user/project/node_modules/sharp\nnpm ERR! command failed\nnpm ERR! command sh -c (node install/libvips && node install/dll-copy && prebuild-install) || (node install/can-compile && node-gyp rebuild && node install/dll-copy)\nnpm ERR! sharp: Installation error: Could not find the globally installed libvips\nnpm ERR! sharp: Please install libvips development files\nnpm ERR! sharp: - On Debian/Ubuntu: sudo apt-get install libvips-dev\nnpm ERR! sharp: - On Red Hat/Fedora: sudo dnf install vips-devel\nnpm ERR! sharp: - On macOS: brew install vips\nnpm ERR! gyp ERR! build error \nnpm ERR! gyp ERR! stack Error: `make` failed with exit code: 2\nnpm ERR! gyp ERR! not ok",
+  "error_class": "build_error",
+  "source": "sharp native module build failure, missing system libvips"
+}

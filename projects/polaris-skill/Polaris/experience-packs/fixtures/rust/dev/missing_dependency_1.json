@@ -1,0 +1,5 @@
+{
+  "stderr": "error[E0432]: unresolved import `serde_json`\n --> src/main.rs:3:5\n  |\n3 | use serde_json::Value;\n  |     ^^^^^^^^^^ use of undeclared crate or module `serde_json`\n\nerror: aborting due to previous error\n\nFor more information about this error, try `rustc --explain E0432`.",
+  "error_class": "missing_dependency",
+  "source": "cargo check on project missing serde_json in Cargo.toml dependencies"
+}

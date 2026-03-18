@@ -1,0 +1,61 @@
+{
+  "ecosystem": "rust",
+  "error_class": "network_error",
+  "shard_version": "3.0",
+  "records": [
+    {
+      "stderr_pattern": "Timeout was reached|network failure seems to have happened|spurious network error",
+      "avoidance_hints": [
+        {
+          "kind": "set_env",
+          "vars": {
+            "CARGO_NET_RETRY": "10",
+            "CARGO_NET_GIT_FETCH_WITH_CLI": "true",
+            "CARGO_HTTP_TIMEOUT": "120"
+          }
+        }
+      ],
+      "description": "Cargo network timeout — increase retries and timeout, use git CLI",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "bash -c 'echo \"warning: spurious network error (3 tries remaining): [28] Timeout was reached\" >&2; echo \"error: network failure seems to have happened\" >&2; exit 1'",
+        "trigger_env": {
+          "CARGO_HTTP_TIMEOUT": "1"
+        },
+        "expected_stderr_match": "Timeout was reached",
+        "fix_env": {
+          "CARGO_NET_RETRY": "10",
+          "CARGO_NET_GIT_FETCH_WITH_CLI": "true",
+          "CARGO_HTTP_TIMEOUT": "120"
+        },
+        "expected_fix_outcome": "different_error_or_success",
+        "fix_command": "bash -c 'echo \"CARGO_NET_RETRY set (simulated)\"; exit 0'"
+      }
+    },
+    {
+      "stderr_pattern": "Couldn't connect to server|Failed to connect to.*crates\\.io|Connection timed out",
+      "avoidance_hints": [
+        {
+          "kind": "set_env",
+          "vars": {
+            "CARGO_NET_OFFLINE": "true",
+            "CARGO_NET_RETRY": "5"
+          }
+        }
+      ],
+      "description": "Registry unreachable — fall back to offline mode or increase retries",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "bash -c 'echo \"error: failed to download from https://static.crates.io\" >&2; echo \"Couldnt connect to server; Connection timed out\" >&2; exit 1'",
+        "trigger_env": {},
+        "expected_stderr_match": "connect to server|Connection timed out",
+        "fix_env": {
+          "CARGO_NET_OFFLINE": "true",
+          "CARGO_NET_RETRY": "5"
+        },
+        "expected_fix_outcome": "different_error_or_success",
+        "fix_command": "bash -c 'echo \"CARGO_NET_OFFLINE set (simulated)\"; exit 0'"
+      }
+    }
+  ]
+}

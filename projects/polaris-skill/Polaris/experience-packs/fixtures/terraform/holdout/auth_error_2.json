@@ -1,0 +1,1 @@
+{"stderr": "Error: error configuring S3 Backend: no valid credential sources for S3 Backend found.\n\nPlease see https://www.terraform.io/docs/language/settings/backends/s3.html\nfor more information about providing credentials.\n\nError: NoCredentialProviders: no valid providers in chain\n", "error_class": "auth_error", "source": "terraform-core-1.7.0"}

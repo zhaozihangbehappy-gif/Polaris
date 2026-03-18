@@ -1,0 +1,1 @@
+{"stderr": "Error: Unsupported block type\n\n  on main.tf line 22, in resource \"aws_s3_bucket\" \"data\":\n  22:   lifecycle_rules {\n\nBlocks of type \"lifecycle_rules\" are not expected here. Did you mean \"lifecycle_rule\"?\n", "error_class": "config_error", "source": "terraform-aws-provider-5.35"}

@@ -1,0 +1,5 @@
+{
+  "stderr": "Error response from daemon: Get \"https://ghcr.io/v2/myorg/myrepo/manifests/v1.2.3\": denied: denied\nerror: denied\nDENIED: access to the requested resource is not authorized",
+  "error_class": "auth_error",
+  "source": "docker pull from GitHub Container Registry with expired PAT"
+}

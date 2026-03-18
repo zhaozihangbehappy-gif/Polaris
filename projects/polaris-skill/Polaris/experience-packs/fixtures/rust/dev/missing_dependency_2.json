@@ -1,0 +1,5 @@
+{
+  "stderr": "error[E0463]: can't find crate for `tokio`\n  |\n  = note: the `tokio` crate is not loaded\n\nerror: aborting due to previous error\n\nFor more information about this error, try `rustc --explain E0463`.",
+  "error_class": "missing_dependency",
+  "source": "rustc compile with missing tokio crate, not in Cargo.toml"
+}

@@ -1,0 +1,5 @@
+{
+  "stderr": "error: package `axum v0.7.2` cannot be built because it requires rustc 1.74.0 or newer, while the currently active rustc version is 1.70.0\nEither upgrade to rustc 1.74.0 or newer, or use\ncargo update axum@0.7.2 --precise ver\nwhere `ver` is the latest version of `axum` supporting rustc 1.70.0",
+  "error_class": "version_conflict",
+  "source": "cargo build with axum 0.7 requiring newer rustc than installed"
+}

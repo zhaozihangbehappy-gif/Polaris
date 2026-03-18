@@ -1,0 +1,5 @@
+{
+  "stderr": "There was an error while trying to write to `/usr/local/lib/ruby/gems/3.2.0/cache`.\nIt is likely that you need to grant write permissions for that path.\nBundler::PermissionError: There was an error while trying to write to `/usr/local/lib/ruby/gems/3.2.0/cache`. It is likely that you need to grant write permissions for that path.",
+  "error_class": "permission_denial",
+  "source": "Bundler write permission error on system gem cache"
+}

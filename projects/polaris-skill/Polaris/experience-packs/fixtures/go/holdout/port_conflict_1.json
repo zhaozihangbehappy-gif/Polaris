@@ -1,0 +1,1 @@
+{"stderr": "failed to start gRPC server: listen tcp 0.0.0.0:50051: bind: address already in use\npanic: runtime error: gRPC server failed to bind\n\ngoroutine 1 [running]:\nmain.main()\n\t/home/user/myapp/cmd/server/main.go:45 +0x1a4\nexit status 2", "error_class": "port_conflict", "source": "go run gRPC server when port 50051 is already in use"}

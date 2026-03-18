@@ -1,0 +1,1 @@
+{"stderr": "Error: Module not installed\n\nThis module is not yet installed. Run \"terraform init\" to install all\nmodules required by this configuration.\n\n  on main.tf line 10, in module \"lambda\":\n  10: module \"lambda\" {\n", "error_class": "build_error", "source": "terraform-core-1.7.0"}

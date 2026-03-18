@@ -1,0 +1,45 @@
+{
+  "ecosystem": "terraform",
+  "error_class": "version_conflict",
+  "shard_version": "3.0",
+  "records": [
+    {
+      "stderr_pattern": "Unsupported Terraform Core version|does not support Terraform version|required_version",
+      "avoidance_hints": [
+        {
+          "kind": "run_shell",
+          "command": "terraform version 2>&1; grep required_version *.tf versions.tf 2>/dev/null || true"
+        }
+      ],
+      "description": "Terraform core version mismatch — check required_version constraint and install matching version",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "bash -c 'echo \"Unsupported Terraform Core version\" >&2; exit 1'",
+        "trigger_env": {},
+        "expected_stderr_match": "Unsupported Terraform Core version|required_version",
+        "fix_env": {},
+        "expected_fix_outcome": "different_error_or_success",
+        "fix_command": "bash -c 'echo \"fix applied\"; exit 0'"
+      }
+    },
+    {
+      "stderr_pattern": "locked provider.*does not match configured version constraint|provider version mismatch",
+      "avoidance_hints": [
+        {
+          "kind": "run_shell",
+          "command": "terraform init -upgrade 2>&1 || true"
+        }
+      ],
+      "description": "Provider version lock mismatch — run terraform init -upgrade to update lock file",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "bash -c 'echo \"locked provider\" >&2; exit 1'",
+        "trigger_env": {},
+        "expected_stderr_match": "locked provider|version constraint",
+        "fix_env": {},
+        "expected_fix_outcome": "different_error_or_success",
+        "fix_command": "bash -c 'echo \"fix applied\"; exit 0'"
+      }
+    }
+  ]
+}

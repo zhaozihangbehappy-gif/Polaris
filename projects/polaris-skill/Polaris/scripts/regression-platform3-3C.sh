@@ -27,90 +27,48 @@ print(len(idx['ecosystems']))
 ")
 assert_eq "$((G2 >= 8 ? 1 : 0))" "1" "3C-G2: ecosystem coverage ≥ 8 (got $G2)"
 
-# --- 3C-G3: Per-ecosystem fixture recall ≥ 60% ---
+# --- 3C-G3: Per-ecosystem dev fixture recall ≥ 60% (file-backed) ---
+# Reads from experience-packs/fixtures/{eco}/dev/*.json instead of inline data.
 G3=$(python3 -c "
-import sys, json, re
+import sys, json, re, os
 sys.path.insert(0, '$SCRIPTS')
 import polaris_failure_records as pfr
 
 pfr._index_cache = None
 from pathlib import Path
 packs = Path('$PACKS')
-
-fixtures = {
-    'python': [
-        ('ModuleNotFoundError: No module named \"requests\"', 'missing_dependency'),
-        ('SyntaxError: invalid syntax', 'syntax_error'),
-        ('PermissionError: [Errno 13] Permission denied', 'permission_denial'),
-        ('FileNotFoundError: [Errno 2] No such file', 'file_not_found'),
-        ('UnicodeDecodeError: \"utf-8\" codec can\\'t decode', 'encoding_error'),
-    ],
-    'node': [
-        ('Cannot find module \"express\"', 'missing_dependency'),
-        ('EACCES: permission denied', 'permission_denial'),
-        ('JavaScript heap out of memory', 'resource_exhaustion'),
-        ('ENOENT: no such file or directory, open \"/package.json\"', 'file_not_found'),
-        ('ERR_MODULE_NOT_FOUND', 'missing_dependency'),
-    ],
-    'go': [
-        ('cannot find module providing package', 'missing_dependency'),
-        ('build constraints exclude all Go files', 'build_error'),
-        ('missing go.sum entry', 'missing_dependency'),
-        ('permission denied', 'permission_denial'),
-        ('cannot find package', 'missing_dependency'),
-    ],
-    'rust': [
-        ('error[E0432]: unresolved import', 'missing_dependency'),
-        ('error: linker \`cc\` not found', 'build_error'),
-        ('error: failed to load source for dependency', 'missing_dependency'),
-        ('Permission denied .cargo', 'permission_denial'),
-        ('can\\'t find crate for', 'missing_dependency'),
-    ],
-    'java': [
-        ('java.lang.ClassNotFoundException: com.foo.Bar', 'missing_dependency'),
-        ('java.lang.OutOfMemoryError: Java heap space', 'resource_exhaustion'),
-        ('Could not resolve dependencies', 'missing_dependency'),
-        ('Permission denied .m2', 'permission_denial'),
-        ('java.lang.NoClassDefFoundError: org/junit/Test', 'missing_dependency'),
-    ],
-    'ruby': [
-        ('cannot load such file -- sinatra', 'missing_dependency'),
-        ('Could not find gem', 'missing_dependency'),
-        ('Errno::EACCES Permission denied', 'permission_denial'),
-        ('Encoding::InvalidByteSequenceError', 'encoding_error'),
-        ('Gem::MissingSpecError', 'missing_dependency'),
-    ],
-    'docker': [
-        ('Got permission denied while trying to connect to the Docker daemon', 'permission_denial'),
-        ('error during connect: This error may indicate that the docker daemon is not running', 'network_error'),
-        ('no space left on device', 'resource_exhaustion'),
-        ('denied: requested access to the resource is denied', 'permission_denial'),
-        ('invalid reference format', 'config_error'),
-    ],
-    'terraform': [
-        ('No valid credential sources found for AWS Provider', 'auth_error'),
-        ('Error: Missing required provider', 'config_error'),
-        ('Error: permission denied .terraform', 'permission_denial'),
-        ('Error: Unauthorized', 'auth_error'),
-        ('Error: backend initialization required', 'config_error'),
-    ],
-}
+fixtures_root = packs / 'fixtures'
 
 total = 0
 hits = 0
 local_store = {'schema_version': 2, 'records': []}
-for eco, cases in fixtures.items():
-    for stderr_text, expected_class in cases:
+
+for eco_dir in sorted(fixtures_root.iterdir()):
+    if not eco_dir.is_dir():
+        continue
+    eco = eco_dir.name
+    dev_dir = eco_dir / 'dev'
+    if not dev_dir.is_dir():
+        continue
+    for f in sorted(dev_dir.glob('*.json')):
+        try:
+            fixture = json.loads(f.read_text())
+        except:
+            continue
+        stderr_text = fixture.get('stderr', '')
+        expected_class = fixture.get('error_class', '')
+        if not stderr_text or not expected_class:
+            continue
         total += 1
+        pfr._index_cache = None
         result = pfr.query_sharded(
             local_store, packs_dir=packs,
-            matching_key='fixture-test',
+            matching_key='fixture-dev-test',
             ecosystem=eco, error_class=expected_class,
             stderr_text=stderr_text
         )
         if result.get('match_tier') in ('ecosystem_pattern', 'ecosystem') and result.get('avoidance_hints'):
             hits += 1
-        pfr._index_cache = None  # reset cache between queries
 
 recall = hits / total if total > 0 else 0
 print(f'{recall:.2f},{hits},{total}')
@@ -227,124 +185,38 @@ print(f'{avg_ms:.2f}')
 G7_OK=$(python3 -c "print('yes' if float('$G7') < 2.0 else 'no:${G7}ms')")
 assert_eq "$G7_OK" "yes" "3C-G7: largest shard query < 2ms (actual: ${G7}ms)"
 
-# --- 3C-G8: KILL GATE — independent holdout corpus, first-hit ≥ 60% ---
-# This corpus is SEPARATE from G3 fixtures: different wording, different contexts,
-# real-world stderr phrasing that users actually see. No overlap with G3.
+# --- 3C-G8: KILL GATE — independent holdout corpus, first-hit ≥ 60% (file-backed) ---
+# Reads from experience-packs/fixtures/{eco}/holdout/*.json.
 G8=$(python3 -c "
-import sys, json, re
+import sys, json, re, os
 sys.path.insert(0, '$SCRIPTS')
 import polaris_failure_records as pfr
 from pathlib import Path
 
 pfr._index_cache = None
 packs = Path('$PACKS')
+fixtures_root = packs / 'fixtures'
 local_store = {'schema_version': 2, 'records': []}
-
-# 80 probes: 10 per ecosystem, all distinct from G3 fixtures.
-# Each probe is a realistic stderr string a user would actually see.
-holdout = {
-    'python': [
-        ('Traceback (most recent call last):\n  File \"app.py\", line 1\nModuleNotFoundError: No module named \"flask\"', 'missing_dependency'),
-        ('ModuleNotFoundError: No module named \"pandas.core\"', 'missing_dependency'),
-        ('  File \"/app/main.py\", line 42\n    print(x\n         ^\nSyntaxError: unexpected EOF while parsing', 'syntax_error'),
-        ('SyntaxError: f-string expression part cannot include a backslash', 'syntax_error'),
-        ('PermissionError: [Errno 13] Permission denied: \"/var/log/app.log\"', 'permission_denial'),
-        ('PermissionError: [Errno 13] Permission denied: \"/opt/data/output.csv\"', 'permission_denial'),
-        ('FileNotFoundError: [Errno 2] No such file or directory: \"config.yaml\"', 'file_not_found'),
-        ('FileNotFoundError: [Errno 2] No such file or directory: \"/etc/myapp/settings.json\"', 'file_not_found'),
-        ('UnicodeDecodeError: \"utf-8\" codec can\\'t decode byte 0xff in position 0: invalid start byte', 'encoding_error'),
-        ('UnicodeDecodeError: \"ascii\" codec can\\'t decode byte 0xc3 in position 42: ordinal not in range(128)', 'encoding_error'),
-    ],
-    'node': [
-        ('Error: Cannot find module \"lodash\"\nRequire stack:\n- /app/index.js', 'missing_dependency'),
-        ('Error [ERR_MODULE_NOT_FOUND]: Cannot find package \"@nestjs/core\" imported from /app/dist/main.js', 'missing_dependency'),
-        ('internal/modules/cjs/loader.js:905\n  throw err;\nError: Cannot find module \"express\"', 'missing_dependency'),
-        ('Error: Cannot find module \"typescript/lib/typescript\"', 'missing_dependency'),
-        ('FATAL ERROR: CALL_AND_RETRY_LAST Allocation failed - JavaScript heap out of memory', 'resource_exhaustion'),
-        ('FATAL ERROR: Reached heap limit Allocation failed - worker thread OOM', 'resource_exhaustion'),
-        ('Error: EACCES: permission denied, mkdir \"/usr/local/lib/node_modules/gatsby\"', 'permission_denial'),
-        ('npm ERR! Error: EACCES: permission denied, rename /root/.npm/_cacache/content-v2', 'permission_denial'),
-        ('ENOENT: no such file or directory, open \"/app/dist/package.json\"', 'file_not_found'),
-        ('ENOENT: no such file or directory, open \"/workspace/node_modules/.package-lock.json\"', 'file_not_found'),
-    ],
-    'go': [
-        ('go: finding module for package github.com/gin-gonic/gin\nmain.go:3:8: no required module provides package github.com/gin-gonic/gin', 'missing_dependency'),
-        ('go: module github.com/lib/pq found (v1.10.9) but does not contain package github.com/lib/pq/v2', 'missing_dependency'),
-        ('missing go.sum entry for module providing package golang.org/x/text/language', 'missing_dependency'),
-        ('go.sum: checksum mismatch\n\tdownloaded: h1:abc\n\tgo.sum:     h1:def', 'missing_dependency'),
-        ('cannot find package \"github.com/my-org/internal-lib\" in any of:\n\t/usr/local/go/src (from GOROOT)', 'missing_dependency'),
-        ('go: writing go.mod: permission denied', 'permission_denial'),
-        ('open /home/builder/go/pkg/mod/cache/lock: EPERM', 'permission_denial'),
-        ('build constraints exclude all Go files in /usr/local/go/src/net', 'build_error'),
-        ('no Go files in /app/cmd/server', 'build_error'),
-        ('go: writing go.mod: permission denied\ngo: updates to go.mod needed', 'permission_denial'),
-    ],
-    'rust': [
-        ('error[E0432]: unresolved import \"tokio::main\"', 'missing_dependency'),
-        ('error: failed to load source for dependency \"serde_json\"\n\nCaused by:\n  Unable to update registry', 'missing_dependency'),
-        ('can\\'t find crate for log', 'missing_dependency'),
-        ('error[E0432]: unresolved import \"actix_web::HttpServer\"', 'missing_dependency'),
-        ('error: linker \"x86_64-linux-gnu-gcc\" not found', 'build_error'),
-        ('error: could not compile \"my-project\" (lib) due to 3 previous errors', 'build_error'),
-        ('error: could not compile \"proc-macro2\"', 'build_error'),
-        ('Permission denied (os error 13) .cargo/registry/cache/github.com-1ecc6299db9ec823', 'permission_denial'),
-        ('error: failed to write /home/user/.cargo/registry: permission denied', 'permission_denial'),
-        ('error[E0432]: unresolved import \"diesel::prelude\"', 'missing_dependency'),
-    ],
-    'java': [
-        ('Exception in thread \"main\" java.lang.ClassNotFoundException: org.springframework.boot.SpringApplication', 'missing_dependency'),
-        ('java.lang.NoClassDefFoundError: javax/servlet/http/HttpServletRequest', 'missing_dependency'),
-        ('Could not resolve dependencies for project com.example:app:jar:1.0\n  Could not find artifact org.apache.kafka:kafka-clients:jar:3.5.0', 'missing_dependency'),
-        ('java.lang.ClassNotFoundException: com.mysql.cj.jdbc.Driver', 'missing_dependency'),
-        ('Could not find artifact io.grpc:grpc-protobuf:jar:1.58.0 in central', 'missing_dependency'),
-        ('error: release version 21 not supported\n1 error', 'build_error'),
-        ('java.lang.UnsupportedClassVersionError: Preview features are not enabled', 'build_error'),
-        ('java.security.AccessControlException: access denied (\"java.io.FilePermission\" \"/opt/app\" \"write\")', 'permission_denial'),
-        ('java.lang.OutOfMemoryError: Java heap space\n\tat java.util.Arrays.copyOf', 'resource_exhaustion'),
-        ('java.lang.OutOfMemoryError: GC overhead limit exceeded', 'resource_exhaustion'),
-    ],
-    'ruby': [
-        ('LoadError: cannot load such file -- bundler/setup\nRun \"bundle install\" to install missing gems.', 'missing_dependency'),
-        ('Could not find gem \"rails\" (~> 7.0) in locally installed gems.\nRun \"bundle install\" to install missing gems.', 'missing_dependency'),
-        ('Gem::MissingSpecError: Could not find \"puma\" (~> 6.0) in locally installed gems.', 'missing_dependency'),
-        ('Bundler::GemNotFound: Could not find gem \"sidekiq\" (>= 7.0) in any of the gem sources', 'missing_dependency'),
-        ('LoadError: cannot load such file -- nokogiri', 'missing_dependency'),
-        ('Errno::EACCES: Permission denied @ dir_s_mkdir - /usr/local/lib/ruby/gems/3.2.0', 'permission_denial'),
-        ('You don\\'t have write permissions for the /var/lib/gems/3.2.0/gems directory.', 'permission_denial'),
-        ('Encoding::InvalidByteSequenceError: \"\\xE2\" followed by \"\\x80\" on UTF-8', 'encoding_error'),
-        ('invalid byte sequence in US-ASCII (ArgumentError)', 'encoding_error'),
-        ('Encoding::InvalidByteSequenceError: \"\\xC0\" on UTF-8', 'encoding_error'),
-    ],
-    'docker': [
-        ('Got permission denied while trying to connect to the Docker daemon socket at unix:///var/run/docker.sock', 'permission_denial'),
-        ('denied: requested access to the resource is denied\nUnauthorized: authentication required', 'permission_denial'),
-        ('error during connect: Post http://docker:2375/v1.40/build: dial tcp: lookup docker: no such host', 'network_error'),
-        ('Cannot connect to the Docker daemon at unix:///var/run/docker.sock. Is the docker daemon running?', 'network_error'),
-        ('error during connect: Get http+unix://%2Fvar%2Frun%2Fdocker.sock/v1.24/containers/json: dial unix /var/run/docker.sock: connect: connection refused', 'network_error'),
-        ('no space left on device: failed to register layer', 'resource_exhaustion'),
-        ('Error processing tar file(exit status 1): write /layer.tar: no space left on device', 'resource_exhaustion'),
-        ('invalid reference format: repository name must be lowercase', 'config_error'),
-        ('invalid image name \"My-App:latest\": invalid reference format', 'config_error'),
-        ('Got permission denied while trying to connect to Docker at tcp://10.0.0.5:2376', 'permission_denial'),
-    ],
-    'terraform': [
-        ('Error: No valid credential sources found for AWS Provider.\n  Please see https://registry.terraform.io/providers/hashicorp/aws', 'auth_error'),
-        ('NoCredentialProviders: no valid providers in chain.\n  EnvAccessKeyNotFound, SharedCredsLoad', 'auth_error'),
-        ('ExpiredToken: The security token included in the request is expired\n\tstatus code: 403', 'auth_error'),
-        ('Error: Unauthorized\n  Status: 401 Unauthorized', 'auth_error'),
-        ('Error: Missing required provider \"hashicorp/aws\"\n\nThis configuration requires provider', 'config_error'),
-        ('Error: provider hashicorp/google not available\n\nProvider \"registry.terraform.io/hashicorp/google\"', 'config_error'),
-        ('Error: backend initialization required, please run \"terraform init\"', 'config_error'),
-        ('Error: permission denied .terraform/providers', 'permission_denial'),
-        ('Failed to read plugin dir .terraform/providers/registry.terraform.io: permission denied', 'permission_denial'),
-        ('Error: status code: 403, request id: abc-123: Access Denied', 'auth_error'),
-    ],
-}
 
 total = 0
 hits = 0
-for eco, cases in holdout.items():
-    for stderr_text, expected_class in cases:
+
+for eco_dir in sorted(fixtures_root.iterdir()):
+    if not eco_dir.is_dir():
+        continue
+    eco = eco_dir.name
+    holdout_dir = eco_dir / 'holdout'
+    if not holdout_dir.is_dir():
+        continue
+    for f in sorted(holdout_dir.glob('*.json')):
+        try:
+            fixture = json.loads(f.read_text())
+        except:
+            continue
+        stderr_text = fixture.get('stderr', '')
+        expected_class = fixture.get('error_class', '')
+        if not stderr_text or not expected_class:
+            continue
         total += 1
         pfr._index_cache = None
         result = pfr.query_sharded(
@@ -373,7 +245,7 @@ assert_eq "$((G8_PCT >= 60 ? 1 : 0))" "1" "3C-G8b: KILL GATE — holdout first-h
 #          (expected_fix_outcome = "different_error_or_success").
 # This proves the fix actually changes the outcome, not just that the error exists.
 G9=$(python3 -c "
-import json, os, re, subprocess, shutil
+import json, os, re, resource, subprocess, shutil
 
 idx = json.load(open('$PACKS/index.json'))
 total = 0
@@ -382,6 +254,7 @@ phase1_passed = 0
 phase2_passed = 0
 skipped_tools = set()
 failures = []
+resource_limit_mb = int(os.environ.get('POLARIS_REPRO_RESOURCE_MEMORY_MB', '768'))
 
 def _find_tool(cmd):
     for w in cmd.split():
@@ -390,12 +263,16 @@ def _find_tool(cmd):
         return w
     return cmd.split()[0]
 
-def _run(cmd, env_overrides, timeout=15):
+def _run(cmd, env_overrides, timeout=15, error_class=''):
     env = dict(os.environ)
     env.update(env_overrides)
+    def _preexec():
+        if error_class == 'resource_exhaustion':
+            limit_bytes = resource_limit_mb * 1024 * 1024
+            resource.setrlimit(resource.RLIMIT_AS, (limit_bytes, limit_bytes))
     try:
         r = subprocess.run(['bash', '-c', cmd], capture_output=True, text=True,
-                           timeout=timeout, env=env, cwd='/tmp')
+                           timeout=timeout, env=env, cwd='/tmp', preexec_fn=_preexec)
         return r.stdout + r.stderr, r.returncode, False
     except subprocess.TimeoutExpired:
         return '', -1, True
@@ -432,7 +309,7 @@ for eco, info in idx['ecosystems'].items():
                 continue
 
             # === Phase 1: trigger the error ===
-            out1, rc1, timeout1 = _run(cmd, trigger_env)
+            out1, rc1, timeout1 = _run(cmd, trigger_env, error_class=ec)
             executed += 1
             if timeout1:
                 # Timeout can be the expected error for some cases
@@ -445,15 +322,17 @@ for eco, info in idx['ecosystems'].items():
             phase1_passed += 1
 
             # === Phase 2: apply fix and rerun ===
+            # Build fix env: trigger_env + fix_env + avoidance_hints set_env vars
+            # (matches repro_diag.py and actual Polaris engine behavior)
+            fix_cmd_env = dict(trigger_env)
+            fix_cmd_env.update(fix_env)
+            for hint in rec.get('avoidance_hints', []) or []:
+                if hint.get('kind') == 'set_env':
+                    fix_cmd_env.update(hint.get('vars', {}) or {})
             if fix_command:
-                # Use fix_command as the phase 2 command (for cases where fix is a different command)
-                fix_cmd_env = dict(trigger_env)
-                fix_cmd_env.update(fix_env)
-                out2, rc2, timeout2 = _run(fix_command, fix_cmd_env)
+                out2, rc2, timeout2 = _run(fix_command, fix_cmd_env, error_class=ec)
             else:
-                merged_fix_env = dict(trigger_env)
-                merged_fix_env.update(fix_env)
-                out2, rc2, timeout2 = _run(cmd, merged_fix_env)
+                out2, rc2, timeout2 = _run(cmd, fix_cmd_env, error_class=ec)
 
             if expected_outcome == 'different_error_or_success':
                 # The fix must change SOMETHING: different output or different exit code

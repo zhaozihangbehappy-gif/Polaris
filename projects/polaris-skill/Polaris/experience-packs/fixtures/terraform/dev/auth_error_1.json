@@ -1,0 +1,1 @@
+{"stderr": "Error: No valid credential sources found\n\n  Provider \"registry.terraform.io/hashicorp/aws\" requires credentials to\n  sign requests. Please configure credentials via AWS_ACCESS_KEY_ID and\n  AWS_SECRET_ACCESS_KEY, or use a shared credentials file.\n", "error_class": "auth_error", "source": "terraform-aws-provider-5.40"}

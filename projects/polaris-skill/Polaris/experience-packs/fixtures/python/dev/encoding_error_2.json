@@ -1,0 +1,5 @@
+{
+  "stderr": "Traceback (most recent call last):\n  File \"/home/user/project/export.py\", line 48, in write_csv\n    writer.writerow(row)\n  File \"/usr/lib/python3.10/encodings/ascii.py\", line 19, in encode\n    return codecs.ascii_encode(input, self.errors)[0]\nUnicodeEncodeError: 'ascii' codec can't encode character '\\u00e9' in position 12: ordinal not in range(128)",
+  "error_class": "encoding_error",
+  "source": "ascii locale prevents writing unicode to stdout"
+}

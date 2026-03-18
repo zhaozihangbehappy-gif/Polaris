@@ -1,0 +1,1 @@
+{"stderr": "Error: Error reading state file: state file exceeds maximum supported size of 512MB. Please reduce the number of resources managed in a single state.\n\nThe state file is 523MB and exceeds the maximum size limit.\n", "error_class": "resource_exhaustion", "source": "terraform-core-1.7.0"}

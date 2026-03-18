@@ -1,0 +1,5 @@
+{
+  "stderr": "failed to solve: dockerfile parse error on line 15: unknown instruction: RUNCMD",
+  "error_class": "config_error",
+  "source": "docker build with typo in Dockerfile instruction"
+}

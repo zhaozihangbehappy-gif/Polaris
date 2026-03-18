@@ -1,0 +1,5 @@
+{
+  "stderr": "error: couldn't read from `src/main.rs`: No such file or directory (os error 2)\n\nerror: aborting due to previous error",
+  "error_class": "file_not_found",
+  "source": "cargo build in project where src/main.rs was deleted but Cargo.toml references [[bin]]"
+}

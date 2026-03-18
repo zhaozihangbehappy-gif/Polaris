@@ -1,0 +1,5 @@
+{
+  "stderr": "Error response from daemon: Head \"https://123456789012.dkr.ecr.us-east-1.amazonaws.com/v2/my-service/manifests/latest\": no basic auth credentials",
+  "error_class": "auth_error",
+  "source": "docker pull from AWS ECR without running ecr get-login-password first"
+}

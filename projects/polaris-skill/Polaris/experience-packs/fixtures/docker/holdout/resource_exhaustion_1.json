@@ -1,0 +1,5 @@
+{
+  "stderr": "failed to register layer: Error processing tar file(exit status 1): write /usr/local/lib/python3.11/site-packages/torch/lib/libtorch_cpu.so: no space left on device",
+  "error_class": "resource_exhaustion",
+  "source": "docker build of PyTorch image on disk-constrained GitHub Actions runner"
+}

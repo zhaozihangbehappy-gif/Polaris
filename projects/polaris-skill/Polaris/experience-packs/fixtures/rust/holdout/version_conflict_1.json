@@ -1,0 +1,5 @@
+{
+  "stderr": "error: package `clap v4.4.11` cannot be built because it requires rustc 1.74.0 or newer, while the currently active rustc version is 1.68.0\nEither upgrade to rustc 1.74.0 or newer, or use\ncargo update clap@4.4.11 --precise ver\nwhere `ver` is the latest version of `clap` supporting rustc 1.68.0",
+  "error_class": "version_conflict",
+  "source": "cargo build with clap v4 requiring newer MSRV than system rustc"
+}
