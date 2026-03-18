@@ -269,7 +269,7 @@ def main() -> None:
     out = {"status": result["status"], "output": str(output_path), "adapter": args.adapter}
     if result["status"] == "failed":
         print(json.dumps(out, sort_keys=True))
-        raise SystemExit(result["stderr"][:200] or f"exit code {result['exit_code']}")
+        raise SystemExit(result["stderr"][:2000] or f"exit code {result['exit_code']}")
     print(json.dumps(out, sort_keys=True))
 
 

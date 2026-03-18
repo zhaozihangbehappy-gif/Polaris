@@ -1761,9 +1761,14 @@ def main() -> None:
     execution_validation_error = validation_result.get("parsed", {}).get("reason")
     execution_payload = validation_result.get("parsed", {}).get("payload")
     execution_error = None
-    # For shell_command, the adapter process returncode is at top level, not in parsed;
-    # for other kinds, the executor embeds returncode in parsed output.
-    exec_rc = execution_result.get("returncode", 0) if execution_kind == "shell_command" else execution_result.get("parsed", {}).get("returncode", 0)
+    # For shell_command, the user command's exit code is inside parsed output (exit_code),
+    # because the adapter process itself always exits 0.
+    # For other kinds, the executor embeds returncode in parsed output.
+    if execution_kind == "shell_command":
+        _parsed = execution_result.get("parsed", {})
+        exec_rc = _parsed.get("exit_code", _parsed.get("returncode", execution_result.get("returncode", 0)))
+    else:
+        exec_rc = execution_result.get("parsed", {}).get("returncode", 0)
     if exec_rc != 0 or not execution_ok:
         execution_error = execution_result.get("parsed", {}).get("stderr") or execution_result.get("stderr") or execution_result.get("parsed", {}).get("stdout") or execution_validation_error or args.simulate_error or "execution failed"
         history.append(run_checked([sys.executable, str(base / "polaris_state.py"), "attempt", "--state", args.state, "--step", "execute_adapter_contract", "--status", "failed", "--summary", execution_error, "--evidence", execution_contract.get("output_file", ""), "--branch-id", execution_branch], "record execution failure attempt"))
@@ -1774,8 +1779,24 @@ def main() -> None:
             failure_classification = pr.classify(execution_error)
             error_class = failure_classification.get("failure_type", "unknown")
             repair_class = failure_classification.get("repair_class", "unknown")
-            # Build avoidance hints from the failure
-            avoidance_hints = _build_failure_avoidance_hints(execution_error, error_class, shell_cmd or args.goal)
+            # Build avoidance hints: prefer prebuilt pack hints over generic built-in hints
+            _detected_eco = _detected_ecosystem if '_detected_ecosystem' in dir() else None
+            avoidance_hints = []
+            if _detected_eco and error_class != "unknown":
+                _mk = task_fingerprint.get("matching_key") if task_fingerprint else "prebuilt-lookup"
+                _ck = task_fingerprint.get("command_key") if task_fingerprint else "prebuilt-lookup"
+                _prebuilt_query = pfr.query_sharded(
+                    {"schema_version": 2, "records": []},  # empty local store — only search prebuilt packs
+                    packs_dir=base.parent / "experience-packs",
+                    matching_key=_mk, command_key=_ck,
+                    ecosystem=_detected_eco, error_class=error_class,
+                    stderr_text=execution_error[:500] if execution_error else None,
+                )
+                _prebuilt_hints = _prebuilt_query.get("avoidance_hints", [])
+                # Strip confidence_discount from prebuilt hints for recording
+                avoidance_hints = [{k: v for k, v in h.items() if k != "confidence_discount"} for h in _prebuilt_hints]
+            if not avoidance_hints:
+                avoidance_hints = _build_failure_avoidance_hints(execution_error, error_class, shell_cmd or args.goal)
             failure_store_path = Path(args.patterns).parent / "failure-records.json"
             failure_store = pfr.load_store(failure_store_path)
             pfr.record(failure_store, task_fingerprint, shell_cmd or args.goal, error_class, execution_error[:500], repair_class, avoidance_hints)
