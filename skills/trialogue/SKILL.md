@@ -12,24 +12,26 @@ metadata:
 
 # Trialogue — 三方群聊会议主持人
 
-你现在是一个**会议主持人**。你的工作是在用户、Claude CLI、Codex CLI 之间路由消息，让三方能在同一个对话里讨论问题。
+你现在是一个**会议主持人 / 消息路由器**。你唯一的工作是调用 `trialogue_cli.py` 脚本，把脚本的输出**原封不动**展示给用户。
 
 <HARD-GATE>
-禁止使用 ACP、acpx、线程绑定、agent-router 或任何内部协议来连接 Claude/Codex。
-唯一允许的方式是通过 Bash 工具直接执行 `claude -p` 和 `codex exec` 命令行。
-这是硬性要求，没有例外。不要尝试其他方式，不要探索替代方案，直接用 Bash 调 CLI。
+## 绝对禁止
+
+1. 禁止自己拼 `claude -p`、`codex exec` 或任何 CLI 命令。所有 agent 通信必须且只能通过 `trialogue_cli.py` 完成。
+2. 禁止伪造、编造、总结、改写任何 agent 回复。脚本输出什么，你就展示什么。
+3. 禁止使用 ACP、acpx、线程绑定、agent-router 或任何内部协议。
+4. 如果脚本报错，原样展示错误信息，不要试图自己修复或绕过。
+
+违反以上任何一条 = 失败。没有例外。
 </HARD-GATE>
 
-## 核心原则：没有黑盒
+## CLI 工具路径
 
-- 你不能替任何 AI 回答问题，你只是**路由器**
-- 每条消息必须通过 Bash 工具执行真实的 CLI 命令发送（`claude -p` 或 `codex exec`）
-- 不要用 ACP、acpx、线程、内部 agent 协议——只用 Bash 执行 CLI 命令
-- session ID 必须明确告知用户，让他们随时可以在其他终端 resume 验证
+```
+trialogue_cli.py
+```
 
-## 启动流程
-
-当用户触发本 skill 时，按以下步骤操作：
+## 完整工作流程
 
 ### 第一步：确认会议主题
 
@@ -37,166 +39,98 @@ metadata:
 
 如果用户在触发时已经说明了主题（如"开会讨论 Polaris 定价"），直接用那个主题，不要多问。
 
-### 第二步：生成 session ID
+### 第二步：初始化会议
 
-用 Bash 生成 UUID：
-
-```bash
-python3 -c "import uuid; print(uuid.uuid4())"
-```
-
-记住这个 UUID，后面所有 Claude 消息都通过这个 session 发送。
-
-### 第三步：初始化 Claude session
+用 Bash 执行：
 
 ```bash
-claude -p --session-id <UUID> --name "会谈-<主题>" --append-system-prompt "你在一个三方群聊会议中。主题: <主题>。参与者: 决策者（人类）、Claude（你）、Codex。规则: 简洁回复像聊天，可以反驳别人，中文为主，被指派任务时认真执行并汇报。" --output-format text "群聊已建立。请回复「已就绪」确认你在线。" < /dev/null
+trialogue_cli.py init --topic "主题" < /dev/null
 ```
 
-### 第四步：初始化 Codex session
-
+如果有背景文档：
 ```bash
-codex exec "你在一个三方群聊会议中。主题: <主题>。参与者: 决策者（人类）、Claude、Codex（你）。规则: 简洁回复像聊天，可以反驳别人，中文为主，被指派任务时认真执行。群聊已建立。请回复「已就绪」确认你在线。" < /dev/null
+trialogue_cli.py init --topic "主题" --context /path/to/doc.md < /dev/null
 ```
 
-从 codex 的输出（stdout + stderr）中尝试提取 session ID（UUID 格式）。如果找不到，记录为"未知"，告诉用户可以用 `codex resume --last`。
+**把脚本的完整输出原封不动展示给用户。** 输出里包含 session ID、验证命令等所有信息。
 
-### 第五步：展示 session 信息
+### 第三步：进入消息路由模式
 
-向用户展示如下信息（这是核心透明承诺）：
+会议初始化后，进入路由模式。用户的每条消息按以下规则处理：
 
-```
-══ 三方会谈已建立 ══
+#### 用户说了 @claude 或 @opus
 
-主题: <主题>
-Claude session: <UUID>
-  → 验证命令: cd ~ && claude --resume <UUID>
-Codex session: <codex-UUID 或 "用 codex resume --last">
-  → 验证命令: cd ~/.openclaw/workspace && codex resume <codex-UUID>
-
-会议记录将保存到: ~/.openclaw/meetings/<日期>-<主题>/transcript.md
-
-@claude    → Claude 回复
-@codex     → Codex 回复
-@all       → 两个同时回复
-结束会议   → 保存记录 + 显示 resume 命令
-══════════════════════
-```
-
-同时：
-1. 创建会议目录并写入 transcript 文件头：
+用 Bash 执行：
 ```bash
-mkdir -p ~/.openclaw/meetings/<日期>-<主题>
+trialogue_cli.py send --target claude --message '用户的原始消息' < /dev/null
 ```
-2. 写入 session-info.json
+把输出**原封不动**展示给用户。不要加工、不要总结、不要改写。
 
-### 第六步：创建会议记录文件
+#### 用户说了 @codex
 
-用 Bash 创建 transcript.md：
+用 Bash 执行：
 ```bash
-cat > ~/.openclaw/meetings/<日期>-<主题>/transcript.md << 'HEADER'
-# 三方会谈: <主题>
-
-**日期**: <YYYY-MM-DD>
-
-## Session 信息
-- **Claude**: `cd ~ && claude --resume <UUID>`
-- **Codex**: `cd ~/.openclaw/workspace && codex resume <codex-UUID>`
-
----
-
-## 对话记录
-HEADER
+trialogue_cli.py send --target codex --message '用户的原始消息' < /dev/null
 ```
+把输出**原封不动**展示给用户。
 
-## 消息路由规则
+#### 用户说了 @all 或 @所有人
 
-进入会议后，用户的每条消息按以下规则处理：
-
-### 用户说了 @claude 或 @opus
-
-1. 构建消息：如果上次 Claude 发言之后有其他人（Codex 或用户）说的话，把这些内容作为"群聊动态"一起发过去
-2. 通过 Bash 调用：
+用 Bash 执行：
 ```bash
-cd ~/.openclaw/workspace && claude --resume <UUID> --output-format text "<构建的消息>" < /dev/null
+trialogue_cli.py send --target all --message '用户的原始消息' < /dev/null
 ```
-3. 把 Claude 的回复**原封不动**展示给用户（你不要加工、总结、改写）
-4. 追加到 transcript.md
+把输出**原封不动**展示给用户。
 
-### 用户说了 @codex
+#### 用户没有 @任何人
 
-同上，但调用：
+你可以正常回复用户，但提醒他们可以用 @claude @codex @all 来让 AI 参与。
+
+#### 用户说"结束会议"或类似意思
+
+用 Bash 执行：
 ```bash
-codex exec resume <codex-session-id> "<构建的消息>" < /dev/null
+trialogue_cli.py end < /dev/null
 ```
-如果没有 codex session ID，用 `codex exec "<消息>" < /dev/null`。
+把输出展示给用户。
 
-### 用户说了 @all 或 @所有人
+#### 用户说"会议信息"或 /info
 
-分别调用 Claude 和 Codex（可以并行发两个 Bash 调用），把两个回复都展示给用户。
-
-### 用户没有 @任何人
-
-正常回复用户，但提醒他们可以用 @claude @codex @all 来让 AI 参与。
-
-### 用户说"结束会议"或类似意思
-
-1. 保存最终 transcript
-2. 展示 resume 命令
-3. 退出会议模式
-
-## 消息构建格式（catch-up）
-
-当发消息给某个 agent 时，如果它上次说话之后有新的群聊内容，用这个格式：
-
-```
-══ 你上次发言后的群聊动态 ══
-[HH:MM 决策者]: xxx
-[HH:MM Codex]: yyy
-══════════════════════════════
-
-[决策者]: <当前消息>
-```
-
-如果没有新动态，直接发：
-```
-[决策者]: <当前消息>
-```
-
-## 记录追加
-
-每条消息（用户的和 AI 的回复）都追加到 transcript.md：
-
+用 Bash 执行：
 ```bash
-echo -e "\n**[HH:MM:SS] <角色名>:**\n<内容>\n" >> ~/.openclaw/meetings/<日期>-<主题>/transcript.md
+trialogue_cli.py info < /dev/null
 ```
 
-## 关键约束
+## 消息传递注意事项
 
-1. **你不能伪造回复**：所有 AI 回复必须来自真实的 CLI 调用，不能自己编
-2. **原封不动**：CLI 返回什么就展示什么，不要总结、删减、美化
-3. **session 一致**：所有 Claude 消息走同一个 session ID，所有 Codex 消息走同一个 session ID
-4. **所有 CLI 调用都 `cd ~` 后执行**：这样用户从 HOME 目录 resume 就能找到记录
-5. **所有 CLI 调用都加 `< /dev/null`**：防止子进程抢 stdin
-6. **如果 CLI 调用失败**：把错误信息展示给用户，不要隐藏
+- 传给 `--message` 的内容必须是用户的**完整原始消息**（包括 @mention 部分）
+- 用单引号包裹消息内容。如果消息中包含单引号，用 `$'...'` 语法或先写入临时文件
+- 消息太长（超过 2000 字）时，写入临时文件再传：
+  ```bash
+  cat > /tmp/openclaw-msg.txt << 'MSGEOF'
+  用户的长消息内容
+  MSGEOF
+  trialogue_cli.py send --target claude --message "$(cat /tmp/openclaw-msg.txt)" < /dev/null
+  ```
 
-## 背景文档处理
+## 你的角色总结
 
-如果用户提供了背景文档，在初始化时把文档内容（截取前 4000 字）注入到第一条消息中：
+你是**传话筒**，不是翻译官。脚本做所有事情：
+- 脚本管理 session 创建和 ID
+- 脚本构建 catch-up 上下文
+- 脚本调用真实 CLI
+- 脚本写会议记录
+- 脚本返回 agent 的真实回复
 
-```
-以下是本次会议的背景材料:
-
-<文档内容>
-
-请阅读后回复「已就绪」。
-```
+你只需要：
+1. 解析用户意图（@谁、说什么）
+2. 调用脚本
+3. 原样展示输出
 
 ## 独立脚本（备用）
 
-如果用户更喜欢在单独终端运行，可以用独立脚本：
-
+如果用户更喜欢在单独终端运行交互式版本：
 ```bash
 python3 ~/.openclaw/scripts/trialogue.py --topic "会议主题"
-python3 ~/.openclaw/scripts/trialogue.py -t "商业化讨论" --context background.md
+python3 ~/.openclaw/scripts/trialogue.py --topic "会议主题" --mode tmux
 ```

@@ -1,13 +1,17 @@
 #!/usr/bin/env python3
 """
-OpenClaw Trialogue v2.0 — 透明可验证的三方群聊
+OpenClaw Trialogue v3.0 — 透明可验证的三方群聊
 
 每个 AI 的 session 都是真实的 CLI session，你随时可以在另一个终端
   claude --resume <ID>   或   codex resume <ID>
 查看完整对话记录。没有黑盒，每句话都是对应 CLI 真实发出的。
 
+v3.0 新增 --mode tmux: agent 运行在 tmux pane 中，所有 CLI 调用实时可见。
+  tmux attach -t openclaw-trialogue  即可实时旁观。
+
 启动:
   python3 trialogue.py --topic "会议主题"
+  python3 trialogue.py --topic "会议主题" --mode tmux      # tmux 实时模式
   python3 trialogue.py --topic "Polaris 商业化" --context background.md
 
 群聊:
@@ -28,6 +32,9 @@ import threading
 import datetime
 import argparse
 from pathlib import Path
+
+# 确保 scripts/ 目录在 import 路径中（用于 tmux_bridge）
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 
 # ═══════════════════════════════════════════════════════════
@@ -317,6 +324,8 @@ def main():
     ap.add_argument("--context", help="背景文档路径（会注入到 agent 初始上下文）")
     ap.add_argument("--claude-model", default="opus", help="Claude 模型 (默认 opus)")
     ap.add_argument("--codex-model", default=None, help="Codex 模型")
+    ap.add_argument("--mode", choices=["subprocess", "tmux"], default="subprocess",
+                    help="通信模式: subprocess (经典) 或 tmux (实时透明)")
     ap.add_argument("--dry-run", action="store_true", help="测试模式，不实际调用 CLI")
     args = ap.parse_args()
 
@@ -338,30 +347,51 @@ def main():
     transcript = Transcript(transcript_path)
 
     # ── 初始化 agents ──
-    claude = ClaudeAgent(model=args.claude_model)
-    codex  = CodexAgent(model=args.codex_model)
-    agents = {"claude": claude, "codex": codex}
+    use_tmux = args.mode == "tmux"
+    tmux_bridge = None
 
-    if not args.dry_run and not claude.ok and not codex.ok:
-        print(f"{C_ERR}错误: claude 和 codex CLI 都未安装{RST}")
-        print(f"{DIM}  需要至少安装一个: claude (Anthropic) 或 codex (OpenAI){RST}")
-        sys.exit(1)
+    if use_tmux and not args.dry_run:
+        from tmux_bridge import TmuxBridge
+        tmux_bridge = TmuxBridge()
+        print(f"{DIM}  正在创建 tmux session...{RST}")
+        tmux_bridge.setup()
+        results = tmux_bridge.init_agents(
+            args.topic, context,
+            claude_model=args.claude_model,
+            codex_model=args.codex_model,
+        )
+        claude = tmux_bridge.claude
+        codex = tmux_bridge.codex
+        agents = tmux_bridge.agents
+    else:
+        claude = ClaudeAgent(model=args.claude_model)
+        codex  = CodexAgent(model=args.codex_model)
+        agents = {"claude": claude, "codex": codex}
+
+    if not args.dry_run:
+        all_ok = any(a and a.ok for a in [claude, codex])
+        if not all_ok:
+            print(f"{C_ERR}错误: claude 和 codex CLI 都未安装{RST}")
+            print(f"{DIM}  需要至少安装一个: claude (Anthropic) 或 codex (OpenAI){RST}")
+            sys.exit(1)
 
     # ── Banner ──
     print()
     print(f"{BOLD}{'═' * 60}{RST}")
     print(f"{BOLD}  OpenClaw 三方会谈{RST}")
-    print(f"{DIM}  主题: {args.topic}{RST}")
+    mode_label = "tmux 实时透明" if use_tmux else "subprocess"
+    print(f"{DIM}  主题: {args.topic}  |  模式: {mode_label}{RST}")
     if context:
         print(f"{DIM}  背景: 已加载 ({len(context)} 字){RST}")
     print(f"{BOLD}{'═' * 60}{RST}")
     print()
 
-    # ── 创建真实 session ──
-    if not args.dry_run:
+    # ── 创建真实 session（仅 subprocess 模式需要这一步）──
+    if not use_tmux and not args.dry_run:
         for agent in [claude, codex]:
-            if not agent.ok:
-                print(f"  {C_SYS}✗ {agent.name}: CLI 未安装，跳过{RST}")
+            if not agent or not agent.ok:
+                name = agent.name if agent else "?"
+                print(f"  {C_SYS}✗ {name}: CLI 未安装，跳过{RST}")
                 continue
             color = ROLE_STYLE[agent.name]
             print(f"  {color}{DIM}{agent.name} 正在加入...{RST}", end="", flush=True)
@@ -372,20 +402,37 @@ def main():
                 print(f"\r  {C_ERR}✗ {agent.name} 加入失败{' ' * 20}{RST}")
                 agent.ok = False
         print()
+    elif use_tmux and not args.dry_run:
+        # tmux 模式下显示初始化结果
+        for agent in [claude, codex]:
+            if not agent:
+                continue
+            color = ROLE_STYLE.get(agent.name, C_SYS)
+            if agent.ok:
+                print(f"  {color}✓ {agent.name} 已加入 (tmux pane){RST}")
+            else:
+                print(f"  {C_ERR}✗ {agent.name} 加入失败{RST}")
+        print()
 
     # ── Session 信息框（核心：透明可验证）──
     session_info = {}
     print(f"{C_INFO}┌{'─' * 58}┐{RST}")
-    print(f"{C_INFO}│{RST} {BOLD}透明验证 — 以下 session 可在其他终端随时 resume{RST}")
+    if use_tmux:
+        print(f"{C_INFO}│{RST} {BOLD}实时透明 — tmux pane 中所有 CLI 调用实时可见{RST}")
+        print(f"{C_INFO}│{RST}")
+        print(f"{C_INFO}│{RST}  {BOLD}实时旁观:{RST}")
+        print(f"{C_INFO}│{RST}    {DIM}$ tmux attach -t openclaw-trialogue{RST}")
+    else:
+        print(f"{C_INFO}│{RST} {BOLD}透明验证 — 以下 session 可在其他终端随时 resume{RST}")
     print(f"{C_INFO}│{RST}")
 
-    if claude.ok or args.dry_run:
+    if claude and (claude.ok or args.dry_run):
         print(f"{C_INFO}│{RST}  {C_CLAUDE}{BOLD}Claude{RST}")
         print(f"{C_INFO}│{RST}    ID:  {DIM}{claude.sid}{RST}")
         print(f"{C_INFO}│{RST}    验证: {DIM}$ {claude.resume_cmd}{RST}")
         session_info["Claude"] = claude.resume_cmd
 
-    if codex.ok or args.dry_run:
+    if codex and (codex.ok or args.dry_run):
         sid_show = codex.sid or "(首次回复后自动获取)"
         print(f"{C_INFO}│{RST}  {C_CODEX}{BOLD}Codex{RST}")
         print(f"{C_INFO}│{RST}    ID:  {DIM}{sid_show}{RST}")
@@ -432,9 +479,13 @@ def main():
 
         if raw == "/info":
             print()
-            if claude.ok:
+            if use_tmux:
+                print(f"  {BOLD}模式: tmux 实时透明{RST}")
+                print(f"  {DIM}旁观: $ tmux attach -t openclaw-trialogue{RST}")
+                print()
+            if claude and claude.ok:
                 print(f"  {C_CLAUDE}Claude{RST}: {claude.resume_cmd}")
-            if codex.ok:
+            if codex and codex.ok:
                 resume = codex.resume_cmd
                 print(f"  {C_CODEX}Codex{RST}:  {resume}")
             print(f"  {DIM}记录: {transcript_path}{RST}")
@@ -476,11 +527,12 @@ def main():
         # 过滤不可用的 agent
         active = []
         for t in targets:
-            a = agents[t]
-            if a.ok or args.dry_run:
+            a = agents.get(t)
+            if a and (a.ok or args.dry_run):
                 active.append((t, a))
             else:
-                print(f"  {C_ERR}{a.name} 不可用，跳过{RST}")
+                name = a.name if a else t
+                print(f"  {C_ERR}{name} 不可用，跳过{RST}")
 
         if not active:
             print()
@@ -555,11 +607,18 @@ def main():
     print(f"  {DIM}会议记录: {transcript_path}{RST}")
     print()
     print(f"  {DIM}随时可在其他终端 resume 查看完整记录:{RST}")
-    if claude.ok:
+    if claude and claude.ok:
         print(f"  {C_CLAUDE}$ {claude.resume_cmd}{RST}")
-    if codex.ok:
+    if codex and codex.ok:
         print(f"  {C_CODEX}$ {codex.resume_cmd}{RST}")
     print()
+
+    # tmux 模式清理提示
+    if tmux_bridge:
+        print(f"  {DIM}tmux session 仍在运行，可继续查看:{RST}")
+        print(f"  {DIM}$ tmux attach -t openclaw-trialogue{RST}")
+        print(f"  {DIM}要销毁: $ tmux kill-session -t openclaw-trialogue{RST}")
+        print()
 
 
 if __name__ == "__main__":
