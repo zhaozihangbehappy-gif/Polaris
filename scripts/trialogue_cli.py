@@ -83,23 +83,6 @@ def _wait_for_shell(pane_id, timeout=15):
     return False
 
 
-def _exit_tui(pane_id):
-    """退出 pane 里正在运行的 TUI，回到 shell"""
-    _tmux("send-keys", "-t", pane_id, "C-c", "")
-    time.sleep(0.5)
-    _tmux("send-keys", "-t", pane_id, "C-c", "")
-    time.sleep(0.3)
-    _tmux("send-keys", "-t", pane_id, "C-d", "")
-    time.sleep(0.5)
-    _tmux("send-keys", "-t", pane_id, "/exit", "Enter")
-    time.sleep(1)
-    _tmux("send-keys", "-t", pane_id, "C-c", "")
-    time.sleep(0.3)
-    _tmux("send-keys", "-t", pane_id, "C-c", "")
-    time.sleep(0.5)
-    return _wait_for_shell(pane_id, timeout=10)
-
-
 def _start_claude_tui(pane_id, sid):
     _tmux("send-keys", "-t", pane_id,
           f"cd {WORKSPACE} && claude --resume {sid}", "Enter")
@@ -167,36 +150,68 @@ def _find_codex_sid(text):
 
 
 # ═══════════════════════════════════════════════════════════
-#  核心: 在独立 tmux session 里发消息
-#  退出 TUI → claude -p 取响应 → 重启 TUI
+#  核心: 直接在 TUI 里打字，capture-pane 抓响应
+#  TUI 全程不退出
 # ═══════════════════════════════════════════════════════════
 
-def _send_to_pane(pane_id, cli_cmd, msg_file, resp_file, done_file,
-                  tui_restart_cmd, timeout=300):
-    for f in [resp_file, done_file]:
-        Path(f).unlink(missing_ok=True)
+def _send_to_tui(pane_id, message, timeout=300):
+    """
+    直接在 TUI 里输入消息，等响应完成，capture-pane 复制响应。
+    TUI 全程不退出。
+    """
+    # 1. 发送前快照
+    before, _ = _tmux("capture-pane", "-t", pane_id, "-p")
 
-    _exit_tui(pane_id)
+    # 2. 直接在 TUI 里打字
+    # 用 load-buffer + paste-buffer 处理长消息，避免 send-keys 的长度/特殊字符问题
+    flat = message.replace("\n", "  ")  # TUI 输入框不支持换行，flatten
+    buf_file = STATE_DIR / "tmux-paste.txt"
+    buf_file.write_text(flat, encoding="utf-8")
+    _tmux("load-buffer", str(buf_file))
+    _tmux("paste-buffer", "-t", pane_id, "-d")  # -d 粘贴后删 buffer
+    time.sleep(0.3)
+    _tmux("send-keys", "-t", pane_id, "Enter")
 
-    shell_cmd = (
-        f'{cli_cmd} "$(cat {msg_file})" > {resp_file} 2>&1; '
-        f'touch {done_file}; '
-        f'{tui_restart_cmd}'
-    )
-    _tmux("send-keys", "-t", pane_id, shell_cmd, "Enter")
-
+    # 3. 等响应完成：屏幕内容连续 5 秒不变 = 完成
+    time.sleep(3)  # 先等处理启动
+    prev = None
+    stable = 0
     deadline = time.time() + timeout
-    while time.time() < deadline:
-        if Path(done_file).exists():
-            break
-        time.sleep(1)
-    else:
-        return f"[超时 — {timeout}s 未响应]"
 
-    rp = Path(resp_file)
-    if rp.exists():
-        return rp.read_text(encoding="utf-8").strip() or "[空回复]"
-    return "[无输出文件]"
+    while time.time() < deadline:
+        current, _ = _tmux("capture-pane", "-t", pane_id, "-p")
+        if current == prev:
+            stable += 1
+            if stable >= 3:  # 6 秒无变化
+                break
+        else:
+            stable = 0
+            prev = current
+        time.sleep(2)
+
+    # 4. 复制粘贴：capture-pane 拿到屏幕内容
+    after, _ = _tmux("capture-pane", "-t", pane_id, "-p")
+
+    # 5. 提取新增内容（before 里没有的行）
+    before_lines = before.strip().split("\n")
+    after_lines = after.strip().split("\n")
+
+    # 用有序 diff：找 after 中新出现的内容
+    # 从 after 末尾往前找，跳过空行和已有行
+    before_set = set(l.strip() for l in before_lines if l.strip())
+    new_lines = []
+    for line in after_lines:
+        stripped = line.strip()
+        if stripped and stripped not in before_set:
+            new_lines.append(stripped)
+
+    response = "\n".join(new_lines).strip()
+
+    # 兜底：如果 diff 没抓到东西，直接返回当前屏幕内容
+    if not response:
+        response = "\n".join(l for l in after_lines if l.strip()).strip()
+
+    return response or "[响应已显示在 TUI 中]"
 
 
 # ═══════════════════════════════════════════════════════════
@@ -406,33 +421,8 @@ def cmd_send(args):
         if not pane_id:
             return f"[错误] {target} 无 pane"
 
-        msg_file = str(STATE_DIR / target / f"msg-{counter:04d}.txt")
-        resp_file = str(STATE_DIR / target / f"resp-{counter:04d}.txt")
-        done_file = str(STATE_DIR / target / f"done-{counter:04d}")
-        Path(msg_file).write_text(prompt, encoding="utf-8")
-
-        if target == "claude":
-            cli_cmd = f"claude -p --resume {state['claude_sid']} --output-format text"
-            tui_cmd = f"cd {WORKSPACE} && claude --resume {state['claude_sid']}"
-        elif target == "codex":
-            sid = state.get("codex_sid")
-            if sid:
-                cli_cmd = f"codex exec resume {sid}"
-                tui_cmd = f"cd {WORKSPACE} && codex resume {sid}"
-            else:
-                cli_cmd = "codex exec"
-                tui_cmd = ""
-
-        resp = _send_to_pane(pane_id, cli_cmd, msg_file, resp_file, done_file, tui_cmd)
-
-        if target == "codex" and not state.get("codex_sid"):
-            rp = Path(resp_file)
-            if rp.exists():
-                new_sid = _find_codex_sid(rp.read_text(encoding="utf-8"))
-                if new_sid:
-                    state["codex_sid"] = new_sid
-
-        return resp
+        # 直接在 TUI 里打字，capture-pane 抓响应
+        return _send_to_tui(pane_id, prompt)
 
     if len(targets) == 1:
         target = targets[0]
