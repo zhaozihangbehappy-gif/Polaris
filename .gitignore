@@ -29,3 +29,6 @@ Thumbs.db
 
 # Local ad-hoc debug scripts
 tmp-*.ps1
+
+# Local machine-specific Trialogue v2 config
+scripts/trialogue-v2/trialogue-v2.conf

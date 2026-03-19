@@ -1,0 +1,21 @@
+# Trialogue v2 配置文件模板
+# 所有路径必须是绝对路径，不依赖 PATH 或 command -v
+# 复制为 scripts/trialogue-v2/trialogue-v2.conf 后按本机环境修改
+
+# 二进制绝对路径
+CLAUDE_BIN=/home/administrator/.local/bin/claude
+CODEX_BIN=/home/administrator/.local/bin/codex
+
+# 审计日志
+AUDIT_LOG=/home/administrator/.openclaw/trialogue/audit.jsonl
+
+# Claude session store
+CLAUDE_SESSIONS=/home/administrator/.claude/sessions
+CLAUDE_PROJECTS=/home/administrator/.claude/projects
+CLAUDE_HISTORY=/home/administrator/.claude/history.jsonl
+
+# Codex session store
+CODEX_SESSIONS=/home/administrator/.codex/sessions
+
+# 工作目录
+WORKSPACE=/home/administrator/.openclaw/workspace
