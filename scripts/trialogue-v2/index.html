@@ -1,0 +1,739 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Trialogue v2</title>
+  <style>
+    :root {
+      --bg: #f3efe5;
+      --panel: rgba(255,255,255,0.82);
+      --panel-strong: #fffdf7;
+      --line: rgba(60, 45, 20, 0.16);
+      --ink: #1e1a14;
+      --muted: #73685b;
+      --accent: #2f6c5d;
+      --accent-soft: #d9ece6;
+      --warn: #93631d;
+      --warn-soft: #f4e7cc;
+      --danger: #8b3a2e;
+      --danger-soft: #f3ddd8;
+      --ok: #2b6a42;
+      --ok-soft: #d7ebdc;
+      --shadow: 0 20px 50px rgba(56, 43, 23, 0.12);
+      --mono: "SFMono-Regular", Consolas, monospace;
+      --sans: "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; margin: 0; }
+    body {
+      font-family: var(--sans);
+      color: var(--ink);
+      background:
+        radial-gradient(circle at top left, rgba(47,108,93,0.18), transparent 28%),
+        radial-gradient(circle at top right, rgba(147,99,29,0.16), transparent 24%),
+        linear-gradient(180deg, #f5f1e8, #ece5d8);
+      overflow: hidden;
+    }
+    .shell {
+      height: 100%;
+      display: grid;
+      grid-template-columns: minmax(0, 1.8fr) minmax(320px, 0.95fr);
+      grid-template-rows: auto minmax(0, 1fr) auto;
+      gap: 16px;
+      padding: 18px;
+    }
+    .topbar, .stream, .sidebar, .composer {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+    }
+    .topbar {
+      grid-column: 1 / span 2;
+      padding: 16px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .headline { display: flex; flex-direction: column; gap: 6px; }
+    .headline h1 { margin: 0; font-size: 22px; font-weight: 700; }
+    .headline .sub { color: var(--muted); font-size: 13px; }
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; }
+    .chip {
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.7);
+      border: 1px solid var(--line);
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .chip strong { color: var(--ink); }
+    .stream {
+      min-height: 0;
+      overflow: auto;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .sidebar {
+      min-height: 0;
+      overflow: auto;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .sidebar h2, .stream h2 {
+      margin: 0 0 4px;
+      font-size: 14px;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .sidebar-card, .message-card, .agent-card {
+      background: var(--panel-strong);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+    }
+    .message-card { padding: 16px; display: flex; flex-direction: column; gap: 14px; }
+    .message-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    .message-text {
+      white-space: pre-wrap;
+      line-height: 1.55;
+      font-size: 15px;
+    }
+    .targets { display: flex; flex-wrap: wrap; gap: 8px; }
+    .target-pill, .status-pill {
+      border-radius: 999px;
+      padding: 5px 10px;
+      font-size: 12px;
+      font-weight: 600;
+      border: 1px solid transparent;
+    }
+    .target-pill { background: #f0ebe1; color: #5b5145; }
+    .agent-list { display: flex; flex-direction: column; gap: 12px; }
+    .agent-card { padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+    .agent-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+    .agent-title { display: flex; align-items: center; gap: 10px; }
+    .agent-meta { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+    .status-queued { background: #efe9df; color: #6b5c44; border-color: #ded3bf; }
+    .status-running { background: var(--warn-soft); color: var(--warn); border-color: #e6cb92; }
+    .status-verified { background: var(--ok-soft); color: var(--ok); border-color: #b9d9c1; }
+    .status-unverified, .status-failed { background: var(--danger-soft); color: var(--danger); border-color: #e2b8b0; }
+    .timer {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--muted);
+      min-width: 70px;
+      text-align: right;
+    }
+    .phase {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+    .current-detail {
+      font-size: 13px;
+      line-height: 1.55;
+      color: #3f382f;
+      background: rgba(255,255,255,0.72);
+      border: 1px solid rgba(60,45,20,0.08);
+      border-radius: 12px;
+      padding: 10px 12px;
+    }
+    .next-step {
+      font-size: 12px;
+      color: #5c564d;
+      background: rgba(240, 235, 225, 0.7);
+      border: 1px solid rgba(60,45,20,0.08);
+      border-radius: 12px;
+      padding: 8px 10px;
+      line-height: 1.5;
+    }
+    .reply {
+      white-space: pre-wrap;
+      line-height: 1.58;
+      font-size: 14px;
+      background: #fbf8f1;
+      border: 1px solid rgba(60, 45, 20, 0.08);
+      border-radius: 14px;
+      padding: 12px;
+    }
+    details {
+      border: 1px dashed rgba(60, 45, 20, 0.18);
+      border-radius: 14px;
+      padding: 10px 12px;
+      background: rgba(251, 248, 241, 0.75);
+    }
+    summary {
+      cursor: pointer;
+      color: var(--muted);
+      font-size: 13px;
+      user-select: none;
+    }
+    .event-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 10px;
+    }
+    .event {
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.7);
+      border: 1px solid rgba(60,45,20,0.08);
+    }
+    .event .ts {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--muted);
+    }
+    .event .detail {
+      margin-top: 4px;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .kv {
+      display: grid;
+      grid-template-columns: 88px 1fr;
+      gap: 6px 10px;
+      margin-top: 10px;
+      font-size: 12px;
+      line-height: 1.55;
+    }
+    .kv .k { color: var(--muted); }
+    .kv .v { word-break: break-all; font-family: var(--mono); }
+    .audit-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .audit-block {
+      border: 1px solid rgba(60,45,20,0.08);
+      background: rgba(255,255,255,0.72);
+      border-radius: 12px;
+      padding: 10px 12px;
+    }
+    .audit-title {
+      font-size: 12px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      margin-bottom: 8px;
+    }
+    .audit-text {
+      font-size: 13px;
+      line-height: 1.58;
+      color: #433d35;
+    }
+    .audit-code {
+      margin-top: 8px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      background: #f8f3e8;
+      border: 1px solid rgba(60,45,20,0.08);
+      font-family: var(--mono);
+      font-size: 12px;
+      line-height: 1.5;
+      word-break: break-all;
+    }
+    .sidebar-card { padding: 14px; }
+    .sidebar-card .title { font-size: 13px; color: var(--muted); margin-bottom: 10px; }
+    .sidebar-card .mono { font-family: var(--mono); font-size: 12px; word-break: break-all; }
+    .composer {
+      grid-column: 1 / span 2;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .quick-row { display: flex; gap: 8px; flex-wrap: wrap; }
+    .quick {
+      border: 1px solid var(--line);
+      background: #fffdf7;
+      color: var(--ink);
+      border-radius: 999px;
+      padding: 8px 12px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+    textarea {
+      width: 100%;
+      min-height: 96px;
+      max-height: 220px;
+      resize: vertical;
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      background: #fffef9;
+      padding: 14px 16px;
+      font: 15px/1.55 var(--sans);
+      color: var(--ink);
+    }
+    textarea:focus {
+      outline: 2px solid rgba(47,108,93,0.22);
+      border-color: rgba(47,108,93,0.38);
+    }
+    .composer-foot {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .hint { color: var(--muted); font-size: 12px; }
+    .send {
+      border: 0;
+      border-radius: 14px;
+      padding: 10px 16px;
+      background: linear-gradient(135deg, #275f51, #3b7d6a);
+      color: white;
+      cursor: pointer;
+      font-weight: 700;
+    }
+    .error {
+      color: var(--danger);
+      font-size: 13px;
+    }
+    .empty {
+      padding: 22px;
+      border-radius: 18px;
+      border: 1px dashed var(--line);
+      color: var(--muted);
+      text-align: center;
+      line-height: 1.6;
+      background: rgba(255,255,255,0.45);
+    }
+    .btn-row { display: flex; gap: 8px; flex-wrap: wrap; }
+    .mini-btn {
+      border: 1px solid var(--line);
+      background: white;
+      color: var(--muted);
+      border-radius: 999px;
+      padding: 6px 10px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+    .source-badge {
+      margin-left: 8px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      color: var(--muted);
+      background: rgba(240, 235, 225, 0.85);
+      border: 1px solid rgba(60,45,20,0.08);
+    }
+    @media (max-width: 960px) {
+      .shell {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto minmax(0, 1fr) auto auto;
+      }
+      .topbar, .composer { grid-column: 1; }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <section class="topbar">
+      <div class="headline">
+        <h1 id="topic">Trialogue v2</h1>
+        <div class="sub">本地浏览器 UI。所有 agent 调用仍然走 launcher.sh → _audit.py。</div>
+      </div>
+      <div class="chips" id="summary"></div>
+    </section>
+
+    <main class="stream" id="stream">
+      <div class="empty">还没有消息。<br>用 <code>@claude</code> / <code>@codex</code> / <code>@all</code> 开始。</div>
+    </main>
+
+    <aside class="sidebar" id="sidebar"></aside>
+
+    <section class="composer">
+      <div class="quick-row">
+        <button class="quick" data-insert="@claude ">@claude</button>
+        <button class="quick" data-insert="@codex ">@codex</button>
+        <button class="quick" data-insert="@all ">@all</button>
+        <button class="quick" data-insert="/target polaris">/target polaris</button>
+        <button class="quick" data-insert="/target auto">/target auto</button>
+        <button class="quick" id="insertExample">插入示例</button>
+      </div>
+      <textarea id="input" placeholder="输入 @claude / @codex / @all + 你的消息，或用 /target [meeting|polaris|auto|status] 切换目标。Enter 换行，Ctrl+Enter 发送。"></textarea>
+      <div class="composer-foot">
+        <div>
+          <div class="hint">输入体验走浏览器原生：多行、回格、滚轮、鼠标选字、复制粘贴都比 tmux / input() 稳定。操作型请求可先用 /target 指到项目视图。</div>
+          <div class="error" id="error"></div>
+        </div>
+        <button class="send" id="send">发送 Ctrl+Enter</button>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const stream = document.getElementById("stream");
+    const sidebar = document.getElementById("sidebar");
+    const summary = document.getElementById("summary");
+    const topic = document.getElementById("topic");
+    const input = document.getElementById("input");
+    const errorEl = document.getElementById("error");
+    const sendBtn = document.getElementById("send");
+    const HISTORY_KEY = "trialogue-web-input-history-v1";
+    let inputHistory = JSON.parse(localStorage.getItem(HISTORY_KEY) || "[]");
+    let historyIndex = inputHistory.length;
+    let state = null;
+
+    function fmtTs(ts) {
+      if (!ts) return "";
+      const d = new Date(ts);
+      return d.toLocaleTimeString("zh-CN", { hour12: false });
+    }
+
+    function fmtElapsed(startedAt, finishedAt) {
+      if (!startedAt) return "--";
+      const start = new Date(startedAt).getTime();
+      const end = finishedAt ? new Date(finishedAt).getTime() : Date.now();
+      const sec = Math.max(0, (end - start) / 1000);
+      return sec < 60 ? `${sec.toFixed(1)}s` : `${Math.floor(sec / 60)}m ${(sec % 60).toFixed(1)}s`;
+    }
+
+    function copyText(text) {
+      navigator.clipboard.writeText(text || "");
+    }
+
+    function escapeHtml(text) {
+      return String(text ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#39;");
+    }
+
+    function formatMultiline(text) {
+      return escapeHtml(text).replaceAll("\n", "<br>");
+    }
+
+    function encodeCopy(text) {
+      const bytes = new TextEncoder().encode(String(text ?? ""));
+      let binary = "";
+      for (const b of bytes) binary += String.fromCharCode(b);
+      return btoa(binary);
+    }
+
+    function decodeCopy(encoded) {
+      const binary = atob(encoded);
+      const bytes = Uint8Array.from(binary, ch => ch.charCodeAt(0));
+      return new TextDecoder().decode(bytes);
+    }
+
+    function renderSummary() {
+      if (!state) return;
+      topic.textContent = state.topic;
+      summary.innerHTML = "";
+      const chips = [
+        `最近 RID: <strong>${state.last_rid || "暂无"}</strong>`,
+        `运行中 agent: <strong>${state.active_agents}</strong>`,
+        `历史消息: <strong>${state.items.length}</strong>`,
+        `当前 target: <strong>${escapeHtml((state.current_target && state.current_target.name) || "meeting")}</strong>`,
+        `Claude sessions: <strong>${state.claude_sessions.length}</strong>`,
+        `Codex session: <strong>${state.latest_codex_session || "暂无"}</strong>`,
+      ];
+      for (const html of chips) {
+        const node = document.createElement("div");
+        node.className = "chip";
+        node.innerHTML = html;
+        summary.appendChild(node);
+      }
+    }
+
+    function renderSidebar() {
+      if (!state) return;
+      sidebar.innerHTML = `
+        <h2>会话概览</h2>
+        <div class="sidebar-card">
+          <div class="title">当前 target</div>
+          <div class="mono">${escapeHtml((state.current_target && state.current_target.name) || "meeting")} · ${escapeHtml((state.current_target && state.current_target.source) || "default")}</div>
+          ${state.current_target && state.current_target.repo_path ? `<div class="mono" style="margin-top:8px;">${escapeHtml(state.current_target.repo_path)}</div>` : ""}
+        </div>
+        <div class="sidebar-card">
+          <div class="title">最近 Claude sessions</div>
+          <div class="mono">${state.claude_sessions.length ? state.claude_sessions.slice().reverse().map(escapeHtml).join("<br>") : "(暂无)"}</div>
+        </div>
+        <div class="sidebar-card">
+          <div class="title">最新 Codex session</div>
+          <div class="mono">${escapeHtml(state.latest_codex_session || "(暂无)")}</div>
+        </div>
+        <div class="sidebar-card">
+          <div class="title">审计日志</div>
+          <div class="mono">${escapeHtml(state.audit_log)}</div>
+        </div>
+      `;
+    }
+
+    function renderAgent(agent) {
+      const confirmedClass = agent.status === "done"
+        ? (agent.confirmed ? "status-verified" : "status-unverified")
+        : agent.status === "running"
+          ? "status-running"
+          : "status-queued";
+      const statusText = agent.status === "done"
+        ? (agent.confirmed ? "verified" : "UNVERIFIED")
+        : agent.status;
+      const meta = agent.meta || {};
+      const verify = meta.verify_rid_command || "";
+      const verifyFile = meta.verify_file_command || "";
+      const verifyStore = meta.verify_store_command || "";
+      const resume = meta.resume_command || "";
+      const reply = agent.reply || (agent.status === "running" ? "等待 CLI 返回..." : "");
+      const details = meta.confirmation ? JSON.stringify(meta.confirmation, null, 2) : "";
+      const nextStep = agent.next_step || "";
+      const phaseLabel = agent.phase_label || "等待开始";
+      const currentDetail = agent.current_detail || "等待更多运行细节";
+      const copyReply = encodeCopy(reply);
+      const copyVerify = verify ? encodeCopy(verify) : "";
+      const copyVerifyFile = verifyFile ? encodeCopy(verifyFile) : "";
+      const copyVerifyStore = verifyStore ? encodeCopy(verifyStore) : "";
+      const copyResume = resume ? encodeCopy(resume) : "";
+      const autoVerdict = agent.confirmed
+        ? "系统自动审已通过。这代表 launcher.sh → _audit.py 已经把本次消息绑定到对应原生 session。"
+        : "系统自动审未通过。这不一定代表消息是假的，但表示你现在不能只看 UI 绿灯，需要继续人工复核。";
+      const resultExplain = meta.confirmation_method === "claude_session_file"
+        ? "Claude 通过同一 session 文件确认本次消息已追加落盘。"
+        : meta.confirmation_method === "nonce_unique_match"
+          ? "Codex 通过 nonce 唯一命中单个 session 文件完成确认。"
+          : meta.confirmation_method === "nonce_new_file_match"
+            ? "Codex 在并发场景下，通过“命中的文件里只有一个属于本次新文件集合”完成确认。"
+            : meta.confirmation_method === "nonce_multi_match"
+              ? "Codex 发现多个候选文件，系统拒绝自动确认，必须人工复核。"
+              : meta.confirmation_method === "claude_cli_failed"
+                ? "Claude CLI 本身执行失败，所以这次没有进入自动确认通过状态。"
+                : "当前没有额外的确认解释。";
+      const events = (agent.events || []).map(ev => `
+        <div class="event">
+          <div class="ts">${fmtTs(ev.ts)} · ${escapeHtml(ev.label)}</div>
+          <div class="detail">${formatMultiline(ev.detail || "")}</div>
+        </div>
+      `).join("");
+
+      return `
+        <article class="agent-card">
+          <div class="agent-head">
+            <div class="agent-title">
+              <strong>${escapeHtml(agent.label)}</strong>
+              <span class="status-pill ${confirmedClass}">${escapeHtml(statusText)}</span>
+            </div>
+            <div class="agent-meta">
+              <span class="phase">${escapeHtml(phaseLabel)}</span>
+              <span class="timer" data-start="${agent.started_at || ""}" data-finish="${agent.finished_at || ""}">${fmtElapsed(agent.started_at, agent.finished_at)}</span>
+            </div>
+          </div>
+          <div class="phase">当前阶段：${escapeHtml(phaseLabel)}</div>
+          <div class="current-detail">最近观察：${formatMultiline(currentDetail)}</div>
+          <div class="next-step">下一步：${escapeHtml(nextStep || "等待更多状态")}</div>
+          <div class="reply">${formatMultiline(reply || "(无输出)")}</div>
+          <div class="btn-row">
+            <button class="mini-btn" data-copy="${escapeHtml(copyReply)}">复制回复</button>
+            ${verify ? `<button class="mini-btn" data-copy="${escapeHtml(copyVerify)}">复制 verify-rid</button>` : ""}
+            ${verifyFile ? `<button class="mini-btn" data-copy="${escapeHtml(copyVerifyFile)}">复制 verify_file</button>` : ""}
+            ${verifyStore ? `<button class="mini-btn" data-copy="${escapeHtml(copyVerifyStore)}">复制 verify_store</button>` : ""}
+            ${resume ? `<button class="mini-btn" data-copy="${escapeHtml(copyResume)}">复制 resume</button>` : ""}
+          </div>
+          <details>
+            <summary>展开运行进展与审计信息</summary>
+            <div class="event-list">${events || '<div class="event"><div class="detail">暂无事件</div></div>'}</div>
+            <div class="audit-stack">
+              <div class="audit-block">
+                <div class="audit-title">系统自动审</div>
+                <div class="audit-text">${escapeHtml(autoVerdict)}</div>
+                <div class="kv">
+                  <div class="k">RID</div><div class="v">${escapeHtml(meta.rid || "")}</div>
+                  <div class="k">session</div><div class="v">${escapeHtml(meta.session_id || "(none)")}</div>
+                  <div class="k">method</div><div class="v">${escapeHtml(meta.confirmation_method || "(none)")}</div>
+                  <div class="k">result</div><div class="v">${escapeHtml(agent.confirmed ? "verified" : "UNVERIFIED")}</div>
+                </div>
+              </div>
+              <div class="audit-block">
+                <div class="audit-title">同源验证（标准）</div>
+                <div class="audit-text">用该 agent 自己的原生会话和原生 session 文件确认这条消息。先看 verify-rid，再看 verify_file，最后进 resume。</div>
+                ${verify ? `<div class="audit-code">${escapeHtml(verify)}</div>` : ""}
+                ${verifyFile ? `<div class="audit-code">${escapeHtml(verifyFile)}</div>` : ""}
+                ${resume ? `<div class="audit-code">${escapeHtml(resume)}</div>` : ""}
+              </div>
+              <div class="audit-block">
+                <div class="audit-title">交叉验证（更硬，推荐）</div>
+                <div class="audit-text">在另一个 agent 的终端里执行该 agent 的 session store 搜索命令。验证者和被验证者不是同一个 agent，更不容易“自圆其说”。</div>
+                ${verifyStore ? `<div class="audit-code">${escapeHtml(verifyStore)}</div>` : '<div class="audit-text">当前没有可用的 verify_store 命令。</div>'}
+              </div>
+              <div class="audit-block">
+                <div class="audit-title">结果解释</div>
+                <div class="audit-text">${escapeHtml(resultExplain)}</div>
+                <div class="kv">
+                  <div class="k">verify</div><div class="v">${escapeHtml(verify || "(none)")}</div>
+                  <div class="k">detail</div><div class="v">${formatMultiline(details || "(none)").replaceAll(" ", "&nbsp;")}</div>
+                </div>
+              </div>
+            </div>
+          </details>
+        </article>
+      `;
+    }
+
+    function renderStream() {
+      if (!state || !state.items.length) {
+        stream.innerHTML = '<div class="empty">还没有消息。<br>用 <code>@claude</code> / <code>@codex</code> / <code>@all</code> 开始。</div>';
+        return;
+      }
+      function sourceBadge(source) {
+        if (source === "audit_replay") return '<span class="source-badge">历史回放</span>';
+        if (source === "audit_live") return '<span class="source-badge">外部记录</span>';
+        if (source === "system") return '<span class="source-badge">系统</span>';
+        return "";
+      }
+      const shouldStick = stream.scrollTop + stream.clientHeight >= stream.scrollHeight - 40;
+      stream.innerHTML = state.items.map(item => `
+        <article class="message-card">
+          <div class="message-head">
+            <div>
+              <div class="targets">
+                ${item.targets.map(t => `<span class="target-pill">@${escapeHtml(t)}</span>`).join("")}
+                ${item.target_name && item.target_name !== "meeting" ? `<span class="target-pill">target:${escapeHtml(item.target_name)}</span>` : ""}
+                ${item.target_source && item.target_source !== "default" ? `<span class="target-pill">${escapeHtml(item.target_source)}</span>` : ""}
+              </div>
+              <div class="message-text">${formatMultiline(item.source === "system" ? item.message : item.raw_text)}${sourceBadge(item.source)}</div>
+            </div>
+            <div class="timer">${fmtTs(item.created_at)}</div>
+          </div>
+          ${item.target_path ? `<div class="next-step">目标路径：${escapeHtml(item.target_path)}</div>` : ""}
+          <div class="agent-list">
+            ${item.agents.map(renderAgent).join("")}
+          </div>
+        </article>
+      `).join("");
+      if (shouldStick) {
+        stream.scrollTop = stream.scrollHeight;
+      }
+      updateTimers();
+    }
+
+    function renderAll() {
+      renderSummary();
+      renderSidebar();
+      renderStream();
+    }
+
+    function updateTimers() {
+      document.querySelectorAll(".timer[data-start]").forEach(node => {
+        const start = node.getAttribute("data-start");
+        const finish = node.getAttribute("data-finish");
+        if (start) node.textContent = fmtElapsed(start, finish);
+      });
+    }
+
+    async function bootstrap() {
+      const res = await fetch("/api/bootstrap");
+      state = await res.json();
+      renderAll();
+    }
+
+    function connectWs() {
+      const proto = location.protocol === "https:" ? "wss" : "ws";
+      const ws = new WebSocket(`${proto}://${location.host}/ws`);
+      ws.onmessage = (ev) => {
+        const payload = JSON.parse(ev.data);
+        if (payload.type === "state") {
+          state = payload.state;
+          renderAll();
+        }
+      };
+      ws.onclose = () => setTimeout(connectWs, 1200);
+    }
+
+    async function sendMessage() {
+      const text = input.value.trim();
+      if (!text) return;
+      errorEl.textContent = "";
+      sendBtn.disabled = true;
+      try {
+        const res = await fetch("/api/send", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ text }),
+        });
+        const payload = await res.json();
+        if (!res.ok) {
+          errorEl.textContent = payload.error || "发送失败";
+          return;
+        }
+        if (!inputHistory.length || inputHistory[inputHistory.length - 1] !== text) {
+          inputHistory.push(text);
+          inputHistory = inputHistory.slice(-30);
+          localStorage.setItem(HISTORY_KEY, JSON.stringify(inputHistory));
+        }
+        historyIndex = inputHistory.length;
+        input.value = "";
+      } catch (err) {
+        errorEl.textContent = String(err);
+      } finally {
+        sendBtn.disabled = false;
+        input.focus();
+      }
+    }
+
+    document.querySelectorAll("[data-insert]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        input.setRangeText(btn.dataset.insert, input.selectionStart, input.selectionEnd, "end");
+        input.focus();
+      });
+    });
+
+    document.getElementById("insertExample").addEventListener("click", () => {
+      input.value = "@all 回复 ALL_OK";
+      input.focus();
+    });
+    sendBtn.addEventListener("click", sendMessage);
+    input.addEventListener("keydown", (ev) => {
+      if (ev.key === "Enter" && ev.ctrlKey) {
+        ev.preventDefault();
+        sendMessage();
+        return;
+      }
+      if (ev.altKey && ev.key === "ArrowUp") {
+        ev.preventDefault();
+        if (!inputHistory.length) return;
+        historyIndex = Math.max(0, historyIndex - 1);
+        input.value = inputHistory[historyIndex] || "";
+      }
+      if (ev.altKey && ev.key === "ArrowDown") {
+        ev.preventDefault();
+        if (!inputHistory.length) return;
+        historyIndex = Math.min(inputHistory.length, historyIndex + 1);
+        input.value = historyIndex >= inputHistory.length ? "" : (inputHistory[historyIndex] || "");
+      }
+    });
+
+    document.addEventListener("click", (ev) => {
+      const button = ev.target.closest("[data-copy]");
+      if (!button) return;
+      copyText(decodeCopy(button.dataset.copy));
+    });
+
+    setInterval(updateTimers, 200);
+    bootstrap();
+    connectWs();
+    window.copyText = copyText;
+  </script>
+</body>
+</html>

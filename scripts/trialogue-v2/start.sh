@@ -8,6 +8,12 @@ set -euo pipefail
 TOPIC="${1:?用法: start.sh <主题>}"
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 CONF="${SCRIPT_DIR}/trialogue-v2.conf"
+DEFAULT_WORKDIR="/home/administrator/trialogue"
+if [[ -d "$DEFAULT_WORKDIR" ]]; then
+  WORKDIR="$DEFAULT_WORKDIR"
+else
+  WORKDIR="$(pwd)"
+fi
 
 # 读取审计日志路径
 source "$CONF"
@@ -33,6 +39,7 @@ export _TRI_LAUNCHER=${SCRIPT_DIR}/launcher.sh
 export _TRI_CONF=${CONF}
 export _TRI_AUDIT=${AUDIT_LOG}
 export _TRI_CHAT=${SCRIPT_DIR}/chat.py
+export _TRI_WORKDIR=${WORKDIR}
 export _TRI_ENV_FILE=${ENV_FILE}
 ENVEOF
 chmod 600 "$ENV_FILE"
@@ -42,10 +49,10 @@ chmod 600 "$ENV_FILE"
 # 右 pane: tail 审计日志
 # 两个 pane 都通过 source env 文件获取路径，不做字符串插值
 tmux new-session -d -s openclaw-chat -x 200 -y 50 \
-  "/bin/bash --noprofile --norc -c 'source $ENV_FILE && env -i HOME=$HOME TERM=\$TERM python3 \$_TRI_CHAT --topic \"\$_TRI_TOPIC\" --launcher \"\$_TRI_LAUNCHER\" --conf \"\$_TRI_CONF\"; rm -f \$_TRI_ENV_FILE; exec bash'"
+  "/bin/bash --noprofile --norc -c 'source $ENV_FILE && cd \"\$_TRI_WORKDIR\" && env -i HOME=$HOME TERM=\$TERM PATH=/usr/bin:/bin:/usr/local/bin python3 \$_TRI_CHAT --topic \"\$_TRI_TOPIC\" --launcher \"\$_TRI_LAUNCHER\" --conf \"\$_TRI_CONF\"; rm -f \$_TRI_ENV_FILE; exec bash'"
 
 tmux split-window -h -t openclaw-chat \
-  "/bin/bash --noprofile --norc -c 'source $ENV_FILE && echo \"══ 审计日志 (实时) ══\" && tail -f \$_TRI_AUDIT | jq --unbuffered . 2>/dev/null || tail -f \$_TRI_AUDIT; exec bash'"
+  "/bin/bash --noprofile --norc -c 'source $ENV_FILE && cd \"\$_TRI_WORKDIR\" && echo \"══ 审计日志 (实时) ══\" && tail -f \$_TRI_AUDIT | jq --unbuffered . 2>/dev/null || tail -f \$_TRI_AUDIT; exec bash'"
 
 tmux select-pane -t openclaw-chat:0.0
 

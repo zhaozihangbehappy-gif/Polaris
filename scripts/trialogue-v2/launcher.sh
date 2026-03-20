@@ -11,9 +11,11 @@
 set -uo pipefail
 export PATH=/usr/bin:/bin:/usr/local/bin
 
+# ── 参数解析 ──
 TARGET=""
 MESSAGE=""
 SESSION_ID=""
+RESUME_SESSION="0"
 CONF=""
 META_FILE=""
 
@@ -22,6 +24,7 @@ while [[ $# -gt 0 ]]; do
     --target)     TARGET="$2"; shift 2 ;;
     --message)    MESSAGE="$2"; shift 2 ;;
     --session-id) SESSION_ID="$2"; shift 2 ;;
+    --resume)     RESUME_SESSION="1"; shift ;;
     --conf)       CONF="$2"; shift 2 ;;
     --meta-file)  META_FILE="$2"; shift 2 ;;
     *) echo "未知参数: $1" >&2; exit 1 ;;
@@ -34,8 +37,10 @@ done
 [[ ! -f "$CONF" ]]  && { echo "配置文件不存在: $CONF" >&2; exit 1; }
 command -v python3 > /dev/null 2>&1 || { echo "错误：python3 不可用" >&2; exit 1; }
 
+# ── 读取配置 ──
 source "$CONF"
 
+# ── 选择二进制 ──
 case "$TARGET" in
   claude) BIN="$CLAUDE_BIN" ;;
   codex)  BIN="$CODEX_BIN" ;;
@@ -47,46 +52,87 @@ REAL_BIN=$(readlink -f "$BIN")
 BIN_HASH=$(sha256sum "$REAL_BIN" | cut -d' ' -f1)
 BIN_VERSION=$("$BIN" --version 2>/dev/null || echo "unknown")
 
+# ── Codex 并发检查 ──
+# 不再硬拦截；并发风险交给 nonce 唯一命中确认，并把现场进程数写入审计。
+CODEX_PROCS="0"
 if [[ "$TARGET" == "codex" ]]; then
   CODEX_PROCS=$(pgrep -u "$(id -u)" -c -x codex 2>/dev/null || echo "0")
-  if [[ "$CODEX_PROCS" -gt 0 ]]; then
-    echo "错误：检测到其他 codex 进程正在运行" >&2
-    exit 1
-  fi
 fi
 
+# ── Codex session 快照（诊断用；正式确认走 nonce 内容命中） ──
 CODEX_PRE_SNAPSHOT=""
 if [[ "$TARGET" == "codex" ]]; then
   CODEX_PRE_SNAPSHOT=$(find "$CODEX_SESSIONS" -type f -name "*.jsonl" 2>/dev/null | sort)
 fi
 
+# ── 执行 CLI ──
 TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%S.%3NZ")
 STDOUT_FILE=$(mktemp)
 STDERR_FILE=$(mktemp)
 MESSAGE_FILE=$(mktemp)
 trap "rm -f '$STDOUT_FILE' '$STDERR_FILE' '$MESSAGE_FILE'" EXIT
 
+# 把 MESSAGE 写入文件，python3 从文件读取，彻底避免 shell 插值
 printf '%s' "$MESSAGE" > "$MESSAGE_FILE"
 
 PRE_EXEC_TIME=$(date +%s)
+CLAUDE_RESUME_FALLBACK="0"
+CLAUDE_RESUME_FALLBACK_REASON=""
+CLAUDE_RESUME_ORIGINAL_SESSION_ID=""
+CLAUDE_RESUME_ORIGINAL_EXIT_CODE=""
+
+run_claude() {
+  local mode="$1"
+  local sid="$2"
+  : > "$STDOUT_FILE"
+  if [[ "$mode" == "resume" ]]; then
+    "$BIN" -p --resume "$sid" --output-format text "$MESSAGE" \
+      < /dev/null > "$STDOUT_FILE" 2> >(tee -a "$STDERR_FILE" >&2) &
+  else
+    "$BIN" -p --session-id "$sid" --output-format text "$MESSAGE" \
+      < /dev/null > "$STDOUT_FILE" 2> >(tee -a "$STDERR_FILE" >&2) &
+  fi
+  CLI_PID=$!
+  CLI_START_TIME=$(stat -c %Y /proc/$CLI_PID 2>/dev/null || echo "$PRE_EXEC_TIME")
+  CLI_PPID=$(awk '{print $4}' /proc/$CLI_PID/stat 2>/dev/null || echo "$$")
+  wait $CLI_PID 2>/dev/null
+  EXIT_CODE=$?
+}
+
+run_codex() {
+  : > "$STDOUT_FILE"
+  "$BIN" exec --skip-git-repo-check "$MESSAGE" \
+    < /dev/null > "$STDOUT_FILE" 2> >(tee -a "$STDERR_FILE" >&2) &
+  CLI_PID=$!
+  CLI_START_TIME=$(stat -c %Y /proc/$CLI_PID 2>/dev/null || echo "$PRE_EXEC_TIME")
+  CLI_PPID=$(awk '{print $4}' /proc/$CLI_PID/stat 2>/dev/null || echo "$$")
+  wait $CLI_PID 2>/dev/null
+  EXIT_CODE=$?
+}
 
 if [[ "$TARGET" == "claude" ]]; then
   [[ -z "$SESSION_ID" ]] && { echo "Claude 调用缺少 --session-id" >&2; exit 1; }
-  "$BIN" -p --session-id "$SESSION_ID" --output-format text "$MESSAGE" \
-    < /dev/null > "$STDOUT_FILE" 2> "$STDERR_FILE" &
-  CLI_PID=$!
+  if [[ "$RESUME_SESSION" == "1" ]]; then
+    CLAUDE_RESUME_ORIGINAL_SESSION_ID="$SESSION_ID"
+    run_claude "resume" "$SESSION_ID"
+    if [[ "$EXIT_CODE" -ne 0 ]]; then
+      CLAUDE_RESUME_FALLBACK="1"
+      CLAUDE_RESUME_ORIGINAL_EXIT_CODE="$EXIT_CODE"
+      CLAUDE_RESUME_FALLBACK_REASON="$(awk 'NF { print; exit }' "$STDERR_FILE")"
+      echo "[launcher] Claude resume failed, retrying with a new session-id" | tee -a "$STDERR_FILE" >&2
+      SESSION_ID="$(cat /proc/sys/kernel/random/uuid)"
+      RESUME_SESSION="0"
+      run_claude "create" "$SESSION_ID"
+    fi
+  else
+    run_claude "create" "$SESSION_ID"
+  fi
 elif [[ "$TARGET" == "codex" ]]; then
-  "$BIN" exec "$MESSAGE" \
-    < /dev/null > "$STDOUT_FILE" 2> "$STDERR_FILE" &
-  CLI_PID=$!
+  run_codex
 fi
 
-CLI_START_TIME=$(stat -c %Y /proc/$CLI_PID 2>/dev/null || echo "$PRE_EXEC_TIME")
-CLI_PPID=$(awk '{print $4}' /proc/$CLI_PID/stat 2>/dev/null || echo "$$")
-
-wait $CLI_PID 2>/dev/null
-EXIT_CODE=$?
-
+# ── Session 确认 + 审计 + 元数据：全部交给一个 python3 脚本 ──
+# 所有数据通过环境变量和文件传递，零 shell 插值
 export _L_TIMESTAMP="$TIMESTAMP"
 export _L_TARGET="$TARGET"
 export _L_REAL_BIN="$REAL_BIN"
@@ -98,6 +144,7 @@ export _L_CLI_START_TIME="$CLI_START_TIME"
 export _L_PRE_EXEC_TIME="$PRE_EXEC_TIME"
 export _L_EXIT_CODE="$EXIT_CODE"
 export _L_SESSION_ID="$SESSION_ID"
+export _L_RESUME_SESSION="$RESUME_SESSION"
 export _L_META_FILE="$META_FILE"
 export _L_STDOUT_FILE="$STDOUT_FILE"
 export _L_STDERR_FILE="$STDERR_FILE"
@@ -108,7 +155,19 @@ export _L_CLAUDE_PROJECTS="$CLAUDE_PROJECTS"
 export _L_CLAUDE_HISTORY="$CLAUDE_HISTORY"
 export _L_CODEX_SESSIONS="${CODEX_SESSIONS:-}"
 export _L_CODEX_PRE_SNAPSHOT="$CODEX_PRE_SNAPSHOT"
+export _L_CODEX_PROCS="$CODEX_PROCS"
 export _L_BIN="$BIN"
+export _L_WORKDIR="$(pwd)"
+export _L_MEMORY_SOURCE_FILES="${TRIALOGUE_MEMORY_SOURCE_FILES:-}"
+export _L_MEMORY_MIRROR_GENERATED_AT="${TRIALOGUE_MEMORY_MIRROR_GENERATED_AT:-}"
+export _L_TARGET_NAME="${TRIALOGUE_TARGET_NAME:-meeting}"
+export _L_TARGET_SOURCE="${TRIALOGUE_TARGET_SOURCE:-default}"
+export _L_TARGET_PATH="${TRIALOGUE_TARGET_PATH:-}"
+export _L_TARGET_CWD_OVERRIDE="${TRIALOGUE_TARGET_CWD_OVERRIDE:-}"
+export _L_CLAUDE_RESUME_FALLBACK="$CLAUDE_RESUME_FALLBACK"
+export _L_CLAUDE_RESUME_FALLBACK_REASON="$CLAUDE_RESUME_FALLBACK_REASON"
+export _L_CLAUDE_RESUME_ORIGINAL_SESSION_ID="$CLAUDE_RESUME_ORIGINAL_SESSION_ID"
+export _L_CLAUDE_RESUME_ORIGINAL_EXIT_CODE="$CLAUDE_RESUME_ORIGINAL_EXIT_CODE"
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 python3 "${SCRIPT_DIR}/_audit.py"
@@ -119,4 +178,5 @@ if [[ "$AUDIT_EXIT" -ne 0 ]]; then
   exit 2
 fi
 
+# stdout 只有 agent 原始输出
 cat "$STDOUT_FILE"
