@@ -25,7 +25,9 @@ import threading
 from _memory import load_memory, build_injected_message
 
 MAX_CLAUDE_HISTORY = 5
-MAX_MEETING_CONTEXT_ENTRIES = 12
+MAX_MEETING_CONTEXT_ENTRIES = 48
+MAX_MEETING_CONTEXT_ITEM_CHARS = 1200
+MAX_MEETING_CONTEXT_TOTAL_CHARS = 24000
 TARGET_DEFAULT = "meeting"
 TARGET_COMMAND_RE = re.compile(r"^/target(?:\s+(\S+))?\s*$", re.IGNORECASE)
 TARGET_KEYWORDS = {
@@ -185,7 +187,7 @@ def build_target_message(target_info, wrapped_message):
     return f"{header}\n{body}\n[/TARGET-CONTEXT]\n{wrapped_message}"
 
 
-def _compact_meeting_text(text, limit=320):
+def _compact_meeting_text(text, limit=MAX_MEETING_CONTEXT_ITEM_CHARS):
     compact = " ".join((text or "").split())
     if len(compact) <= limit:
         return compact
@@ -195,12 +197,22 @@ def _compact_meeting_text(text, limit=320):
 def build_meeting_context(entries, wrapped_message):
     """把最近几轮共享会议实录拼到消息前面。"""
     lines = []
-    for entry in entries[-MAX_MEETING_CONTEXT_ENTRIES:]:
+    total_chars = 0
+    recent_entries = entries[-MAX_MEETING_CONTEXT_ENTRIES:]
+    for entry in reversed(recent_entries):
         speaker = (entry.get("speaker") or "").strip()
         text = _compact_meeting_text(entry.get("text", ""))
         if not speaker or not text:
             continue
-        lines.append(f"{speaker}: {text}")
+        line = f"{speaker}: {text}"
+        next_total = total_chars + len(line) + (1 if lines else 0)
+        if lines and next_total > MAX_MEETING_CONTEXT_TOTAL_CHARS:
+            break
+        if not lines and len(line) > MAX_MEETING_CONTEXT_TOTAL_CHARS:
+            line = line[: MAX_MEETING_CONTEXT_TOTAL_CHARS - 1] + "…"
+            next_total = len(line)
+        lines.insert(0, line)
+        total_chars = next_total
 
     if not lines:
         return wrapped_message
