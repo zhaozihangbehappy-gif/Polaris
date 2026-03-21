@@ -613,7 +613,7 @@ class TrialogueState:
                 resume_session = False
 
             # 记忆注入：只读自己的事实层记忆
-            mem = load_memory(target)
+            mem = load_memory(target, target_name=target_info.get("name", "meeting"))
             injected_message = build_injected_message(mem, wrapped_message)
             injected_message = build_target_message(target_info, injected_message)
             cwd_override = target_info.get("claude_cwd") if target == "claude" else None

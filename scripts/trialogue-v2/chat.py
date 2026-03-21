@@ -45,6 +45,23 @@ TARGET_KEYWORDS = {
         "改了什么",
         "check git",
     ],
+    "shadow": [
+        "shadow",
+        "shadow helmet",
+        "shadow exo",
+        "shadow link",
+        "全身智能穿戴",
+        "智能头盔",
+        "外骨骼",
+    ],
+    "hlock": [
+        "hlock",
+        "锁控板",
+        "锁控",
+        "stc15w408as",
+        "烧录",
+        "rs485",
+    ],
 }
 TARGETS = {
     "meeting": {
@@ -58,6 +75,18 @@ TARGETS = {
         "label": "Polaris",
         "repo_path": "/home/administrator/trialogue/projects/polaris-skill/Polaris",
         "claude_cwd": "/home/administrator/trialogue/projects/polaris-skill/Polaris",
+    },
+    "shadow": {
+        "name": "shadow",
+        "label": "Shadow",
+        "repo_path": "",
+        "claude_cwd": None,
+    },
+    "hlock": {
+        "name": "hlock",
+        "label": "HLock",
+        "repo_path": "",
+        "claude_cwd": None,
     },
 }
 
@@ -129,7 +158,7 @@ def resolve_target(target_override, message):
 
     info = dict(TARGETS.get(selected, TARGETS[TARGET_DEFAULT]))
     info["source"] = source
-    info["injected"] = info["name"] != TARGET_DEFAULT
+    info["injected"] = bool(info.get("repo_path"))
     return info
 
 
@@ -459,7 +488,7 @@ def main():
             print(f"  → 正在调用 {name}... RID={audit_msg['rid']}")
 
             # 记忆注入：只读自己的事实层记忆
-            mem = load_memory(target)
+            mem = load_memory(target, target_name=target_info.get("name", TARGET_DEFAULT))
             injected_message = build_injected_message(mem, audit_msg["wrapped_message"])
             injected_message = build_target_message(target_info, injected_message)
             cwd_override = target_info.get("claude_cwd") if target == "claude" else None

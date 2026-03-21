@@ -53,6 +53,7 @@ CODEX_MEMORY_LIVE_DIR = os.environ.get(
 
 # frontmatter 中的 type 字段
 _TYPE_RE = re.compile(r"^type:\s*(\S+)", re.MULTILINE)
+_TARGETS_RE = re.compile(r"^targets:\s*(.+)$", re.MULTILINE)
 # frontmatter 边界
 _FRONTMATTER_RE = re.compile(r"^---\s*\n(.*?)\n---\s*\n", re.DOTALL)
 
@@ -78,8 +79,17 @@ _BEHAVIOR_KEYWORDS = [
 ]
 
 
+def _parse_targets(raw_value):
+    targets = []
+    for part in (raw_value or "").split(","):
+        token = part.strip().lower()
+        if token:
+            targets.append(token)
+    return targets
+
+
 def _parse_memory_file(path):
-    """解析单个记忆文件，返回 (type, body) 或 None。"""
+    """解析单个记忆文件，返回 (meta, body) 或 None。"""
     try:
         with open(path, "r", encoding="utf-8", errors="replace") as f:
             content = f.read()
@@ -87,12 +97,16 @@ def _parse_memory_file(path):
         return None
 
     # 提取 frontmatter type
-    mem_type = ""
+    meta = {"type": "", "targets": []}
     fm_match = _FRONTMATTER_RE.match(content)
     if fm_match:
-        type_match = _TYPE_RE.search(fm_match.group(1))
+        frontmatter = fm_match.group(1)
+        type_match = _TYPE_RE.search(frontmatter)
         if type_match:
-            mem_type = type_match.group(1).strip()
+            meta["type"] = type_match.group(1).strip()
+        targets_match = _TARGETS_RE.search(frontmatter)
+        if targets_match:
+            meta["targets"] = _parse_targets(targets_match.group(1))
 
     # 提取正文（frontmatter 之后）
     if fm_match:
@@ -100,7 +114,7 @@ def _parse_memory_file(path):
     else:
         body = content.strip()
 
-    return mem_type, body
+    return meta, body
 
 
 def _read_text(path):
@@ -139,6 +153,17 @@ def _is_fact_content(mem_type, body):
     # 需要检查正文是否含行为/流程指导内容
     # 保守策略：没有 type 标记的文件默认跳过
     return False
+
+
+def _matches_target_scope(targets, target_name):
+    if not targets:
+        return True
+
+    normalized = set(targets)
+    current_target = (target_name or "meeting").strip().lower() or "meeting"
+    if "*" in normalized or "all" in normalized or "any" in normalized:
+        return True
+    return current_target in normalized
 
 
 def _filter_behavior_lines(body):
@@ -187,8 +212,8 @@ def sync_codex_memory_live():
             parsed = _parse_memory_file(src_path)
             if parsed is None:
                 continue
-            mem_type, body = parsed
-            if not _is_fact_content(mem_type, body):
+            mem_meta, body = parsed
+            if not _is_fact_content(mem_meta["type"], body):
                 continue
 
             filtered_body = _filter_behavior_lines(body)
@@ -268,7 +293,7 @@ def _get_claude_memory_dir(cwd=None):
     return mem_dir  # 返回原始路径，调用方会检查存在性
 
 
-def load_memory(target, cwd=None):
+def load_memory(target, cwd=None, target_name="meeting"):
     """加载指定 agent 的事实层记忆。
 
     返回 dict:
@@ -324,8 +349,11 @@ def load_memory(target, cwd=None):
             if parsed is None:
                 continue
 
-            mem_type, body = parsed
-            if not _is_fact_content(mem_type, body):
+            mem_meta, body = parsed
+            if not _is_fact_content(mem_meta["type"], body):
+                continue
+
+            if target == "codex" and not _matches_target_scope(mem_meta["targets"], target_name):
                 continue
 
             # 所有类型都过滤行为约束行
