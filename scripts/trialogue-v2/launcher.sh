@@ -40,6 +40,21 @@ command -v python3 > /dev/null 2>&1 || { echo "错误：python3 不可用" >&2; 
 # ── 读取配置 ──
 source "$CONF"
 
+if [[ "$TARGET" == "codex" && -n "${CODEX_RUNNER:-}" ]]; then
+  [[ -x "$CODEX_RUNNER" ]] || { echo "Codex runner 不存在或不可执行: $CODEX_RUNNER" >&2; exit 1; }
+  RUNNER_CONF="${CODEX_RUNNER_CONF:-$CONF}"
+  if [[ -n "${CODEX_RUNNER_USER:-}" ]]; then
+    exec sudo -n -u "$CODEX_RUNNER_USER" "$CODEX_RUNNER" \
+      --message "$MESSAGE" \
+      --conf "$RUNNER_CONF" \
+      --meta-file "$META_FILE"
+  fi
+  exec "$CODEX_RUNNER" \
+    --message "$MESSAGE" \
+    --conf "$RUNNER_CONF" \
+    --meta-file "$META_FILE"
+fi
+
 # ── 选择二进制 ──
 case "$TARGET" in
   claude) BIN="$CLAUDE_BIN" ;;
@@ -56,7 +71,9 @@ BIN_VERSION=$("$BIN" --version 2>/dev/null || echo "unknown")
 # 不再硬拦截；并发风险交给 nonce 唯一命中确认，并把现场进程数写入审计。
 CODEX_PROCS="0"
 if [[ "$TARGET" == "codex" ]]; then
-  CODEX_PROCS=$(pgrep -u "$(id -u)" -c -x codex 2>/dev/null || echo "0")
+  CODEX_PROCS="$(pgrep -u "$(id -u)" -c -x codex 2>/dev/null || true)"
+  CODEX_PROCS="${CODEX_PROCS//$'\n'/}"
+  [[ "$CODEX_PROCS" =~ ^[0-9]+$ ]] || CODEX_PROCS="0"
 fi
 
 # ── Codex session 快照（诊断用；正式确认走 nonce 内容命中） ──

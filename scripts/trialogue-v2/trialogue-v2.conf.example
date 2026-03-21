@@ -6,6 +6,20 @@
 CLAUDE_BIN=/home/administrator/.local/bin/claude
 CODEX_BIN=/home/administrator/.local/bin/codex
 
+# 可选：将 Codex 调用委托给独立 runner。
+# 为空时维持当前本地直接调用；设置后 launcher.sh 会转交给该 runner。
+CODEX_RUNNER=
+CODEX_RUNNER_CONF=
+CODEX_RUNNER_USER=codex-agent
+CODEX_RUNNER_HOME=/srv/trialogue/codex/home
+CODEX_RUNNER_WORKSPACE=/srv/trialogue/codex/workspace
+CODEX_RUNNER_AUDIT_LOG=/srv/trialogue/codex/audit/audit.jsonl
+CODEX_MEMORY_SOURCE_DIR=/srv/trialogue/codex/home/.codex-facts
+CODEX_MEMORY_LIVE_DIR=/srv/trialogue/codex/workspace/state/codex-memory-live
+CODEX_SANDBOX_MODE=workspace-write
+# codex exec 非交互模式当前不会弹审批；有效行为等同 never。
+CODEX_APPROVAL_MODE=never
+
 # 审计日志
 AUDIT_LOG=/home/administrator/.openclaw/trialogue/audit.jsonl
 

@@ -30,8 +30,10 @@ from chat import (
     build_target_message,
     call_launcher,
     call_launcher_stream,
+    has_external_codex_runner,
     parse_message,
     parse_target_command,
+    resolve_agent_target_info,
     resolve_target,
 )
 from _memory import load_memory, build_injected_message
@@ -71,6 +73,7 @@ class TrialogueState:
         self.launcher = launcher
         self.conf = conf
         self.audit_log = audit_log
+        self.codex_runner_enabled = has_external_codex_runner(conf)
         self.started_at = now_iso()
         self.items: list[dict[str, Any]] = []
         self.last_rid = ""
@@ -622,11 +625,25 @@ class TrialogueState:
             else:
                 session_id = ""
                 resume_session = False
+            agent_target_info = resolve_agent_target_info(target, target_info, self.conf)
 
             # 记忆注入：只读自己的事实层记忆
-            mem = load_memory(target, target_name=target_info.get("name", "meeting"))
-            injected_message = build_injected_message(mem, wrapped_message)
-            injected_message = build_target_message(target_info, injected_message)
+            if target == "codex" and self.codex_runner_enabled:
+                mem = {
+                    "injected": False,
+                    "profile": "runner_managed",
+                    "files": [],
+                    "source_files": [],
+                    "sha256": "",
+                    "bytes": 0,
+                    "text": "",
+                    "mirror_generated_at": "",
+                }
+                injected_message = wrapped_message
+            else:
+                mem = load_memory(target, target_name=agent_target_info.get("name", "meeting"))
+                injected_message = build_injected_message(mem, wrapped_message)
+            injected_message = build_target_message(agent_target_info, injected_message)
             injected_message = build_meeting_context(self._build_meeting_entries(), injected_message)
             cwd_override = target_info.get("claude_cwd") if target == "claude" else None
             with self.lock:
@@ -644,14 +661,14 @@ class TrialogueState:
                         agent, "running",
                         f"记忆注入: {mem['profile']} ({len(mem['files'])} 文件, {mem['bytes']} 字节)"
                     )
-                if target_info.get("injected"):
+                if agent_target_info.get("injected"):
                     self.append_event(
                         agent, "running",
-                        f"目标上下文: {target_info['name']} ({target_info['source']})"
+                        f"目标上下文: {agent_target_info['name']} ({agent_target_info['source']})"
                     )
             if mem["injected"]:
                 self.broadcast()
-            elif target_info.get("injected"):
+            elif agent_target_info.get("injected"):
                 self.broadcast()
 
             reply = ""
@@ -667,7 +684,7 @@ class TrialogueState:
                             session_id=session_id or None,
                             resume_session=resume_session,
                             memory_result=mem,
-                            target_info=target_info,
+                            target_info=agent_target_info,
                             cwd_override=cwd_override,
                         )
                 else:
@@ -676,12 +693,12 @@ class TrialogueState:
                         self.conf,
                         target,
                         injected_message,
-                        session_id=session_id or None,
-                        resume_session=resume_session,
-                        memory_result=mem,
-                        target_info=target_info,
-                        on_stderr=lambda line: self._handle_codex_stderr(agent, line),
-                    )
+                            session_id=session_id or None,
+                            resume_session=resume_session,
+                            memory_result=mem,
+                            target_info=agent_target_info,
+                            on_stderr=lambda line: self._handle_codex_stderr(agent, line),
+                        )
             except Exception as exc:  # pragma: no cover - defensive
                 meta = {"session_confirmed": False, "error": str(exc)}
                 reply = f"[错误] {exc}"

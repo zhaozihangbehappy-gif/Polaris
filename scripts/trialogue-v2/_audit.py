@@ -27,7 +27,10 @@ MEMORY_HEADER_RE = re.compile(
     r"(?:\s+files=(?P<files>\S+))?\]$"
 )
 MEETING_HEADER_RE = re.compile(
-    r"^\[MEETING-CONTEXT readonly=true sha256=(?P<sha>[0-9a-f]{64})"
+    r"^\[MEETING-CONTEXT readonly=true"
+    r"(?:\s+untrusted=(?P<untrusted>\S+))?"
+    r"(?:\s+semantic=(?P<semantic>\S+))?"
+    r" sha256=(?P<sha>[0-9a-f]{64})"
     r" entries=(?P<entries>\d+)\]$"
 )
 TARGET_HEADER_RE = re.compile(
@@ -107,6 +110,8 @@ def parse_meeting_context(message):
         "sha256_match": False,
         "bytes": 0,
         "entries": 0,
+        "untrusted": False,
+        "semantic": "",
     }
 
     if not message.startswith("[MEETING-CONTEXT "):
@@ -139,6 +144,8 @@ def parse_meeting_context(message):
         "sha256_match": actual_sha256 == claimed_sha256,
         "bytes": len(body_bytes),
         "entries": int(match.group("entries")),
+        "untrusted": (match.group("untrusted") or "").lower() == "true",
+        "semantic": match.group("semantic") or "",
     }, remaining
 
 
@@ -210,6 +217,65 @@ def parse_audit_message(message):
         "header_found": True,
         "header_valid": body_sha256 == match.group("sha"),
     }
+
+
+def peel_context_wrappers(message):
+    meeting_info = {
+        "injected": False,
+        "sha256_claimed": "",
+        "sha256_verified": "",
+        "sha256_match": False,
+        "bytes": 0,
+        "entries": 0,
+        "untrusted": False,
+        "semantic": "",
+    }
+    target_info = {
+        "injected": False,
+        "name": "meeting",
+        "source": "default",
+        "path": "",
+        "sha256_claimed": "",
+        "sha256_verified": "",
+        "sha256_match": False,
+    }
+    memory_info = {
+        "injected": False,
+        "profile": "none",
+        "sha256_claimed": "",
+        "sha256_verified": "",
+        "sha256_match": False,
+        "bytes": 0,
+        "files": [],
+    }
+
+    remaining = message
+    changed = True
+    while changed:
+        changed = False
+        if not meeting_info["injected"] and remaining.startswith("[MEETING-CONTEXT "):
+            parsed, stripped = parse_meeting_context(remaining)
+            if parsed["injected"]:
+                meeting_info = parsed
+                remaining = stripped
+                changed = True
+                continue
+        if not target_info["injected"] and remaining.startswith("[TARGET-CONTEXT "):
+            parsed, stripped = parse_target_context(remaining)
+            if parsed["injected"]:
+                target_info = parsed
+                remaining = stripped
+                changed = True
+                continue
+        if not memory_info["injected"] and remaining.startswith("[MEMORY-CONTEXT "):
+            parsed, stripped = parse_memory_context(remaining)
+            if parsed["injected"]:
+                memory_info = parsed
+                remaining = stripped
+                changed = True
+                continue
+
+    return meeting_info, target_info, memory_info, remaining
 
 
 def file_contains(path, needle):
@@ -322,9 +388,7 @@ def main():
     claude_resume_original_session_id = env("_L_CLAUDE_RESUME_ORIGINAL_SESSION_ID")
     claude_resume_original_exit_code = env("_L_CLAUDE_RESUME_ORIGINAL_EXIT_CODE")
 
-    meeting_info, message_without_meeting = parse_meeting_context(message)
-    target_info, message_without_target = parse_target_context(message_without_meeting)
-    memory_info, message_without_memory = parse_memory_context(message_without_target)
+    meeting_info, target_info, memory_info, message_without_memory = peel_context_wrappers(message)
     target_env_match = (
         not target_info["injected"]
         or (
@@ -581,6 +645,8 @@ def main():
         "meeting_context_sha256_match": meeting_info.get("sha256_match", False),
         "meeting_context_bytes": meeting_info.get("bytes", 0),
         "meeting_context_entries": meeting_info.get("entries", 0),
+        "meeting_context_untrusted": meeting_info.get("untrusted", False),
+        "meeting_context_semantic": meeting_info.get("semantic", ""),
         "target_context_injected": target_info["injected"],
         "target_name": target_name_env,
         "target_source": target_source_env,
@@ -637,6 +703,8 @@ def main():
             "meeting_context_sha256_match": meeting_info.get("sha256_match", False),
             "meeting_context_bytes": meeting_info.get("bytes", 0),
             "meeting_context_entries": meeting_info.get("entries", 0),
+            "meeting_context_untrusted": meeting_info.get("untrusted", False),
+            "meeting_context_semantic": meeting_info.get("semantic", ""),
             "target_context_injected": target_info["injected"],
             "target_name": target_name_env,
             "target_source": target_source_env,
