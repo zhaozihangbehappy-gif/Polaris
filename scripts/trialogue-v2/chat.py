@@ -25,6 +25,7 @@ import threading
 from _memory import load_memory, build_injected_message
 
 MAX_CLAUDE_HISTORY = 5
+MAX_MEETING_CONTEXT_ENTRIES = 12
 TARGET_DEFAULT = "meeting"
 TARGET_COMMAND_RE = re.compile(r"^/target(?:\s+(\S+))?\s*$", re.IGNORECASE)
 TARGET_KEYWORDS = {
@@ -182,6 +183,35 @@ def build_target_message(target_info, wrapped_message):
         f" path={target_info['repo_path']}]"
     )
     return f"{header}\n{body}\n[/TARGET-CONTEXT]\n{wrapped_message}"
+
+
+def _compact_meeting_text(text, limit=320):
+    compact = " ".join((text or "").split())
+    if len(compact) <= limit:
+        return compact
+    return compact[: limit - 1] + "…"
+
+
+def build_meeting_context(entries, wrapped_message):
+    """把最近几轮共享会议实录拼到消息前面。"""
+    lines = []
+    for entry in entries[-MAX_MEETING_CONTEXT_ENTRIES:]:
+        speaker = (entry.get("speaker") or "").strip()
+        text = _compact_meeting_text(entry.get("text", ""))
+        if not speaker or not text:
+            continue
+        lines.append(f"{speaker}: {text}")
+
+    if not lines:
+        return wrapped_message
+
+    body = "\n".join(lines)
+    body_sha256 = hashlib.sha256(body.encode("utf-8")).hexdigest()
+    header = (
+        f"[MEETING-CONTEXT readonly=true sha256={body_sha256}"
+        f" entries={len(lines)}]"
+    )
+    return f"{header}\n{body}\n[/MEETING-CONTEXT]\n{wrapped_message}"
 
 
 def call_launcher(
@@ -390,6 +420,7 @@ def main():
     target_override = ""
     last_rid = None
     last_meta = {"claude": {}, "codex": {}}
+    meeting_history = []
     now = datetime.datetime.now().strftime("%H:%M:%S")
     print("══ Trialogue v2 ══")
     print(f"主题: {args.topic}")
@@ -476,6 +507,7 @@ def main():
         audit_msg = build_audit_message(message)
         target_info = resolve_target(target_override, message)
         last_rid = audit_msg["rid"]
+        meeting_history.append({"speaker": "User", "text": user_input})
         # 串行调用（不并行，避免 codex 并发问题）
         for target in targets:
             name = "Claude" if target == "claude" else "Codex"
@@ -491,6 +523,7 @@ def main():
             mem = load_memory(target, target_name=target_info.get("name", TARGET_DEFAULT))
             injected_message = build_injected_message(mem, audit_msg["wrapped_message"])
             injected_message = build_target_message(target_info, injected_message)
+            injected_message = build_meeting_context(meeting_history, injected_message)
             cwd_override = target_info.get("claude_cwd") if target == "claude" else None
             if mem["injected"]:
                 print(f"  📋 记忆注入: {mem['profile']} ({len(mem['files'])} 文件, {mem['bytes']} 字节)")
@@ -535,6 +568,7 @@ def main():
             elif audit_msg["rid"]:
                 print(f"  verify: /home/administrator/trialogue/bin/verify-rid.sh {audit_msg['rid']}")
             print()
+            meeting_history.append({"speaker": name, "text": reply})
 
 
 if __name__ == "__main__":

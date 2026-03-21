@@ -26,6 +26,10 @@ MEMORY_HEADER_RE = re.compile(
     r" sha256=(?P<sha>[0-9a-f]{64})"
     r"(?:\s+files=(?P<files>\S+))?\]$"
 )
+MEETING_HEADER_RE = re.compile(
+    r"^\[MEETING-CONTEXT readonly=true sha256=(?P<sha>[0-9a-f]{64})"
+    r" entries=(?P<entries>\d+)\]$"
+)
 TARGET_HEADER_RE = re.compile(
     r"^\[TARGET-CONTEXT readonly=true target=(?P<target>\S+)"
     r" source=(?P<source>\S+)"
@@ -92,6 +96,49 @@ def parse_memory_context(message):
         "sha256_match": actual_sha256 == claimed_sha256,
         "bytes": len(body_bytes),
         "files": files_list,
+    }, remaining
+
+
+def parse_meeting_context(message):
+    no_meeting = {
+        "injected": False,
+        "sha256_claimed": "",
+        "sha256_verified": "",
+        "sha256_match": False,
+        "bytes": 0,
+        "entries": 0,
+    }
+
+    if not message.startswith("[MEETING-CONTEXT "):
+        return no_meeting, message
+
+    end_tag = "[/MEETING-CONTEXT]"
+    end_pos = message.find(end_tag)
+    if end_pos == -1:
+        return no_meeting, message
+
+    block = message[:end_pos + len(end_tag)]
+    remaining = message[end_pos + len(end_tag):].lstrip("\n")
+
+    first_line = block.split("\n", 1)[0]
+    match = MEETING_HEADER_RE.fullmatch(first_line.strip())
+    if not match:
+        return no_meeting, message
+
+    body_start = block.find("\n") + 1
+    body_end = block.rfind("\n" + end_tag)
+    body = block[body_start:body_end] if body_end > body_start else ""
+    body_bytes = body.encode("utf-8")
+    actual_sha256 = hashlib.sha256(body_bytes).hexdigest()
+    claimed_sha256 = match.group("sha")
+
+    return {
+        "injected": True,
+        "sha256_claimed": claimed_sha256,
+        "sha256_verified": actual_sha256,
+        "sha256_match": actual_sha256 == claimed_sha256,
+        "bytes": len(body_bytes),
+        "entries": int(match.group("entries")),
     }, remaining
 
 
@@ -275,7 +322,8 @@ def main():
     claude_resume_original_session_id = env("_L_CLAUDE_RESUME_ORIGINAL_SESSION_ID")
     claude_resume_original_exit_code = env("_L_CLAUDE_RESUME_ORIGINAL_EXIT_CODE")
 
-    target_info, message_without_target = parse_target_context(message)
+    meeting_info, message_without_meeting = parse_meeting_context(message)
+    target_info, message_without_target = parse_target_context(message_without_meeting)
     memory_info, message_without_memory = parse_memory_context(message_without_target)
     target_env_match = (
         not target_info["injected"]
@@ -527,6 +575,12 @@ def main():
         "memory_sha256_match": memory_info.get("sha256_match", False),
         "memory_bytes": memory_info["bytes"],
         "memory_mirror_generated_at": memory_mirror_generated_at,
+        "meeting_context_injected": meeting_info["injected"],
+        "meeting_context_sha256_claimed": meeting_info.get("sha256_claimed", ""),
+        "meeting_context_sha256_verified": meeting_info.get("sha256_verified", ""),
+        "meeting_context_sha256_match": meeting_info.get("sha256_match", False),
+        "meeting_context_bytes": meeting_info.get("bytes", 0),
+        "meeting_context_entries": meeting_info.get("entries", 0),
         "target_context_injected": target_info["injected"],
         "target_name": target_name_env,
         "target_source": target_source_env,
@@ -577,6 +631,12 @@ def main():
             "memory_sha256_match": memory_info.get("sha256_match", False),
             "memory_bytes": memory_info["bytes"],
             "memory_mirror_generated_at": memory_mirror_generated_at,
+            "meeting_context_injected": meeting_info["injected"],
+            "meeting_context_sha256_claimed": meeting_info.get("sha256_claimed", ""),
+            "meeting_context_sha256_verified": meeting_info.get("sha256_verified", ""),
+            "meeting_context_sha256_match": meeting_info.get("sha256_match", False),
+            "meeting_context_bytes": meeting_info.get("bytes", 0),
+            "meeting_context_entries": meeting_info.get("entries", 0),
             "target_context_injected": target_info["injected"],
             "target_name": target_name_env,
             "target_source": target_source_env,

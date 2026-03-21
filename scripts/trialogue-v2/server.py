@@ -26,6 +26,7 @@ from typing import Any
 
 from chat import (
     build_audit_message,
+    build_meeting_context,
     build_target_message,
     call_launcher,
     call_launcher_stream,
@@ -251,6 +252,23 @@ class TrialogueState:
         if targets == ["codex"]:
             return f"@codex {message_body}".strip()
         return message_body
+
+    def _build_meeting_entries(self) -> list[dict[str, str]]:
+        entries = []
+        with self.lock:
+            items = copy.deepcopy(self.items)
+
+        for item in sorted(items, key=lambda x: x.get("created_at", "")):
+            if item.get("source") == "system":
+                continue
+            raw_text = (item.get("raw_text") or "").strip()
+            if raw_text:
+                entries.append({"speaker": "User", "text": raw_text})
+            for agent in item.get("agents", []):
+                reply = (agent.get("reply") or "").strip()
+                if reply:
+                    entries.append({"speaker": agent.get("label", "Agent"), "text": reply})
+        return entries
 
     def _agent_from_record(self, record: dict[str, Any]) -> dict[str, Any]:
         target = record.get("target", "unknown")
@@ -582,15 +600,8 @@ class TrialogueState:
         if not item:
             return
 
-        threads = []
         for agent in list(item["agents"]):
-            thread = threading.Thread(
-                target=self._run_agent,
-                args=(agent, wrapped_message, target_info),
-                daemon=True,
-            )
-            threads.append(thread)
-            thread.start()
+            self._run_agent(agent, wrapped_message, target_info)
 
     def _run_agent(self, agent: dict[str, Any], wrapped_message: str, target_info: dict[str, Any]) -> None:
             target = agent["target"]
@@ -616,6 +627,7 @@ class TrialogueState:
             mem = load_memory(target, target_name=target_info.get("name", "meeting"))
             injected_message = build_injected_message(mem, wrapped_message)
             injected_message = build_target_message(target_info, injected_message)
+            injected_message = build_meeting_context(self._build_meeting_entries(), injected_message)
             cwd_override = target_info.get("claude_cwd") if target == "claude" else None
             with self.lock:
                 agent["memory"] = {
