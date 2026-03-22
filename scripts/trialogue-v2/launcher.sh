@@ -43,16 +43,36 @@ source "$CONF"
 if [[ "$TARGET" == "codex" && -n "${CODEX_RUNNER:-}" ]]; then
   [[ -x "$CODEX_RUNNER" ]] || { echo "Codex runner 不存在或不可执行: $CODEX_RUNNER" >&2; exit 1; }
   RUNNER_CONF="${CODEX_RUNNER_CONF:-$CONF}"
-  if [[ -n "${CODEX_RUNNER_USER:-}" ]]; then
-    exec sudo -n -u "$CODEX_RUNNER_USER" "$CODEX_RUNNER" \
-      --message "$MESSAGE" \
-      --conf "$RUNNER_CONF" \
-      --meta-file "$META_FILE"
-  fi
-  exec "$CODEX_RUNNER" \
-    --message "$MESSAGE" \
-    --conf "$RUNNER_CONF" \
+  RUNNER_ARGS=(
+    --message "$MESSAGE"
+    --conf "$RUNNER_CONF"
     --meta-file "$META_FILE"
+    --room-id "${TRIALOGUE_ROOM_ID:-}"
+    --target-name "${TRIALOGUE_TARGET_NAME:-meeting}"
+    --target-source "${TRIALOGUE_TARGET_SOURCE:-default}"
+    --target-path "${TRIALOGUE_TARGET_PATH:-}"
+    --target-cwd-override "${TRIALOGUE_TARGET_CWD_OVERRIDE:-}"
+  )
+  if [[ -n "${CODEX_RUNNER_USER:-}" ]]; then
+    exec sudo -n -u "$CODEX_RUNNER_USER" "$CODEX_RUNNER" "${RUNNER_ARGS[@]}"
+  fi
+  exec "$CODEX_RUNNER" "${RUNNER_ARGS[@]}"
+fi
+
+if [[ "$TARGET" == "claude" && -n "${CLAUDE_RUNNER:-}" ]]; then
+  [[ -x "$CLAUDE_RUNNER" ]] || { echo "Claude runner 不存在或不可执行: $CLAUDE_RUNNER" >&2; exit 1; }
+  RUNNER_CONF="${CLAUDE_RUNNER_CONF:-$CONF}"
+  RUNNER_ARGS=(
+    --message "$MESSAGE"
+    --conf "$RUNNER_CONF"
+    --meta-file "$META_FILE"
+    --session-id "$SESSION_ID"
+  )
+  [[ "$RESUME_SESSION" == "1" ]] && RUNNER_ARGS+=(--resume)
+  if [[ -n "${CLAUDE_RUNNER_USER:-}" ]]; then
+    exec sudo -n -u "$CLAUDE_RUNNER_USER" "$CLAUDE_RUNNER" "${RUNNER_ARGS[@]}"
+  fi
+  exec "$CLAUDE_RUNNER" "${RUNNER_ARGS[@]}"
 fi
 
 # ── 选择二进制 ──

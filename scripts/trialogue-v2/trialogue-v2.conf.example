@@ -14,11 +14,17 @@ CODEX_RUNNER_USER=codex-agent
 CODEX_RUNNER_HOME=/srv/trialogue/codex/home
 CODEX_RUNNER_WORKSPACE=/srv/trialogue/codex/workspace
 CODEX_RUNNER_AUDIT_LOG=/srv/trialogue/codex/audit/audit.jsonl
+CODEX_APP_EVENTS_DIR=/srv/trialogue/codex/audit/events
+CODEX_ROOM_STATE_DIR=/srv/trialogue/codex/state/rooms
 CODEX_MEMORY_SOURCE_DIR=/srv/trialogue/codex/home/.codex-facts
 CODEX_MEMORY_LIVE_DIR=/srv/trialogue/codex/workspace/state/codex-memory-live
+CODEX_APP_SERVER_BIN=/srv/trialogue/codex/home/.local/bin/codex
+# 可选：测试或调试时覆盖完整 app-server 启动命令。
+CODEX_APP_SERVER_COMMAND=
 CODEX_SANDBOX_MODE=workspace-write
-# codex exec 非交互模式当前不会弹审批；有效行为等同 never。
-CODEX_APPROVAL_MODE=never
+# Codex app-server runner 支持真实 approval request -> broker -> user -> runner 回传。
+CODEX_APPROVAL_MODE=on-request
+CODEX_APPROVAL_TIMEOUT_SEC=120
 
 # 审计日志
 AUDIT_LOG=/home/administrator/.openclaw/trialogue/audit.jsonl

@@ -27,6 +27,7 @@ from typing import Any
 from chat import (
     build_audit_message,
     build_meeting_context,
+    make_room_id,
     build_target_message,
     call_launcher,
     call_launcher_stream,
@@ -70,6 +71,7 @@ def shorten_command(line: str, limit: int = 88) -> str:
 class TrialogueState:
     def __init__(self, topic: str, launcher: str, conf: str, audit_log: str):
         self.topic = topic
+        self.room_id = make_room_id(topic)
         self.launcher = launcher
         self.conf = conf
         self.audit_log = audit_log
@@ -84,6 +86,7 @@ class TrialogueState:
         self.clients: set[socket.socket] = set()
         self.lock = threading.RLock()
         self.claude_exec_lock = threading.Lock()
+        self.pending_approvals: dict[tuple[str, str, str], dict[str, Any]] = {}
         self._load_history()
         self.audit_offset = os.path.getsize(self.audit_log) if os.path.isfile(self.audit_log) else 0
         threading.Thread(target=self._tail_audit_log, daemon=True).start()
@@ -95,6 +98,11 @@ class TrialogueState:
                 for agent in item["agents"]:
                     if agent["status"] in ("queued", "running"):
                         active_agents += 1
+            pending_approvals = 0
+            for item in self.items:
+                for agent in item["agents"]:
+                    if agent.get("pending_approval"):
+                        pending_approvals += 1
             return {
                 "topic": self.topic,
                 "started_at": self.started_at,
@@ -105,6 +113,8 @@ class TrialogueState:
                 "claude_sessions": list(self.claude_sessions),
                 "latest_codex_session": self.latest_codex_session,
                 "active_agents": active_agents,
+                "pending_approvals": pending_approvals,
+                "room_id": self.room_id,
                 "items": copy.deepcopy(self.items),
             }
 
@@ -315,6 +325,7 @@ class TrialogueState:
             "reply": reply,
             "meta": meta,
             "events": [],
+            "pending_approval": None,
         }
         self.append_event(agent, "done", "从 audit.jsonl 恢复")
         return agent
@@ -455,6 +466,7 @@ class TrialogueState:
                 )
                 agent["current_detail"] = "已从 audit.jsonl 合并权威记录"
                 agent["finished_at"] = record.get("timestamp", now_iso())
+                agent["pending_approval"] = None
                 self.append_event(agent, "done", "已从 audit.jsonl 合并权威记录")
 
             self.last_rid = rid
@@ -529,6 +541,7 @@ class TrialogueState:
                 "reply": "",
                 "meta": {},
                 "events": [],
+                "pending_approval": None,
             }
             self.append_event(agent, "queued", "等待本地执行队列")
             agents.append(agent)
@@ -604,9 +617,9 @@ class TrialogueState:
             return
 
         for agent in list(item["agents"]):
-            self._run_agent(agent, wrapped_message, target_info)
+            self._run_agent(item, agent, wrapped_message, target_info)
 
-    def _run_agent(self, agent: dict[str, Any], wrapped_message: str, target_info: dict[str, Any]) -> None:
+    def _run_agent(self, item: dict[str, Any], agent: dict[str, Any], wrapped_message: str, target_info: dict[str, Any]) -> None:
             target = agent["target"]
             label = agent["label"]
             with self.lock:
@@ -695,10 +708,12 @@ class TrialogueState:
                         injected_message,
                             session_id=session_id or None,
                             resume_session=resume_session,
-                            memory_result=mem,
-                            target_info=agent_target_info,
-                            on_stderr=lambda line: self._handle_codex_stderr(agent, line),
-                        )
+                        memory_result=mem,
+                        target_info=agent_target_info,
+                        on_stderr=lambda line: self._handle_codex_stderr(agent, line),
+                        on_event=lambda event: self._handle_codex_runner_event(item, agent, event),
+                        room_id=self.room_id,
+                    )
             except Exception as exc:  # pragma: no cover - defensive
                 meta = {"session_confirmed": False, "error": str(exc)}
                 reply = f"[错误] {exc}"
@@ -718,6 +733,7 @@ class TrialogueState:
                 agent["meta"] = meta
                 agent["confirmed"] = confirmed
                 agent["status"] = "done"
+                agent["pending_approval"] = None
                 agent["phase"] = "done"
                 agent["phase_label"] = "已完成并验真" if confirmed else "已完成，等待人工复核"
                 agent["next_step"] = (
@@ -758,6 +774,119 @@ class TrialogueState:
             event.get("event_detail"),
         )
 
+    def resolve_approval(
+        self,
+        item_id: str,
+        target: str,
+        request_id: str,
+        decision: str,
+        scope: str,
+    ) -> bool:
+        key = (item_id, target, request_id)
+        with self.lock:
+            waiter = self.pending_approvals.get(key)
+            if waiter is None:
+                return False
+            waiter["response"] = {
+                "type": "approval_response",
+                "request_id": request_id,
+                "decision": decision,
+                "scope": scope,
+            }
+            agent = waiter["agent"]
+            agent["pending_approval"] = None
+            self.append_event(agent, "running", f"审批已处理: {decision} ({scope})")
+            waiter["event"].set()
+        self.broadcast()
+        return True
+
+    def _await_approval(self, item: dict[str, Any], agent: dict[str, Any], event: dict[str, Any]) -> dict[str, Any]:
+        request_id = str(event.get("request_id", ""))
+        timeout_sec = float(event.get("timeout_sec", 120) or 120)
+        key = (item["id"], agent["target"], request_id)
+        waiter = {"event": threading.Event(), "response": None, "agent": agent}
+        with self.lock:
+            agent["pending_approval"] = {
+                "request_id": request_id,
+                "request_kind": event.get("request_kind", ""),
+                "summary": event.get("summary", ""),
+                "request": event.get("request", {}),
+                "timeout_sec": timeout_sec,
+                "thread_id": event.get("thread_id", ""),
+                "turn_id": event.get("turn_id", ""),
+            }
+            agent["phase"] = "approval_wait"
+            agent["phase_label"] = "等待你的审批"
+            agent["next_step"] = "点击批准 / 拒绝 / 取消后，Codex 才会继续"
+            agent["current_detail"] = event.get("summary", "Codex 请求审批")
+            self.append_event(agent, "running", f"审批请求: {event.get('summary', 'Codex 请求审批')}")
+            self.pending_approvals[key] = waiter
+        self.broadcast()
+        waiter["event"].wait(timeout=timeout_sec)
+        with self.lock:
+            self.pending_approvals.pop(key, None)
+            response = waiter["response"] or {
+                "type": "approval_response",
+                "request_id": request_id,
+                "decision": "decline",
+                "scope": "turn",
+            }
+            agent["pending_approval"] = None
+            if waiter["response"] is None:
+                self.append_event(agent, "running", "审批超时，默认拒绝本次请求")
+        self.broadcast()
+        return response
+
+    def _handle_codex_runner_event(
+        self,
+        item: dict[str, Any],
+        agent: dict[str, Any],
+        event: dict[str, Any],
+    ) -> dict[str, Any] | None:
+        event_type = event.get("type", "")
+        if event_type == "phase":
+            self._set_agent_phase(
+                agent,
+                event.get("phase", "running"),
+                event.get("phase_label", "Codex 状态更新"),
+                event.get("next_step", "等待更多状态"),
+                event.get("current_detail", ""),
+                event.get("event_detail"),
+            )
+            return None
+        if event_type == "session_state":
+            thread_id = event.get("thread_id", "")
+            with self.lock:
+                if thread_id:
+                    self.latest_codex_session = thread_id
+                    agent.setdefault("meta", {})["session_id"] = thread_id
+                    self.append_event(agent, "running", f"room session: {thread_id}")
+            self.broadcast()
+            return None
+        if event_type == "reply_delta":
+            with self.lock:
+                agent["reply"] = event.get("reply", agent.get("reply", ""))
+            self.broadcast()
+            return None
+        if event_type == "approval_request":
+            return self._await_approval(item, agent, event)
+        if event_type == "approval_resolved":
+            with self.lock:
+                self.append_event(
+                    agent,
+                    "running",
+                    f"审批已回传: {event.get('decision', 'decline')} ({event.get('scope', 'turn')})",
+                )
+            self.broadcast()
+            return None
+        if event_type == "runner_error":
+            with self.lock:
+                agent["current_detail"] = str(event.get("error", "Codex runner error"))
+                self.append_event(agent, "running", f"runner error: {event.get('error', 'unknown')}")
+            self.broadcast()
+            return None
+        return None
+
 
 class Handler(BaseHTTPRequestHandler):
     server: "TrialogueHTTPServer"
@@ -775,7 +904,7 @@ class Handler(BaseHTTPRequestHandler):
         self.send_error(HTTPStatus.NOT_FOUND)
 
     def do_POST(self) -> None:  # noqa: N802
-        if self.path != "/api/send":
+        if self.path not in {"/api/send", "/api/approval"}:
             self.send_error(HTTPStatus.NOT_FOUND)
             return
 
@@ -787,18 +916,37 @@ class Handler(BaseHTTPRequestHandler):
             self._send_json({"error": "invalid json"}, status=HTTPStatus.BAD_REQUEST)
             return
 
-        text = str(payload.get("text", "")).strip()
-        if not text:
-            self._send_json({"error": "text is required"}, status=HTTPStatus.BAD_REQUEST)
+        if self.path == "/api/send":
+            text = str(payload.get("text", "")).strip()
+            if not text:
+                self._send_json({"error": "text is required"}, status=HTTPStatus.BAD_REQUEST)
+                return
+
+            try:
+                item = self.server.state.submit(text)
+            except ValueError as exc:
+                self._send_json({"error": str(exc)}, status=HTTPStatus.BAD_REQUEST)
+                return
+
+            self._send_json({"ok": True, "item_id": item["id"], "rid": item["rid"]})
             return
 
-        try:
-            item = self.server.state.submit(text)
-        except ValueError as exc:
-            self._send_json({"error": str(exc)}, status=HTTPStatus.BAD_REQUEST)
+        item_id = str(payload.get("item_id", "")).strip()
+        target = str(payload.get("target", "")).strip()
+        request_id = str(payload.get("request_id", "")).strip()
+        decision = str(payload.get("decision", "")).strip().lower()
+        scope = str(payload.get("scope", "turn")).strip().lower() or "turn"
+        if not item_id or not target or not request_id or decision not in {"accept", "decline", "cancel"}:
+            self._send_json({"error": "invalid approval payload"}, status=HTTPStatus.BAD_REQUEST)
             return
-
-        self._send_json({"ok": True, "item_id": item["id"], "rid": item["rid"]})
+        if scope not in {"turn", "session"}:
+            self._send_json({"error": "invalid approval scope"}, status=HTTPStatus.BAD_REQUEST)
+            return
+        ok = self.server.state.resolve_approval(item_id, target, request_id, decision, scope)
+        if not ok:
+            self._send_json({"error": "approval request not found"}, status=HTTPStatus.NOT_FOUND)
+            return
+        self._send_json({"ok": True})
 
     def log_message(self, fmt: str, *args: Any) -> None:
         return

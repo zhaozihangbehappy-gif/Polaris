@@ -164,6 +164,42 @@
       padding: 8px 10px;
       line-height: 1.5;
     }
+    .approval-box {
+      border: 1px solid #d9b46e;
+      background: #fff4dc;
+      border-radius: 14px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .approval-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #7a5318;
+    }
+    .approval-meta {
+      font-size: 12px;
+      color: #7a5f36;
+      line-height: 1.55;
+    }
+    .approval-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .approval-btn {
+      border: 1px solid rgba(60,45,20,0.15);
+      border-radius: 999px;
+      padding: 7px 12px;
+      cursor: pointer;
+      background: white;
+      font-size: 12px;
+      color: var(--ink);
+    }
+    .approval-btn.ok { background: #e1f0e6; color: #245536; border-color: #b6d0bf; }
+    .approval-btn.warn { background: #fff2d7; color: #7d5618; border-color: #dfc28d; }
+    .approval-btn.danger { background: #f5ded8; color: #7e3128; border-color: #d7ada5; }
     .reply {
       white-space: pre-wrap;
       line-height: 1.58;
@@ -448,6 +484,7 @@
         `运行中 agent: <strong>${state.active_agents}</strong>`,
         `历史消息: <strong>${state.items.length}</strong>`,
         `当前 target: <strong>${escapeHtml((state.current_target && state.current_target.name) || "meeting")}</strong>`,
+        `待审批: <strong>${state.pending_approvals || 0}</strong>`,
         `Claude sessions: <strong>${state.claude_sessions.length}</strong>`,
         `Codex session: <strong>${state.latest_codex_session || "暂无"}</strong>`,
       ];
@@ -483,7 +520,7 @@
       `;
     }
 
-    function renderAgent(agent) {
+    function renderAgent(agent, itemId) {
       const confirmedClass = agent.status === "done"
         ? (agent.confirmed ? "status-verified" : "status-unverified")
         : agent.status === "running"
@@ -502,6 +539,7 @@
       const nextStep = agent.next_step || "";
       const phaseLabel = agent.phase_label || "等待开始";
       const currentDetail = agent.current_detail || "等待更多运行细节";
+      const pending = agent.pending_approval || null;
       const copyReply = encodeCopy(reply);
       const copyVerify = verify ? encodeCopy(verify) : "";
       const copyVerifyFile = verifyFile ? encodeCopy(verifyFile) : "";
@@ -527,6 +565,23 @@
           <div class="detail">${formatMultiline(ev.detail || "")}</div>
         </div>
       `).join("");
+      const approvalHtml = pending ? `
+        <div class="approval-box">
+          <div class="approval-title">等待你的审批</div>
+          <div class="approval-meta">${escapeHtml(pending.summary || "Codex 请求审批")}</div>
+          <div class="approval-meta">request: ${escapeHtml(pending.request_id || "")} · timeout: ${escapeHtml(String(pending.timeout_sec || 120))}s</div>
+          <div class="approval-actions">
+            <button class="approval-btn ok" data-approval="${escapeHtml(itemId)}|${escapeHtml(agent.target)}|${escapeHtml(pending.request_id || "")}|accept|turn">批准本次</button>
+            <button class="approval-btn warn" data-approval="${escapeHtml(itemId)}|${escapeHtml(agent.target)}|${escapeHtml(pending.request_id || "")}|accept|session">批准本 session</button>
+            <button class="approval-btn danger" data-approval="${escapeHtml(itemId)}|${escapeHtml(agent.target)}|${escapeHtml(pending.request_id || "")}|decline|turn">拒绝继续</button>
+            <button class="approval-btn danger" data-approval="${escapeHtml(itemId)}|${escapeHtml(agent.target)}|${escapeHtml(pending.request_id || "")}|cancel|turn">取消本轮</button>
+          </div>
+          <details>
+            <summary>展开审批原文</summary>
+            <div class="audit-code">${escapeHtml(JSON.stringify(pending.request || {}, null, 2))}</div>
+          </details>
+        </div>
+      ` : "";
 
       return `
         <article class="agent-card">
@@ -543,6 +598,7 @@
           <div class="phase">当前阶段：${escapeHtml(phaseLabel)}</div>
           <div class="current-detail">最近观察：${formatMultiline(currentDetail)}</div>
           <div class="next-step">下一步：${escapeHtml(nextStep || "等待更多状态")}</div>
+          ${approvalHtml}
           <div class="reply">${formatMultiline(reply || "(无输出)")}</div>
           <div class="btn-row">
             <button class="mini-btn" data-copy="${escapeHtml(copyReply)}">复制回复</button>
@@ -618,7 +674,7 @@
           </div>
           ${item.target_path ? `<div class="next-step">目标路径：${escapeHtml(item.target_path)}</div>` : ""}
           <div class="agent-list">
-            ${item.agents.map(renderAgent).join("")}
+            ${item.agents.map(agent => renderAgent(agent, item.id)).join("")}
           </div>
         </article>
       `).join("");
@@ -726,8 +782,14 @@
 
     document.addEventListener("click", (ev) => {
       const button = ev.target.closest("[data-copy]");
-      if (!button) return;
-      copyText(decodeCopy(button.dataset.copy));
+      if (button) {
+        copyText(decodeCopy(button.dataset.copy));
+        return;
+      }
+      const approval = ev.target.closest("[data-approval]");
+      if (!approval) return;
+      const [itemId, target, requestId, decision, scope] = approval.dataset.approval.split("|");
+      resolveApproval(itemId, target, requestId, decision, scope);
     });
 
     setInterval(updateTimers, 200);
@@ -737,3 +799,25 @@
   </script>
 </body>
 </html>
+    async function resolveApproval(itemId, target, requestId, decision, scope) {
+      errorEl.textContent = "";
+      try {
+        const res = await fetch("/api/approval", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            item_id: itemId,
+            target,
+            request_id: requestId,
+            decision,
+            scope,
+          }),
+        });
+        const payload = await res.json();
+        if (!res.ok) {
+          errorEl.textContent = payload.error || "审批提交失败";
+        }
+      } catch (err) {
+        errorEl.textContent = String(err);
+      }
+    }
