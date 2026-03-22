@@ -287,6 +287,7 @@ class Runner:
         self.target_source = args.target_source or "default"
         self.target_path = args.target_path or ""
         self.target_cwd_override = args.target_cwd_override or ""
+        self.skip_memory = bool(args.skip_memory)
         self.room_state_path = os.path.join(self.room_state_dir, f"{self.room_id}.json")
         self.room_state = read_json_file(self.room_state_path)
         self.thread_id = str(self.room_state.get("thread_id", "") or "")
@@ -336,17 +337,28 @@ class Runner:
     def _prepare_message(self) -> None:
         os.environ["TRIALOGUE_CODEX_MEMORY_SOURCE_DIR"] = self.memory_source_dir
         os.environ["TRIALOGUE_CODEX_MEMORY_LIVE_DIR"] = self.memory_live_dir
-        memory_result = load_memory("codex", target_name=self.target_name)
-        self.memory_meta = {
-            "injected": memory_result.get("injected", False),
-            "profile": memory_result.get("profile", "none"),
-            "files": memory_result.get("files", []),
-            "source_files": memory_result.get("source_files", []),
-            "bytes": memory_result.get("bytes", 0),
-            "mirror_generated_at": memory_result.get("mirror_generated_at", ""),
-            "sha256_claimed": memory_result.get("sha256", ""),
-        }
-        self.message = build_injected_message(memory_result, self.message)
+        if self.skip_memory:
+            self.memory_meta = {
+                "injected": False,
+                "profile": "skipped_persistent_session",
+                "files": [],
+                "source_files": [],
+                "bytes": 0,
+                "mirror_generated_at": "",
+                "sha256_claimed": "",
+            }
+        else:
+            memory_result = load_memory("codex", target_name=self.target_name)
+            self.memory_meta = {
+                "injected": memory_result.get("injected", False),
+                "profile": memory_result.get("profile", "none"),
+                "files": memory_result.get("files", []),
+                "source_files": memory_result.get("source_files", []),
+                "bytes": memory_result.get("bytes", 0),
+                "mirror_generated_at": memory_result.get("mirror_generated_at", ""),
+                "sha256_claimed": memory_result.get("sha256", ""),
+            }
+            self.message = build_injected_message(memory_result, self.message)
         self.meeting_info, self.target_info, memory_info, message_without_context = peel_context_wrappers(self.message)
         self.memory_meta["sha256_verified"] = memory_info.get("sha256_verified", "")
         self.memory_meta["sha256_match"] = memory_info.get("sha256_match", False)
@@ -908,6 +920,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--target-source", default="")
     parser.add_argument("--target-path", default="")
     parser.add_argument("--target-cwd-override", default="")
+    parser.add_argument("--skip-memory", action="store_true")
     return parser.parse_args()
 
 

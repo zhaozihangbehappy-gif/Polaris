@@ -14,6 +14,7 @@ TARGET_NAME=""
 TARGET_SOURCE=""
 TARGET_PATH=""
 TARGET_CWD_OVERRIDE=""
+SKIP_MEMORY="0"
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -27,6 +28,7 @@ while [[ $# -gt 0 ]]; do
     --target-source) TARGET_SOURCE="$2"; shift 2 ;;
     --target-path)   TARGET_PATH="$2"; shift 2 ;;
     --target-cwd-override) TARGET_CWD_OVERRIDE="$2"; shift 2 ;;
+    --skip-memory)   SKIP_MEMORY="1"; shift ;;
     *) echo "未知参数: $1" >&2; exit 1 ;;
   esac
 done
@@ -38,6 +40,10 @@ done
 command -v python3 >/dev/null 2>&1 || { echo "错误：python3 不可用" >&2; exit 1; }
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+EXTRA_ARGS=()
+if [[ "$SKIP_MEMORY" == "1" ]]; then
+  EXTRA_ARGS+=(--skip-memory)
+fi
 
 exec python3 "${SCRIPT_DIR}/codex_app_server_runner.py" \
   --message "$MESSAGE" \
@@ -49,4 +55,5 @@ exec python3 "${SCRIPT_DIR}/codex_app_server_runner.py" \
   --target-name "$TARGET_NAME" \
   --target-source "$TARGET_SOURCE" \
   --target-path "$TARGET_PATH" \
-  --target-cwd-override "$TARGET_CWD_OVERRIDE"
+  --target-cwd-override "$TARGET_CWD_OVERRIDE" \
+  "${EXTRA_ARGS[@]}"

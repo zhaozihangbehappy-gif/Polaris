@@ -308,6 +308,7 @@ def call_launcher(
     message,
     session_id=None,
     resume_session=False,
+    skip_memory=False,
     memory_result=None,
     target_info=None,
     cwd_override=None,
@@ -337,6 +338,8 @@ def call_launcher(
         cmd.extend(["--session-id", session_id])
     if resume_session:
         cmd.append("--resume")
+    if skip_memory:
+        cmd.append("--skip-memory")
 
     env = os.environ.copy()
     if memory_result:
@@ -391,6 +394,7 @@ def call_launcher_stream(
     message,
     session_id=None,
     resume_session=False,
+    skip_memory=False,
     memory_result=None,
     target_info=None,
     cwd_override=None,
@@ -423,6 +427,8 @@ def call_launcher_stream(
         cmd.extend(["--session-id", session_id])
     if resume_session:
         cmd.append("--resume")
+    if skip_memory:
+        cmd.append("--skip-memory")
 
     env = os.environ.copy()
     if memory_result:
@@ -714,6 +720,7 @@ def main():
                     injected_message,
                     session_id=sid,
                     resume_session=resume_session,
+                    skip_memory=skip_memory,
                     memory_result=mem,
                     target_info=agent_target_info,
                     cwd_override=cwd_override,
@@ -728,6 +735,7 @@ def main():
                     injected_message,
                     session_id=sid,
                     resume_session=resume_session,
+                    skip_memory=skip_memory,
                     memory_result=mem,
                     target_info=agent_target_info,
                     cwd_override=cwd_override,

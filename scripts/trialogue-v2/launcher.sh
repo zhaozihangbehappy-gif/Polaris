@@ -16,6 +16,7 @@ TARGET=""
 MESSAGE=""
 SESSION_ID=""
 RESUME_SESSION="0"
+SKIP_MEMORY="0"
 CONF=""
 META_FILE=""
 
@@ -25,6 +26,7 @@ while [[ $# -gt 0 ]]; do
     --message)    MESSAGE="$2"; shift 2 ;;
     --session-id) SESSION_ID="$2"; shift 2 ;;
     --resume)     RESUME_SESSION="1"; shift ;;
+    --skip-memory) SKIP_MEMORY="1"; shift ;;
     --conf)       CONF="$2"; shift 2 ;;
     --meta-file)  META_FILE="$2"; shift 2 ;;
     *) echo "未知参数: $1" >&2; exit 1 ;;
@@ -53,6 +55,7 @@ if [[ "$TARGET" == "codex" && -n "${CODEX_RUNNER:-}" ]]; then
     --target-path "${TRIALOGUE_TARGET_PATH:-}"
     --target-cwd-override "${TRIALOGUE_TARGET_CWD_OVERRIDE:-}"
   )
+  [[ "$SKIP_MEMORY" == "1" ]] && RUNNER_ARGS+=(--skip-memory)
   if [[ -n "${CODEX_RUNNER_USER:-}" ]]; then
     exec sudo -n -u "$CODEX_RUNNER_USER" "$CODEX_RUNNER" "${RUNNER_ARGS[@]}"
   fi
@@ -69,6 +72,7 @@ if [[ "$TARGET" == "claude" && -n "${CLAUDE_RUNNER:-}" ]]; then
     --session-id "$SESSION_ID"
   )
   [[ "$RESUME_SESSION" == "1" ]] && RUNNER_ARGS+=(--resume)
+  [[ "$SKIP_MEMORY" == "1" ]] && RUNNER_ARGS+=(--skip-memory)
   if [[ -n "${CLAUDE_RUNNER_USER:-}" ]]; then
     exec sudo -n -u "$CLAUDE_RUNNER_USER" "$CLAUDE_RUNNER" "${RUNNER_ARGS[@]}"
   fi
