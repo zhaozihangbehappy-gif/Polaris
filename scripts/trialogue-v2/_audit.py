@@ -31,7 +31,8 @@ MEETING_HEADER_RE = re.compile(
     r"(?:\s+untrusted=(?P<untrusted>\S+))?"
     r"(?:\s+semantic=(?P<semantic>\S+))?"
     r" sha256=(?P<sha>[0-9a-f]{64})"
-    r" entries=(?P<entries>\d+)\]$"
+    r" entries=(?P<entries>\d+)"
+    r"(?:\s+mode=(?P<mode>\S+))?\]$"
 )
 TARGET_HEADER_RE = re.compile(
     r"^\[TARGET-CONTEXT readonly=true target=(?P<target>\S+)"
@@ -146,6 +147,7 @@ def parse_meeting_context(message):
         "entries": int(match.group("entries")),
         "untrusted": (match.group("untrusted") or "").lower() == "true",
         "semantic": match.group("semantic") or "",
+        "mode": match.group("mode") or "full",
     }, remaining
 
 
@@ -647,6 +649,7 @@ def main():
         "meeting_context_entries": meeting_info.get("entries", 0),
         "meeting_context_untrusted": meeting_info.get("untrusted", False),
         "meeting_context_semantic": meeting_info.get("semantic", ""),
+        "meeting_context_mode": meeting_info.get("mode", "full"),
         "target_context_injected": target_info["injected"],
         "target_name": target_name_env,
         "target_source": target_source_env,
@@ -705,6 +708,7 @@ def main():
             "meeting_context_entries": meeting_info.get("entries", 0),
             "meeting_context_untrusted": meeting_info.get("untrusted", False),
             "meeting_context_semantic": meeting_info.get("semantic", ""),
+        "meeting_context_mode": meeting_info.get("mode", "full"),
             "target_context_injected": target_info["injected"],
             "target_name": target_name_env,
             "target_source": target_source_env,

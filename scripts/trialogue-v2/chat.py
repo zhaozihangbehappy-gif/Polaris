@@ -206,11 +206,22 @@ def _compact_meeting_text(text, limit=MAX_MEETING_CONTEXT_ITEM_CHARS):
     return compact[: limit - 1] + "…"
 
 
-def build_meeting_context(entries, wrapped_message):
-    """把最近几轮共享会议实录拼到消息前面。"""
+def build_meeting_context(entries, wrapped_message, since_index=0):
+    """把会议实录拼到消息前面。
+
+    since_index: 持久 session 增量模式下，只注入从此 index 之后的条目。
+                 0 表示注入全部（非持久 session 或首轮）。
+    返回 (injected_message, next_cursor, mode)
+      next_cursor: 下次调用应传入的 since_index（= 本次 entries 总数）
+      mode: "full" 或 "delta"
+    """
+    mode = "delta" if since_index > 0 else "full"
+    effective_entries = entries[since_index:] if since_index > 0 else entries
+    next_cursor = len(entries)
+
     lines = []
     total_chars = 0
-    recent_entries = entries[-MAX_MEETING_CONTEXT_ENTRIES:]
+    recent_entries = effective_entries[-MAX_MEETING_CONTEXT_ENTRIES:]
     for entry in reversed(recent_entries):
         speaker = (entry.get("speaker") or "").strip()
         text = _compact_meeting_text(entry.get("text", ""))
@@ -227,16 +238,17 @@ def build_meeting_context(entries, wrapped_message):
         total_chars = next_total
 
     if not lines:
-        return wrapped_message
+        return wrapped_message, next_cursor, mode
 
     body = MEETING_CONTEXT_NOTICE + "\n" + "\n".join(lines)
     body_sha256 = hashlib.sha256(body.encode("utf-8")).hexdigest()
     header = (
         f"[MEETING-CONTEXT readonly=true untrusted=true semantic=peer-transcript"
         f" sha256={body_sha256}"
-        f" entries={len(lines)}]"
+        f" entries={len(lines)}"
+        f" mode={mode}]"
     )
-    return f"{header}\n{body}\n[/MEETING-CONTEXT]\n{wrapped_message}"
+    return f"{header}\n{body}\n[/MEETING-CONTEXT]\n{wrapped_message}", next_cursor, mode
 
 
 def load_conf_map(conf_path):
@@ -518,6 +530,7 @@ def main():
     last_rid = None
     last_meta = {"claude": {}, "codex": {}}
     meeting_history = []
+    meeting_cursors = {"claude": 0, "codex": 0}
     room_id = make_room_id(args.topic)
     now = datetime.datetime.now().strftime("%H:%M:%S")
     print("══ Trialogue v2 ══")
@@ -619,7 +632,9 @@ def main():
                 resume_session = False
             print(f"  → 正在调用 {name}... RID={audit_msg['rid']}")
 
-            # 记忆注入：只读自己的事实层记忆
+            # 记忆注入：持久 session 下只在首轮注入（后续轮 session 历史已包含）
+            is_persistent = (target == "claude" and resume_session) or (target == "codex" and codex_runner_enabled)
+            skip_memory = is_persistent and meeting_cursors[target] > 0
             if target == "codex" and codex_runner_enabled:
                 mem = {
                     "injected": False,
@@ -632,11 +647,26 @@ def main():
                     "mirror_generated_at": "",
                 }
                 injected_message = audit_msg["wrapped_message"]
+            elif skip_memory:
+                mem = {
+                    "injected": False,
+                    "profile": "skipped_persistent_session",
+                    "files": [],
+                    "source_files": [],
+                    "sha256": "",
+                    "bytes": 0,
+                    "text": "",
+                    "mirror_generated_at": "",
+                }
+                injected_message = audit_msg["wrapped_message"]
             else:
                 mem = load_memory(target, target_name=agent_target_info.get("name", TARGET_DEFAULT))
                 injected_message = build_injected_message(mem, audit_msg["wrapped_message"])
             injected_message = build_target_message(agent_target_info, injected_message)
-            injected_message = build_meeting_context(meeting_history, injected_message)
+            # 持久 session 下只注入增量会议上下文
+            is_persistent = (target == "claude" and resume_session) or (target == "codex" and codex_runner_enabled)
+            since = meeting_cursors[target] if is_persistent else 0
+            injected_message, next_cursor, meeting_mode = build_meeting_context(meeting_history, injected_message, since_index=since)
             cwd_override = target_info.get("claude_cwd") if target == "claude" else None
             if mem["injected"]:
                 print(f"  📋 记忆注入: {mem['profile']} ({len(mem['files'])} 文件, {mem['bytes']} 字节)")
@@ -702,6 +732,9 @@ def main():
                     target_info=agent_target_info,
                     cwd_override=cwd_override,
                 )
+
+            # 推进会议上下文游标
+            meeting_cursors[target] = next_cursor
 
             # 更新最新 session id
             if target == "claude":

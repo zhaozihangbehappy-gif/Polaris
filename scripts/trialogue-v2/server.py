@@ -82,6 +82,8 @@ class TrialogueState:
         self.latest_codex_session = ""
         self.current_claude_session = ""
         self.claude_sessions: list[str] = []
+        self.claude_meeting_cursor = 0
+        self.codex_meeting_cursor = 0
         self.target_override = ""
         self.clients: set[socket.socket] = set()
         self.lock = threading.RLock()
@@ -641,6 +643,11 @@ class TrialogueState:
             agent_target_info = resolve_agent_target_info(target, target_info, self.conf)
 
             # 记忆注入：只读自己的事实层记忆
+            # 持久 session 下，记忆只在首轮注入（后续轮 session 历史已包含）
+            with self.lock:
+                is_persistent = (target == "claude" and resume_session) or (target == "codex" and self.codex_runner_enabled)
+                memory_cursor = self.claude_meeting_cursor if target == "claude" else self.codex_meeting_cursor
+                skip_memory = is_persistent and memory_cursor > 0
             if target == "codex" and self.codex_runner_enabled:
                 mem = {
                     "injected": False,
@@ -653,11 +660,26 @@ class TrialogueState:
                     "mirror_generated_at": "",
                 }
                 injected_message = wrapped_message
+            elif skip_memory:
+                mem = {
+                    "injected": False,
+                    "profile": "skipped_persistent_session",
+                    "files": [],
+                    "source_files": [],
+                    "sha256": "",
+                    "bytes": 0,
+                    "text": "",
+                    "mirror_generated_at": "",
+                }
+                injected_message = wrapped_message
             else:
                 mem = load_memory(target, target_name=agent_target_info.get("name", "meeting"))
                 injected_message = build_injected_message(mem, wrapped_message)
             injected_message = build_target_message(agent_target_info, injected_message)
-            injected_message = build_meeting_context(self._build_meeting_entries(), injected_message)
+            # 持久 session 下只注入增量会议上下文，避免双重历史
+            since = memory_cursor if is_persistent else 0
+            meeting_entries = self._build_meeting_entries()
+            injected_message, next_cursor, meeting_mode = build_meeting_context(meeting_entries, injected_message, since_index=since)
             cwd_override = target_info.get("claude_cwd") if target == "claude" else None
             with self.lock:
                 agent["memory"] = {
@@ -751,6 +773,12 @@ class TrialogueState:
                     "done",
                     "已生成验真结果" if confirmed else "执行完成，但验真未通过",
                 )
+
+                # 推进会议上下文游标，下次持久 session 只注入增量
+                if target == "claude":
+                    self.claude_meeting_cursor = next_cursor
+                else:
+                    self.codex_meeting_cursor = next_cursor
 
                 if target == "claude":
                     resolved = meta.get("session_id") or session_id
