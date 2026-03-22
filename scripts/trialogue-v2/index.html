@@ -780,25 +780,6 @@
       }
     });
 
-    document.addEventListener("click", (ev) => {
-      const button = ev.target.closest("[data-copy]");
-      if (button) {
-        copyText(decodeCopy(button.dataset.copy));
-        return;
-      }
-      const approval = ev.target.closest("[data-approval]");
-      if (!approval) return;
-      const [itemId, target, requestId, decision, scope] = approval.dataset.approval.split("|");
-      resolveApproval(itemId, target, requestId, decision, scope);
-    });
-
-    setInterval(updateTimers, 200);
-    bootstrap();
-    connectWs();
-    window.copyText = copyText;
-  </script>
-</body>
-</html>
     async function resolveApproval(itemId, target, requestId, decision, scope) {
       errorEl.textContent = "";
       try {
@@ -821,3 +802,23 @@
         errorEl.textContent = String(err);
       }
     }
+
+    document.addEventListener("click", (ev) => {
+      const button = ev.target.closest("[data-copy]");
+      if (button) {
+        copyText(decodeCopy(button.dataset.copy));
+        return;
+      }
+      const approval = ev.target.closest("[data-approval]");
+      if (!approval) return;
+      const [itemId, target, requestId, decision, scope] = approval.dataset.approval.split("|");
+      resolveApproval(itemId, target, requestId, decision, scope);
+    });
+
+    setInterval(updateTimers, 200);
+    bootstrap();
+    connectWs();
+    window.copyText = copyText;
+  </script>
+</body>
+</html>
