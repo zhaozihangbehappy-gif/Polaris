@@ -37,6 +37,15 @@ PORT_PATTERNS = [
     re.compile(r"http\.server\s+([0-9]{2,5})"),
     re.compile(r":([0-9]{2,5})(?:\b|/)"),
 ]
+SERVICE_CONTROL_RE = re.compile(
+    r"(?:^|[;&|]\s*|\bsudo\s+)(?:systemctl\b|service\s+[a-zA-Z0-9_.@-]+(?:\s+(?:start|stop|restart|reload|status))?\b)",
+    re.IGNORECASE,
+)
+SERVICE_UNIT_RE = re.compile(
+    r"(?:systemctl\s+(?:start|stop|restart|reload|status)?\s*|service\s+)([a-zA-Z0-9_.@-]+)",
+    re.IGNORECASE,
+)
+BLOCK_TAG_TEMPLATE = r"\[(?P<close>/)?(?P<name>{names})(?=[\s\]])(?P<attrs>[\s\S]*?)\]"
 
 
 def load_conf_map(conf_path: str) -> dict[str, str]:
@@ -57,6 +66,14 @@ def load_conf_map(conf_path: str) -> dict[str, str]:
 def _norm_mode(value: str, *, allowed: set[str], default: str) -> str:
     lowered = (value or "").strip().lower()
     return lowered if lowered in allowed else default
+
+
+def _safe_float(value: str, default: float) -> float:
+    try:
+        parsed = float(value)
+    except (TypeError, ValueError):
+        return default
+    return parsed if parsed > 0 else default
 
 
 @dataclasses.dataclass
@@ -99,7 +116,7 @@ def load_hardening_settings(conf_path: str) -> HardeningSettings:
             "HARDENING_VERSION_ALLOWLIST",
             os.path.join(base_dir, "runner-version-allowlist.json"),
         ),
-        lock_timeout_sec=float(conf.get("HARDENING_LOCK_TIMEOUT_SEC", "30") or 30),
+        lock_timeout_sec=_safe_float(conf.get("HARDENING_LOCK_TIMEOUT_SEC", "30"), 30.0),
         alert_log_path=conf.get(
             "HARDENING_ALERT_LOG",
             os.path.join(base_dir, "hardening-events.jsonl"),
@@ -154,15 +171,55 @@ def _sanitize_text_once(text: str, patterns: dict[str, Any]) -> tuple[str, int, 
     updated = text or ""
     modifications = 0
     removed: list[str] = []
-    for wrapper in patterns.get("block_wrappers", []):
-        expr = re.compile(
-            rf"\[{re.escape(wrapper)}[^\n]*\][\s\S]*?\[/{re.escape(wrapper)}\]",
-            re.IGNORECASE,
-        )
-        updated, count = expr.subn("", updated)
-        if count:
-            modifications += count
-            removed.extend([wrapper] * count)
+    block_wrappers = [wrapper for wrapper in patterns.get("block_wrappers", []) if wrapper]
+    if block_wrappers:
+        names_expr = "|".join(re.escape(wrapper) for wrapper in block_wrappers)
+        token_re = re.compile(BLOCK_TAG_TEMPLATE.format(names=names_expr), re.IGNORECASE)
+        stack: list[tuple[str, int]] = []
+        spans: list[tuple[int, int]] = []
+        for match in token_re.finditer(updated):
+            name = (match.group("name") or "").upper()
+            is_close = bool(match.group("close"))
+            if not is_close:
+                stack.append((name, match.start()))
+                continue
+            close_end = match.end()
+            if not stack:
+                spans.append((match.start(), close_end))
+                modifications += 1
+                removed.append(name)
+                continue
+            same_index = next((idx for idx in range(len(stack) - 1, -1, -1) if stack[idx][0] == name), -1)
+            if same_index >= 0:
+                open_name, open_start = stack[same_index]
+                spans.append((open_start, close_end))
+                removed.extend(item_name for item_name, _ in stack[same_index:])
+                removed.append(name)
+                modifications += 1
+                stack = stack[:same_index]
+            else:
+                spans.append((match.start(), close_end))
+                modifications += 1
+                removed.append(name)
+        for open_name, open_start in stack:
+            spans.append((open_start, len(updated)))
+            modifications += 1
+            removed.append(open_name)
+        if spans:
+            spans.sort()
+            merged: list[tuple[int, int]] = []
+            for start, end in spans:
+                if not merged or start > merged[-1][1]:
+                    merged.append((start, end))
+                else:
+                    merged[-1] = (merged[-1][0], max(merged[-1][1], end))
+            parts: list[str] = []
+            cursor = 0
+            for start, end in merged:
+                parts.append(updated[cursor:start])
+                cursor = end
+            parts.append(updated[cursor:])
+            updated = "".join(parts)
     for wrapper in patterns.get("single_line_headers", []):
         expr = re.compile(rf"^\[{re.escape(wrapper)}[^\]]*\]\s*$", re.IGNORECASE | re.MULTILINE)
         updated, count = expr.subn("", updated)
@@ -324,8 +381,8 @@ def classify_operation(request: dict[str, Any] | None) -> dict[str, Any]:
                 "summary": f"package manager {tool}",
             }
 
-    if "systemctl" in lower or re.search(r"\bservice\b", lower):
-        unit_match = re.search(r"(?:systemctl|service)\s+(?:restart|start|stop|reload|status)?\s*([a-zA-Z0-9_.@-]+)", lower)
+    if SERVICE_CONTROL_RE.search(command):
+        unit_match = SERVICE_UNIT_RE.search(command)
         unit = unit_match.group(1) if unit_match else "system"
         return {
             "class_name": "systemd",
