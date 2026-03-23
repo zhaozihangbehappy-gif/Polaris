@@ -14,6 +14,7 @@ import tempfile
 import threading
 import time
 import urllib.error
+import urllib.parse
 import urllib.request
 from pathlib import Path
 from typing import Any
@@ -125,6 +126,7 @@ class HardeningSettings:
     anchor_key_path: str
     remote_anchor_publish: str
     remote_anchor_publish_url: str
+    remote_anchor_verify_url: str
     remote_anchor_publish_credential_path: str
     remote_anchor_verify_credential_path: str
     remote_anchor_backlog_dir: str
@@ -132,6 +134,7 @@ class HardeningSettings:
     remote_anchor_hard_cap: int
     remote_anchor_drain_batch_size: int
     remote_anchor_request_timeout_sec: float
+    remote_anchor_verify_interval_turns: int
     alert_log_path: str
 
 
@@ -206,6 +209,7 @@ def load_hardening_settings(conf_path: str) -> HardeningSettings:
             default="disabled",
         ),
         remote_anchor_publish_url=conf.get("HARDENING_REMOTE_AUDIT_PUBLISH_URL", "").strip(),
+        remote_anchor_verify_url=conf.get("HARDENING_REMOTE_AUDIT_VERIFY_URL", "").strip(),
         remote_anchor_publish_credential_path=conf.get(
             "HARDENING_REMOTE_AUDIT_PUBLISH_CREDENTIAL_PATH",
             os.path.join(audit_root, "remote-anchor-publish.token"),
@@ -224,6 +228,10 @@ def load_hardening_settings(conf_path: str) -> HardeningSettings:
         remote_anchor_request_timeout_sec=_safe_float(
             conf.get("HARDENING_REMOTE_AUDIT_REQUEST_TIMEOUT_SEC", "5"),
             5.0,
+        ),
+        remote_anchor_verify_interval_turns=min(
+            50,
+            _safe_int(conf.get("HARDENING_REMOTE_AUDIT_VERIFY_INTERVAL_TURNS", "10"), 10, minimum=1),
         ),
         alert_log_path=conf.get(
             "HARDENING_ALERT_LOG",
@@ -1083,6 +1091,36 @@ def _remote_publish_once(
         }
 
 
+def _remote_verify_fetch(
+    verify_url: str,
+    verify_token: str,
+    *,
+    room_id: str,
+    timeout_sec: float,
+) -> dict[str, Any]:
+    query = urllib.parse.urlencode({"room_id": room_id})
+    url = f"{verify_url}{'&' if '?' in verify_url else '?'}{query}"
+    headers = {"Accept": "application/json"}
+    if verify_token:
+        headers["Authorization"] = f"Bearer {verify_token}"
+    request = urllib.request.Request(url, headers=headers, method="GET")
+    try:
+        with urllib.request.urlopen(request, timeout=timeout_sec) as response:
+            response_body = response.read().decode("utf-8", errors="replace")
+            payload = json.loads(response_body) if response_body else {}
+            if not isinstance(payload, dict):
+                payload = {}
+            records = payload.get("records")
+            if not isinstance(records, list):
+                return {"ok": False, "reason": "verify response missing records", "records": []}
+            return {"ok": True, "reason": "", "records": records, "response": payload}
+    except urllib.error.HTTPError as exc:
+        detail = exc.read().decode("utf-8", errors="replace")
+        return {"ok": False, "reason": f"http {exc.code}: {detail or exc.reason}", "records": []}
+    except (urllib.error.URLError, TimeoutError, ValueError, OSError, json.JSONDecodeError) as exc:
+        return {"ok": False, "reason": str(exc), "records": []}
+
+
 def publish_remote_anchor(
     settings: HardeningSettings,
     chain_entry: dict[str, Any],
@@ -1192,6 +1230,197 @@ def publish_remote_anchor(
         "remote_record_id": last_remote_record_id,
         "hard_cap_exceeded": hard_cap_exceeded,
         "current_published": current_published,
+    }
+
+
+def verify_remote_anchor(
+    settings: HardeningSettings,
+    *,
+    room_id: str,
+    expected_backlog_count: int = 0,
+) -> dict[str, Any]:
+    policy = settings.remote_anchor_publish
+    if policy == "disabled":
+        return {
+            "policy": policy,
+            "result": "disabled",
+            "ok": True,
+            "reason": "remote audit publish disabled",
+            "room_id": room_id,
+            "checked_local": 0,
+            "checked_remote": 0,
+            "latest_remote_sequence": None,
+            "mismatch_kind": "",
+            "transport_failure": False,
+        }
+
+    verify_url = settings.remote_anchor_verify_url.strip()
+    if not verify_url:
+        return {
+            "policy": policy,
+            "result": "unreachable",
+            "ok": False,
+            "reason": "remote verify URL missing",
+            "room_id": room_id,
+            "checked_local": 0,
+            "checked_remote": 0,
+            "latest_remote_sequence": None,
+            "mismatch_kind": "",
+            "transport_failure": True,
+        }
+
+    verify_token = _read_secret_token(settings.remote_anchor_verify_credential_path)
+    if not verify_token:
+        return {
+            "policy": policy,
+            "result": "unreachable",
+            "ok": False,
+            "reason": "remote verify credential missing",
+            "room_id": room_id,
+            "checked_local": 0,
+            "checked_remote": 0,
+            "latest_remote_sequence": None,
+            "mismatch_kind": "",
+            "transport_failure": True,
+        }
+
+    fetch = _remote_verify_fetch(
+        verify_url,
+        verify_token,
+        room_id=room_id,
+        timeout_sec=settings.remote_anchor_request_timeout_sec,
+    )
+    if not fetch["ok"]:
+        return {
+            "policy": policy,
+            "result": "unreachable",
+            "ok": False,
+            "reason": fetch["reason"],
+            "room_id": room_id,
+            "checked_local": 0,
+            "checked_remote": 0,
+            "latest_remote_sequence": None,
+            "mismatch_kind": "",
+            "transport_failure": True,
+        }
+
+    chain_path = os.path.join(settings.summary_chain_dir, f"{room_id}.jsonl")
+    local_entries = _load_jsonl_records(chain_path)
+    backlog_count = max(0, int(expected_backlog_count or 0))
+    published_local_count = max(0, len(local_entries) - backlog_count)
+    published_local = local_entries[:published_local_count]
+    remote_records = fetch["records"]
+    latest_remote_sequence = None
+
+    if len(remote_records) != len(published_local):
+        mismatch_kind = "remote_has_extra_records" if len(remote_records) > len(published_local) else "remote_missing_records"
+        return {
+            "policy": policy,
+            "result": "mismatch",
+            "ok": False,
+            "reason": f"{mismatch_kind}: local_published={len(published_local)} remote={len(remote_records)}",
+            "room_id": room_id,
+            "checked_local": len(published_local),
+            "checked_remote": len(remote_records),
+            "latest_remote_sequence": remote_records[-1].get("remote_sequence") if remote_records else None,
+            "mismatch_kind": mismatch_kind,
+            "transport_failure": False,
+        }
+
+    for idx, local_entry in enumerate(published_local):
+        remote_entry = remote_records[idx]
+        latest_remote_sequence = remote_entry.get("remote_sequence")
+        if remote_entry.get("remote_sequence") != idx + 1:
+            return {
+                "policy": policy,
+                "result": "mismatch",
+                "ok": False,
+                "reason": f"remote sequence mismatch at index {idx}",
+                "room_id": room_id,
+                "checked_local": idx,
+                "checked_remote": idx,
+                "latest_remote_sequence": latest_remote_sequence,
+                "mismatch_kind": "remote_sequence_mismatch",
+                "transport_failure": False,
+            }
+        payload = remote_entry.get("payload") or {}
+        if payload.get("room_id") != room_id:
+            return {
+                "policy": policy,
+                "result": "mismatch",
+                "ok": False,
+                "reason": f"remote room mismatch at index {idx}",
+                "room_id": room_id,
+                "checked_local": idx,
+                "checked_remote": idx,
+                "latest_remote_sequence": latest_remote_sequence,
+                "mismatch_kind": "remote_room_mismatch",
+                "transport_failure": False,
+            }
+        if payload.get("genesis_summary_sha256") != SUMMARY_CHAIN_GENESIS_SHA256:
+            return {
+                "policy": policy,
+                "result": "mismatch",
+                "ok": False,
+                "reason": f"remote genesis mismatch at index {idx}",
+                "room_id": room_id,
+                "checked_local": idx,
+                "checked_remote": idx,
+                "latest_remote_sequence": latest_remote_sequence,
+                "mismatch_kind": "remote_genesis_mismatch",
+                "transport_failure": False,
+            }
+        if payload.get("prev_summary_sha256") != local_entry.get("prev_summary_sha256"):
+            return {
+                "policy": policy,
+                "result": "mismatch",
+                "ok": False,
+                "reason": f"prev summary mismatch at index {idx}",
+                "room_id": room_id,
+                "checked_local": idx,
+                "checked_remote": idx,
+                "latest_remote_sequence": latest_remote_sequence,
+                "mismatch_kind": "prev_summary_mismatch",
+                "transport_failure": False,
+            }
+        if payload.get("turn_summary_sha256") != local_entry.get("turn_summary_sha256"):
+            return {
+                "policy": policy,
+                "result": "mismatch",
+                "ok": False,
+                "reason": f"turn summary mismatch at index {idx}",
+                "room_id": room_id,
+                "checked_local": idx,
+                "checked_remote": idx,
+                "latest_remote_sequence": latest_remote_sequence,
+                "mismatch_kind": "turn_summary_mismatch",
+                "transport_failure": False,
+            }
+        if payload.get("rid", "") != local_entry.get("rid", ""):
+            return {
+                "policy": policy,
+                "result": "mismatch",
+                "ok": False,
+                "reason": f"rid mismatch at index {idx}",
+                "room_id": room_id,
+                "checked_local": idx,
+                "checked_remote": idx,
+                "latest_remote_sequence": latest_remote_sequence,
+                "mismatch_kind": "rid_mismatch",
+                "transport_failure": False,
+            }
+
+    return {
+        "policy": policy,
+        "result": "verified",
+        "ok": True,
+        "reason": "",
+        "room_id": room_id,
+        "checked_local": len(published_local),
+        "checked_remote": len(remote_records),
+        "latest_remote_sequence": latest_remote_sequence,
+        "mismatch_kind": "",
+        "transport_failure": False,
     }
 
 

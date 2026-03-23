@@ -49,6 +49,7 @@ from hardening import (
     load_hardening_settings,
     read_json_file,
     snapshot_runner_version,
+    verify_remote_anchor,
 )
 
 
@@ -135,6 +136,18 @@ class TrialogueState:
             "last_remote_sequence": None,
             "backlog_count": 0,
             "consecutive_unanchored": 0,
+            "verify_status": "disabled" if self.hardening.remote_anchor_publish == "disabled" else "startup-pending",
+            "verify_reason": "",
+            "verify_checked_local": 0,
+            "verify_checked_remote": 0,
+            "verify_last_sequence": None,
+            "verify_last_trigger": "",
+            "verify_last_checked_at": "",
+            "verify_turn_counter": 0,
+            "verify_last_turn": 0,
+            "recovery_publish_ready": False,
+            "recovery_verify_ready": False,
+            "verifier_running": False,
             "updated_at": "",
         }
         self.target_override = ""
@@ -144,6 +157,7 @@ class TrialogueState:
         self.port_registry = PortReservationRegistry(self.hardening.port_registry_path)
         self.claude_exec_lock = threading.Lock()
         self.pending_approvals: dict[tuple[str, str, str], dict[str, Any]] = {}
+        self.remote_verify_lock = threading.Lock()
         self.room_state_path = os.path.join(self.hardening.broker_room_state_dir, f"{self.room_id}.json")
         self.persisted_state = read_json_file(self.room_state_path, {})
         self._load_persisted_broker_state()
@@ -165,6 +179,7 @@ class TrialogueState:
                     severity="warn",
                     feature="version_gate",
                 )
+        self._run_remote_verifier(trigger="startup", asynchronous=False)
         self._persist_room_state()
         threading.Thread(target=self._tail_audit_log, daemon=True).start()
 
@@ -230,7 +245,9 @@ class TrialogueState:
 
     def _refresh_room_health(self) -> None:
         with self.lock:
-            if self.remote_anchor.get("state") == "anchor_blocked":
+            if self.remote_anchor.get("state") == "read_only_diagnostic":
+                self.room_health = "read_only_diagnostic"
+            elif self.remote_anchor.get("state") == "anchor_blocked":
                 self.room_health = "anchor_blocked"
             elif self.recovery_reasons:
                 self.room_health = "recovery_required"
@@ -286,7 +303,10 @@ class TrialogueState:
         self.codex_meeting_cursor = int(payload.get("codex_meeting_cursor", 0) or 0)
         self.target_override = payload.get("target_override", "") or ""
         self.last_rid = payload.get("last_rid", "") or ""
-        self.remote_anchor = copy.deepcopy(payload.get("remote_anchor") or self.remote_anchor)
+        persisted_remote_anchor = dict(payload.get("remote_anchor") or {})
+        merged_remote_anchor = copy.deepcopy(self.remote_anchor)
+        merged_remote_anchor.update(persisted_remote_anchor)
+        self.remote_anchor = merged_remote_anchor
         self.degraded_features = copy.deepcopy(payload.get("degraded_features") or {})
         self.system_events = copy.deepcopy(payload.get("system_events") or [])
         self.items = copy.deepcopy(payload.get("items") or [])
@@ -333,12 +353,25 @@ class TrialogueState:
             )
             if active:
                 return False, "active agents still running"
+            if self.remote_anchor.get("state") == "read_only_diagnostic":
+                if self.remote_anchor.get("verify_status") != "verified":
+                    return False, "remote verifier has not passed yet"
+                self.remote_anchor["state"] = "healthy"
+                self.remote_anchor["last_reason"] = ""
+                self.remote_anchor["recovery_verify_ready"] = False
+                self.degraded_features.pop("remote_anchor", None)
             if self.remote_anchor.get("state") == "anchor_blocked":
+                if not self.remote_anchor.get("recovery_publish_ready"):
+                    return False, "remote anchor publish recovery has not completed yet"
+                if not self.remote_anchor.get("recovery_verify_ready"):
+                    return False, "remote verifier has not passed yet"
                 if self.remote_anchor.get("last_status") != "published" or int(self.remote_anchor.get("backlog_count", 0) or 0) > 0:
                     return False, "remote anchor has not recovered yet"
                 self.remote_anchor["state"] = "healthy"
                 self.remote_anchor["consecutive_unanchored"] = 0
                 self.remote_anchor["last_reason"] = ""
+                self.remote_anchor["recovery_publish_ready"] = False
+                self.remote_anchor["recovery_verify_ready"] = False
                 self.degraded_features.pop("remote_anchor", None)
             self.recovery_reasons = []
             self.degraded_features.pop("broker_recovery", None)
@@ -363,10 +396,13 @@ class TrialogueState:
             if policy == "disabled":
                 self.remote_anchor["state"] = "disabled"
                 self.remote_anchor["consecutive_unanchored"] = 0
+                self.remote_anchor["recovery_publish_ready"] = False
                 self.degraded_features.pop("remote_anchor", None)
                 return
             if status == "published":
                 self.remote_anchor["consecutive_unanchored"] = 0
+                if self.remote_anchor.get("state") == "anchor_blocked":
+                    self.remote_anchor["recovery_publish_ready"] = True
                 if self.remote_anchor.get("state") == "anchor_blocked":
                     self.degraded_features["remote_anchor"] = {
                         "state": "anchor_blocked",
@@ -387,6 +423,7 @@ class TrialogueState:
                 return
 
             self.remote_anchor["consecutive_unanchored"] = int(self.remote_anchor.get("consecutive_unanchored", 0) or 0) + 1
+            self.remote_anchor["recovery_publish_ready"] = False
             if policy == "blocking" and (self.remote_anchor["consecutive_unanchored"] >= 3 or hard_cap_exceeded):
                 self.remote_anchor["state"] = "anchor_blocked"
                 self.degraded_features["remote_anchor"] = {
@@ -401,6 +438,164 @@ class TrialogueState:
                     "reason": reason or "remote anchor publish degraded",
                     "updated_at": self.remote_anchor["updated_at"],
                 }
+
+    def _apply_remote_verifier_result(self, result: dict[str, Any], *, trigger: str) -> None:
+        policy = result.get("policy", self.hardening.remote_anchor_publish)
+        verify_result = result.get("result", "disabled")
+        reason = result.get("reason", "") or ""
+        now = now_iso()
+        with self.lock:
+            self.remote_anchor["verify_status"] = verify_result
+            self.remote_anchor["verify_reason"] = reason
+            self.remote_anchor["verify_checked_local"] = int(result.get("checked_local", 0) or 0)
+            self.remote_anchor["verify_checked_remote"] = int(result.get("checked_remote", 0) or 0)
+            self.remote_anchor["verify_last_sequence"] = result.get("latest_remote_sequence")
+            self.remote_anchor["verify_last_trigger"] = trigger
+            self.remote_anchor["verify_last_checked_at"] = now
+            self.remote_anchor["updated_at"] = now
+            self.remote_anchor["verifier_running"] = False
+
+            if verify_result == "disabled":
+                return
+
+            if verify_result == "verified":
+                self.remote_anchor["recovery_verify_ready"] = self.remote_anchor.get("state") in {"anchor_blocked", "read_only_diagnostic"}
+                if self.remote_anchor.get("state") == "read_only_diagnostic":
+                    self.degraded_features["remote_anchor"] = {
+                        "state": "read_only_diagnostic",
+                        "reason": "remote verifier recovered; awaiting operator reset",
+                        "updated_at": now,
+                    }
+                    return
+                if self.remote_anchor.get("state") == "anchor_blocked":
+                    publish_ready = bool(self.remote_anchor.get("recovery_publish_ready"))
+                    detail = "remote anchor recovered; awaiting operator reset" if publish_ready else "remote verifier recovered; awaiting publish recovery"
+                    self.degraded_features["remote_anchor"] = {
+                        "state": "anchor_blocked",
+                        "reason": detail,
+                        "updated_at": now,
+                    }
+                    return
+                if self.remote_anchor.get("backlog_count", 0):
+                    self.remote_anchor["state"] = "degraded"
+                    self.degraded_features["remote_anchor"] = {
+                        "state": "degraded",
+                        "reason": f"remote anchor backlog pending: {self.remote_anchor['backlog_count']}",
+                        "updated_at": now,
+                    }
+                else:
+                    self.remote_anchor["state"] = "healthy"
+                    self.degraded_features.pop("remote_anchor", None)
+                return
+
+            self.remote_anchor["recovery_verify_ready"] = False
+            if verify_result == "mismatch":
+                if trigger == "startup":
+                    self.remote_anchor["state"] = "read_only_diagnostic"
+                    self.degraded_features["remote_anchor"] = {
+                        "state": "read_only_diagnostic",
+                        "reason": reason or "startup remote verifier mismatch",
+                        "updated_at": now,
+                    }
+                else:
+                    self.remote_anchor["state"] = "anchor_blocked"
+                    self.degraded_features["remote_anchor"] = {
+                        "state": "anchor_blocked",
+                        "reason": reason or "remote verifier mismatch",
+                        "updated_at": now,
+                    }
+                return
+
+            if verify_result == "unreachable":
+                if policy == "blocking":
+                    self.remote_anchor["state"] = "anchor_blocked"
+                    self.degraded_features["remote_anchor"] = {
+                        "state": "anchor_blocked",
+                        "reason": reason or "remote verifier transport failure",
+                        "updated_at": now,
+                    }
+                else:
+                    self.remote_anchor["state"] = "degraded"
+                    self.degraded_features["remote_anchor"] = {
+                        "state": "degraded",
+                        "reason": reason or "remote verifier transport failure",
+                        "updated_at": now,
+                    }
+
+    def _run_remote_verifier(self, *, trigger: str, asynchronous: bool) -> dict[str, Any] | None:
+        if self.hardening.remote_anchor_publish == "disabled":
+            with self.lock:
+                self.remote_anchor["verify_status"] = "disabled"
+                self.remote_anchor["verify_last_trigger"] = trigger
+            return {"policy": "disabled", "result": "disabled"}
+
+        if asynchronous:
+            with self.lock:
+                if self.remote_anchor.get("verifier_running"):
+                    return None
+                self.remote_anchor["verifier_running"] = True
+            worker = threading.Thread(target=self._run_remote_verifier, kwargs={"trigger": trigger, "asynchronous": False}, daemon=True)
+            worker.start()
+            return None
+
+        with self.remote_verify_lock:
+            with self.lock:
+                self.remote_anchor["verifier_running"] = True
+                expected_backlog = int(self.remote_anchor.get("backlog_count", 0) or 0)
+            try:
+                result = verify_remote_anchor(
+                    self.hardening,
+                    room_id=self.room_id,
+                    expected_backlog_count=expected_backlog,
+                )
+            except Exception as exc:  # noqa: BLE001
+                result = {
+                    "policy": self.hardening.remote_anchor_publish,
+                    "result": "unreachable",
+                    "ok": False,
+                    "reason": f"verifier exception: {exc}",
+                    "room_id": self.room_id,
+                    "checked_local": 0,
+                    "checked_remote": 0,
+                    "latest_remote_sequence": None,
+                    "mismatch_kind": "",
+                    "transport_failure": True,
+                }
+            self._apply_remote_verifier_result(result, trigger=trigger)
+            severity = "info"
+            if result.get("result") == "verified":
+                kind = "remote_verifier_ok"
+                detail = f"remote verifier passed ({trigger})"
+            elif result.get("result") == "disabled":
+                kind = "remote_verifier_disabled"
+                detail = "remote verifier disabled"
+            elif result.get("result") == "unreachable":
+                kind = "remote_verifier_unreachable"
+                detail = result.get("reason", "remote verifier unreachable")
+                severity = "warn" if self.hardening.remote_anchor_publish == "async" else "error"
+            else:
+                kind = "remote_verifier_mismatch"
+                detail = result.get("reason", "remote verifier mismatch")
+                severity = "error"
+            self.emit_system_event(kind, detail, severity=severity, feature="")
+            self._persist_room_state()
+            self.broadcast()
+            return result
+
+    def _maybe_schedule_remote_verifier(self) -> None:
+        if self.hardening.remote_anchor_publish == "disabled":
+            return
+        should_run = False
+        with self.lock:
+            self.remote_anchor["verify_turn_counter"] = int(self.remote_anchor.get("verify_turn_counter", 0) or 0) + 1
+            interval = max(1, min(50, int(self.hardening.remote_anchor_verify_interval_turns)))
+            last_turn = int(self.remote_anchor.get("verify_last_turn", 0) or 0)
+            current_turn = int(self.remote_anchor["verify_turn_counter"])
+            if current_turn - last_turn >= interval and not self.remote_anchor.get("verifier_running"):
+                self.remote_anchor["verify_last_turn"] = current_turn
+                should_run = True
+        if should_run:
+            self._run_remote_verifier(trigger="periodic", asynchronous=True)
 
     def emit_system_event(self, kind: str, detail: str, *, severity: str = "info", feature: str = "") -> None:
         event = {
@@ -834,6 +1029,7 @@ class TrialogueState:
                 self.latest_codex_session = session_id
         self._update_remote_anchor_state(record)
         self._persist_room_state()
+        self._maybe_schedule_remote_verifier()
         return True
 
     def _tail_audit_log(self) -> None:
@@ -870,6 +1066,8 @@ class TrialogueState:
         target_cmd = parse_target_command(raw_text)
         if target_cmd:
             return self._handle_target_command(raw_text, target_cmd)
+        if self.room_health == "read_only_diagnostic":
+            raise ValueError("远端审计锚处于只读诊断态，拒绝新的 turn；请先运行 verifier 并确认恢复")
         if self.room_health == "anchor_blocked":
             raise ValueError("远端审计锚当前阻断中，拒绝新的 turn；请先处理 anchor_blocked 状态")
 
@@ -1495,7 +1693,7 @@ class Handler(BaseHTTPRequestHandler):
         self.send_error(HTTPStatus.NOT_FOUND)
 
     def do_POST(self) -> None:  # noqa: N802
-        if self.path not in {"/api/send", "/api/approval", "/api/recovery/reset"}:
+        if self.path not in {"/api/send", "/api/approval", "/api/recovery/reset", "/api/anchor/verify"}:
             self.send_error(HTTPStatus.NOT_FOUND)
             return
 
@@ -1528,6 +1726,11 @@ class Handler(BaseHTTPRequestHandler):
                 self._send_json({"error": reason}, status=HTTPStatus.BAD_REQUEST)
                 return
             self._send_json({"ok": True})
+            return
+
+        if self.path == "/api/anchor/verify":
+            result = self.server.state._run_remote_verifier(trigger="manual", asynchronous=False) or {}
+            self._send_json({"ok": True, "result": result})
             return
 
         item_id = str(payload.get("item_id", "")).strip()

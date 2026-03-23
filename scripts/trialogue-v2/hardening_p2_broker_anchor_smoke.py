@@ -24,7 +24,7 @@ def _write_conf(root: Path) -> Path:
                 "HARDENING_VERSION_GATE=warn",
                 "HARDENING_VERSION_GATE_RECHECK=warn",
                 "HARDENING_OPERATION_LOCKS=enabled",
-                "HARDENING_REMOTE_AUDIT_PUBLISH=blocking",
+                "HARDENING_REMOTE_AUDIT_PUBLISH=disabled",
             ]
         ),
         encoding="utf-8",
@@ -95,6 +95,9 @@ def main() -> int:
         state._merge_audit_record(success)
         assert state.remote_anchor["consecutive_unanchored"] == 0
         assert state.remote_anchor["state"] == "anchor_blocked"
+        with state.lock:
+            state.remote_anchor["verify_status"] = "verified"
+            state.remote_anchor["recovery_verify_ready"] = True
         ok, reason = state.reset_recovery()
         assert ok is True, reason
         assert state.room_health in {"healthy", "degraded"}

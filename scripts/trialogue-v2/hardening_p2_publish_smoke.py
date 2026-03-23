@@ -8,6 +8,7 @@ import threading
 import time
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
+from urllib.parse import parse_qs, urlparse
 
 from hardening import (
     HardeningSettings,
@@ -37,14 +38,40 @@ class FakeSinkHandler(BaseHTTPRequestHandler):
             self.end_headers()
             return
         payload = json.loads(body or "{}")
-        self.server.records.append(payload)  # type: ignore[attr-defined]
-        sequence = len(self.server.records)  # type: ignore[attr-defined]
+        sequence = len(self.server.records) + 1  # type: ignore[attr-defined]
+        stored = {
+            "remote_sequence": sequence,
+            "remote_record_id": f"remote-{sequence}",
+            "recorded_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+            "payload": payload,
+        }
+        self.server.records.append(stored)  # type: ignore[attr-defined]
         response = {
             "remote_sequence": sequence,
             "remote_record_id": f"remote-{sequence}",
             "recorded_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
         }
         raw = json.dumps(response).encode("utf-8")
+        self.send_response(200)
+        self.send_header("Content-Type", "application/json")
+        self.send_header("Content-Length", str(len(raw)))
+        self.end_headers()
+        self.wfile.write(raw)
+
+    def do_GET(self) -> None:  # noqa: N802
+        parsed = urlparse(self.path)
+        if parsed.path != "/verify":
+            self.send_response(404)
+            self.end_headers()
+            return
+        auth = self.headers.get("Authorization", "")
+        if auth != "Bearer verify-secret":
+            self.send_response(403)
+            self.end_headers()
+            return
+        room_id = (parse_qs(parsed.query).get("room_id") or [""])[0]
+        records = [record for record in self.server.records if ((record.get("payload") or {}).get("room_id") == room_id)]  # type: ignore[attr-defined]
+        raw = json.dumps({"room_id": room_id, "records": records}).encode("utf-8")
         self.send_response(200)
         self.send_header("Content-Type", "application/json")
         self.send_header("Content-Length", str(len(raw)))
@@ -77,6 +104,7 @@ def _write_conf(root: Path, publish_mode: str, publish_url: str) -> Path:
                 f"HARDENING_SUMMARY_CHAIN_DIR={root / 'audit' / 'summary-chain'}",
                 f"HARDENING_REMOTE_AUDIT_PUBLISH={publish_mode}",
                 f"HARDENING_REMOTE_AUDIT_PUBLISH_URL={publish_url}",
+                f"HARDENING_REMOTE_AUDIT_VERIFY_URL={publish_url.rsplit('/', 1)[0]}/verify",
                 f"HARDENING_REMOTE_AUDIT_PUBLISH_CREDENTIAL_PATH={root / 'publish.token'}",
                 f"HARDENING_REMOTE_AUDIT_VERIFY_CREDENTIAL_PATH={root / 'verify.token'}",
                 f"HARDENING_REMOTE_AUDIT_BACKLOG_DIR={root / 'audit' / 'remote-backlog'}",
@@ -84,6 +112,7 @@ def _write_conf(root: Path, publish_mode: str, publish_url: str) -> Path:
                 "HARDENING_REMOTE_AUDIT_HARD_CAP=3",
                 "HARDENING_REMOTE_AUDIT_DRAIN_BATCH_SIZE=10",
                 "HARDENING_REMOTE_AUDIT_REQUEST_TIMEOUT_SEC=1",
+                "HARDENING_REMOTE_AUDIT_VERIFY_INTERVAL_TURNS=10",
             ]
         ),
         encoding="utf-8",

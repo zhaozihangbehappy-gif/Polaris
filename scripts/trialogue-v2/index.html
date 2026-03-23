@@ -521,11 +521,16 @@
             state: ${escapeHtml((((state.hardening || {}).remote_anchor) || {}).state || "n/a")}<br>
             policy: ${escapeHtml((((state.hardening || {}).remote_anchor) || {}).policy || "n/a")}<br>
             last_status: ${escapeHtml((((state.hardening || {}).remote_anchor) || {}).last_status || "n/a")}<br>
+            verify_status: ${escapeHtml((((state.hardening || {}).remote_anchor) || {}).verify_status || "n/a")}<br>
+            verify_trigger: ${escapeHtml((((state.hardening || {}).remote_anchor) || {}).verify_last_trigger || "n/a")}<br>
+            verify_checked: ${escapeHtml(String((((state.hardening || {}).remote_anchor) || {}).verify_checked_local || 0))} / ${escapeHtml(String((((state.hardening || {}).remote_anchor) || {}).verify_checked_remote || 0))}<br>
             backlog: ${escapeHtml(String((((state.hardening || {}).remote_anchor) || {}).backlog_count || 0))}<br>
             consecutive_unanchored: ${escapeHtml(String((((state.hardening || {}).remote_anchor) || {}).consecutive_unanchored || 0))}<br>
             remote_sequence: ${escapeHtml(String((((state.hardening || {}).remote_anchor) || {}).last_remote_sequence || "(none)"))}
           </div>
-          ${((((state.hardening || {}).remote_anchor) || {}).last_reason) ? `<div class="mono" style="margin-top:8px;">${escapeHtml((((state.hardening || {}).remote_anchor) || {}).last_reason || "")}</div>` : ""}
+          ${((((state.hardening || {}).remote_anchor) || {}).last_reason) ? `<div class="mono" style="margin-top:8px;">publish: ${escapeHtml((((state.hardening || {}).remote_anchor) || {}).last_reason || "")}</div>` : ""}
+          ${((((state.hardening || {}).remote_anchor) || {}).verify_reason) ? `<div class="mono" style="margin-top:8px;">verify: ${escapeHtml((((state.hardening || {}).remote_anchor) || {}).verify_reason || "")}</div>` : ""}
+          <div style="margin-top:10px;"><button class="mini-btn" data-anchor-verify="true">立即运行 verifier</button></div>
         </div>
         <div class="sidebar-card">
           <div class="title">当前 target</div>
@@ -536,7 +541,7 @@
           <div class="title">房间健康</div>
           <div class="mono">state: ${escapeHtml(state.room_health || "healthy")}</div>
           ${(state.recovery_reasons || []).length ? `<div class="mono" style="margin-top:8px;">${(state.recovery_reasons || []).map(escapeHtml).join("<br>")}</div>` : ""}
-          ${state.room_health === "recovery_required" || state.room_health === "anchor_blocked" ? '<div style="margin-top:10px;"><button class="mini-btn" data-recovery-reset="true">确认并退出恢复态</button></div>' : ""}
+          ${state.room_health === "recovery_required" || state.room_health === "anchor_blocked" || state.room_health === "read_only_diagnostic" ? '<div style="margin-top:10px;"><button class="mini-btn" data-recovery-reset="true">确认并退出恢复态</button></div>' : ""}
         </div>
         <div class="sidebar-card">
           <div class="title">最近 Claude sessions</div>
@@ -874,6 +879,23 @@
       }
     }
 
+    async function runRemoteVerifier() {
+      errorEl.textContent = "";
+      try {
+        const res = await fetch("/api/anchor/verify", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({}),
+        });
+        const payload = await res.json();
+        if (!res.ok) {
+          errorEl.textContent = payload.error || "verifier 运行失败";
+        }
+      } catch (err) {
+        errorEl.textContent = String(err);
+      }
+    }
+
     document.addEventListener("click", (ev) => {
       const button = ev.target.closest("[data-copy]");
       if (button) {
@@ -883,6 +905,11 @@
       const resetBtn = ev.target.closest("[data-recovery-reset]");
       if (resetBtn) {
         resetRecovery();
+        return;
+      }
+      const verifyBtn = ev.target.closest("[data-anchor-verify]");
+      if (verifyBtn) {
+        runRemoteVerifier();
         return;
       }
       const approval = ev.target.closest("[data-approval]");
