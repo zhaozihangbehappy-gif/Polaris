@@ -9,6 +9,7 @@ from hardening import (
     HostOperationLockManager,
     classify_operation,
     evaluate_version_gate,
+    evaluate_version_recheck,
     load_hardening_settings,
     sanitize_transcript_entries,
 )
@@ -22,9 +23,12 @@ def make_conf(tmp: Path, *, sanitizer="strict", version_gate="warn", locks="enab
                 f"HARDENING_TRANSCRIPT_SANITIZER={sanitizer}",
                 f"HARDENING_SANITIZER_PATTERNS={tmp / 'sanitizer-patterns.json'}",
                 f"HARDENING_VERSION_GATE={version_gate}",
+                f"HARDENING_VERSION_GATE_RECHECK={version_gate}",
                 f"HARDENING_VERSION_ALLOWLIST={tmp / 'runner-version-allowlist.json'}",
                 f"HARDENING_OPERATION_LOCKS={locks}",
                 "HARDENING_LOCK_TIMEOUT_SEC=0.2",
+                "HARDENING_VERSION_RECHECK_FAST_INTERVAL_SEC=10",
+                "HARDENING_VERSION_RECHECK_FULL_INTERVAL_SEC=60",
             ]
         ),
         encoding="utf-8",
@@ -106,6 +110,22 @@ def main() -> int:
         )
         assert gate_warn["allowed"] is True
         assert gate_warn["matched"] is False
+        recheck_ok = evaluate_version_recheck(
+            "claude",
+            {"cli_version": "claude 1.0", "binary_sha256": "abc", "binary_path": "/tmp/claude", "binary_exists": True},
+            {"cli_version": "claude 1.0", "binary_sha256": "abc", "binary_path": "/tmp/claude", "binary_exists": True},
+            settings=settings,
+        )
+        assert recheck_ok["result"] == "match"
+        assert recheck_ok["allowed"] is True
+        recheck_block = evaluate_version_recheck(
+            "claude",
+            {"cli_version": "claude 1.0", "binary_sha256": "abc", "binary_path": "/tmp/claude", "binary_exists": True},
+            {"cli_version": "claude 9.9", "binary_sha256": "zzz", "binary_path": "/tmp/claude", "binary_exists": True},
+            settings=settings,
+        )
+        assert recheck_block["result"] == "changed-and-unapproved"
+        assert recheck_block["allowed"] is True
 
     print("HARDENING_SMOKE_OK")
     return 0

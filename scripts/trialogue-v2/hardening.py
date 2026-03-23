@@ -90,28 +90,41 @@ def _safe_float(value: str, default: float) -> float:
 class HardeningSettings:
     transcript_sanitizer: str
     version_gate: str
+    version_gate_recheck: str
     operation_locks: str
     external_audit_anchor: str
     sanitizer_patterns_path: str
     version_allowlist_path: str
     lock_timeout_sec: float
+    version_recheck_fast_interval_sec: float
+    version_recheck_full_interval_sec: float
     alert_log_path: str
 
 
 def load_hardening_settings(conf_path: str) -> HardeningSettings:
     conf = load_conf_map(conf_path)
     base_dir = os.path.dirname(conf_path)
+    version_gate = _norm_mode(
+        conf.get("HARDENING_VERSION_GATE", "warn"),
+        allowed={"disabled", "warn", "enforce"},
+        default="warn",
+    )
+    version_gate_recheck = _norm_mode(
+        conf.get("HARDENING_VERSION_GATE_RECHECK", version_gate),
+        allowed={"disabled", "warn", "enforce"},
+        default=version_gate,
+    )
+    rank = {"disabled": 0, "warn": 1, "enforce": 2}
+    if rank[version_gate_recheck] < rank[version_gate]:
+        version_gate_recheck = version_gate
     return HardeningSettings(
         transcript_sanitizer=_norm_mode(
             conf.get("HARDENING_TRANSCRIPT_SANITIZER", "strict"),
             allowed={"disabled", "permissive", "strict"},
             default="strict",
         ),
-        version_gate=_norm_mode(
-            conf.get("HARDENING_VERSION_GATE", "warn"),
-            allowed={"disabled", "warn", "enforce"},
-            default="warn",
-        ),
+        version_gate=version_gate,
+        version_gate_recheck=version_gate_recheck,
         operation_locks="enabled" if conf.get("HARDENING_OPERATION_LOCKS", "enabled").strip().lower() != "disabled" else "disabled",
         external_audit_anchor=_norm_mode(
             conf.get("HARDENING_EXTERNAL_AUDIT_ANCHOR", "disabled"),
@@ -127,6 +140,14 @@ def load_hardening_settings(conf_path: str) -> HardeningSettings:
             os.path.join(base_dir, "runner-version-allowlist.json"),
         ),
         lock_timeout_sec=_safe_float(conf.get("HARDENING_LOCK_TIMEOUT_SEC", "30"), 30.0),
+        version_recheck_fast_interval_sec=_safe_float(
+            conf.get("HARDENING_VERSION_RECHECK_FAST_INTERVAL_SEC", "10"),
+            10.0,
+        ),
+        version_recheck_full_interval_sec=_safe_float(
+            conf.get("HARDENING_VERSION_RECHECK_FULL_INTERVAL_SEC", "60"),
+            60.0,
+        ),
         alert_log_path=conf.get(
             "HARDENING_ALERT_LOG",
             os.path.join(base_dir, "hardening-events.jsonl"),
@@ -294,13 +315,93 @@ def resolve_versioned_binary(target: str, conf_path: str) -> str:
     return conf.get("CODEX_BIN", "")
 
 
-def snapshot_runner_version(target: str, conf_path: str) -> dict[str, Any]:
+def _version_rule_match(target: str, snapshot: dict[str, Any], settings: HardeningSettings) -> tuple[bool, str]:
+    allowlist = load_version_allowlist(settings.version_allowlist_path)
+    rule = (allowlist.get("runners") or {}).get(target) or {}
+    allowed_versions = set(rule.get("versions") or [])
+    allowed_hashes = set(rule.get("hashes") or [])
+    version = snapshot.get("cli_version", "")
+    sha = snapshot.get("binary_sha256", "")
+    matched = bool((version and version in allowed_versions) or (sha and sha in allowed_hashes))
+    reason = "allowlist matched" if matched else "runner binary is outside version/hash allowlist"
+    return matched, reason
+
+
+def _snapshot_identity_fields(snapshot: dict[str, Any]) -> dict[str, Any]:
+    return {
+        "binary_path": snapshot.get("binary_path", ""),
+        "binary_exists": bool(snapshot.get("binary_exists")),
+        "binary_sha256": snapshot.get("binary_sha256", ""),
+        "cli_version": snapshot.get("cli_version", ""),
+    }
+
+
+def _snapshot_changed_fields(startup_snapshot: dict[str, Any], invocation_snapshot: dict[str, Any]) -> list[str]:
+    changed: list[str] = []
+    startup_fields = _snapshot_identity_fields(startup_snapshot)
+    invocation_fields = _snapshot_identity_fields(invocation_snapshot)
+    for key, startup_value in startup_fields.items():
+        if invocation_fields.get(key) != startup_value:
+            changed.append(key)
+    return changed
+
+
+def snapshot_runner_version(
+    target: str,
+    conf_path: str,
+    *,
+    settings: HardeningSettings | None = None,
+    previous_snapshot: dict[str, Any] | None = None,
+    force_full: bool = False,
+) -> dict[str, Any]:
     bin_path = resolve_versioned_binary(target, conf_path)
     resolved = str(Path(bin_path).resolve()) if bin_path else ""
     sha = ""
     version = "missing"
     exists = bool(bin_path and os.path.lexists(bin_path))
+    checked_at = time.time()
+    full_hash_at = checked_at
+    size = 0
+    mtime_ns = 0
+    snapshot_mode = "missing"
+    version_probe_ran = False
+    stat_changed = True
+    stat_unchanged = False
+    stat_result = None
     if exists:
+        try:
+            stat_result = os.stat(bin_path)
+            size = int(stat_result.st_size)
+            mtime_ns = int(getattr(stat_result, "st_mtime_ns", int(stat_result.st_mtime * 1_000_000_000)))
+        except OSError:
+            stat_result = None
+    if previous_snapshot and exists and stat_result is not None:
+        prev_path = str(previous_snapshot.get("binary_path", ""))
+        prev_size = int(previous_snapshot.get("binary_size", 0) or 0)
+        prev_mtime_ns = int(previous_snapshot.get("binary_mtime_ns", 0) or 0)
+        prev_checked_at = float(previous_snapshot.get("checked_at", 0) or 0)
+        prev_full_hash_at = float(previous_snapshot.get("full_hash_at", 0) or 0)
+        stat_unchanged = (
+            prev_path == (resolved or bin_path)
+            and prev_size == size
+            and prev_mtime_ns == mtime_ns
+        )
+        stat_changed = not stat_unchanged
+        if (
+            settings is not None
+            and not force_full
+            and stat_unchanged
+            and (checked_at - prev_checked_at) <= settings.version_recheck_fast_interval_sec
+            and (checked_at - prev_full_hash_at) <= settings.version_recheck_full_interval_sec
+        ):
+            snapshot_mode = "stat_only"
+            sha = str(previous_snapshot.get("binary_sha256", ""))
+            version = str(previous_snapshot.get("cli_version", "unknown"))
+            full_hash_at = prev_full_hash_at or checked_at
+    if exists and snapshot_mode != "stat_only":
+        snapshot_mode = "full"
+        version_probe_ran = True
+        full_hash_at = checked_at
         try:
             sha = hashlib.sha256(Path(bin_path).read_bytes()).hexdigest()
         except OSError:
@@ -322,6 +423,13 @@ def snapshot_runner_version(target: str, conf_path: str) -> dict[str, Any]:
         "binary_exists": exists,
         "binary_sha256": sha,
         "cli_version": version,
+        "binary_size": size,
+        "binary_mtime_ns": mtime_ns,
+        "checked_at": checked_at,
+        "full_hash_at": full_hash_at,
+        "snapshot_mode": snapshot_mode,
+        "version_probe_ran": version_probe_ran,
+        "stat_changed": stat_changed if exists else False,
     }
 
 
@@ -331,24 +439,79 @@ def evaluate_version_gate(
     *,
     settings: HardeningSettings,
 ) -> dict[str, Any]:
-    allowlist = load_version_allowlist(settings.version_allowlist_path)
     policy = settings.version_gate if settings.version_gate != "disabled" else "disabled"
-    rule = (allowlist.get("runners") or {}).get(target) or {}
-    allowed_versions = set(rule.get("versions") or [])
-    allowed_hashes = set(rule.get("hashes") or [])
-    version = snapshot.get("cli_version", "")
-    sha = snapshot.get("binary_sha256", "")
-    matched = bool((version and version in allowed_versions) or (sha and sha in allowed_hashes))
+    matched, reason = _version_rule_match(target, snapshot, settings)
     if policy == "disabled":
         return {"policy": policy, "allowed": True, "matched": matched, "reason": "version gate disabled"}
     if matched:
         return {"policy": policy, "allowed": True, "matched": True, "reason": "allowlist matched"}
-    reason = "runner binary is outside version/hash allowlist"
     return {
         "policy": policy,
         "allowed": policy != "enforce",
         "matched": False,
         "reason": reason,
+    }
+
+
+def evaluate_version_recheck(
+    target: str,
+    startup_snapshot: dict[str, Any],
+    invocation_snapshot: dict[str, Any],
+    *,
+    settings: HardeningSettings,
+) -> dict[str, Any]:
+    policy = settings.version_gate_recheck
+    changed_fields = _snapshot_changed_fields(startup_snapshot, invocation_snapshot)
+    changed = bool(changed_fields)
+    matched, gate_reason = _version_rule_match(target, invocation_snapshot, settings)
+    if policy == "disabled":
+        return {
+            "policy": policy,
+            "allowed": True,
+            "result": "disabled",
+            "matched": matched,
+            "changed": changed,
+            "changed_fields": changed_fields,
+            "reason": "version recheck disabled",
+        }
+    if not invocation_snapshot.get("binary_exists"):
+        return {
+            "policy": policy,
+            "allowed": policy != "enforce",
+            "result": "missing",
+            "matched": False,
+            "changed": True,
+            "changed_fields": changed_fields or ["binary_exists"],
+            "reason": "runner binary missing at invocation time",
+        }
+    if not changed:
+        return {
+            "policy": policy,
+            "allowed": True,
+            "result": "match",
+            "matched": matched,
+            "changed": False,
+            "changed_fields": [],
+            "reason": "invocation snapshot matches startup snapshot",
+        }
+    if matched:
+        return {
+            "policy": policy,
+            "allowed": True,
+            "result": "changed-but-allowed",
+            "matched": True,
+            "changed": True,
+            "changed_fields": changed_fields,
+            "reason": "runner changed after startup but still matches allowlist",
+        }
+    return {
+        "policy": policy,
+        "allowed": policy != "enforce",
+        "result": "changed-and-unapproved",
+        "matched": False,
+        "changed": True,
+        "changed_fields": changed_fields,
+        "reason": gate_reason,
     }
 
 

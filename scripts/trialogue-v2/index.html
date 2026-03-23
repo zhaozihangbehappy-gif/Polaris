@@ -507,6 +507,7 @@
           <div class="mono">
             sanitizer: ${escapeHtml((state.hardening && state.hardening.transcript_sanitizer) || "n/a")}<br>
             version_gate: ${escapeHtml((state.hardening && state.hardening.version_gate) || "n/a")}<br>
+            version_recheck: ${escapeHtml((state.hardening && state.hardening.version_gate_recheck) || "n/a")}<br>
             operation_locks: ${escapeHtml((state.hardening && state.hardening.operation_locks) || "n/a")}
           </div>
         </div>
@@ -531,7 +532,8 @@
           <div class="title">版本闸门</div>
           <div class="mono">${Object.entries((state.hardening && state.hardening.version_gate_status) || {}).map(([name, gate]) => {
             const snap = ((state.hardening && state.hardening.version_snapshots) || {})[name] || {};
-            return `${escapeHtml(name)}: ${(gate && gate.allowed) ? "ok" : "blocked"} · ${escapeHtml((snap && snap.cli_version) || "unknown")}`;
+            const recheck = (((state.hardening && state.hardening.version_recheck_status) || {})[name]) || {};
+            return `${escapeHtml(name)}: ${(gate && gate.allowed) ? "ok" : "blocked"} · ${escapeHtml((snap && snap.cli_version) || "unknown")} · recheck=${escapeHtml((recheck && recheck.result) || "startup-only")}`;
           }).join("<br>") || "(暂无)"}</div>
         </div>
         <div class="sidebar-card">
@@ -643,6 +645,7 @@
                   <div class="k">result</div><div class="v">${escapeHtml(agent.confirmed ? "verified" : "UNVERIFIED")}</div>
                   <div class="k">sanitizer</div><div class="v">${escapeHtml(String(((agent.hardening || {}).sanitizer || {}).modifications_count || 0))}</div>
                   <div class="k">version gate</div><div class="v">${escapeHtml((((agent.hardening || {}).version_gate || {}).allowed) === false ? "blocked" : (((agent.hardening || {}).version_gate || {}).policy || "n/a"))}</div>
+                  <div class="k">version recheck</div><div class="v">${escapeHtml((((agent.hardening || {}).version_recheck || {}).result) || "startup-only")}</div>
                 </div>
               </div>
               <div class="audit-block">

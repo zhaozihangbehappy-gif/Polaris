@@ -43,6 +43,7 @@ from hardening import (
     append_hardening_event,
     classify_operation,
     evaluate_version_gate,
+    evaluate_version_recheck,
     load_hardening_settings,
     snapshot_runner_version,
 )
@@ -90,6 +91,19 @@ class TrialogueState:
         }
         self.version_gate = {
             target: evaluate_version_gate(target, self.version_snapshots[target], settings=self.hardening)
+            for target in ("claude", "codex")
+        }
+        self.version_recheck_snapshots = dict(self.version_snapshots)
+        self.version_recheck = {
+            target: {
+                "policy": self.hardening.version_gate_recheck,
+                "allowed": True,
+                "result": "startup-only",
+                "matched": self.version_gate[target]["matched"],
+                "changed": False,
+                "changed_fields": [],
+                "reason": "invocation recheck not run yet",
+            }
             for target in ("claude", "codex")
         }
         self.codex_runner_enabled = has_external_codex_runner(conf)
@@ -155,10 +169,12 @@ class TrialogueState:
                 "hardening": {
                     "transcript_sanitizer": self.hardening.transcript_sanitizer,
                     "version_gate": self.hardening.version_gate,
+                    "version_gate_recheck": self.hardening.version_gate_recheck,
                     "operation_locks": self.hardening.operation_locks,
                     "external_audit_anchor": self.hardening.external_audit_anchor,
                     "version_snapshots": copy.deepcopy(self.version_snapshots),
                     "version_gate_status": copy.deepcopy(self.version_gate),
+                    "version_recheck_status": copy.deepcopy(self.version_recheck),
                     "degraded_features": copy.deepcopy(self.degraded_features),
                     "system_events": copy.deepcopy(self.system_events[-12:]),
                     "lock_snapshot": self.operation_locks.snapshot(),
@@ -741,6 +757,48 @@ class TrialogueState:
                     severity="warn",
                     feature="version_gate",
                 )
+            invocation_snapshot = snapshot_runner_version(
+                target,
+                self.conf,
+                settings=self.hardening,
+                previous_snapshot=self.version_recheck_snapshots.get(target),
+            )
+            recheck = evaluate_version_recheck(
+                target,
+                self.version_snapshots[target],
+                invocation_snapshot,
+                settings=self.hardening,
+            )
+            self.version_recheck_snapshots[target] = invocation_snapshot
+            self.version_recheck[target] = recheck
+            if not recheck.get("allowed", True):
+                with self.lock:
+                    agent["status"] = "failed"
+                    agent["reply"] = f"[Hardening] blocked by version recheck: {recheck.get('reason', 'unknown')}"
+                    agent["hardening"] = {"version_gate": gate, "version_recheck": recheck}
+                    self.append_event(agent, "failed", agent["reply"])
+                self.emit_system_event(
+                    "version_recheck_block",
+                    f"{label} blocked by version recheck: {recheck.get('reason', 'unknown')}",
+                    severity="error",
+                    feature="version_gate",
+                )
+                self.broadcast()
+                return
+            if recheck.get("result") in {"changed-and-unapproved", "missing"} and recheck.get("policy") == "warn":
+                self.emit_system_event(
+                    "version_recheck_warn",
+                    f"{label} invocation drift: {recheck.get('reason', 'unknown')}",
+                    severity="warn",
+                    feature="version_gate",
+                )
+            elif recheck.get("result") == "changed-but-allowed":
+                self.emit_system_event(
+                    "version_recheck_change",
+                    f"{label} runner changed but still matches allowlist",
+                    severity="info",
+                    feature="version_gate",
+                )
 
             if target == "claude":
                 session_id = self.current_claude_session or str(uuid.uuid4())
@@ -811,6 +869,7 @@ class TrialogueState:
                     )
                 agent["hardening"] = {
                     "version_gate": gate,
+                    "version_recheck": recheck,
                     "sanitizer": sanitizer_meta,
                 }
                 if sanitizer_meta.get("sanitized"):
@@ -851,7 +910,16 @@ class TrialogueState:
                             target_info=agent_target_info,
                             cwd_override=cwd_override,
                             sanitizer_meta=sanitizer_meta,
-                            version_meta=gate,
+                            version_meta={
+                                **gate,
+                                "recheck_policy": recheck["policy"],
+                                "recheck_allowed": recheck["allowed"],
+                                "recheck_result": recheck["result"],
+                                "recheck_reason": recheck["reason"],
+                                "recheck_changed_fields": recheck["changed_fields"],
+                                "startup_snapshot": self.version_snapshots[target],
+                                "invocation_snapshot": invocation_snapshot,
+                            },
                         )
                 else:
                     reply, meta = call_launcher_stream(
@@ -865,7 +933,16 @@ class TrialogueState:
                         memory_result=mem,
                         target_info=agent_target_info,
                         sanitizer_meta=sanitizer_meta,
-                        version_meta=gate,
+                        version_meta={
+                            **gate,
+                            "recheck_policy": recheck["policy"],
+                            "recheck_allowed": recheck["allowed"],
+                            "recheck_result": recheck["result"],
+                            "recheck_reason": recheck["reason"],
+                            "recheck_changed_fields": recheck["changed_fields"],
+                            "startup_snapshot": self.version_snapshots[target],
+                            "invocation_snapshot": invocation_snapshot,
+                        },
                         on_stderr=lambda line: self._handle_codex_stderr(agent, line),
                         on_event=lambda event: self._handle_codex_runner_event(item, agent, event),
                         room_id=self.room_id,

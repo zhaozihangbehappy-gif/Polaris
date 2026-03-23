@@ -28,6 +28,7 @@ from hardening import (
     append_hardening_event,
     classify_operation,
     evaluate_version_gate,
+    evaluate_version_recheck,
     load_hardening_settings,
     sanitize_transcript_entries,
     snapshot_runner_version,
@@ -393,6 +394,20 @@ def call_launcher(
         env["TRIALOGUE_VERSION_GATE_POLICY"] = str(version_meta.get("policy", "disabled"))
         env["TRIALOGUE_VERSION_GATE_ALLOWED"] = "true" if version_meta.get("allowed", True) else "false"
         env["TRIALOGUE_VERSION_GATE_REASON"] = str(version_meta.get("reason", ""))
+        env["TRIALOGUE_VERSION_RECHECK_POLICY"] = str(version_meta.get("recheck_policy", "disabled"))
+        env["TRIALOGUE_VERSION_RECHECK_ALLOWED"] = "true" if version_meta.get("recheck_allowed", True) else "false"
+        env["TRIALOGUE_VERSION_RECHECK_RESULT"] = str(version_meta.get("recheck_result", "disabled"))
+        env["TRIALOGUE_VERSION_RECHECK_REASON"] = str(version_meta.get("recheck_reason", ""))
+        env["TRIALOGUE_VERSION_RECHECK_CHANGED_FIELDS"] = ",".join(version_meta.get("recheck_changed_fields", []))
+        startup_snapshot = version_meta.get("startup_snapshot") or {}
+        invocation_snapshot = version_meta.get("invocation_snapshot") or {}
+        env["TRIALOGUE_VERSION_STARTUP_BINARY_PATH"] = str(startup_snapshot.get("binary_path", ""))
+        env["TRIALOGUE_VERSION_STARTUP_BINARY_SHA256"] = str(startup_snapshot.get("binary_sha256", ""))
+        env["TRIALOGUE_VERSION_STARTUP_CLI_VERSION"] = str(startup_snapshot.get("cli_version", ""))
+        env["TRIALOGUE_VERSION_INVOCATION_BINARY_PATH"] = str(invocation_snapshot.get("binary_path", ""))
+        env["TRIALOGUE_VERSION_INVOCATION_BINARY_SHA256"] = str(invocation_snapshot.get("binary_sha256", ""))
+        env["TRIALOGUE_VERSION_INVOCATION_CLI_VERSION"] = str(invocation_snapshot.get("cli_version", ""))
+        env["TRIALOGUE_VERSION_INVOCATION_SNAPSHOT_MODE"] = str(invocation_snapshot.get("snapshot_mode", "missing"))
     result = subprocess.run(
         cmd,
         stdout=subprocess.PIPE,
@@ -497,6 +512,20 @@ def call_launcher_stream(
         env["TRIALOGUE_VERSION_GATE_POLICY"] = str(version_meta.get("policy", "disabled"))
         env["TRIALOGUE_VERSION_GATE_ALLOWED"] = "true" if version_meta.get("allowed", True) else "false"
         env["TRIALOGUE_VERSION_GATE_REASON"] = str(version_meta.get("reason", ""))
+        env["TRIALOGUE_VERSION_RECHECK_POLICY"] = str(version_meta.get("recheck_policy", "disabled"))
+        env["TRIALOGUE_VERSION_RECHECK_ALLOWED"] = "true" if version_meta.get("recheck_allowed", True) else "false"
+        env["TRIALOGUE_VERSION_RECHECK_RESULT"] = str(version_meta.get("recheck_result", "disabled"))
+        env["TRIALOGUE_VERSION_RECHECK_REASON"] = str(version_meta.get("recheck_reason", ""))
+        env["TRIALOGUE_VERSION_RECHECK_CHANGED_FIELDS"] = ",".join(version_meta.get("recheck_changed_fields", []))
+        startup_snapshot = version_meta.get("startup_snapshot") or {}
+        invocation_snapshot = version_meta.get("invocation_snapshot") or {}
+        env["TRIALOGUE_VERSION_STARTUP_BINARY_PATH"] = str(startup_snapshot.get("binary_path", ""))
+        env["TRIALOGUE_VERSION_STARTUP_BINARY_SHA256"] = str(startup_snapshot.get("binary_sha256", ""))
+        env["TRIALOGUE_VERSION_STARTUP_CLI_VERSION"] = str(startup_snapshot.get("cli_version", ""))
+        env["TRIALOGUE_VERSION_INVOCATION_BINARY_PATH"] = str(invocation_snapshot.get("binary_path", ""))
+        env["TRIALOGUE_VERSION_INVOCATION_BINARY_SHA256"] = str(invocation_snapshot.get("binary_sha256", ""))
+        env["TRIALOGUE_VERSION_INVOCATION_CLI_VERSION"] = str(invocation_snapshot.get("cli_version", ""))
+        env["TRIALOGUE_VERSION_INVOCATION_SNAPSHOT_MODE"] = str(invocation_snapshot.get("snapshot_mode", "missing"))
     stderr_lines = []
 
     def read_stderr(stream):
@@ -612,6 +641,19 @@ def main():
         target: evaluate_version_gate(target, version_snapshots[target], settings=hardening)
         for target in ("claude", "codex")
     }
+    version_recheck_snapshots = dict(version_snapshots)
+    version_rechecks = {
+        target: {
+            "policy": hardening.version_gate_recheck,
+            "allowed": True,
+            "result": "startup-only",
+            "matched": version_gate[target]["matched"],
+            "changed": False,
+            "changed_fields": [],
+            "reason": "invocation recheck not run yet",
+        }
+        for target in ("claude", "codex")
+    }
 
     # session 状态
     claude_sid = None
@@ -633,7 +675,11 @@ def main():
     print("输入 /quit 或 /exit 退出")
     print("输入 /info 查看 session 信息")
     print("输入 /target [meeting|polaris|auto|status] 切换或查看目标")
-    print(f"Hardening: sanitizer={hardening.transcript_sanitizer} version_gate={hardening.version_gate} locks={hardening.operation_locks}")
+    print(
+        f"Hardening: sanitizer={hardening.transcript_sanitizer} "
+        f"version_gate={hardening.version_gate}/{hardening.version_gate_recheck} "
+        f"locks={hardening.operation_locks}"
+    )
     print("══════════════════")
     print()
 
@@ -680,7 +726,12 @@ def main():
             for target in ("claude", "codex"):
                 snap = version_snapshots[target]
                 gate = version_gate[target]
-                print(f"  {target} version: {snap['cli_version']} [{gate['policy']}/{ 'ok' if gate['allowed'] else 'blocked'}]")
+                recheck = version_rechecks[target]
+                print(
+                    f"  {target} version: {snap['cli_version']} "
+                    f"[startup {gate['policy']}/{ 'ok' if gate['allowed'] else 'blocked'} · "
+                    f"recheck {recheck['policy']}/{recheck['result']}]"
+                )
             if hardening_events:
                 print("  最近 hardening 事件:")
                 for line in hardening_events[-5:]:
@@ -741,6 +792,31 @@ def main():
                 continue
             if not gate["matched"] and gate["policy"] == "warn":
                 emit_hardening_event("version_gate_warn", f"{name} running outside allowlist: {gate['reason']}")
+            invocation_snapshot = snapshot_runner_version(
+                target,
+                args.conf,
+                settings=hardening,
+                previous_snapshot=version_recheck_snapshots.get(target),
+            )
+            recheck = evaluate_version_recheck(
+                target,
+                version_snapshots[target],
+                invocation_snapshot,
+                settings=hardening,
+            )
+            version_recheck_snapshots[target] = invocation_snapshot
+            version_rechecks[target] = recheck
+            if not recheck["allowed"]:
+                detail = f"{name} blocked by version recheck: {recheck['reason']}"
+                emit_hardening_event("version_recheck_block", detail)
+                print(f"  [{name}] (blocked): {detail}")
+                print()
+                meeting_history.append({"speaker": name, "text": detail})
+                continue
+            if recheck["result"] in {"changed-and-unapproved", "missing"} and recheck["policy"] == "warn":
+                emit_hardening_event("version_recheck_warn", f"{name} invocation drift: {recheck['reason']}")
+            elif recheck["result"] == "changed-but-allowed":
+                emit_hardening_event("version_recheck_change", f"{name} runner changed but still allowlisted")
 
             # 记忆注入：持久 session 下只在首轮注入（后续轮 session 历史已包含）
             is_persistent = (target == "claude" and resume_session) or (target == "codex" and codex_runner_enabled)
@@ -853,15 +929,24 @@ def main():
                         args.launcher,
                         args.conf,
                         target,
-                    injected_message,
-                    session_id=sid,
-                    resume_session=resume_session,
-                    skip_memory=skip_memory,
-                    memory_result=mem,
+                        injected_message,
+                        session_id=sid,
+                        resume_session=resume_session,
+                        skip_memory=skip_memory,
+                        memory_result=mem,
                         target_info=agent_target_info,
                         cwd_override=cwd_override,
                         sanitizer_meta=sanitizer_meta,
-                        version_meta=gate,
+                        version_meta={
+                            **gate,
+                            "recheck_policy": recheck["policy"],
+                            "recheck_allowed": recheck["allowed"],
+                            "recheck_result": recheck["result"],
+                            "recheck_reason": recheck["reason"],
+                            "recheck_changed_fields": recheck["changed_fields"],
+                            "startup_snapshot": version_snapshots[target],
+                            "invocation_snapshot": invocation_snapshot,
+                        },
                         on_event=handle_codex_event,
                         room_id=room_id,
                     )
@@ -878,7 +963,16 @@ def main():
                     target_info=agent_target_info,
                     cwd_override=cwd_override,
                     sanitizer_meta=sanitizer_meta,
-                    version_meta=gate,
+                    version_meta={
+                        **gate,
+                        "recheck_policy": recheck["policy"],
+                        "recheck_allowed": recheck["allowed"],
+                        "recheck_result": recheck["result"],
+                        "recheck_reason": recheck["reason"],
+                        "recheck_changed_fields": recheck["changed_fields"],
+                        "startup_snapshot": version_snapshots[target],
+                        "invocation_snapshot": invocation_snapshot,
+                    },
                 )
 
             # 推进会议上下文游标
