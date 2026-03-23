@@ -1,0 +1,13 @@
+{
+  "policy": "warn",
+  "runners": {
+    "claude": {
+      "versions": [],
+      "hashes": []
+    },
+    "codex": {
+      "versions": [],
+      "hashes": []
+    }
+  }
+}

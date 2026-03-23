@@ -38,6 +38,14 @@ from chat import (
     resolve_target,
 )
 from _memory import load_memory, build_injected_message
+from hardening import (
+    HostOperationLockManager,
+    append_hardening_event,
+    classify_operation,
+    evaluate_version_gate,
+    load_hardening_settings,
+    snapshot_runner_version,
+)
 
 
 MAX_CLAUDE_HISTORY = 5
@@ -75,9 +83,20 @@ class TrialogueState:
         self.launcher = launcher
         self.conf = conf
         self.audit_log = audit_log
+        self.hardening = load_hardening_settings(conf)
+        self.version_snapshots = {
+            target: snapshot_runner_version(target, conf)
+            for target in ("claude", "codex")
+        }
+        self.version_gate = {
+            target: evaluate_version_gate(target, self.version_snapshots[target], settings=self.hardening)
+            for target in ("claude", "codex")
+        }
         self.codex_runner_enabled = has_external_codex_runner(conf)
         self.started_at = now_iso()
         self.items: list[dict[str, Any]] = []
+        self.system_events: list[dict[str, Any]] = []
+        self.degraded_features: dict[str, dict[str, Any]] = {}
         self.last_rid = ""
         self.latest_codex_session = ""
         self.current_claude_session = ""
@@ -87,10 +106,26 @@ class TrialogueState:
         self.target_override = ""
         self.clients: set[socket.socket] = set()
         self.lock = threading.RLock()
+        self.operation_locks = HostOperationLockManager()
         self.claude_exec_lock = threading.Lock()
         self.pending_approvals: dict[tuple[str, str, str], dict[str, Any]] = {}
         self._load_history()
         self.audit_offset = os.path.getsize(self.audit_log) if os.path.isfile(self.audit_log) else 0
+        for target, gate in self.version_gate.items():
+            if not gate.get("allowed", True):
+                self.emit_system_event(
+                    "version_gate_block",
+                    f"{target} blocked by version gate: {gate.get('reason', 'unknown')}",
+                    severity="error",
+                    feature="version_gate",
+                )
+            elif not gate.get("matched", True) and gate.get("policy") == "warn":
+                self.emit_system_event(
+                    "version_gate_warn",
+                    f"{target} is outside allowlist: {gate.get('reason', 'unknown')}",
+                    severity="warn",
+                    feature="version_gate",
+                )
         threading.Thread(target=self._tail_audit_log, daemon=True).start()
 
     def snapshot(self) -> dict[str, Any]:
@@ -117,8 +152,49 @@ class TrialogueState:
                 "active_agents": active_agents,
                 "pending_approvals": pending_approvals,
                 "room_id": self.room_id,
+                "hardening": {
+                    "transcript_sanitizer": self.hardening.transcript_sanitizer,
+                    "version_gate": self.hardening.version_gate,
+                    "operation_locks": self.hardening.operation_locks,
+                    "external_audit_anchor": self.hardening.external_audit_anchor,
+                    "version_snapshots": copy.deepcopy(self.version_snapshots),
+                    "version_gate_status": copy.deepcopy(self.version_gate),
+                    "degraded_features": copy.deepcopy(self.degraded_features),
+                    "system_events": copy.deepcopy(self.system_events[-12:]),
+                    "lock_snapshot": self.operation_locks.snapshot(),
+                },
                 "items": copy.deepcopy(self.items),
             }
+
+    def emit_system_event(self, kind: str, detail: str, *, severity: str = "info", feature: str = "") -> None:
+        event = {
+            "ts": now_iso(),
+            "kind": kind,
+            "severity": severity,
+            "detail": detail,
+            "feature": feature,
+        }
+        with self.lock:
+            self.system_events.append(event)
+            self.system_events = self.system_events[-100:]
+            if feature and severity in {"warn", "error"}:
+                self.degraded_features[feature] = {
+                    "state": "degraded",
+                    "reason": detail,
+                    "updated_at": event["ts"],
+                }
+        append_hardening_event(
+            self.hardening.alert_log_path,
+            {
+                "timestamp": event["ts"],
+                "kind": kind,
+                "severity": severity,
+                "detail": detail,
+                "feature": feature,
+                "source": "broker",
+                "room_id": self.room_id,
+            },
+        )
 
     def register_client(self, sock: socket.socket) -> None:
         with self.lock:
@@ -542,8 +618,10 @@ class TrialogueState:
                 "current_detail": "请求已进入本地队列",
                 "reply": "",
                 "meta": {},
+                "hardening": {},
                 "events": [],
                 "pending_approval": None,
+                "held_lock_owners": [],
             }
             self.append_event(agent, "queued", "等待本地执行队列")
             agents.append(agent)
@@ -612,6 +690,13 @@ class TrialogueState:
         self.broadcast()
         return item
 
+    def _release_agent_locks(self, agent: dict[str, Any]) -> None:
+        held = list(agent.get("held_lock_owners") or [])
+        for owner in held:
+            self.operation_locks.release_owner(owner)
+        if held:
+            agent["held_lock_owners"] = []
+
     def _run_item(self, item_id: str, wrapped_message: str, target_info: dict[str, Any]) -> None:
         with self.lock:
             item = next((x for x in self.items if x["id"] == item_id), None)
@@ -624,6 +709,7 @@ class TrialogueState:
     def _run_agent(self, item: dict[str, Any], agent: dict[str, Any], wrapped_message: str, target_info: dict[str, Any]) -> None:
             target = agent["target"]
             label = agent["label"]
+            gate = self.version_gate.get(target, {"allowed": True, "matched": True, "policy": "disabled", "reason": ""})
             with self.lock:
                 agent["status"] = "running"
                 agent["started_at"] = now_iso()
@@ -633,6 +719,28 @@ class TrialogueState:
                 agent["current_detail"] = f"{label} 已提交给 launcher"
                 self.append_event(agent, "running", f"{label} 已提交给 launcher，正在等待 CLI + 审计完成")
             self.broadcast()
+
+            if not gate.get("allowed", True):
+                with self.lock:
+                    agent["status"] = "failed"
+                    agent["reply"] = f"[Hardening] blocked by version gate: {gate.get('reason', 'unknown')}"
+                    agent["hardening"] = {"version_gate": gate}
+                    self.append_event(agent, "failed", agent["reply"])
+                self.emit_system_event(
+                    "version_gate_block",
+                    f"{label} blocked by version gate: {gate.get('reason', 'unknown')}",
+                    severity="error",
+                    feature="version_gate",
+                )
+                self.broadcast()
+                return
+            if not gate.get("matched", True) and gate.get("policy") == "warn":
+                self.emit_system_event(
+                    "version_gate_warn",
+                    f"{label} is outside allowlist: {gate.get('reason', 'unknown')}",
+                    severity="warn",
+                    feature="version_gate",
+                )
 
             if target == "claude":
                 session_id = self.current_claude_session or str(uuid.uuid4())
@@ -679,7 +787,7 @@ class TrialogueState:
             # 持久 session 下只注入增量会议上下文，避免双重历史
             since = memory_cursor if is_persistent else 0
             meeting_entries = self._build_meeting_entries()
-            injected_message, next_cursor, meeting_mode = build_meeting_context(meeting_entries, injected_message, since_index=since)
+            injected_message, next_cursor, meeting_mode, sanitizer_meta = build_meeting_context(meeting_entries, injected_message, since_index=since)
             cwd_override = target_info.get("claude_cwd") if target == "claude" else None
             with self.lock:
                 agent["memory"] = {
@@ -701,10 +809,30 @@ class TrialogueState:
                         agent, "running",
                         f"目标上下文: {agent_target_info['name']} ({agent_target_info['source']})"
                     )
+                agent["hardening"] = {
+                    "version_gate": gate,
+                    "sanitizer": sanitizer_meta,
+                }
+                if sanitizer_meta.get("sanitized"):
+                    self.append_event(
+                        agent,
+                        "running",
+                        f"transcript sanitizer modified {sanitizer_meta['modifications_count']} fragments",
+                    )
             if mem["injected"]:
                 self.broadcast()
             elif agent_target_info.get("injected"):
                 self.broadcast()
+            elif sanitizer_meta.get("sanitized"):
+                self.broadcast()
+
+            if sanitizer_meta.get("sanitized"):
+                self.emit_system_event(
+                    "sanitizer_modified",
+                    f"{label} transcript filtered {sanitizer_meta['modifications_count']} fragments",
+                    severity="warn",
+                    feature="transcript_sanitizer",
+                )
 
             reply = ""
             meta: dict[str, Any] = {}
@@ -722,6 +850,8 @@ class TrialogueState:
                             memory_result=mem,
                             target_info=agent_target_info,
                             cwd_override=cwd_override,
+                            sanitizer_meta=sanitizer_meta,
+                            version_meta=gate,
                         )
                 else:
                     reply, meta = call_launcher_stream(
@@ -734,6 +864,8 @@ class TrialogueState:
                         skip_memory=skip_memory,
                         memory_result=mem,
                         target_info=agent_target_info,
+                        sanitizer_meta=sanitizer_meta,
+                        version_meta=gate,
                         on_stderr=lambda line: self._handle_codex_stderr(agent, line),
                         on_event=lambda event: self._handle_codex_runner_event(item, agent, event),
                         room_id=self.room_id,
@@ -781,6 +913,7 @@ class TrialogueState:
                     self.claude_meeting_cursor = next_cursor
                 else:
                     self.codex_meeting_cursor = next_cursor
+                    self._release_agent_locks(agent)
 
                 if target == "claude":
                     resolved = meta.get("session_id") or session_id
@@ -825,6 +958,8 @@ class TrialogueState:
             }
             agent = waiter["agent"]
             agent["pending_approval"] = None
+            if decision in {"decline", "cancel"}:
+                self._release_agent_locks(agent)
             self.append_event(agent, "running", f"审批已处理: {decision} ({scope})")
             waiter["event"].set()
         self.broadcast()
@@ -833,17 +968,59 @@ class TrialogueState:
     def _await_approval(self, item: dict[str, Any], agent: dict[str, Any], event: dict[str, Any]) -> dict[str, Any]:
         request_id = str(event.get("request_id", ""))
         timeout_sec = float(event.get("timeout_sec", 120) or 120)
+        request_payload = event.get("request", {}) or {}
+        operation = classify_operation(request_payload)
         key = (item["id"], agent["target"], request_id)
         waiter = {"event": threading.Event(), "response": None, "agent": agent}
+        if operation.get("requires_lock") and self.hardening.operation_locks == "enabled":
+            owner = f"{self.room_id}:{agent['target']}:{request_id}"
+            decision = self.operation_locks.acquire(
+                owner,
+                operation["class_name"],
+                operation["resource_name"],
+                self.hardening.lock_timeout_sec,
+            )
+            if not decision.granted:
+                self.emit_system_event(
+                    "lock_timeout",
+                    f"{agent['label']} denied {operation['summary']} after {decision.wait_sec:.1f}s",
+                    severity="warn",
+                    feature="operation_locks",
+                )
+                with self.lock:
+                    self.append_event(agent, "running", f"lock timeout: {operation['summary']}")
+                self.broadcast()
+                return {
+                    "type": "approval_response",
+                    "request_id": request_id,
+                    "decision": "decline",
+                    "scope": "turn",
+                }
+            with self.lock:
+                owners = list(agent.get("held_lock_owners") or [])
+                owners.append(owner)
+                agent["held_lock_owners"] = owners
+                self.append_event(
+                    agent,
+                    "running",
+                    f"lock acquired: {decision.resource_lock or decision.class_lock}",
+                )
+            self.emit_system_event(
+                "lock_acquired",
+                f"{agent['label']} acquired {decision.resource_lock or decision.class_lock}",
+                severity="info",
+                feature="operation_locks",
+            )
         with self.lock:
             agent["pending_approval"] = {
                 "request_id": request_id,
                 "request_kind": event.get("request_kind", ""),
                 "summary": event.get("summary", ""),
-                "request": event.get("request", {}),
+                "request": request_payload,
                 "timeout_sec": timeout_sec,
                 "thread_id": event.get("thread_id", ""),
                 "turn_id": event.get("turn_id", ""),
+                "operation": operation,
             }
             agent["phase"] = "approval_wait"
             agent["phase_label"] = "等待你的审批"
@@ -864,6 +1041,7 @@ class TrialogueState:
             agent["pending_approval"] = None
             if waiter["response"] is None:
                 self.append_event(agent, "running", "审批超时，默认拒绝本次请求")
+                self._release_agent_locks(agent)
         self.broadcast()
         return response
 
@@ -907,6 +1085,8 @@ class TrialogueState:
                     "running",
                     f"审批已回传: {event.get('decision', 'decline')} ({event.get('scope', 'turn')})",
                 )
+                if event.get("decision") in {"decline", "cancel"}:
+                    self._release_agent_locks(agent)
             self.broadcast()
             return None
         if event_type == "runner_error":

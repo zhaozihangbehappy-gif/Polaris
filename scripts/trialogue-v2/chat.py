@@ -23,6 +23,15 @@ import tempfile
 import threading
 
 from _memory import load_memory, build_injected_message
+from hardening import (
+    HostOperationLockManager,
+    append_hardening_event,
+    classify_operation,
+    evaluate_version_gate,
+    load_hardening_settings,
+    sanitize_transcript_entries,
+    snapshot_runner_version,
+)
 
 MAX_CLAUDE_HISTORY = 5
 MAX_MEETING_CONTEXT_ENTRIES = 48
@@ -219,9 +228,30 @@ def build_meeting_context(entries, wrapped_message, since_index=0):
     effective_entries = entries[since_index:] if since_index > 0 else entries
     next_cursor = len(entries)
 
+    sanitizer_meta = {
+        "mode": "disabled",
+        "raw_entry_count": len(effective_entries),
+        "injected_entry_count": len(effective_entries),
+        "modifications_count": 0,
+        "removed_wrapper_types": [],
+        "notice": "",
+        "sanitized": False,
+    }
     lines = []
     total_chars = 0
     recent_entries = effective_entries[-MAX_MEETING_CONTEXT_ENTRIES:]
+    settings = globals().get("_TRIALOGUE_HARDENING_SETTINGS")
+    if settings is not None:
+        recent_entries, sanitizer = sanitize_transcript_entries(recent_entries, settings=settings)
+        sanitizer_meta = {
+            "mode": sanitizer.mode,
+            "raw_entry_count": sanitizer.raw_entry_count,
+            "injected_entry_count": sanitizer.injected_entry_count,
+            "modifications_count": sanitizer.modifications_count,
+            "removed_wrapper_types": sanitizer.removed_wrapper_types,
+            "notice": sanitizer.notice,
+            "sanitized": sanitizer.sanitized,
+        }
     for entry in reversed(recent_entries):
         speaker = (entry.get("speaker") or "").strip()
         text = _compact_meeting_text(entry.get("text", ""))
@@ -238,9 +268,14 @@ def build_meeting_context(entries, wrapped_message, since_index=0):
         total_chars = next_total
 
     if not lines:
-        return wrapped_message, next_cursor, mode
+        return wrapped_message, next_cursor, mode, sanitizer_meta
 
-    body = MEETING_CONTEXT_NOTICE + "\n" + "\n".join(lines)
+    body_parts = []
+    if sanitizer_meta["notice"]:
+        body_parts.append(sanitizer_meta["notice"])
+    body_parts.append(MEETING_CONTEXT_NOTICE)
+    body_parts.extend(lines)
+    body = "\n".join(body_parts)
     body_sha256 = hashlib.sha256(body.encode("utf-8")).hexdigest()
     header = (
         f"[MEETING-CONTEXT readonly=true untrusted=true semantic=peer-transcript"
@@ -248,7 +283,7 @@ def build_meeting_context(entries, wrapped_message, since_index=0):
         f" entries={len(lines)}"
         f" mode={mode}]"
     )
-    return f"{header}\n{body}\n[/MEETING-CONTEXT]\n{wrapped_message}", next_cursor, mode
+    return f"{header}\n{body}\n[/MEETING-CONTEXT]\n{wrapped_message}", next_cursor, mode, sanitizer_meta
 
 
 def load_conf_map(conf_path):
@@ -312,6 +347,8 @@ def call_launcher(
     memory_result=None,
     target_info=None,
     cwd_override=None,
+    sanitizer_meta=None,
+    version_meta=None,
 ):
     """调用 launcher.sh，返回 (agent_stdout, meta_dict)
 
@@ -350,6 +387,17 @@ def call_launcher(
         env["TRIALOGUE_TARGET_SOURCE"] = target_info.get("source", "default")
         env["TRIALOGUE_TARGET_PATH"] = target_info.get("repo_path", "")
         env["TRIALOGUE_TARGET_CWD_OVERRIDE"] = cwd_override or ""
+    if sanitizer_meta:
+        env["TRIALOGUE_SANITIZER_MODE"] = str(sanitizer_meta.get("mode", "disabled"))
+        env["TRIALOGUE_SANITIZER_RAW_COUNT"] = str(sanitizer_meta.get("raw_entry_count", 0))
+        env["TRIALOGUE_SANITIZER_INJECTED_COUNT"] = str(sanitizer_meta.get("injected_entry_count", 0))
+        env["TRIALOGUE_SANITIZER_MODIFICATIONS"] = str(sanitizer_meta.get("modifications_count", 0))
+        env["TRIALOGUE_SANITIZER_REMOVED_TYPES"] = ",".join(sanitizer_meta.get("removed_wrapper_types", []))
+        env["TRIALOGUE_SANITIZER_SANITIZED"] = "true" if sanitizer_meta.get("sanitized") else "false"
+    if version_meta:
+        env["TRIALOGUE_VERSION_GATE_POLICY"] = str(version_meta.get("policy", "disabled"))
+        env["TRIALOGUE_VERSION_GATE_ALLOWED"] = "true" if version_meta.get("allowed", True) else "false"
+        env["TRIALOGUE_VERSION_GATE_REASON"] = str(version_meta.get("reason", ""))
     result = subprocess.run(
         cmd,
         stdout=subprocess.PIPE,
@@ -401,6 +449,8 @@ def call_launcher_stream(
     on_stderr=None,
     on_event=None,
     room_id=None,
+    sanitizer_meta=None,
+    version_meta=None,
 ):
     """流式调用 launcher.sh。
 
@@ -441,6 +491,17 @@ def call_launcher_stream(
         env["TRIALOGUE_TARGET_CWD_OVERRIDE"] = cwd_override or ""
     if room_id:
         env["TRIALOGUE_ROOM_ID"] = room_id
+    if sanitizer_meta:
+        env["TRIALOGUE_SANITIZER_MODE"] = str(sanitizer_meta.get("mode", "disabled"))
+        env["TRIALOGUE_SANITIZER_RAW_COUNT"] = str(sanitizer_meta.get("raw_entry_count", 0))
+        env["TRIALOGUE_SANITIZER_INJECTED_COUNT"] = str(sanitizer_meta.get("injected_entry_count", 0))
+        env["TRIALOGUE_SANITIZER_MODIFICATIONS"] = str(sanitizer_meta.get("modifications_count", 0))
+        env["TRIALOGUE_SANITIZER_REMOVED_TYPES"] = ",".join(sanitizer_meta.get("removed_wrapper_types", []))
+        env["TRIALOGUE_SANITIZER_SANITIZED"] = "true" if sanitizer_meta.get("sanitized") else "false"
+    if version_meta:
+        env["TRIALOGUE_VERSION_GATE_POLICY"] = str(version_meta.get("policy", "disabled"))
+        env["TRIALOGUE_VERSION_GATE_ALLOWED"] = "true" if version_meta.get("allowed", True) else "false"
+        env["TRIALOGUE_VERSION_GATE_REASON"] = str(version_meta.get("reason", ""))
     stderr_lines = []
 
     def read_stderr(stream):
@@ -527,6 +588,35 @@ def main():
     parser.add_argument("--conf", required=True, help="trialogue-v2.conf 绝对路径")
     args = parser.parse_args()
     codex_runner_enabled = has_external_codex_runner(args.conf)
+    hardening = load_hardening_settings(args.conf)
+    globals()["_TRIALOGUE_HARDENING_SETTINGS"] = hardening
+    lock_manager = HostOperationLockManager()
+    hardening_events: list[str] = []
+
+    def emit_hardening_event(kind: str, detail: str) -> None:
+        stamp = datetime.datetime.now().strftime("%H:%M:%S")
+        line = f"[{stamp}] {kind}: {detail}"
+        hardening_events.append(line)
+        hardening_events[:] = hardening_events[-20:]
+        append_hardening_event(
+            hardening.alert_log_path,
+            {
+                "timestamp": datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="milliseconds"),
+                "kind": kind,
+                "detail": detail,
+                "source": "chat_tui",
+            },
+        )
+        print(f"  [Hardening] {detail}")
+
+    version_snapshots = {
+        target: snapshot_runner_version(target, args.conf)
+        for target in ("claude", "codex")
+    }
+    version_gate = {
+        target: evaluate_version_gate(target, version_snapshots[target], settings=hardening)
+        for target in ("claude", "codex")
+    }
 
     # session 状态
     claude_sid = None
@@ -548,6 +638,7 @@ def main():
     print("输入 /quit 或 /exit 退出")
     print("输入 /info 查看 session 信息")
     print("输入 /target [meeting|polaris|auto|status] 切换或查看目标")
+    print(f"Hardening: sanitizer={hardening.transcript_sanitizer} version_gate={hardening.version_gate} locks={hardening.operation_locks}")
     print("══════════════════")
     print()
 
@@ -591,6 +682,14 @@ def main():
             print(f"  Codex session: {codex_sid or '(未建立)'}")
             print(f"  Room ID: {room_id}")
             print(f"  最新 RID: {last_rid or '(暂无)'}")
+            for target in ("claude", "codex"):
+                snap = version_snapshots[target]
+                gate = version_gate[target]
+                print(f"  {target} version: {snap['cli_version']} [{gate['policy']}/{ 'ok' if gate['allowed'] else 'blocked'}]")
+            if hardening_events:
+                print("  最近 hardening 事件:")
+                for line in hardening_events[-5:]:
+                    print(f"    {line}")
             print()
             continue
 
@@ -637,6 +736,16 @@ def main():
                 sid = codex_sid
                 resume_session = False
             print(f"  → 正在调用 {name}... RID={audit_msg['rid']}")
+            gate = version_gate[target]
+            if not gate["allowed"]:
+                detail = f"{name} blocked by version gate: {gate['reason']}"
+                emit_hardening_event("version_gate_block", detail)
+                print(f"  [{name}] (blocked): {detail}")
+                print()
+                meeting_history.append({"speaker": name, "text": detail})
+                continue
+            if not gate["matched"] and gate["policy"] == "warn":
+                emit_hardening_event("version_gate_warn", f"{name} running outside allowlist: {gate['reason']}")
 
             # 记忆注入：持久 session 下只在首轮注入（后续轮 session 历史已包含）
             is_persistent = (target == "claude" and resume_session) or (target == "codex" and codex_runner_enabled)
@@ -672,7 +781,12 @@ def main():
             # 持久 session 下只注入增量会议上下文
             is_persistent = (target == "claude" and resume_session) or (target == "codex" and codex_runner_enabled)
             since = meeting_cursors[target] if is_persistent else 0
-            injected_message, next_cursor, meeting_mode = build_meeting_context(meeting_history, injected_message, since_index=since)
+            injected_message, next_cursor, meeting_mode, sanitizer_meta = build_meeting_context(meeting_history, injected_message, since_index=since)
+            if sanitizer_meta.get("sanitized"):
+                emit_hardening_event(
+                    "sanitizer_modified",
+                    f"{name} transcript filtered {sanitizer_meta['modifications_count']} fragments",
+                )
             cwd_override = target_info.get("claude_cwd") if target == "claude" else None
             if mem["injected"]:
                 print(f"  📋 记忆注入: {mem['profile']} ({len(mem['files'])} 文件, {mem['bytes']} 字节)")
@@ -695,9 +809,31 @@ def main():
                     if event_type == "reply_delta":
                         return None
                     if event_type == "approval_request":
+                        owner = f"{room_id}:{target}:{event.get('request_id', '')}"
+                        op = classify_operation(event.get("request", {}))
+                        if op.get("requires_lock") and hardening.operation_locks == "enabled":
+                            decision = lock_manager.acquire(owner, op["class_name"], op["resource_name"], hardening.lock_timeout_sec)
+                            if not decision.granted:
+                                emit_hardening_event(
+                                    "lock_timeout",
+                                    f"{name} denied {op['summary']} after {decision.wait_sec:.1f}s",
+                                )
+                                return {
+                                    "type": "approval_response",
+                                    "request_id": event.get("request_id"),
+                                    "decision": "decline",
+                                    "scope": "turn",
+                                }
+                            emit_hardening_event(
+                                "lock_acquired",
+                                f"{name} acquired {decision.resource_lock or decision.class_lock}",
+                            )
+                            event["hardening_lock_owner"] = owner
                         summary = event.get("summary", "Codex 请求审批")
                         timeout_sec = int(event.get("timeout_sec", 120) or 120)
                         print(f"  [Codex 审批] {summary}")
+                        if op.get("requires_lock"):
+                            print(f"  [Lock] {op['operation_type']} · {op['summary']}")
                         print("  选项: a=批准本次, s=批准本 session, d=拒绝继续, c=取消本轮")
                         print(f"  超时: {timeout_sec}s，超时默认拒绝")
                         while True:
@@ -707,26 +843,33 @@ def main():
                             if choice in ("s", "session"):
                                 return {"type": "approval_response", "request_id": event.get("request_id"), "decision": "accept", "scope": "session"}
                             if choice in ("d", "decline", "reject"):
+                                lock_manager.release_owner(owner)
                                 return {"type": "approval_response", "request_id": event.get("request_id"), "decision": "decline", "scope": "turn"}
                             if choice in ("c", "cancel"):
+                                lock_manager.release_owner(owner)
                                 return {"type": "approval_response", "request_id": event.get("request_id"), "decision": "cancel", "scope": "turn"}
                             print("  请输入 a / s / d / c")
+                    if event_type == "approval_resolved":
+                        if event.get("decision") in ("decline", "cancel"):
+                            lock_manager.release_owner(f"{room_id}:{target}:{event.get('request_id', '')}")
                     return None
 
-                reply, meta = call_launcher_stream(
-                    args.launcher,
-                    args.conf,
-                    target,
+                    reply, meta = call_launcher_stream(
+                        args.launcher,
+                        args.conf,
+                        target,
                     injected_message,
                     session_id=sid,
                     resume_session=resume_session,
                     skip_memory=skip_memory,
                     memory_result=mem,
-                    target_info=agent_target_info,
-                    cwd_override=cwd_override,
-                    on_event=handle_codex_event,
-                    room_id=room_id,
-                )
+                        target_info=agent_target_info,
+                        cwd_override=cwd_override,
+                        sanitizer_meta=sanitizer_meta,
+                        version_meta=gate,
+                        on_event=handle_codex_event,
+                        room_id=room_id,
+                    )
             else:
                 reply, meta = call_launcher(
                     args.launcher,
@@ -739,6 +882,8 @@ def main():
                     memory_result=mem,
                     target_info=agent_target_info,
                     cwd_override=cwd_override,
+                    sanitizer_meta=sanitizer_meta,
+                    version_meta=gate,
                 )
 
             # 推进会议上下文游标
@@ -755,6 +900,10 @@ def main():
             if target == "codex" and meta.get("session_id"):
                 codex_sid = meta["session_id"]
             last_meta[target] = meta
+            if target == "codex":
+                for owner in list(lock_manager.snapshot().values()):
+                    if owner.startswith(f"{room_id}:{target}:"):
+                        lock_manager.release_owner(owner)
 
             # 显示确认状态
             confirmed = meta.get("session_confirmed", False)

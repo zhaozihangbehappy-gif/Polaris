@@ -487,6 +487,8 @@
         `待审批: <strong>${state.pending_approvals || 0}</strong>`,
         `Claude sessions: <strong>${state.claude_sessions.length}</strong>`,
         `Codex session: <strong>${state.latest_codex_session || "暂无"}</strong>`,
+        `Hardening: <strong>${escapeHtml((state.hardening && state.hardening.transcript_sanitizer) || "n/a")}</strong>`,
+        `降级特性: <strong>${Object.keys((state.hardening && state.hardening.degraded_features) || {}).length}</strong>`,
       ];
       for (const html of chips) {
         const node = document.createElement("div");
@@ -500,6 +502,14 @@
       if (!state) return;
       sidebar.innerHTML = `
         <h2>会话概览</h2>
+        <div class="sidebar-card">
+          <div class="title">Hardening 状态</div>
+          <div class="mono">
+            sanitizer: ${escapeHtml((state.hardening && state.hardening.transcript_sanitizer) || "n/a")}<br>
+            version_gate: ${escapeHtml((state.hardening && state.hardening.version_gate) || "n/a")}<br>
+            operation_locks: ${escapeHtml((state.hardening && state.hardening.operation_locks) || "n/a")}
+          </div>
+        </div>
         <div class="sidebar-card">
           <div class="title">当前 target</div>
           <div class="mono">${escapeHtml((state.current_target && state.current_target.name) || "meeting")} · ${escapeHtml((state.current_target && state.current_target.source) || "default")}</div>
@@ -516,6 +526,17 @@
         <div class="sidebar-card">
           <div class="title">审计日志</div>
           <div class="mono">${escapeHtml(state.audit_log)}</div>
+        </div>
+        <div class="sidebar-card">
+          <div class="title">版本闸门</div>
+          <div class="mono">${Object.entries((state.hardening && state.hardening.version_gate_status) || {}).map(([name, gate]) => {
+            const snap = ((state.hardening && state.hardening.version_snapshots) || {})[name] || {};
+            return `${escapeHtml(name)}: ${(gate && gate.allowed) ? "ok" : "blocked"} · ${escapeHtml((snap && snap.cli_version) || "unknown")}`;
+          }).join("<br>") || "(暂无)"}</div>
+        </div>
+        <div class="sidebar-card">
+          <div class="title">系统事件</div>
+          <div class="mono">${(((state.hardening && state.hardening.system_events) || []).slice(-8).map(ev => `${escapeHtml(ev.ts || "")} [${escapeHtml(ev.severity || "info")}] ${escapeHtml(ev.detail || "")}`)).join("<br>") || "(暂无)"}</div>
         </div>
       `;
     }
@@ -570,6 +591,7 @@
           <div class="approval-title">等待你的审批</div>
           <div class="approval-meta">${escapeHtml(pending.summary || "Codex 请求审批")}</div>
           <div class="approval-meta">request: ${escapeHtml(pending.request_id || "")} · timeout: ${escapeHtml(String(pending.timeout_sec || 120))}s</div>
+          ${pending.operation ? `<div class="approval-meta">operation: ${escapeHtml(pending.operation.operation_type || "workspace_local")} · ${escapeHtml(pending.operation.summary || "")}</div>` : ""}
           <div class="approval-actions">
             <button class="approval-btn ok" data-approval="${escapeHtml(itemId)}|${escapeHtml(agent.target)}|${escapeHtml(pending.request_id || "")}|accept|turn">批准本次</button>
             <button class="approval-btn warn" data-approval="${escapeHtml(itemId)}|${escapeHtml(agent.target)}|${escapeHtml(pending.request_id || "")}|accept|session">批准本 session</button>
@@ -619,6 +641,8 @@
                   <div class="k">session</div><div class="v">${escapeHtml(meta.session_id || "(none)")}</div>
                   <div class="k">method</div><div class="v">${escapeHtml(meta.confirmation_method || "(none)")}</div>
                   <div class="k">result</div><div class="v">${escapeHtml(agent.confirmed ? "verified" : "UNVERIFIED")}</div>
+                  <div class="k">sanitizer</div><div class="v">${escapeHtml(String(((agent.hardening || {}).sanitizer || {}).modifications_count || 0))}</div>
+                  <div class="k">version gate</div><div class="v">${escapeHtml((((agent.hardening || {}).version_gate || {}).allowed) === false ? "blocked" : (((agent.hardening || {}).version_gate || {}).policy || "n/a"))}</div>
                 </div>
               </div>
               <div class="audit-block">

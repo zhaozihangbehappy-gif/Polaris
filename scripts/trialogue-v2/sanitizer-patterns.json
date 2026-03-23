@@ -1,0 +1,10 @@
+{
+  "block_wrappers": [
+    "MEMORY-CONTEXT",
+    "MEETING-CONTEXT",
+    "TARGET-CONTEXT"
+  ],
+  "single_line_headers": [
+    "TRIALOGUE-AUDIT"
+  ]
+}
