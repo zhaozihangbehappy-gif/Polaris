@@ -39,6 +39,11 @@ CODEX_SESSIONS=/home/administrator/.codex/sessions
 
 # 工作目录
 WORKSPACE=/home/administrator/.openclaw/workspace
+TRIALOGUE_STATE_ROOT=/home/administrator/.openclaw/workspace/state
+TRIALOGUE_PRIVATE_TMP_DIR=/home/administrator/.openclaw/workspace/state/tmp
+TRIALOGUE_SHARED_META_DIR=/home/administrator/.openclaw/workspace/state/shared-meta
+TRIALOGUE_PORT_REGISTRY_PATH=/home/administrator/.openclaw/workspace/state/port-registry.json
+BROKER_ROOM_STATE_DIR=/home/administrator/.openclaw/workspace/state/broker-rooms
 
 # P0 hardening
 HARDENING_TRANSCRIPT_SANITIZER=strict
@@ -51,4 +56,9 @@ HARDENING_LOCK_TIMEOUT_SEC=30
 HARDENING_VERSION_RECHECK_FAST_INTERVAL_SEC=10
 HARDENING_VERSION_RECHECK_FULL_INTERVAL_SEC=60
 HARDENING_EXTERNAL_AUDIT_ANCHOR=disabled
+HARDENING_BROKER_RECOVERY_MODE=auto
+HARDENING_SHARED_HOST_COLLISION_GUARD=enabled
+HARDENING_SUMMARY_CHAIN_DIR=/home/administrator/.openclaw/trialogue/summary-chain
+HARDENING_ANCHOR_DIR=/home/administrator/.openclaw/trialogue/anchor
+HARDENING_ANCHOR_KEY_PATH=/home/administrator/.openclaw/trialogue/anchor.key
 HARDENING_ALERT_LOG=/home/administrator/.openclaw/trialogue/hardening-events.jsonl

@@ -19,6 +19,9 @@ source "$CONF"
 
 mkdir -p "$(dirname "$AUDIT_LOG")"
 touch "$AUDIT_LOG"
+PRIVATE_TMP_DIR="${TRIALOGUE_PRIVATE_TMP_DIR:-${WORKSPACE}/state/tmp}"
+SHARED_META_DIR="${TRIALOGUE_SHARED_META_DIR:-${WORKSPACE}/state/shared-meta}"
+mkdir -p "$PRIVATE_TMP_DIR" "$SHARED_META_DIR"
 
 if tmux has-session -t "$SESSION_NAME" 2>/dev/null; then
   echo "Web UI session 已存在。"
@@ -28,7 +31,7 @@ if tmux has-session -t "$SESSION_NAME" 2>/dev/null; then
   exit 0
 fi
 
-ENV_FILE=$(mktemp /tmp/trialogue-web-env-XXXXXX)
+ENV_FILE=$(mktemp -p "$PRIVATE_TMP_DIR" trialogue-web-env-XXXXXX)
 cat > "$ENV_FILE" <<ENVEOF
 export _TRI_TOPIC=$(printf '%q' "$TOPIC")
 export _TRI_PORT=$(printf '%q' "$PORT")
@@ -38,6 +41,9 @@ export _TRI_AUDIT=${AUDIT_LOG}
 export _TRI_SERVER=${SCRIPT_DIR}/server.py
 export _TRI_WORKDIR=${WORKDIR}
 export _TRI_ENV_FILE=${ENV_FILE}
+export TRIALOGUE_PRIVATE_TMP_DIR=${PRIVATE_TMP_DIR}
+export TRIALOGUE_SHARED_META_DIR=${SHARED_META_DIR}
+export TMPDIR=${PRIVATE_TMP_DIR}
 ENVEOF
 chmod 600 "$ENV_FILE"
 

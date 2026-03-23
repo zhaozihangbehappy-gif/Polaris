@@ -2,10 +2,13 @@
 from __future__ import annotations
 
 import dataclasses
+import fcntl
 import hashlib
+import hmac
 import json
 import os
 import re
+import socket
 import subprocess
 import threading
 import time
@@ -31,6 +34,7 @@ DEFAULT_VERSION_ALLOWLIST = {
         "codex": {"versions": [], "hashes": []},
     },
 }
+SUMMARY_CHAIN_GENESIS_SHA256 = hashlib.sha256(b"TRIALOGUE_V3_SUMMARY_CHAIN_V1").hexdigest()
 
 PORT_PATTERNS = [
     re.compile(r"(?:--port| -p |PORT=|port=)\s*([0-9]{2,5})"),
@@ -93,17 +97,31 @@ class HardeningSettings:
     version_gate_recheck: str
     operation_locks: str
     external_audit_anchor: str
+    broker_recovery_mode: str
+    shared_host_collision_guard: str
     sanitizer_patterns_path: str
     version_allowlist_path: str
     lock_timeout_sec: float
     version_recheck_fast_interval_sec: float
     version_recheck_full_interval_sec: float
+    state_root: str
+    broker_room_state_dir: str
+    private_tmp_dir: str
+    shared_meta_dir: str
+    port_registry_path: str
+    summary_chain_dir: str
+    anchor_dir: str
+    anchor_key_path: str
     alert_log_path: str
 
 
 def load_hardening_settings(conf_path: str) -> HardeningSettings:
     conf = load_conf_map(conf_path)
     base_dir = os.path.dirname(conf_path)
+    workspace = conf.get("WORKSPACE", base_dir).strip() or base_dir
+    state_root = conf.get("TRIALOGUE_STATE_ROOT", os.path.join(workspace, "state")).strip() or os.path.join(workspace, "state")
+    audit_log = conf.get("AUDIT_LOG", os.path.join(workspace, "audit.jsonl")).strip() or os.path.join(workspace, "audit.jsonl")
+    audit_root = os.path.dirname(audit_log) or state_root
     version_gate = _norm_mode(
         conf.get("HARDENING_VERSION_GATE", "warn"),
         allowed={"disabled", "warn", "enforce"},
@@ -131,6 +149,12 @@ def load_hardening_settings(conf_path: str) -> HardeningSettings:
             allowed={"disabled", "async", "blocking"},
             default="disabled",
         ),
+        broker_recovery_mode=_norm_mode(
+            conf.get("HARDENING_BROKER_RECOVERY_MODE", "auto"),
+            allowed={"auto", "strict"},
+            default="auto",
+        ),
+        shared_host_collision_guard="enabled" if conf.get("HARDENING_SHARED_HOST_COLLISION_GUARD", "enabled").strip().lower() != "disabled" else "disabled",
         sanitizer_patterns_path=conf.get(
             "HARDENING_SANITIZER_PATTERNS",
             os.path.join(base_dir, "sanitizer-patterns.json"),
@@ -148,6 +172,14 @@ def load_hardening_settings(conf_path: str) -> HardeningSettings:
             conf.get("HARDENING_VERSION_RECHECK_FULL_INTERVAL_SEC", "60"),
             60.0,
         ),
+        state_root=state_root,
+        broker_room_state_dir=conf.get("BROKER_ROOM_STATE_DIR", os.path.join(state_root, "broker-rooms")).strip() or os.path.join(state_root, "broker-rooms"),
+        private_tmp_dir=conf.get("TRIALOGUE_PRIVATE_TMP_DIR", os.path.join(state_root, "tmp")).strip() or os.path.join(state_root, "tmp"),
+        shared_meta_dir=conf.get("TRIALOGUE_SHARED_META_DIR", os.path.join(state_root, "shared-meta")).strip() or os.path.join(state_root, "shared-meta"),
+        port_registry_path=conf.get("TRIALOGUE_PORT_REGISTRY_PATH", os.path.join(state_root, "port-registry.json")).strip() or os.path.join(state_root, "port-registry.json"),
+        summary_chain_dir=conf.get("HARDENING_SUMMARY_CHAIN_DIR", os.path.join(audit_root, "summary-chain")).strip() or os.path.join(audit_root, "summary-chain"),
+        anchor_dir=conf.get("HARDENING_ANCHOR_DIR", os.path.join(audit_root, "anchor")).strip() or os.path.join(audit_root, "anchor"),
+        anchor_key_path=conf.get("HARDENING_ANCHOR_KEY_PATH", os.path.join(audit_root, "anchor.key")).strip() or os.path.join(audit_root, "anchor.key"),
         alert_log_path=conf.get(
             "HARDENING_ALERT_LOG",
             os.path.join(base_dir, "hardening-events.jsonl"),
@@ -698,12 +730,309 @@ class HostOperationLockManager:
             return dict(self._owners)
 
 
+def ensure_parent_dir(path: str) -> None:
+    Path(path).parent.mkdir(parents=True, exist_ok=True)
+
+
+def atomic_write_json(path: str, payload: dict[str, Any]) -> None:
+    ensure_parent_dir(path)
+    tmp_path = f"{path}.tmp"
+    with open(tmp_path, "w", encoding="utf-8") as f:
+        json.dump(payload, f, ensure_ascii=False, indent=2)
+        f.flush()
+        os.fsync(f.fileno())
+    os.replace(tmp_path, path)
+
+
+def read_json_file(path: str, default: dict[str, Any] | None = None) -> dict[str, Any]:
+    fallback = {} if default is None else default
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            payload = json.load(f)
+            return payload if isinstance(payload, dict) else fallback
+    except (FileNotFoundError, json.JSONDecodeError, OSError):
+        return fallback
+
+
+def append_jsonl(path: str, payload: dict[str, Any]) -> None:
+    ensure_parent_dir(path)
+    with open(path, "a", encoding="utf-8") as f:
+        f.write(json.dumps(payload, ensure_ascii=False) + "\n")
+        f.flush()
+        os.fsync(f.fileno())
+
+
+def _last_jsonl_record(path: str) -> dict[str, Any] | None:
+    try:
+        last = None
+        with open(path, "r", encoding="utf-8", errors="replace") as f:
+            for raw_line in f:
+                line = raw_line.strip()
+                if not line:
+                    continue
+                last = json.loads(line)
+        return last
+    except (FileNotFoundError, json.JSONDecodeError, OSError):
+        return None
+
+
+def _anchor_signature_bytes(payload: dict[str, Any]) -> bytes:
+    return json.dumps(payload, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8")
+
+
+def build_turn_summary(record: dict[str, Any], *, room_id: str, source_mode: str) -> dict[str, Any]:
+    confirmation = record.get("confirmation") or {}
+    summary = {
+        "schema": "trialogue_turn_summary_v1",
+        "room_id": room_id,
+        "source_mode": source_mode,
+        "rid": record.get("rid", ""),
+        "nonce": record.get("nonce", ""),
+        "target": record.get("target", ""),
+        "target_name": record.get("target_name", ""),
+        "target_source": record.get("target_source", ""),
+        "target_path": record.get("target_path", ""),
+        "mode": record.get("mode", ""),
+        "session_id": record.get("session_id", ""),
+        "session_confirmed": bool(record.get("session_confirmed")),
+        "confirmation_method": record.get("confirmation_method", ""),
+        "turn_id": confirmation.get("turn_id", ""),
+        "thread_id": confirmation.get("thread_id", ""),
+        "exit_code": record.get("exit_code"),
+        "binary_path": record.get("binary_path", ""),
+        "binary_sha256": record.get("binary_sha256", ""),
+        "cli_version": record.get("cli_version", ""),
+        "version_gate_policy": record.get("version_gate_policy", "disabled"),
+        "version_gate_allowed": bool(record.get("version_gate_allowed", True)),
+        "version_gate_reason": record.get("version_gate_reason", ""),
+        "version_recheck_policy": record.get("version_recheck_policy", "disabled"),
+        "version_recheck_allowed": bool(record.get("version_recheck_allowed", True)),
+        "version_recheck_result": record.get("version_recheck_result", "disabled"),
+        "version_recheck_reason": record.get("version_recheck_reason", ""),
+        "message_body_sha256": hashlib.sha256(str(record.get("message_body", "")).encode("utf-8")).hexdigest(),
+        "stdout_sha256": hashlib.sha256(str(record.get("stdout", "")).encode("utf-8")).hexdigest(),
+        "stderr_sha256": hashlib.sha256(str(record.get("stderr", "")).encode("utf-8")).hexdigest(),
+        "raw_event_log_path": record.get("raw_event_log_path", ""),
+        "room_state_path": record.get("room_state_path", ""),
+        "timestamp": record.get("timestamp", ""),
+    }
+    canonical = _anchor_signature_bytes(summary)
+    summary["turn_summary_sha256"] = hashlib.sha256(canonical).hexdigest()
+    return summary
+
+
+def append_summary_chain(
+    summary_chain_dir: str,
+    record: dict[str, Any],
+    *,
+    room_id: str,
+    source_mode: str,
+) -> dict[str, Any]:
+    Path(summary_chain_dir).mkdir(parents=True, exist_ok=True)
+    chain_path = os.path.join(summary_chain_dir, f"{room_id}.jsonl")
+    lock_path = f"{chain_path}.lock"
+    ensure_parent_dir(lock_path)
+    with open(lock_path, "a+", encoding="utf-8") as lock_file:
+        fcntl.flock(lock_file.fileno(), fcntl.LOCK_EX)
+        last_record = _last_jsonl_record(chain_path)
+        prev_sha = SUMMARY_CHAIN_GENESIS_SHA256
+        if last_record:
+            prev_sha = str(last_record.get("turn_summary_sha256") or SUMMARY_CHAIN_GENESIS_SHA256)
+        summary = build_turn_summary(record, room_id=room_id, source_mode=source_mode)
+        entry = {
+            "schema": "trialogue_summary_chain_entry_v1",
+            "generated_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+            "room_id": room_id,
+            "rid": record.get("rid", ""),
+            "target": record.get("target", ""),
+            "prev_summary_sha256": prev_sha,
+            "turn_summary_sha256": summary["turn_summary_sha256"],
+            "summary": summary,
+        }
+        append_jsonl(chain_path, entry)
+    return {
+        "chain_path": chain_path,
+        "entry": entry,
+        "prev_summary_sha256": prev_sha,
+        "turn_summary_sha256": summary["turn_summary_sha256"],
+        "genesis_summary_sha256": SUMMARY_CHAIN_GENESIS_SHA256,
+    }
+
+
+def export_anchor_bundle(
+    anchor_dir: str,
+    anchor_key_path: str,
+    chain_entry: dict[str, Any],
+    *,
+    policy: str,
+) -> dict[str, Any]:
+    if policy == "disabled":
+        return {"policy": policy, "status": "disabled", "bundle_path": "", "reason": "anchor disabled"}
+    key_bytes = b""
+    try:
+        key_bytes = Path(anchor_key_path).read_bytes()
+    except OSError:
+        key_bytes = b""
+    if not key_bytes:
+        return {
+            "policy": policy,
+            "status": "failed",
+            "bundle_path": "",
+            "reason": "anchor signing key missing",
+        }
+    room_id = chain_entry["entry"]["room_id"]
+    turn_sha = chain_entry["turn_summary_sha256"]
+    bundle_body = {
+        "schema": "trialogue_anchor_bundle_v1",
+        "exported_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+        "room_id": room_id,
+        "rid": chain_entry["entry"].get("rid", ""),
+        "target": chain_entry["entry"].get("target", ""),
+        "prev_summary_sha256": chain_entry["prev_summary_sha256"],
+        "turn_summary_sha256": turn_sha,
+        "genesis_summary_sha256": chain_entry["genesis_summary_sha256"],
+        "signature_type": "hmac-sha256-local-file",
+    }
+    signature = hmac.new(key_bytes, _anchor_signature_bytes(bundle_body), hashlib.sha256).hexdigest()
+    bundle = {**bundle_body, "signature": signature}
+    room_dir = os.path.join(anchor_dir, room_id)
+    Path(room_dir).mkdir(parents=True, exist_ok=True)
+    bundle_path = os.path.join(room_dir, f"{turn_sha}.json")
+    atomic_write_json(bundle_path, bundle)
+    return {"policy": policy, "status": "exported", "bundle_path": bundle_path, "reason": ""}
+
+
+def verify_summary_chain(
+    chain_path: str,
+    *,
+    anchor_dir: str = "",
+    anchor_key_path: str = "",
+) -> dict[str, Any]:
+    checked = 0
+    prev_expected = SUMMARY_CHAIN_GENESIS_SHA256
+    key_bytes = b""
+    if anchor_key_path:
+        try:
+            key_bytes = Path(anchor_key_path).read_bytes()
+        except OSError:
+            key_bytes = b""
+    try:
+        with open(chain_path, "r", encoding="utf-8", errors="replace") as f:
+            for raw_line in f:
+                line = raw_line.strip()
+                if not line:
+                    continue
+                checked += 1
+                entry = json.loads(line)
+                prev_actual = entry.get("prev_summary_sha256", "")
+                if prev_actual != prev_expected:
+                    return {"ok": False, "checked": checked, "reason": "chain prev hash mismatch", "entry": entry}
+                summary = entry.get("summary") or {}
+                turn_expected = hashlib.sha256(_anchor_signature_bytes({
+                    k: v for k, v in summary.items() if k != "turn_summary_sha256"
+                })).hexdigest()
+                if summary.get("turn_summary_sha256") != turn_expected or entry.get("turn_summary_sha256") != turn_expected:
+                    return {"ok": False, "checked": checked, "reason": "summary hash mismatch", "entry": entry}
+                if anchor_dir:
+                    bundle_path = os.path.join(anchor_dir, entry.get("room_id", ""), f"{turn_expected}.json")
+                    if not os.path.isfile(bundle_path):
+                        return {"ok": False, "checked": checked, "reason": "anchor bundle missing", "entry": entry}
+                    bundle = read_json_file(bundle_path)
+                    if bundle.get("turn_summary_sha256") != turn_expected:
+                        return {"ok": False, "checked": checked, "reason": "anchor turn hash mismatch", "entry": entry}
+                    if key_bytes:
+                        signature = bundle.get("signature", "")
+                        body = {k: v for k, v in bundle.items() if k != "signature"}
+                        expected_sig = hmac.new(key_bytes, _anchor_signature_bytes(body), hashlib.sha256).hexdigest()
+                        if signature != expected_sig:
+                            return {"ok": False, "checked": checked, "reason": "anchor signature mismatch", "entry": entry}
+                prev_expected = turn_expected
+    except (FileNotFoundError, json.JSONDecodeError, OSError) as exc:
+        return {"ok": False, "checked": checked, "reason": str(exc)}
+    return {"ok": True, "checked": checked, "reason": "", "genesis_summary_sha256": SUMMARY_CHAIN_GENESIS_SHA256}
+
+
+class PortReservationRegistry:
+    def __init__(self, path: str):
+        self.path = path
+        self._lock = threading.Lock()
+        self._state = read_json_file(path, {"reservations": {}})
+        self._state.setdefault("reservations", {})
+
+    def _persist(self) -> None:
+        atomic_write_json(self.path, self._state)
+
+    def reserve(self, port: int, owner: str, metadata: dict[str, Any] | None = None) -> dict[str, Any]:
+        key = str(port)
+        with self._lock:
+            current = (self._state.get("reservations") or {}).get(key)
+            if current and current.get("owner") != owner:
+                return {"granted": False, "reason": "already_reserved", "reservation": current}
+            payload = {
+                "owner": owner,
+                "reserved_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+                "metadata": metadata or {},
+            }
+            self._state.setdefault("reservations", {})[key] = payload
+            self._persist()
+            return {"granted": True, "reason": "reserved", "reservation": payload}
+
+    def release_owner(self, owner: str) -> list[str]:
+        released: list[str] = []
+        with self._lock:
+            reservations = self._state.setdefault("reservations", {})
+            for key in [name for name, payload in reservations.items() if payload.get("owner") == owner]:
+                reservations.pop(key, None)
+                released.append(key)
+            if released:
+                self._persist()
+        return released
+
+    def snapshot(self) -> dict[str, Any]:
+        with self._lock:
+            return json.loads(json.dumps(self._state))
+
+    def reconcile_after_restart(self) -> list[dict[str, Any]]:
+        events: list[dict[str, Any]] = []
+        with self._lock:
+            reservations = self._state.setdefault("reservations", {})
+            updated = False
+            for key, payload in list(reservations.items()):
+                try:
+                    port = int(key)
+                except ValueError:
+                    reservations.pop(key, None)
+                    updated = True
+                    events.append({"kind": "port_registry_invalid", "port": key})
+                    continue
+                if _can_bind_local_port(port):
+                    reservations.pop(key, None)
+                    updated = True
+                    events.append({"kind": "port_registry_orphan_cleaned", "port": port, "owner": payload.get("owner", "")})
+                else:
+                    payload["metadata"] = {**(payload.get("metadata") or {}), "occupied_after_restart": True}
+                    events.append({"kind": "port_registry_occupied", "port": port, "owner": payload.get("owner", "")})
+            if updated:
+                self._persist()
+        return events
+
+
+def _can_bind_local_port(port: int) -> bool:
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    try:
+        sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        sock.bind(("127.0.0.1", port))
+        return True
+    except OSError:
+        return False
+    finally:
+        sock.close()
+
+
 def append_hardening_event(path: str, payload: dict[str, Any]) -> None:
     if not path:
         return
     try:
-        Path(path).parent.mkdir(parents=True, exist_ok=True)
-        with open(path, "a", encoding="utf-8") as f:
-            f.write(json.dumps(payload, ensure_ascii=False) + "\n")
+        append_jsonl(path, payload)
     except OSError:
         return

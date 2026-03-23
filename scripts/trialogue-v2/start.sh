@@ -21,6 +21,9 @@ source "$CONF"
 # 确保审计日志目录存在
 mkdir -p "$(dirname "$AUDIT_LOG")"
 touch "$AUDIT_LOG"
+PRIVATE_TMP_DIR="${TRIALOGUE_PRIVATE_TMP_DIR:-${WORKSPACE}/state/tmp}"
+SHARED_META_DIR="${TRIALOGUE_SHARED_META_DIR:-${WORKSPACE}/state/shared-meta}"
+mkdir -p "$PRIVATE_TMP_DIR" "$SHARED_META_DIR"
 
 # 如果已有 session 则先提示
 if tmux has-session -t openclaw-chat 2>/dev/null; then
@@ -32,7 +35,7 @@ fi
 
 # 将参数写入临时 env 文件，tmux 内的 shell 通过 source 读取
 # 这样避免在 tmux shell 命令中内联插值任何用户输入
-ENV_FILE=$(mktemp /tmp/trialogue-env-XXXXXX)
+ENV_FILE=$(mktemp -p "$PRIVATE_TMP_DIR" trialogue-env-XXXXXX)
 cat > "$ENV_FILE" <<ENVEOF
 export _TRI_TOPIC=$(printf '%q' "$TOPIC")
 export _TRI_LAUNCHER=${SCRIPT_DIR}/launcher.sh
@@ -41,6 +44,9 @@ export _TRI_AUDIT=${AUDIT_LOG}
 export _TRI_CHAT=${SCRIPT_DIR}/chat.py
 export _TRI_WORKDIR=${WORKDIR}
 export _TRI_ENV_FILE=${ENV_FILE}
+export TRIALOGUE_PRIVATE_TMP_DIR=${PRIVATE_TMP_DIR}
+export TRIALOGUE_SHARED_META_DIR=${SHARED_META_DIR}
+export TMPDIR=${PRIVATE_TMP_DIR}
 ENVEOF
 chmod 600 "$ENV_FILE"
 

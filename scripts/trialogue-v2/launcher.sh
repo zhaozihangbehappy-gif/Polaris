@@ -41,6 +41,8 @@ command -v python3 > /dev/null 2>&1 || { echo "错误：python3 不可用" >&2; 
 
 # ── 读取配置 ──
 source "$CONF"
+TMP_ROOT="${TRIALOGUE_PRIVATE_TMP_DIR:-${WORKSPACE}/state/tmp}"
+mkdir -p "$TMP_ROOT"
 
 if [[ "$TARGET" == "codex" && -n "${CODEX_RUNNER:-}" ]]; then
   [[ -x "$CODEX_RUNNER" ]] || { echo "Codex runner 不存在或不可执行: $CODEX_RUNNER" >&2; exit 1; }
@@ -130,9 +132,9 @@ fi
 
 # ── 执行 CLI ──
 TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%S.%3NZ")
-STDOUT_FILE=$(mktemp)
-STDERR_FILE=$(mktemp)
-MESSAGE_FILE=$(mktemp)
+STDOUT_FILE=$(mktemp -p "$TMP_ROOT" trialogue-stdout-XXXXXX)
+STDERR_FILE=$(mktemp -p "$TMP_ROOT" trialogue-stderr-XXXXXX)
+MESSAGE_FILE=$(mktemp -p "$TMP_ROOT" trialogue-message-XXXXXX)
 trap "rm -f '$STDOUT_FILE' '$STDERR_FILE' '$MESSAGE_FILE'" EXIT
 
 # 把 MESSAGE 写入文件，python3 从文件读取，彻底避免 shell 插值
@@ -227,10 +229,15 @@ export _L_TARGET_NAME="${TRIALOGUE_TARGET_NAME:-meeting}"
 export _L_TARGET_SOURCE="${TRIALOGUE_TARGET_SOURCE:-default}"
 export _L_TARGET_PATH="${TRIALOGUE_TARGET_PATH:-}"
 export _L_TARGET_CWD_OVERRIDE="${TRIALOGUE_TARGET_CWD_OVERRIDE:-}"
+export _L_ROOM_ID="${TRIALOGUE_ROOM_ID:-}"
 export _L_CLAUDE_RESUME_FALLBACK="$CLAUDE_RESUME_FALLBACK"
 export _L_CLAUDE_RESUME_FALLBACK_REASON="$CLAUDE_RESUME_FALLBACK_REASON"
 export _L_CLAUDE_RESUME_ORIGINAL_SESSION_ID="$CLAUDE_RESUME_ORIGINAL_SESSION_ID"
 export _L_CLAUDE_RESUME_ORIGINAL_EXIT_CODE="$CLAUDE_RESUME_ORIGINAL_EXIT_CODE"
+export TRIALOGUE_EXTERNAL_AUDIT_ANCHOR="${HARDENING_EXTERNAL_AUDIT_ANCHOR:-disabled}"
+export TRIALOGUE_SUMMARY_CHAIN_DIR="${HARDENING_SUMMARY_CHAIN_DIR:-}"
+export TRIALOGUE_ANCHOR_DIR="${HARDENING_ANCHOR_DIR:-}"
+export TRIALOGUE_ANCHOR_KEY_PATH="${HARDENING_ANCHOR_KEY_PATH:-}"
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 python3 "${SCRIPT_DIR}/_audit.py"

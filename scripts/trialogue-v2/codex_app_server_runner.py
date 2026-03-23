@@ -30,6 +30,7 @@ from typing import Any
 
 from _audit import build_verify_commands, parse_audit_message, peel_context_wrappers
 from _memory import build_injected_message, load_memory
+from hardening import append_summary_chain, export_anchor_bundle
 
 
 EVENT_PREFIX = "TRIALOGUE_CODEX_EVENT "
@@ -94,6 +95,8 @@ def write_json_file(path: str, payload: dict[str, Any]) -> None:
     tmp_path = f"{path}.tmp"
     with open(tmp_path, "w", encoding="utf-8") as f:
         json.dump(payload, f, ensure_ascii=False, indent=2)
+        f.flush()
+        os.fsync(f.fileno())
     os.replace(tmp_path, path)
 
 
@@ -282,6 +285,10 @@ class Runner:
         self.model = self.conf.get("CODEX_MODEL", "").strip() or None
         self.model_provider = self.conf.get("CODEX_MODEL_PROVIDER", "").strip() or None
         self.service_tier = self.conf.get("CODEX_SERVICE_TIER", "").strip() or None
+        self.anchor_policy = self.conf.get("HARDENING_EXTERNAL_AUDIT_ANCHOR", "disabled").strip() or "disabled"
+        self.summary_chain_dir = self.conf.get("HARDENING_SUMMARY_CHAIN_DIR", os.path.join(os.path.dirname(self.runner_audit_log), "summary-chain")).strip() or os.path.join(os.path.dirname(self.runner_audit_log), "summary-chain")
+        self.anchor_dir = self.conf.get("HARDENING_ANCHOR_DIR", os.path.join(os.path.dirname(self.runner_audit_log), "anchor")).strip() or os.path.join(os.path.dirname(self.runner_audit_log), "anchor")
+        self.anchor_key_path = self.conf.get("HARDENING_ANCHOR_KEY_PATH", os.path.join(os.path.dirname(self.runner_audit_log), "anchor.key")).strip() or os.path.join(os.path.dirname(self.runner_audit_log), "anchor.key")
         self.room_id = sanitize_room_id(args.room_id or os.environ.get("TRIALOGUE_ROOM_ID", "default-room"))
         self.target_name = args.target_name or "meeting"
         self.target_source = args.target_source or "default"
@@ -709,6 +716,7 @@ class Runner:
         }
         record = {
             "timestamp": self.started_at,
+            "room_id": self.room_id,
             "target": "codex",
             "mode": "codex_app_server",
             "rid": self.rid,
@@ -800,6 +808,26 @@ class Runner:
             "raw_event_log_path": self.raw_event_log_path,
             "room_state_path": self.room_state_path,
         }
+        summary_chain = append_summary_chain(
+            self.summary_chain_dir,
+            record,
+            room_id=self.room_id,
+            source_mode="codex_app_server",
+        )
+        anchor_status = export_anchor_bundle(
+            self.anchor_dir,
+            self.anchor_key_path,
+            summary_chain,
+            policy=self.anchor_policy,
+        )
+        record["summary_chain_path"] = summary_chain["chain_path"]
+        record["prev_summary_sha256"] = summary_chain["prev_summary_sha256"]
+        record["turn_summary_sha256"] = summary_chain["turn_summary_sha256"]
+        record["summary_chain_genesis_sha256"] = summary_chain["genesis_summary_sha256"]
+        record["external_anchor_policy"] = anchor_status["policy"]
+        record["external_anchor_status"] = anchor_status["status"]
+        record["external_anchor_bundle_path"] = anchor_status.get("bundle_path", "")
+        record["external_anchor_reason"] = anchor_status.get("reason", "")
         ensure_parent(self.runner_audit_log)
         with open(self.runner_audit_log, "a", encoding="utf-8") as f:
             f.write(json.dumps(record, ensure_ascii=False) + "\n")
@@ -857,11 +885,21 @@ class Runner:
             "room_state_path": self.room_state_path,
             "raw_event_log_path": self.raw_event_log_path,
             "mode": "codex_app_server",
+            "summary_chain_path": summary_chain["chain_path"],
+            "prev_summary_sha256": summary_chain["prev_summary_sha256"],
+            "turn_summary_sha256": summary_chain["turn_summary_sha256"],
+            "summary_chain_genesis_sha256": summary_chain["genesis_summary_sha256"],
+            "external_anchor_policy": anchor_status["policy"],
+            "external_anchor_status": anchor_status["status"],
+            "external_anchor_bundle_path": anchor_status.get("bundle_path", ""),
+            "external_anchor_reason": anchor_status.get("reason", ""),
         }
         ensure_parent(self.args.meta_file)
         with open(self.args.meta_file, "w", encoding="utf-8") as f:
             f.write(json.dumps(meta, ensure_ascii=False) + "\n")
         self.meta = meta
+        if self.anchor_policy == "blocking" and anchor_status.get("status") != "exported":
+            raise RuntimeError(f"external audit anchor failed: {anchor_status.get('reason', 'unknown')}")
 
     def run(self) -> int:
         Path(self.events_dir).mkdir(parents=True, exist_ok=True)

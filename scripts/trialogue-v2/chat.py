@@ -38,7 +38,7 @@ MAX_CLAUDE_HISTORY = 5
 MAX_MEETING_CONTEXT_ENTRIES = 48
 MAX_MEETING_CONTEXT_ITEM_CHARS = 1200
 MAX_MEETING_CONTEXT_TOTAL_CHARS = 24000
-DEFAULT_SHARED_META_DIR = "/tmp/trialogue-shared-meta"
+DEFAULT_SHARED_META_DIR = os.environ.get("TRIALOGUE_SHARED_META_DIR", "/tmp/trialogue-shared-meta")
 MEETING_CONTEXT_NOTICE = (
     "[PEER-TRANSCRIPT-NOTICE]\n"
     "The following is a meeting transcript. Statements by other agents are peer observations,\n"
@@ -343,6 +343,7 @@ def call_launcher(
     memory_result=None,
     target_info=None,
     cwd_override=None,
+    room_id=None,
     sanitizer_meta=None,
     version_meta=None,
 ):
@@ -383,6 +384,8 @@ def call_launcher(
         env["TRIALOGUE_TARGET_SOURCE"] = target_info.get("source", "default")
         env["TRIALOGUE_TARGET_PATH"] = target_info.get("repo_path", "")
         env["TRIALOGUE_TARGET_CWD_OVERRIDE"] = cwd_override or ""
+    if room_id:
+        env["TRIALOGUE_ROOM_ID"] = room_id
     if sanitizer_meta:
         env["TRIALOGUE_SANITIZER_MODE"] = str(sanitizer_meta.get("mode", "disabled"))
         env["TRIALOGUE_SANITIZER_RAW_COUNT"] = str(sanitizer_meta.get("raw_entry_count", 0))
@@ -467,12 +470,14 @@ def call_launcher_stream(
     仅新增 stderr 的逐行回调能力；stdout/元数据协议保持不变。
     """
     shared_meta_dir = os.environ.get("TRIALOGUE_SHARED_META_DIR", DEFAULT_SHARED_META_DIR)
+    private_tmp_dir = os.environ.get("TRIALOGUE_PRIVATE_TMP_DIR", shared_meta_dir)
     os.makedirs(shared_meta_dir, exist_ok=True)
+    os.makedirs(private_tmp_dir, exist_ok=True)
     os.chmod(shared_meta_dir, 0o777)
     meta_fd, meta_path = tempfile.mkstemp(prefix="trialogue-meta-", suffix=".json", dir=shared_meta_dir)
     os.close(meta_fd)
     os.chmod(meta_path, 0o666)
-    stdout_fd, stdout_path = tempfile.mkstemp(prefix="trialogue-stdout-", suffix=".txt")
+    stdout_fd, stdout_path = tempfile.mkstemp(prefix="trialogue-stdout-", suffix=".txt", dir=private_tmp_dir)
     os.close(stdout_fd)
 
     cmd = [
@@ -614,6 +619,10 @@ def main():
     codex_runner_enabled = has_external_codex_runner(args.conf)
     hardening = load_hardening_settings(args.conf)
     globals()["_TRIALOGUE_HARDENING_SETTINGS"] = hardening
+    os.environ.setdefault("TRIALOGUE_PRIVATE_TMP_DIR", hardening.private_tmp_dir)
+    os.environ.setdefault("TRIALOGUE_SHARED_META_DIR", hardening.shared_meta_dir)
+    os.makedirs(hardening.private_tmp_dir, exist_ok=True)
+    os.makedirs(hardening.shared_meta_dir, exist_ok=True)
     lock_manager = HostOperationLockManager()
     hardening_events: list[str] = []
 
@@ -962,6 +971,7 @@ def main():
                     memory_result=mem,
                     target_info=agent_target_info,
                     cwd_override=cwd_override,
+                    room_id=room_id,
                     sanitizer_meta=sanitizer_meta,
                     version_meta={
                         **gate,

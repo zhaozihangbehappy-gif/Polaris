@@ -40,11 +40,14 @@ from chat import (
 from _memory import load_memory, build_injected_message
 from hardening import (
     HostOperationLockManager,
+    PortReservationRegistry,
+    atomic_write_json,
     append_hardening_event,
     classify_operation,
     evaluate_version_gate,
     evaluate_version_recheck,
     load_hardening_settings,
+    read_json_file,
     snapshot_runner_version,
 )
 
@@ -85,6 +88,11 @@ class TrialogueState:
         self.conf = conf
         self.audit_log = audit_log
         self.hardening = load_hardening_settings(conf)
+        os.environ.setdefault("TRIALOGUE_PRIVATE_TMP_DIR", self.hardening.private_tmp_dir)
+        os.environ.setdefault("TRIALOGUE_SHARED_META_DIR", self.hardening.shared_meta_dir)
+        Path(self.hardening.private_tmp_dir).mkdir(parents=True, exist_ok=True)
+        Path(self.hardening.shared_meta_dir).mkdir(parents=True, exist_ok=True)
+        Path(self.hardening.broker_room_state_dir).mkdir(parents=True, exist_ok=True)
         self.version_snapshots = {
             target: snapshot_runner_version(target, conf)
             for target in ("claude", "codex")
@@ -117,13 +125,20 @@ class TrialogueState:
         self.claude_sessions: list[str] = []
         self.claude_meeting_cursor = 0
         self.codex_meeting_cursor = 0
+        self.room_health = "healthy"
+        self.recovery_reasons: list[str] = []
         self.target_override = ""
         self.clients: set[socket.socket] = set()
         self.lock = threading.RLock()
         self.operation_locks = HostOperationLockManager()
+        self.port_registry = PortReservationRegistry(self.hardening.port_registry_path)
         self.claude_exec_lock = threading.Lock()
         self.pending_approvals: dict[tuple[str, str, str], dict[str, Any]] = {}
+        self.room_state_path = os.path.join(self.hardening.broker_room_state_dir, f"{self.room_id}.json")
+        self.persisted_state = read_json_file(self.room_state_path, {})
+        self._load_persisted_broker_state()
         self._load_history()
+        self._recover_port_registry()
         self.audit_offset = os.path.getsize(self.audit_log) if os.path.isfile(self.audit_log) else 0
         for target, gate in self.version_gate.items():
             if not gate.get("allowed", True):
@@ -140,6 +155,7 @@ class TrialogueState:
                     severity="warn",
                     feature="version_gate",
                 )
+        self._persist_room_state()
         threading.Thread(target=self._tail_audit_log, daemon=True).start()
 
     def snapshot(self) -> dict[str, Any]:
@@ -166,21 +182,146 @@ class TrialogueState:
                 "active_agents": active_agents,
                 "pending_approvals": pending_approvals,
                 "room_id": self.room_id,
+                "room_state_path": self.room_state_path,
+                "room_health": self.room_health,
+                "recovery_reasons": list(self.recovery_reasons),
                 "hardening": {
                     "transcript_sanitizer": self.hardening.transcript_sanitizer,
                     "version_gate": self.hardening.version_gate,
                     "version_gate_recheck": self.hardening.version_gate_recheck,
                     "operation_locks": self.hardening.operation_locks,
                     "external_audit_anchor": self.hardening.external_audit_anchor,
+                    "broker_recovery_mode": self.hardening.broker_recovery_mode,
+                    "shared_host_collision_guard": self.hardening.shared_host_collision_guard,
                     "version_snapshots": copy.deepcopy(self.version_snapshots),
                     "version_gate_status": copy.deepcopy(self.version_gate),
                     "version_recheck_status": copy.deepcopy(self.version_recheck),
                     "degraded_features": copy.deepcopy(self.degraded_features),
                     "system_events": copy.deepcopy(self.system_events[-12:]),
                     "lock_snapshot": self.operation_locks.snapshot(),
+                    "port_registry": self.port_registry.snapshot(),
                 },
                 "items": copy.deepcopy(self.items),
             }
+
+    def _mark_recovery_required(self, reason: str, *, feature: str = "broker_recovery") -> None:
+        stamp = now_iso()
+        with self.lock:
+            if reason not in self.recovery_reasons:
+                self.recovery_reasons.append(reason)
+            self.room_health = "recovery_required"
+            self.degraded_features[feature] = {
+                "state": "recovery_required",
+                "reason": reason,
+                "updated_at": stamp,
+            }
+
+    def _refresh_room_health(self) -> None:
+        with self.lock:
+            if self.recovery_reasons:
+                self.room_health = "recovery_required"
+            elif self.degraded_features:
+                self.room_health = "degraded"
+            else:
+                self.room_health = "healthy"
+
+    def _serialize_room_state(self) -> dict[str, Any]:
+        with self.lock:
+            return {
+                "topic": self.topic,
+                "room_id": self.room_id,
+                "current_claude_session": self.current_claude_session,
+                "latest_codex_session": self.latest_codex_session,
+                "claude_sessions": list(self.claude_sessions),
+                "claude_meeting_cursor": self.claude_meeting_cursor,
+                "codex_meeting_cursor": self.codex_meeting_cursor,
+                "target_override": self.target_override,
+                "last_rid": self.last_rid,
+                "room_health": self.room_health,
+                "recovery_reasons": list(self.recovery_reasons),
+                "degraded_features": copy.deepcopy(self.degraded_features),
+                "system_events": copy.deepcopy(self.system_events[-50:]),
+                "items": copy.deepcopy(self.items),
+                "pending_approvals": [
+                    {
+                        "item_id": key[0],
+                        "target": key[1],
+                        "request_id": key[2],
+                        "summary": (value["agent"].get("pending_approval") or {}).get("summary", ""),
+                    }
+                    for key, value in self.pending_approvals.items()
+                ],
+                "lock_snapshot": self.operation_locks.snapshot(),
+                "port_registry": self.port_registry.snapshot(),
+                "updated_at": now_iso(),
+            }
+
+    def _persist_room_state(self) -> None:
+        self._refresh_room_health()
+        atomic_write_json(self.room_state_path, self._serialize_room_state())
+
+    def _load_persisted_broker_state(self) -> None:
+        payload = dict(self.persisted_state or {})
+        if not payload:
+            return
+        self.current_claude_session = payload.get("current_claude_session", "") or ""
+        self.latest_codex_session = payload.get("latest_codex_session", "") or ""
+        self.claude_sessions = list(payload.get("claude_sessions") or [])
+        self.claude_meeting_cursor = int(payload.get("claude_meeting_cursor", 0) or 0)
+        self.codex_meeting_cursor = int(payload.get("codex_meeting_cursor", 0) or 0)
+        self.target_override = payload.get("target_override", "") or ""
+        self.last_rid = payload.get("last_rid", "") or ""
+        self.degraded_features = copy.deepcopy(payload.get("degraded_features") or {})
+        self.system_events = copy.deepcopy(payload.get("system_events") or [])
+        self.items = copy.deepcopy(payload.get("items") or [])
+        orphaned_pending = list(payload.get("pending_approvals") or [])
+        orphaned_locks = dict(payload.get("lock_snapshot") or {})
+        unfinished = 0
+        for item in self.items:
+            for agent in item.get("agents", []):
+                if agent.get("status") in {"queued", "running"} or agent.get("pending_approval"):
+                    unfinished += 1
+                    agent["status"] = "failed"
+                    agent["confirmed"] = False
+                    agent["pending_approval"] = None
+                    agent["phase"] = "recovery_required"
+                    agent["phase_label"] = "broker 重启后需要人工恢复"
+                    agent["next_step"] = "请人工确认状态并重新发起本轮"
+                    agent["current_detail"] = "broker 在该 agent 完成前重启"
+                    self.append_event(agent, "failed", "broker restart interrupted this agent")
+        if orphaned_pending:
+            self._mark_recovery_required(f"orphaned approvals recovered: {len(orphaned_pending)}")
+        if orphaned_locks:
+            self._mark_recovery_required(f"orphaned lock snapshot recovered: {len(orphaned_locks)}")
+        if unfinished:
+            self._mark_recovery_required(f"incomplete agents recovered: {unfinished}")
+
+    def _recover_port_registry(self) -> None:
+        for event in self.port_registry.reconcile_after_restart():
+            detail = f"port {event.get('port')} {event.get('kind')}"
+            self.emit_system_event(
+                event.get("kind", "port_registry_event"),
+                detail,
+                severity="warn",
+                feature="shared_host_collision_guard",
+            )
+
+    def reset_recovery(self) -> tuple[bool, str]:
+        with self.lock:
+            if self.pending_approvals:
+                return False, "pending approvals still exist"
+            active = any(
+                agent.get("status") in {"queued", "running"}
+                for item in self.items
+                for agent in item.get("agents", [])
+            )
+            if active:
+                return False, "active agents still running"
+            self.recovery_reasons = []
+            self.degraded_features.pop("broker_recovery", None)
+        self._persist_room_state()
+        self.broadcast()
+        return True, ""
 
     def emit_system_event(self, kind: str, detail: str, *, severity: str = "info", feature: str = "") -> None:
         event = {
@@ -211,6 +352,7 @@ class TrialogueState:
                 "room_id": self.room_id,
             },
         )
+        self._persist_room_state()
 
     def register_client(self, sock: socket.socket) -> None:
         with self.lock:
@@ -395,6 +537,14 @@ class TrialogueState:
                 "confirmation_method": record.get("confirmation_method", ""),
                 "confirmation": record.get("confirmation", {}),
                 "exit_code": record.get("exit_code"),
+                "summary_chain_path": record.get("summary_chain_path", ""),
+                "prev_summary_sha256": record.get("prev_summary_sha256", ""),
+                "turn_summary_sha256": record.get("turn_summary_sha256", ""),
+                "summary_chain_genesis_sha256": record.get("summary_chain_genesis_sha256", ""),
+                "external_anchor_policy": record.get("external_anchor_policy", ""),
+                "external_anchor_status": record.get("external_anchor_status", ""),
+                "external_anchor_bundle_path": record.get("external_anchor_bundle_path", ""),
+                "external_anchor_reason": record.get("external_anchor_reason", ""),
             }
         )
 
@@ -476,8 +626,11 @@ class TrialogueState:
 
         recovered.sort(key=lambda item: item["created_at"])
         with self.lock:
-            self.items.extend(recovered)
+            existing_rids = {item.get("rid", "") for item in self.items if item.get("rid")}
             for item in recovered:
+                if item.get("rid") and item["rid"] in existing_rids:
+                    continue
+                self.items.append(item)
                 self.last_rid = item["rid"]
                 for agent in item["agents"]:
                     session_id = agent["meta"].get("session_id", "")
@@ -485,6 +638,7 @@ class TrialogueState:
                         self._append_claude_session(session_id)
                     elif agent["target"] == "codex" and session_id:
                         self.latest_codex_session = session_id
+            self.items.sort(key=lambda x: x["created_at"])
 
     def _find_item_by_rid(self, rid: str) -> dict[str, Any] | None:
         for item in self.items:
@@ -545,6 +699,14 @@ class TrialogueState:
                         "confirmation_method": record.get("confirmation_method", ""),
                         "confirmation": record.get("confirmation", {}),
                         "exit_code": record.get("exit_code"),
+                        "summary_chain_path": record.get("summary_chain_path", ""),
+                        "prev_summary_sha256": record.get("prev_summary_sha256", ""),
+                        "turn_summary_sha256": record.get("turn_summary_sha256", ""),
+                        "summary_chain_genesis_sha256": record.get("summary_chain_genesis_sha256", ""),
+                        "external_anchor_policy": record.get("external_anchor_policy", ""),
+                        "external_anchor_status": record.get("external_anchor_status", ""),
+                        "external_anchor_bundle_path": record.get("external_anchor_bundle_path", ""),
+                        "external_anchor_reason": record.get("external_anchor_reason", ""),
                     }
                 )
                 agent["reply"] = reply
@@ -571,6 +733,7 @@ class TrialogueState:
                     self.current_claude_session = session_id
             elif target == "codex" and session_id:
                 self.latest_codex_session = session_id
+        self._persist_room_state()
         return True
 
     def _tail_audit_log(self) -> None:
@@ -660,6 +823,7 @@ class TrialogueState:
         with self.lock:
             self.items.append(item)
             self.last_rid = audit_msg["rid"]
+        self._persist_room_state()
         self.broadcast()
 
         worker = threading.Thread(
@@ -703,6 +867,7 @@ class TrialogueState:
         }
         with self.lock:
             self.items.append(item)
+        self._persist_room_state()
         self.broadcast()
         return item
 
@@ -710,8 +875,10 @@ class TrialogueState:
         held = list(agent.get("held_lock_owners") or [])
         for owner in held:
             self.operation_locks.release_owner(owner)
+            self.port_registry.release_owner(owner)
         if held:
             agent["held_lock_owners"] = []
+            self._persist_room_state()
 
     def _run_item(self, item_id: str, wrapped_message: str, target_info: dict[str, Any]) -> None:
         with self.lock:
@@ -909,6 +1076,7 @@ class TrialogueState:
                             memory_result=mem,
                             target_info=agent_target_info,
                             cwd_override=cwd_override,
+                            room_id=self.room_id,
                             sanitizer_meta=sanitizer_meta,
                             version_meta={
                                 **gate,
@@ -999,6 +1167,7 @@ class TrialogueState:
                         self.current_claude_session = resolved
                 elif target == "codex" and meta.get("session_id"):
                     self.latest_codex_session = meta["session_id"]
+            self._persist_room_state()
             self.broadcast()
 
     def _handle_codex_stderr(self, agent: dict[str, Any], line: str) -> None:
@@ -1039,6 +1208,7 @@ class TrialogueState:
                 self._release_agent_locks(agent)
             self.append_event(agent, "running", f"审批已处理: {decision} ({scope})")
             waiter["event"].set()
+        self._persist_room_state()
         self.broadcast()
         return True
 
@@ -1073,6 +1243,33 @@ class TrialogueState:
                     "decision": "decline",
                     "scope": "turn",
                 }
+            if operation.get("class_name") == "ports" and self.hardening.shared_host_collision_guard == "enabled":
+                try:
+                    port_value = int(str(operation.get("resource_name", "")).split(":", 1)[1])
+                except (IndexError, ValueError):
+                    port_value = 0
+                reservation = self.port_registry.reserve(
+                    port_value,
+                    owner,
+                    {"room_id": self.room_id, "target": agent["target"], "request_id": request_id},
+                )
+                if not reservation.get("granted"):
+                    self.operation_locks.release_owner(owner)
+                    self.emit_system_event(
+                        "port_reservation_conflict",
+                        f"{agent['label']} denied port reservation {port_value}",
+                        severity="warn",
+                        feature="shared_host_collision_guard",
+                    )
+                    with self.lock:
+                        self.append_event(agent, "running", f"port reservation conflict: {port_value}")
+                    self.broadcast()
+                    return {
+                        "type": "approval_response",
+                        "request_id": request_id,
+                        "decision": "decline",
+                        "scope": "turn",
+                    }
             with self.lock:
                 owners = list(agent.get("held_lock_owners") or [])
                 owners.append(owner)
@@ -1105,6 +1302,7 @@ class TrialogueState:
             agent["current_detail"] = event.get("summary", "Codex 请求审批")
             self.append_event(agent, "running", f"审批请求: {event.get('summary', 'Codex 请求审批')}")
             self.pending_approvals[key] = waiter
+        self._persist_room_state()
         self.broadcast()
         waiter["event"].wait(timeout=timeout_sec)
         with self.lock:
@@ -1119,6 +1317,7 @@ class TrialogueState:
             if waiter["response"] is None:
                 self.append_event(agent, "running", "审批超时，默认拒绝本次请求")
                 self._release_agent_locks(agent)
+        self._persist_room_state()
         self.broadcast()
         return response
 
@@ -1146,6 +1345,7 @@ class TrialogueState:
                     self.latest_codex_session = thread_id
                     agent.setdefault("meta", {})["session_id"] = thread_id
                     self.append_event(agent, "running", f"room session: {thread_id}")
+            self._persist_room_state()
             self.broadcast()
             return None
         if event_type == "reply_delta":
@@ -1170,6 +1370,8 @@ class TrialogueState:
             with self.lock:
                 agent["current_detail"] = str(event.get("error", "Codex runner error"))
                 self.append_event(agent, "running", f"runner error: {event.get('error', 'unknown')}")
+            self._mark_recovery_required(f"runner error: {event.get('error', 'unknown')}")
+            self._persist_room_state()
             self.broadcast()
             return None
         return None
@@ -1191,7 +1393,7 @@ class Handler(BaseHTTPRequestHandler):
         self.send_error(HTTPStatus.NOT_FOUND)
 
     def do_POST(self) -> None:  # noqa: N802
-        if self.path not in {"/api/send", "/api/approval"}:
+        if self.path not in {"/api/send", "/api/approval", "/api/recovery/reset"}:
             self.send_error(HTTPStatus.NOT_FOUND)
             return
 
@@ -1216,6 +1418,14 @@ class Handler(BaseHTTPRequestHandler):
                 return
 
             self._send_json({"ok": True, "item_id": item["id"], "rid": item["rid"]})
+            return
+
+        if self.path == "/api/recovery/reset":
+            ok, reason = self.server.state.reset_recovery()
+            if not ok:
+                self._send_json({"error": reason}, status=HTTPStatus.BAD_REQUEST)
+                return
+            self._send_json({"ok": True})
             return
 
         item_id = str(payload.get("item_id", "")).strip()

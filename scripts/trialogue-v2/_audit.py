@@ -15,6 +15,8 @@ import shlex
 import sys
 import time
 
+from hardening import append_summary_chain, export_anchor_bundle
+
 AUDIT_HEADER_RE = re.compile(
     r"^\[TRIALOGUE-AUDIT rid=(?P<rid>\S+) nonce=(?P<nonce>\S+) sha256=(?P<sha>[0-9a-f]{64})\]$"
 )
@@ -692,8 +694,34 @@ def main():
         "claude_resume_original_session_id": claude_resume_original_session_id,
         "claude_resume_original_exit_code": claude_resume_original_exit_code,
     }
-
     audit_log = env("_L_AUDIT_LOG")
+    room_id = env("_L_ROOM_ID", "") or f"room-{target}"
+    anchor_policy = env("TRIALOGUE_EXTERNAL_AUDIT_ANCHOR", "disabled")
+    summary_chain_dir = env("TRIALOGUE_SUMMARY_CHAIN_DIR", "") or os.path.join(os.path.dirname(audit_log), "summary-chain")
+    anchor_dir = env("TRIALOGUE_ANCHOR_DIR", "") or os.path.join(os.path.dirname(audit_log), "anchor")
+    anchor_key_path = env("TRIALOGUE_ANCHOR_KEY_PATH", "") or os.path.join(os.path.dirname(audit_log), "anchor.key")
+    summary_chain = append_summary_chain(
+        summary_chain_dir,
+        audit_record,
+        room_id=room_id,
+        source_mode="launcher_audit",
+    )
+    anchor_status = export_anchor_bundle(
+        anchor_dir,
+        anchor_key_path,
+        summary_chain,
+        policy=anchor_policy,
+    )
+    audit_record["room_id"] = room_id
+    audit_record["summary_chain_path"] = summary_chain["chain_path"]
+    audit_record["prev_summary_sha256"] = summary_chain["prev_summary_sha256"]
+    audit_record["turn_summary_sha256"] = summary_chain["turn_summary_sha256"]
+    audit_record["summary_chain_genesis_sha256"] = summary_chain["genesis_summary_sha256"]
+    audit_record["external_anchor_policy"] = anchor_status["policy"]
+    audit_record["external_anchor_status"] = anchor_status["status"]
+    audit_record["external_anchor_bundle_path"] = anchor_status.get("bundle_path", "")
+    audit_record["external_anchor_reason"] = anchor_status.get("reason", "")
+
     try:
         with open(audit_log, "a", encoding="utf-8") as f:
             f.write(json.dumps(audit_record, ensure_ascii=False) + "\n")
@@ -775,6 +803,15 @@ def main():
             "claude_resume_fallback_reason": claude_resume_fallback_reason,
             "claude_resume_original_session_id": claude_resume_original_session_id,
             "claude_resume_original_exit_code": claude_resume_original_exit_code,
+            "room_id": room_id,
+            "summary_chain_path": summary_chain["chain_path"],
+            "prev_summary_sha256": summary_chain["prev_summary_sha256"],
+            "turn_summary_sha256": summary_chain["turn_summary_sha256"],
+            "summary_chain_genesis_sha256": summary_chain["genesis_summary_sha256"],
+            "external_anchor_policy": anchor_status["policy"],
+            "external_anchor_status": anchor_status["status"],
+            "external_anchor_bundle_path": anchor_status.get("bundle_path", ""),
+            "external_anchor_reason": anchor_status.get("reason", ""),
         }
         try:
             with open(meta_file, "w", encoding="utf-8") as f:
@@ -782,6 +819,10 @@ def main():
         except Exception as e:
             print(f"元数据文件写入失败: {e}", file=sys.stderr)
             return 1
+
+    if anchor_policy == "blocking" and anchor_status.get("status") != "exported":
+        print(f"外部审计锚写入失败: {anchor_status.get('reason', 'unknown')}", file=sys.stderr)
+        return 1
 
     return 0
 

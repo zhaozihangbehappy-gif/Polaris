@@ -489,6 +489,7 @@
         `Codex session: <strong>${state.latest_codex_session || "暂无"}</strong>`,
         `Hardening: <strong>${escapeHtml((state.hardening && state.hardening.transcript_sanitizer) || "n/a")}</strong>`,
         `降级特性: <strong>${Object.keys((state.hardening && state.hardening.degraded_features) || {}).length}</strong>`,
+        `审计锚: <strong>${escapeHtml((state.hardening && state.hardening.external_audit_anchor) || "n/a")}</strong>`,
       ];
       for (const html of chips) {
         const node = document.createElement("div");
@@ -508,13 +509,20 @@
             sanitizer: ${escapeHtml((state.hardening && state.hardening.transcript_sanitizer) || "n/a")}<br>
             version_gate: ${escapeHtml((state.hardening && state.hardening.version_gate) || "n/a")}<br>
             version_recheck: ${escapeHtml((state.hardening && state.hardening.version_gate_recheck) || "n/a")}<br>
-            operation_locks: ${escapeHtml((state.hardening && state.hardening.operation_locks) || "n/a")}
+            operation_locks: ${escapeHtml((state.hardening && state.hardening.operation_locks) || "n/a")}<br>
+            external_audit_anchor: ${escapeHtml((state.hardening && state.hardening.external_audit_anchor) || "n/a")}
           </div>
         </div>
         <div class="sidebar-card">
           <div class="title">当前 target</div>
           <div class="mono">${escapeHtml((state.current_target && state.current_target.name) || "meeting")} · ${escapeHtml((state.current_target && state.current_target.source) || "default")}</div>
           ${state.current_target && state.current_target.repo_path ? `<div class="mono" style="margin-top:8px;">${escapeHtml(state.current_target.repo_path)}</div>` : ""}
+        </div>
+        <div class="sidebar-card">
+          <div class="title">房间健康</div>
+          <div class="mono">state: ${escapeHtml(state.room_health || "healthy")}</div>
+          ${(state.recovery_reasons || []).length ? `<div class="mono" style="margin-top:8px;">${(state.recovery_reasons || []).map(escapeHtml).join("<br>")}</div>` : ""}
+          ${state.room_health === "recovery_required" ? '<div style="margin-top:10px;"><button class="mini-btn" data-recovery-reset="true">确认并退出恢复态</button></div>' : ""}
         </div>
         <div class="sidebar-card">
           <div class="title">最近 Claude sessions</div>
@@ -646,6 +654,8 @@
                   <div class="k">sanitizer</div><div class="v">${escapeHtml(String(((agent.hardening || {}).sanitizer || {}).modifications_count || 0))}</div>
                   <div class="k">version gate</div><div class="v">${escapeHtml((((agent.hardening || {}).version_gate || {}).allowed) === false ? "blocked" : (((agent.hardening || {}).version_gate || {}).policy || "n/a"))}</div>
                   <div class="k">version recheck</div><div class="v">${escapeHtml((((agent.hardening || {}).version_recheck || {}).result) || "startup-only")}</div>
+                  <div class="k">anchor</div><div class="v">${escapeHtml(meta.external_anchor_status || meta.external_anchor_policy || "n/a")}</div>
+                  <div class="k">summary</div><div class="v">${escapeHtml(meta.turn_summary_sha256 || "(none)")}</div>
                 </div>
               </div>
               <div class="audit-block">
@@ -830,10 +840,32 @@
       }
     }
 
+    async function resetRecovery() {
+      errorEl.textContent = "";
+      try {
+        const res = await fetch("/api/recovery/reset", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({}),
+        });
+        const payload = await res.json();
+        if (!res.ok) {
+          errorEl.textContent = payload.error || "恢复态重置失败";
+        }
+      } catch (err) {
+        errorEl.textContent = String(err);
+      }
+    }
+
     document.addEventListener("click", (ev) => {
       const button = ev.target.closest("[data-copy]");
       if (button) {
         copyText(decodeCopy(button.dataset.copy));
+        return;
+      }
+      const resetBtn = ev.target.closest("[data-recovery-reset]");
+      if (resetBtn) {
+        resetRecovery();
         return;
       }
       const approval = ev.target.closest("[data-approval]");
