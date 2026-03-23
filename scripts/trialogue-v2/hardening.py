@@ -13,6 +13,8 @@ import subprocess
 import tempfile
 import threading
 import time
+import urllib.error
+import urllib.request
 from pathlib import Path
 from typing import Any
 
@@ -91,6 +93,14 @@ def _safe_float(value: str, default: float) -> float:
     return parsed if parsed > 0 else default
 
 
+def _safe_int(value: str, default: int, *, minimum: int = 0) -> int:
+    try:
+        parsed = int(value)
+    except (TypeError, ValueError):
+        return default
+    return parsed if parsed >= minimum else default
+
+
 @dataclasses.dataclass
 class HardeningSettings:
     transcript_sanitizer: str
@@ -113,6 +123,15 @@ class HardeningSettings:
     summary_chain_dir: str
     anchor_dir: str
     anchor_key_path: str
+    remote_anchor_publish: str
+    remote_anchor_publish_url: str
+    remote_anchor_publish_credential_path: str
+    remote_anchor_verify_credential_path: str
+    remote_anchor_backlog_dir: str
+    remote_anchor_soft_cap: int
+    remote_anchor_hard_cap: int
+    remote_anchor_drain_batch_size: int
+    remote_anchor_request_timeout_sec: float
     alert_log_path: str
 
 
@@ -181,6 +200,31 @@ def load_hardening_settings(conf_path: str) -> HardeningSettings:
         summary_chain_dir=conf.get("HARDENING_SUMMARY_CHAIN_DIR", os.path.join(audit_root, "summary-chain")).strip() or os.path.join(audit_root, "summary-chain"),
         anchor_dir=conf.get("HARDENING_ANCHOR_DIR", os.path.join(audit_root, "anchor")).strip() or os.path.join(audit_root, "anchor"),
         anchor_key_path=conf.get("HARDENING_ANCHOR_KEY_PATH", os.path.join(audit_root, "anchor.key")).strip() or os.path.join(audit_root, "anchor.key"),
+        remote_anchor_publish=_norm_mode(
+            conf.get("HARDENING_REMOTE_AUDIT_PUBLISH", "disabled"),
+            allowed={"disabled", "async", "blocking"},
+            default="disabled",
+        ),
+        remote_anchor_publish_url=conf.get("HARDENING_REMOTE_AUDIT_PUBLISH_URL", "").strip(),
+        remote_anchor_publish_credential_path=conf.get(
+            "HARDENING_REMOTE_AUDIT_PUBLISH_CREDENTIAL_PATH",
+            os.path.join(audit_root, "remote-anchor-publish.token"),
+        ).strip() or os.path.join(audit_root, "remote-anchor-publish.token"),
+        remote_anchor_verify_credential_path=conf.get(
+            "HARDENING_REMOTE_AUDIT_VERIFY_CREDENTIAL_PATH",
+            os.path.join(audit_root, "remote-anchor-verify.token"),
+        ).strip() or os.path.join(audit_root, "remote-anchor-verify.token"),
+        remote_anchor_backlog_dir=conf.get(
+            "HARDENING_REMOTE_AUDIT_BACKLOG_DIR",
+            os.path.join(audit_root, "remote-anchor-backlog"),
+        ).strip() or os.path.join(audit_root, "remote-anchor-backlog"),
+        remote_anchor_soft_cap=_safe_int(conf.get("HARDENING_REMOTE_AUDIT_SOFT_CAP", "100"), 100, minimum=1),
+        remote_anchor_hard_cap=_safe_int(conf.get("HARDENING_REMOTE_AUDIT_HARD_CAP", "500"), 500, minimum=1),
+        remote_anchor_drain_batch_size=_safe_int(conf.get("HARDENING_REMOTE_AUDIT_DRAIN_BATCH_SIZE", "10"), 10, minimum=1),
+        remote_anchor_request_timeout_sec=_safe_float(
+            conf.get("HARDENING_REMOTE_AUDIT_REQUEST_TIMEOUT_SEC", "5"),
+            5.0,
+        ),
         alert_log_path=conf.get(
             "HARDENING_ALERT_LOG",
             os.path.join(base_dir, "hardening-events.jsonl"),
@@ -923,6 +967,232 @@ def export_anchor_bundle(
     bundle_path = os.path.join(room_dir, f"{turn_sha}.json")
     atomic_write_json(bundle_path, bundle)
     return {"policy": policy, "status": "exported", "bundle_path": bundle_path, "reason": ""}
+
+
+def _remote_anchor_backlog_path(backlog_dir: str, room_id: str) -> str:
+    return os.path.join(backlog_dir, f"{room_id}.jsonl")
+
+
+def _load_jsonl_records(path: str) -> list[dict[str, Any]]:
+    records: list[dict[str, Any]] = []
+    try:
+        with open(path, "r", encoding="utf-8", errors="replace") as f:
+            for raw_line in f:
+                line = raw_line.strip()
+                if not line:
+                    continue
+                payload = json.loads(line)
+                if isinstance(payload, dict):
+                    records.append(payload)
+    except (FileNotFoundError, json.JSONDecodeError, OSError):
+        return []
+    return records
+
+
+def _rewrite_jsonl(path: str, records: list[dict[str, Any]]) -> None:
+    ensure_parent_dir(path)
+    parent = str(Path(path).parent)
+    fd, tmp_path = tempfile.mkstemp(prefix=f".{Path(path).name}.", suffix=".tmp", dir=parent, text=True)
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8") as f:
+            for payload in records:
+                f.write(json.dumps(payload, ensure_ascii=False) + "\n")
+            f.flush()
+            os.fsync(f.fileno())
+        os.replace(tmp_path, path)
+        dir_fd = os.open(parent, os.O_DIRECTORY)
+        try:
+            os.fsync(dir_fd)
+        finally:
+            os.close(dir_fd)
+    finally:
+        try:
+            os.unlink(tmp_path)
+        except FileNotFoundError:
+            pass
+
+
+def _read_secret_token(path: str) -> str:
+    try:
+        return Path(path).read_text(encoding="utf-8").strip()
+    except OSError:
+        return ""
+
+
+def build_remote_anchor_payload(chain_entry: dict[str, Any]) -> dict[str, Any]:
+    entry = dict(chain_entry.get("entry") or {})
+    summary = dict(entry.get("summary") or {})
+    return {
+        "schema": "trialogue_remote_anchor_publish_v1",
+        "room_id": entry.get("room_id", ""),
+        "rid": entry.get("rid", ""),
+        "target": entry.get("target", ""),
+        "generated_at": entry.get("generated_at", ""),
+        "prev_summary_sha256": entry.get("prev_summary_sha256", ""),
+        "turn_summary_sha256": entry.get("turn_summary_sha256", ""),
+        "genesis_summary_sha256": chain_entry.get("genesis_summary_sha256", SUMMARY_CHAIN_GENESIS_SHA256),
+        "source_mode": summary.get("source_mode", ""),
+        "local_timestamp": summary.get("timestamp", ""),
+    }
+
+
+def _remote_publish_once(
+    publish_url: str,
+    publish_token: str,
+    payload: dict[str, Any],
+    *,
+    timeout_sec: float,
+) -> dict[str, Any]:
+    body = json.dumps(payload, ensure_ascii=False, sort_keys=True).encode("utf-8")
+    headers = {"Content-Type": "application/json"}
+    if publish_token:
+        headers["Authorization"] = f"Bearer {publish_token}"
+    request = urllib.request.Request(publish_url, data=body, headers=headers, method="POST")
+    try:
+        with urllib.request.urlopen(request, timeout=timeout_sec) as response:
+            response_body = response.read().decode("utf-8", errors="replace")
+            payload = json.loads(response_body) if response_body else {}
+            if not isinstance(payload, dict):
+                payload = {}
+            return {
+                "ok": True,
+                "status": "published",
+                "remote_sequence": payload.get("remote_sequence"),
+                "remote_record_id": payload.get("remote_record_id", ""),
+                "recorded_at": payload.get("recorded_at", ""),
+                "reason": "",
+            }
+    except urllib.error.HTTPError as exc:
+        detail = exc.read().decode("utf-8", errors="replace")
+        return {
+            "ok": False,
+            "status": "http_error",
+            "remote_sequence": None,
+            "remote_record_id": "",
+            "recorded_at": "",
+            "reason": f"http {exc.code}: {detail or exc.reason}",
+        }
+    except (urllib.error.URLError, TimeoutError, ValueError, OSError) as exc:
+        return {
+            "ok": False,
+            "status": "transport_error",
+            "remote_sequence": None,
+            "remote_record_id": "",
+            "recorded_at": "",
+            "reason": str(exc),
+        }
+
+
+def publish_remote_anchor(
+    settings: HardeningSettings,
+    chain_entry: dict[str, Any],
+    *,
+    room_id: str,
+) -> dict[str, Any]:
+    policy = settings.remote_anchor_publish
+    backlog_path = _remote_anchor_backlog_path(settings.remote_anchor_backlog_dir, room_id)
+    if policy == "disabled":
+        return {
+            "policy": policy,
+            "status": "disabled",
+            "reason": "remote audit publish disabled",
+            "backlog_path": backlog_path,
+            "backlog_count": 0,
+            "drained_count": 0,
+            "remote_sequence": None,
+            "remote_record_id": "",
+            "hard_cap_exceeded": False,
+            "current_published": False,
+        }
+
+    publish_url = settings.remote_anchor_publish_url
+    if not publish_url:
+        return {
+            "policy": policy,
+            "status": "unconfigured",
+            "reason": "remote publish URL missing",
+            "backlog_path": backlog_path,
+            "backlog_count": 0,
+            "drained_count": 0,
+            "remote_sequence": None,
+            "remote_record_id": "",
+            "hard_cap_exceeded": False,
+            "current_published": False,
+        }
+
+    publish_token = _read_secret_token(settings.remote_anchor_publish_credential_path)
+    queue = _load_jsonl_records(backlog_path)
+    drained_count = 0
+    last_remote_sequence = None
+    last_remote_record_id = ""
+    reason = ""
+
+    while queue and drained_count < settings.remote_anchor_drain_batch_size:
+        result = _remote_publish_once(
+            publish_url,
+            publish_token,
+            queue[0],
+            timeout_sec=settings.remote_anchor_request_timeout_sec,
+        )
+        if not result["ok"]:
+            reason = result["reason"]
+            break
+        drained_count += 1
+        last_remote_sequence = result.get("remote_sequence")
+        last_remote_record_id = result.get("remote_record_id", "")
+        queue.pop(0)
+
+    current_payload = build_remote_anchor_payload(chain_entry)
+    current_published = False
+    publish_result = None
+    if not queue:
+        publish_result = _remote_publish_once(
+            publish_url,
+            publish_token,
+            current_payload,
+            timeout_sec=settings.remote_anchor_request_timeout_sec,
+        )
+        if publish_result["ok"]:
+            current_published = True
+            last_remote_sequence = publish_result.get("remote_sequence")
+            last_remote_record_id = publish_result.get("remote_record_id", "")
+        else:
+            reason = publish_result["reason"]
+            queue.append(current_payload)
+    else:
+        queue.append(current_payload)
+        if not reason:
+            reason = "older remote publish backlog still pending"
+
+    if queue:
+        _rewrite_jsonl(backlog_path, queue)
+    elif os.path.exists(backlog_path):
+        _rewrite_jsonl(backlog_path, [])
+
+    backlog_count = len(queue)
+    hard_cap_exceeded = backlog_count >= settings.remote_anchor_hard_cap
+    if hard_cap_exceeded:
+        reason = reason or f"remote publish backlog hard cap exceeded ({backlog_count})"
+
+    if current_published and backlog_count == 0:
+        status = "published"
+    elif policy == "async":
+        status = "backlogged"
+    else:
+        status = "unanchored"
+
+    return {
+        "policy": policy,
+        "status": status,
+        "reason": reason,
+        "backlog_path": backlog_path,
+        "backlog_count": backlog_count,
+        "drained_count": drained_count,
+        "remote_sequence": last_remote_sequence,
+        "remote_record_id": last_remote_record_id,
+        "hard_cap_exceeded": hard_cap_exceeded,
+        "current_published": current_published,
+    }
 
 
 def verify_summary_chain(

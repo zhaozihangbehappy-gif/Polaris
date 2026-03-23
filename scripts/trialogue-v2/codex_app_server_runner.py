@@ -30,7 +30,7 @@ from typing import Any
 
 from _audit import build_verify_commands, parse_audit_message, peel_context_wrappers
 from _memory import build_injected_message, load_memory
-from hardening import append_summary_chain, export_anchor_bundle
+from hardening import append_jsonl, append_summary_chain, export_anchor_bundle, publish_remote_anchor, load_hardening_settings
 
 
 EVENT_PREFIX = "TRIALOGUE_CODEX_EVENT "
@@ -265,6 +265,7 @@ class Runner:
     def __init__(self, args: argparse.Namespace):
         self.args = args
         self.conf = load_conf_map(args.conf)
+        self.hardening_settings = load_hardening_settings(args.conf)
         self.script_dir = str(Path(__file__).resolve().parent)
         self.bin_path = self.conf.get("CODEX_BIN", "").strip()
         if not self.bin_path:
@@ -820,6 +821,11 @@ class Runner:
             summary_chain,
             policy=self.anchor_policy,
         )
+        remote_anchor = publish_remote_anchor(
+            self.hardening_settings,
+            summary_chain,
+            room_id=self.room_id,
+        )
         record["summary_chain_path"] = summary_chain["chain_path"]
         record["prev_summary_sha256"] = summary_chain["prev_summary_sha256"]
         record["turn_summary_sha256"] = summary_chain["turn_summary_sha256"]
@@ -828,9 +834,18 @@ class Runner:
         record["external_anchor_status"] = anchor_status["status"]
         record["external_anchor_bundle_path"] = anchor_status.get("bundle_path", "")
         record["external_anchor_reason"] = anchor_status.get("reason", "")
+        record["remote_anchor_policy"] = remote_anchor["policy"]
+        record["remote_anchor_status"] = remote_anchor["status"]
+        record["remote_anchor_reason"] = remote_anchor.get("reason", "")
+        record["remote_anchor_backlog_path"] = remote_anchor.get("backlog_path", "")
+        record["remote_anchor_backlog_count"] = remote_anchor.get("backlog_count", 0)
+        record["remote_anchor_drained_count"] = remote_anchor.get("drained_count", 0)
+        record["remote_anchor_remote_sequence"] = remote_anchor.get("remote_sequence")
+        record["remote_anchor_remote_record_id"] = remote_anchor.get("remote_record_id", "")
+        record["remote_anchor_hard_cap_exceeded"] = remote_anchor.get("hard_cap_exceeded", False)
+        record["remote_anchor_current_published"] = remote_anchor.get("current_published", False)
         ensure_parent(self.runner_audit_log)
-        with open(self.runner_audit_log, "a", encoding="utf-8") as f:
-            f.write(json.dumps(record, ensure_ascii=False) + "\n")
+        append_jsonl(self.runner_audit_log, record)
         meta = {
             "rid": self.rid,
             "nonce": self.nonce,
@@ -893,6 +908,16 @@ class Runner:
             "external_anchor_status": anchor_status["status"],
             "external_anchor_bundle_path": anchor_status.get("bundle_path", ""),
             "external_anchor_reason": anchor_status.get("reason", ""),
+            "remote_anchor_policy": remote_anchor["policy"],
+            "remote_anchor_status": remote_anchor["status"],
+            "remote_anchor_reason": remote_anchor.get("reason", ""),
+            "remote_anchor_backlog_path": remote_anchor.get("backlog_path", ""),
+            "remote_anchor_backlog_count": remote_anchor.get("backlog_count", 0),
+            "remote_anchor_drained_count": remote_anchor.get("drained_count", 0),
+            "remote_anchor_remote_sequence": remote_anchor.get("remote_sequence"),
+            "remote_anchor_remote_record_id": remote_anchor.get("remote_record_id", ""),
+            "remote_anchor_hard_cap_exceeded": remote_anchor.get("hard_cap_exceeded", False),
+            "remote_anchor_current_published": remote_anchor.get("current_published", False),
         }
         ensure_parent(self.args.meta_file)
         with open(self.args.meta_file, "w", encoding="utf-8") as f:

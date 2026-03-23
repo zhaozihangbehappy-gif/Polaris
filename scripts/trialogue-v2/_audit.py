@@ -15,7 +15,7 @@ import shlex
 import sys
 import time
 
-from hardening import append_jsonl, append_summary_chain, export_anchor_bundle
+from hardening import append_jsonl, append_summary_chain, export_anchor_bundle, publish_remote_anchor, load_hardening_settings
 
 AUDIT_HEADER_RE = re.compile(
     r"^\[TRIALOGUE-AUDIT rid=(?P<rid>\S+) nonce=(?P<nonce>\S+) sha256=(?P<sha>[0-9a-f]{64})\]$"
@@ -700,6 +700,7 @@ def main():
     summary_chain_dir = env("TRIALOGUE_SUMMARY_CHAIN_DIR", "") or os.path.join(os.path.dirname(audit_log), "summary-chain")
     anchor_dir = env("TRIALOGUE_ANCHOR_DIR", "") or os.path.join(os.path.dirname(audit_log), "anchor")
     anchor_key_path = env("TRIALOGUE_ANCHOR_KEY_PATH", "") or os.path.join(os.path.dirname(audit_log), "anchor.key")
+    hardening_settings = load_hardening_settings(conf_path)
     summary_chain = append_summary_chain(
         summary_chain_dir,
         audit_record,
@@ -712,6 +713,11 @@ def main():
         summary_chain,
         policy=anchor_policy,
     )
+    remote_anchor = publish_remote_anchor(
+        hardening_settings,
+        summary_chain,
+        room_id=room_id,
+    )
     audit_record["room_id"] = room_id
     audit_record["summary_chain_path"] = summary_chain["chain_path"]
     audit_record["prev_summary_sha256"] = summary_chain["prev_summary_sha256"]
@@ -721,6 +727,16 @@ def main():
     audit_record["external_anchor_status"] = anchor_status["status"]
     audit_record["external_anchor_bundle_path"] = anchor_status.get("bundle_path", "")
     audit_record["external_anchor_reason"] = anchor_status.get("reason", "")
+    audit_record["remote_anchor_policy"] = remote_anchor["policy"]
+    audit_record["remote_anchor_status"] = remote_anchor["status"]
+    audit_record["remote_anchor_reason"] = remote_anchor.get("reason", "")
+    audit_record["remote_anchor_backlog_path"] = remote_anchor.get("backlog_path", "")
+    audit_record["remote_anchor_backlog_count"] = remote_anchor.get("backlog_count", 0)
+    audit_record["remote_anchor_drained_count"] = remote_anchor.get("drained_count", 0)
+    audit_record["remote_anchor_remote_sequence"] = remote_anchor.get("remote_sequence")
+    audit_record["remote_anchor_remote_record_id"] = remote_anchor.get("remote_record_id", "")
+    audit_record["remote_anchor_hard_cap_exceeded"] = remote_anchor.get("hard_cap_exceeded", False)
+    audit_record["remote_anchor_current_published"] = remote_anchor.get("current_published", False)
 
     try:
         append_jsonl(audit_log, audit_record)
@@ -811,6 +827,16 @@ def main():
             "external_anchor_status": anchor_status["status"],
             "external_anchor_bundle_path": anchor_status.get("bundle_path", ""),
             "external_anchor_reason": anchor_status.get("reason", ""),
+            "remote_anchor_policy": remote_anchor["policy"],
+            "remote_anchor_status": remote_anchor["status"],
+            "remote_anchor_reason": remote_anchor.get("reason", ""),
+            "remote_anchor_backlog_path": remote_anchor.get("backlog_path", ""),
+            "remote_anchor_backlog_count": remote_anchor.get("backlog_count", 0),
+            "remote_anchor_drained_count": remote_anchor.get("drained_count", 0),
+            "remote_anchor_remote_sequence": remote_anchor.get("remote_sequence"),
+            "remote_anchor_remote_record_id": remote_anchor.get("remote_record_id", ""),
+            "remote_anchor_hard_cap_exceeded": remote_anchor.get("hard_cap_exceeded", False),
+            "remote_anchor_current_published": remote_anchor.get("current_published", False),
         }
         try:
             with open(meta_file, "w", encoding="utf-8") as f:

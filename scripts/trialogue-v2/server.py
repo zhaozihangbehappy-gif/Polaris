@@ -127,6 +127,16 @@ class TrialogueState:
         self.codex_meeting_cursor = 0
         self.room_health = "healthy"
         self.recovery_reasons: list[str] = []
+        self.remote_anchor = {
+            "policy": self.hardening.remote_anchor_publish,
+            "state": "disabled" if self.hardening.remote_anchor_publish == "disabled" else "healthy",
+            "last_status": "disabled" if self.hardening.remote_anchor_publish == "disabled" else "startup-only",
+            "last_reason": "",
+            "last_remote_sequence": None,
+            "backlog_count": 0,
+            "consecutive_unanchored": 0,
+            "updated_at": "",
+        }
         self.target_override = ""
         self.clients: set[socket.socket] = set()
         self.lock = threading.RLock()
@@ -191,6 +201,7 @@ class TrialogueState:
                     "version_gate_recheck": self.hardening.version_gate_recheck,
                     "operation_locks": self.hardening.operation_locks,
                     "external_audit_anchor": self.hardening.external_audit_anchor,
+                    "remote_audit_publish": self.hardening.remote_anchor_publish,
                     "broker_recovery_mode": self.hardening.broker_recovery_mode,
                     "shared_host_collision_guard": self.hardening.shared_host_collision_guard,
                     "version_snapshots": copy.deepcopy(self.version_snapshots),
@@ -200,6 +211,7 @@ class TrialogueState:
                     "system_events": copy.deepcopy(self.system_events[-12:]),
                     "lock_snapshot": self.operation_locks.snapshot(),
                     "port_registry": self.port_registry.snapshot(),
+                    "remote_anchor": copy.deepcopy(self.remote_anchor),
                 },
                 "items": copy.deepcopy(self.items),
             }
@@ -218,9 +230,11 @@ class TrialogueState:
 
     def _refresh_room_health(self) -> None:
         with self.lock:
-            if self.recovery_reasons:
+            if self.remote_anchor.get("state") == "anchor_blocked":
+                self.room_health = "anchor_blocked"
+            elif self.recovery_reasons:
                 self.room_health = "recovery_required"
-            elif self.degraded_features:
+            elif self.remote_anchor.get("state") == "degraded" or self.degraded_features:
                 self.room_health = "degraded"
             else:
                 self.room_health = "healthy"
@@ -239,6 +253,7 @@ class TrialogueState:
                 "last_rid": self.last_rid,
                 "room_health": self.room_health,
                 "recovery_reasons": list(self.recovery_reasons),
+                "remote_anchor": copy.deepcopy(self.remote_anchor),
                 "degraded_features": copy.deepcopy(self.degraded_features),
                 "system_events": copy.deepcopy(self.system_events[-50:]),
                 "items": copy.deepcopy(self.items),
@@ -271,6 +286,7 @@ class TrialogueState:
         self.codex_meeting_cursor = int(payload.get("codex_meeting_cursor", 0) or 0)
         self.target_override = payload.get("target_override", "") or ""
         self.last_rid = payload.get("last_rid", "") or ""
+        self.remote_anchor = copy.deepcopy(payload.get("remote_anchor") or self.remote_anchor)
         self.degraded_features = copy.deepcopy(payload.get("degraded_features") or {})
         self.system_events = copy.deepcopy(payload.get("system_events") or [])
         self.items = copy.deepcopy(payload.get("items") or [])
@@ -317,11 +333,74 @@ class TrialogueState:
             )
             if active:
                 return False, "active agents still running"
+            if self.remote_anchor.get("state") == "anchor_blocked":
+                if self.remote_anchor.get("last_status") != "published" or int(self.remote_anchor.get("backlog_count", 0) or 0) > 0:
+                    return False, "remote anchor has not recovered yet"
+                self.remote_anchor["state"] = "healthy"
+                self.remote_anchor["consecutive_unanchored"] = 0
+                self.remote_anchor["last_reason"] = ""
+                self.degraded_features.pop("remote_anchor", None)
             self.recovery_reasons = []
             self.degraded_features.pop("broker_recovery", None)
         self._persist_room_state()
         self.broadcast()
         return True, ""
+
+    def _update_remote_anchor_state(self, record: dict[str, Any]) -> None:
+        policy = record.get("remote_anchor_policy") or self.hardening.remote_anchor_publish
+        status = record.get("remote_anchor_status") or ("disabled" if policy == "disabled" else "unknown")
+        reason = record.get("remote_anchor_reason", "") or ""
+        backlog_count = int(record.get("remote_anchor_backlog_count", 0) or 0)
+        hard_cap_exceeded = bool(record.get("remote_anchor_hard_cap_exceeded"))
+        remote_sequence = record.get("remote_anchor_remote_sequence")
+        with self.lock:
+            self.remote_anchor["policy"] = policy
+            self.remote_anchor["last_status"] = status
+            self.remote_anchor["last_reason"] = reason
+            self.remote_anchor["backlog_count"] = backlog_count
+            self.remote_anchor["last_remote_sequence"] = remote_sequence
+            self.remote_anchor["updated_at"] = now_iso()
+            if policy == "disabled":
+                self.remote_anchor["state"] = "disabled"
+                self.remote_anchor["consecutive_unanchored"] = 0
+                self.degraded_features.pop("remote_anchor", None)
+                return
+            if status == "published":
+                self.remote_anchor["consecutive_unanchored"] = 0
+                if self.remote_anchor.get("state") == "anchor_blocked":
+                    self.degraded_features["remote_anchor"] = {
+                        "state": "anchor_blocked",
+                        "reason": "remote anchor recovered; awaiting operator reset",
+                        "updated_at": self.remote_anchor["updated_at"],
+                    }
+                    return
+                if backlog_count == 0:
+                    self.remote_anchor["state"] = "healthy"
+                    self.degraded_features.pop("remote_anchor", None)
+                else:
+                    self.remote_anchor["state"] = "degraded"
+                    self.degraded_features["remote_anchor"] = {
+                        "state": "degraded",
+                        "reason": f"remote anchor backlog pending: {backlog_count}",
+                        "updated_at": self.remote_anchor["updated_at"],
+                    }
+                return
+
+            self.remote_anchor["consecutive_unanchored"] = int(self.remote_anchor.get("consecutive_unanchored", 0) or 0) + 1
+            if policy == "blocking" and (self.remote_anchor["consecutive_unanchored"] >= 3 or hard_cap_exceeded):
+                self.remote_anchor["state"] = "anchor_blocked"
+                self.degraded_features["remote_anchor"] = {
+                    "state": "anchor_blocked",
+                    "reason": reason or f"remote anchor blocked after {self.remote_anchor['consecutive_unanchored']} unanchored turns",
+                    "updated_at": self.remote_anchor["updated_at"],
+                }
+            else:
+                self.remote_anchor["state"] = "degraded"
+                self.degraded_features["remote_anchor"] = {
+                    "state": "degraded",
+                    "reason": reason or "remote anchor publish degraded",
+                    "updated_at": self.remote_anchor["updated_at"],
+                }
 
     def emit_system_event(self, kind: str, detail: str, *, severity: str = "info", feature: str = "") -> None:
         event = {
@@ -545,6 +624,16 @@ class TrialogueState:
                 "external_anchor_status": record.get("external_anchor_status", ""),
                 "external_anchor_bundle_path": record.get("external_anchor_bundle_path", ""),
                 "external_anchor_reason": record.get("external_anchor_reason", ""),
+                "remote_anchor_policy": record.get("remote_anchor_policy", ""),
+                "remote_anchor_status": record.get("remote_anchor_status", ""),
+                "remote_anchor_reason": record.get("remote_anchor_reason", ""),
+                "remote_anchor_backlog_path": record.get("remote_anchor_backlog_path", ""),
+                "remote_anchor_backlog_count": record.get("remote_anchor_backlog_count", 0),
+                "remote_anchor_drained_count": record.get("remote_anchor_drained_count", 0),
+                "remote_anchor_remote_sequence": record.get("remote_anchor_remote_sequence"),
+                "remote_anchor_remote_record_id": record.get("remote_anchor_remote_record_id", ""),
+                "remote_anchor_hard_cap_exceeded": record.get("remote_anchor_hard_cap_exceeded", False),
+                "remote_anchor_current_published": record.get("remote_anchor_current_published", False),
             }
         )
 
@@ -707,6 +796,16 @@ class TrialogueState:
                         "external_anchor_status": record.get("external_anchor_status", ""),
                         "external_anchor_bundle_path": record.get("external_anchor_bundle_path", ""),
                         "external_anchor_reason": record.get("external_anchor_reason", ""),
+                        "remote_anchor_policy": record.get("remote_anchor_policy", ""),
+                        "remote_anchor_status": record.get("remote_anchor_status", ""),
+                        "remote_anchor_reason": record.get("remote_anchor_reason", ""),
+                        "remote_anchor_backlog_path": record.get("remote_anchor_backlog_path", ""),
+                        "remote_anchor_backlog_count": record.get("remote_anchor_backlog_count", 0),
+                        "remote_anchor_drained_count": record.get("remote_anchor_drained_count", 0),
+                        "remote_anchor_remote_sequence": record.get("remote_anchor_remote_sequence"),
+                        "remote_anchor_remote_record_id": record.get("remote_anchor_remote_record_id", ""),
+                        "remote_anchor_hard_cap_exceeded": record.get("remote_anchor_hard_cap_exceeded", False),
+                        "remote_anchor_current_published": record.get("remote_anchor_current_published", False),
                     }
                 )
                 agent["reply"] = reply
@@ -733,6 +832,7 @@ class TrialogueState:
                     self.current_claude_session = session_id
             elif target == "codex" and session_id:
                 self.latest_codex_session = session_id
+        self._update_remote_anchor_state(record)
         self._persist_room_state()
         return True
 
@@ -770,6 +870,8 @@ class TrialogueState:
         target_cmd = parse_target_command(raw_text)
         if target_cmd:
             return self._handle_target_command(raw_text, target_cmd)
+        if self.room_health == "anchor_blocked":
+            raise ValueError("远端审计锚当前阻断中，拒绝新的 turn；请先处理 anchor_blocked 状态")
 
         targets, message = parse_message(raw_text)
         if not targets:
