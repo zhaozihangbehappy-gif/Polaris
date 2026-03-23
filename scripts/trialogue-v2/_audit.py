@@ -706,6 +706,7 @@ def main():
         audit_record,
         room_id=room_id,
         source_mode="launcher_audit",
+        stage_remote_backlog_dir=hardening_settings.remote_anchor_backlog_dir,
     )
     anchor_status = export_anchor_bundle(
         anchor_dir,

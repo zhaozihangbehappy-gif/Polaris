@@ -814,6 +814,7 @@ class Runner:
             record,
             room_id=self.room_id,
             source_mode="codex_app_server",
+            stage_remote_backlog_dir=self.hardening_settings.remote_anchor_backlog_dir,
         )
         anchor_status = export_anchor_bundle(
             self.anchor_dir,

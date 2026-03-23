@@ -894,6 +894,7 @@ def append_summary_chain(
     *,
     room_id: str,
     source_mode: str,
+    stage_remote_backlog_dir: str = "",
 ) -> dict[str, Any]:
     Path(summary_chain_dir).mkdir(parents=True, exist_ok=True)
     chain_path = os.path.join(summary_chain_dir, f"{room_id}.jsonl")
@@ -917,12 +918,24 @@ def append_summary_chain(
             "summary": summary,
         }
         append_jsonl(chain_path, entry)
+        staged_backlog_path = ""
+        if stage_remote_backlog_dir:
+            staged_backlog_path = _remote_anchor_backlog_path(stage_remote_backlog_dir, room_id)
+            staged_queue = _load_jsonl_records(staged_backlog_path)
+            staged_queue.append(build_remote_anchor_payload({
+                "entry": entry,
+                "prev_summary_sha256": prev_sha,
+                "turn_summary_sha256": summary["turn_summary_sha256"],
+                "genesis_summary_sha256": SUMMARY_CHAIN_GENESIS_SHA256,
+            }))
+            _rewrite_jsonl(staged_backlog_path, staged_queue)
     return {
         "chain_path": chain_path,
         "entry": entry,
         "prev_summary_sha256": prev_sha,
         "turn_summary_sha256": summary["turn_summary_sha256"],
         "genesis_summary_sha256": SUMMARY_CHAIN_GENESIS_SHA256,
+        "staged_backlog_path": staged_backlog_path,
     }
 
 
@@ -1169,7 +1182,8 @@ def publish_remote_anchor(
 
     publish_token = _read_secret_token(settings.remote_anchor_publish_credential_path)
     if not publish_token:
-        queue.append(current_payload)
+        if not queue or queue[-1] != current_payload:
+            queue.append(current_payload)
         _rewrite_jsonl(backlog_path, queue)
         backlog_count = len(queue)
         return {
@@ -1190,6 +1204,8 @@ def publish_remote_anchor(
     last_remote_record_id = ""
     reason = ""
     queue_index = 0
+    current_staged = bool(queue) and queue[-1] == current_payload
+    published_current_from_queue = False
 
     while queue_index < len(queue) and drained_count < settings.remote_anchor_drain_batch_size:
         result = _remote_publish_once(
@@ -1204,6 +1220,8 @@ def publish_remote_anchor(
         drained_count += 1
         last_remote_sequence = result.get("remote_sequence")
         last_remote_record_id = result.get("remote_record_id", "")
+        if queue[queue_index] == current_payload:
+            published_current_from_queue = True
         queue_index += 1
 
     if queue_index:
@@ -1211,7 +1229,9 @@ def publish_remote_anchor(
 
     current_published = False
     publish_result = None
-    if not queue:
+    if current_staged and published_current_from_queue:
+        current_published = True
+    elif not queue:
         publish_result = _remote_publish_once(
             publish_url,
             publish_token,
@@ -1226,7 +1246,8 @@ def publish_remote_anchor(
             reason = publish_result["reason"]
             queue.append(current_payload)
     else:
-        queue.append(current_payload)
+        if not current_staged:
+            queue.append(current_payload)
         if not reason:
             reason = "older remote publish backlog still pending"
 
