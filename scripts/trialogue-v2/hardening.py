@@ -981,6 +981,10 @@ def _remote_anchor_backlog_path(backlog_dir: str, room_id: str) -> str:
     return os.path.join(backlog_dir, f"{room_id}.jsonl")
 
 
+def _remote_anchor_backlog_count(backlog_dir: str, room_id: str) -> int:
+    return len(_load_jsonl_records(_remote_anchor_backlog_path(backlog_dir, room_id)))
+
+
 def _load_jsonl_records(path: str) -> list[dict[str, Any]]:
     records: list[dict[str, Any]] = []
     try:
@@ -1129,6 +1133,7 @@ def publish_remote_anchor(
 ) -> dict[str, Any]:
     policy = settings.remote_anchor_publish
     backlog_path = _remote_anchor_backlog_path(settings.remote_anchor_backlog_dir, room_id)
+    current_payload = build_remote_anchor_payload(chain_entry)
     if policy == "disabled":
         return {
             "policy": policy,
@@ -1144,32 +1149,53 @@ def publish_remote_anchor(
         }
 
     publish_url = settings.remote_anchor_publish_url
+    queue = _load_jsonl_records(backlog_path)
     if not publish_url:
+        queue.append(current_payload)
+        _rewrite_jsonl(backlog_path, queue)
+        backlog_count = len(queue)
         return {
             "policy": policy,
             "status": "unconfigured",
             "reason": "remote publish URL missing",
             "backlog_path": backlog_path,
-            "backlog_count": 0,
+            "backlog_count": backlog_count,
             "drained_count": 0,
             "remote_sequence": None,
             "remote_record_id": "",
-            "hard_cap_exceeded": False,
+            "hard_cap_exceeded": backlog_count >= settings.remote_anchor_hard_cap,
             "current_published": False,
         }
 
     publish_token = _read_secret_token(settings.remote_anchor_publish_credential_path)
-    queue = _load_jsonl_records(backlog_path)
+    if not publish_token:
+        queue.append(current_payload)
+        _rewrite_jsonl(backlog_path, queue)
+        backlog_count = len(queue)
+        return {
+            "policy": policy,
+            "status": "unconfigured",
+            "reason": "remote publish credential missing",
+            "backlog_path": backlog_path,
+            "backlog_count": backlog_count,
+            "drained_count": 0,
+            "remote_sequence": None,
+            "remote_record_id": "",
+            "hard_cap_exceeded": backlog_count >= settings.remote_anchor_hard_cap,
+            "current_published": False,
+        }
+
     drained_count = 0
     last_remote_sequence = None
     last_remote_record_id = ""
     reason = ""
+    queue_index = 0
 
-    while queue and drained_count < settings.remote_anchor_drain_batch_size:
+    while queue_index < len(queue) and drained_count < settings.remote_anchor_drain_batch_size:
         result = _remote_publish_once(
             publish_url,
             publish_token,
-            queue[0],
+            queue[queue_index],
             timeout_sec=settings.remote_anchor_request_timeout_sec,
         )
         if not result["ok"]:
@@ -1178,9 +1204,11 @@ def publish_remote_anchor(
         drained_count += 1
         last_remote_sequence = result.get("remote_sequence")
         last_remote_record_id = result.get("remote_record_id", "")
-        queue.pop(0)
+        queue_index += 1
 
-    current_payload = build_remote_anchor_payload(chain_entry)
+    if queue_index:
+        queue = queue[queue_index:]
+
     current_published = False
     publish_result = None
     if not queue:
@@ -1306,7 +1334,8 @@ def verify_remote_anchor(
 
     chain_path = os.path.join(settings.summary_chain_dir, f"{room_id}.jsonl")
     local_entries = _load_jsonl_records(chain_path)
-    backlog_count = max(0, int(expected_backlog_count or 0))
+    backlog_count = _remote_anchor_backlog_count(settings.remote_anchor_backlog_dir, room_id)
+    expected_backlog_count = max(0, int(expected_backlog_count or 0))
     published_local_count = max(0, len(local_entries) - backlog_count)
     published_local = local_entries[:published_local_count]
     remote_records = fetch["records"]
@@ -1325,6 +1354,8 @@ def verify_remote_anchor(
             "latest_remote_sequence": remote_records[-1].get("remote_sequence") if remote_records else None,
             "mismatch_kind": mismatch_kind,
             "transport_failure": False,
+            "backlog_count_used": backlog_count,
+            "expected_backlog_count": expected_backlog_count,
         }
 
     for idx, local_entry in enumerate(published_local):
@@ -1342,6 +1373,8 @@ def verify_remote_anchor(
                 "latest_remote_sequence": latest_remote_sequence,
                 "mismatch_kind": "remote_sequence_mismatch",
                 "transport_failure": False,
+                "backlog_count_used": backlog_count,
+                "expected_backlog_count": expected_backlog_count,
             }
         payload = remote_entry.get("payload") or {}
         if payload.get("room_id") != room_id:
@@ -1356,6 +1389,8 @@ def verify_remote_anchor(
                 "latest_remote_sequence": latest_remote_sequence,
                 "mismatch_kind": "remote_room_mismatch",
                 "transport_failure": False,
+                "backlog_count_used": backlog_count,
+                "expected_backlog_count": expected_backlog_count,
             }
         if payload.get("genesis_summary_sha256") != SUMMARY_CHAIN_GENESIS_SHA256:
             return {
@@ -1369,6 +1404,8 @@ def verify_remote_anchor(
                 "latest_remote_sequence": latest_remote_sequence,
                 "mismatch_kind": "remote_genesis_mismatch",
                 "transport_failure": False,
+                "backlog_count_used": backlog_count,
+                "expected_backlog_count": expected_backlog_count,
             }
         if payload.get("prev_summary_sha256") != local_entry.get("prev_summary_sha256"):
             return {
@@ -1382,6 +1419,8 @@ def verify_remote_anchor(
                 "latest_remote_sequence": latest_remote_sequence,
                 "mismatch_kind": "prev_summary_mismatch",
                 "transport_failure": False,
+                "backlog_count_used": backlog_count,
+                "expected_backlog_count": expected_backlog_count,
             }
         if payload.get("turn_summary_sha256") != local_entry.get("turn_summary_sha256"):
             return {
@@ -1395,6 +1434,8 @@ def verify_remote_anchor(
                 "latest_remote_sequence": latest_remote_sequence,
                 "mismatch_kind": "turn_summary_mismatch",
                 "transport_failure": False,
+                "backlog_count_used": backlog_count,
+                "expected_backlog_count": expected_backlog_count,
             }
         if payload.get("rid", "") != local_entry.get("rid", ""):
             return {
@@ -1408,6 +1449,8 @@ def verify_remote_anchor(
                 "latest_remote_sequence": latest_remote_sequence,
                 "mismatch_kind": "rid_mismatch",
                 "transport_failure": False,
+                "backlog_count_used": backlog_count,
+                "expected_backlog_count": expected_backlog_count,
             }
 
     return {
@@ -1421,6 +1464,8 @@ def verify_remote_anchor(
         "latest_remote_sequence": latest_remote_sequence,
         "mismatch_kind": "",
         "transport_failure": False,
+        "backlog_count_used": backlog_count,
+        "expected_backlog_count": expected_backlog_count,
     }
 
 

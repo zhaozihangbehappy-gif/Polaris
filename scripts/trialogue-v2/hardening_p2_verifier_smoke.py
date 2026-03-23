@@ -5,7 +5,15 @@ import tempfile
 import threading
 from pathlib import Path
 
-from hardening import append_summary_chain, load_hardening_settings, publish_remote_anchor, verify_remote_anchor
+from hardening import (
+    _rewrite_jsonl,
+    _remote_anchor_backlog_path,
+    append_summary_chain,
+    build_remote_anchor_payload,
+    load_hardening_settings,
+    publish_remote_anchor,
+    verify_remote_anchor,
+)
 from hardening_p2_publish_smoke import FakeSinkServer, _free_port, _record, _write_conf
 
 
@@ -41,10 +49,20 @@ def main() -> int:
         # Expected unpublished suffix is tolerated in async-style verification.
         chain = append_summary_chain(str(root / "audit" / "summary-chain"), _record(3), room_id=room_id, source_mode="test")
         three_line_lines = chain_path.read_text(encoding="utf-8").splitlines()
+        _rewrite_jsonl(
+            _remote_anchor_backlog_path(settings.remote_anchor_backlog_dir, room_id),
+            [build_remote_anchor_payload(chain)],
+        )
         tolerated = verify_remote_anchor(settings, room_id=room_id, expected_backlog_count=1)
         assert tolerated["result"] == "verified", tolerated
+        stale_expected = verify_remote_anchor(settings, room_id=room_id, expected_backlog_count=0)
+        assert stale_expected["result"] == "verified", stale_expected
+        assert stale_expected["backlog_count_used"] == 1
+        assert stale_expected["expected_backlog_count"] == 0
 
-        # Tail injection is visible without backlog allowance.
+        # Tail injection / crash window is visible when the backlog file is missing.
+        backlog_path = root / "audit" / "remote-backlog" / f"{room_id}.jsonl"
+        backlog_path.unlink()
         tail_injected = verify_remote_anchor(settings, room_id=room_id, expected_backlog_count=0)
         assert tail_injected["result"] == "mismatch", tail_injected
         assert tail_injected["mismatch_kind"] == "remote_missing_records"

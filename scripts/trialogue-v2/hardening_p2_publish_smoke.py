@@ -198,6 +198,14 @@ def main() -> int:
         assert result4["status"] == "unanchored"
         assert result4["backlog_count"] == 1
 
+        # Missing publish credential is explicit and still preserves backlog.
+        (root / "publish.token").unlink()
+        chain5 = append_summary_chain(str(root / "audit" / "summary-chain"), _record(5), room_id="room-missing-token", source_mode="test")
+        result5 = publish_remote_anchor(settings, chain5, room_id="room-missing-token")
+        assert result5["status"] == "unconfigured"
+        assert result5["reason"] == "remote publish credential missing"
+        assert result5["backlog_count"] == 1
+
         server2.shutdown()
         server2.server_close()
 

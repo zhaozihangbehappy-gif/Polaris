@@ -102,6 +102,15 @@ def main() -> int:
         assert ok is True, reason
         assert state.room_health in {"healthy", "degraded"}
 
+        async_hard_cap = _record(5)
+        async_hard_cap["remote_anchor_policy"] = "async"
+        async_hard_cap["remote_anchor_status"] = "backlogged"
+        async_hard_cap["remote_anchor_hard_cap_exceeded"] = True
+        async_hard_cap["remote_anchor_backlog_count"] = 500
+        assert state._merge_audit_record(async_hard_cap) is True
+        assert state.remote_anchor["state"] == "anchor_blocked"
+        assert state.room_health == "anchor_blocked"
+
     print("P2_BROKER_ANCHOR_SMOKE_OK")
     return 0
 

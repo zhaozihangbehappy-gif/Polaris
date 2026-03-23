@@ -360,6 +360,11 @@ class TrialogueState:
                 self.remote_anchor["last_reason"] = ""
                 self.remote_anchor["recovery_verify_ready"] = False
                 self.degraded_features.pop("remote_anchor", None)
+                self.recovery_reasons = []
+                self.degraded_features.pop("broker_recovery", None)
+                self._persist_room_state()
+                self.broadcast()
+                return True, ""
             if self.remote_anchor.get("state") == "anchor_blocked":
                 if not self.remote_anchor.get("recovery_publish_ready"):
                     return False, "remote anchor publish recovery has not completed yet"
@@ -424,11 +429,15 @@ class TrialogueState:
 
             self.remote_anchor["consecutive_unanchored"] = int(self.remote_anchor.get("consecutive_unanchored", 0) or 0) + 1
             self.remote_anchor["recovery_publish_ready"] = False
-            if policy == "blocking" and (self.remote_anchor["consecutive_unanchored"] >= 3 or hard_cap_exceeded):
+            if hard_cap_exceeded or (policy == "blocking" and self.remote_anchor["consecutive_unanchored"] >= 3):
                 self.remote_anchor["state"] = "anchor_blocked"
                 self.degraded_features["remote_anchor"] = {
                     "state": "anchor_blocked",
-                    "reason": reason or f"remote anchor blocked after {self.remote_anchor['consecutive_unanchored']} unanchored turns",
+                    "reason": reason or (
+                        f"remote anchor backlog hard cap exceeded ({backlog_count})"
+                        if hard_cap_exceeded
+                        else f"remote anchor blocked after {self.remote_anchor['consecutive_unanchored']} unanchored turns"
+                    ),
                     "updated_at": self.remote_anchor["updated_at"],
                 }
             else:
