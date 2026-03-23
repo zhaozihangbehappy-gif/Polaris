@@ -15,7 +15,7 @@ import shlex
 import sys
 import time
 
-from hardening import append_summary_chain, export_anchor_bundle
+from hardening import append_jsonl, append_summary_chain, export_anchor_bundle
 
 AUDIT_HEADER_RE = re.compile(
     r"^\[TRIALOGUE-AUDIT rid=(?P<rid>\S+) nonce=(?P<nonce>\S+) sha256=(?P<sha>[0-9a-f]{64})\]$"
@@ -723,8 +723,7 @@ def main():
     audit_record["external_anchor_reason"] = anchor_status.get("reason", "")
 
     try:
-        with open(audit_log, "a", encoding="utf-8") as f:
-            f.write(json.dumps(audit_record, ensure_ascii=False) + "\n")
+        append_jsonl(audit_log, audit_record)
     except Exception as e:
         print(f"审计日志写入失败: {e}", file=sys.stderr)
         return 1

@@ -10,6 +10,7 @@ import os
 import re
 import socket
 import subprocess
+import tempfile
 import threading
 import time
 from pathlib import Path
@@ -736,12 +737,24 @@ def ensure_parent_dir(path: str) -> None:
 
 def atomic_write_json(path: str, payload: dict[str, Any]) -> None:
     ensure_parent_dir(path)
-    tmp_path = f"{path}.tmp"
-    with open(tmp_path, "w", encoding="utf-8") as f:
-        json.dump(payload, f, ensure_ascii=False, indent=2)
-        f.flush()
-        os.fsync(f.fileno())
-    os.replace(tmp_path, path)
+    parent = str(Path(path).parent)
+    fd, tmp_path = tempfile.mkstemp(prefix=f".{Path(path).name}.", suffix=".tmp", dir=parent, text=True)
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8") as f:
+            json.dump(payload, f, ensure_ascii=False, indent=2)
+            f.flush()
+            os.fsync(f.fileno())
+        os.replace(tmp_path, path)
+        dir_fd = os.open(parent, os.O_DIRECTORY)
+        try:
+            os.fsync(dir_fd)
+        finally:
+            os.close(dir_fd)
+    finally:
+        try:
+            os.unlink(tmp_path)
+        except FileNotFoundError:
+            pass
 
 
 def read_json_file(path: str, default: dict[str, Any] | None = None) -> dict[str, Any]:
@@ -757,9 +770,11 @@ def read_json_file(path: str, default: dict[str, Any] | None = None) -> dict[str
 def append_jsonl(path: str, payload: dict[str, Any]) -> None:
     ensure_parent_dir(path)
     with open(path, "a", encoding="utf-8") as f:
+        fcntl.flock(f.fileno(), fcntl.LOCK_EX)
         f.write(json.dumps(payload, ensure_ascii=False) + "\n")
         f.flush()
         os.fsync(f.fileno())
+        fcntl.flock(f.fileno(), fcntl.LOCK_UN)
 
 
 def _last_jsonl_record(path: str) -> dict[str, Any] | None:
@@ -870,6 +885,14 @@ def export_anchor_bundle(
         return {"policy": policy, "status": "disabled", "bundle_path": "", "reason": "anchor disabled"}
     key_bytes = b""
     try:
+        mode = os.stat(anchor_key_path).st_mode & 0o777
+        if mode & 0o077:
+            return {
+                "policy": policy,
+                "status": "failed",
+                "bundle_path": "",
+                "reason": f"anchor signing key has insecure permissions: {oct(mode)}",
+            }
         key_bytes = Path(anchor_key_path).read_bytes()
     except OSError:
         key_bytes = b""

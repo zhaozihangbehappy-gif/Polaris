@@ -4,6 +4,7 @@ from __future__ import annotations
 import json
 import socket
 import tempfile
+import threading
 from pathlib import Path
 
 from hardening import atomic_write_json
@@ -151,6 +152,28 @@ def main() -> int:
         persisted = json.loads(room_state_path.read_text(encoding="utf-8"))
         assert persisted["room_id"] == room_id
         assert persisted["items"][0]["agents"][0]["status"] == "failed"
+
+        concurrent_path = root / "state" / "concurrent-room.json"
+        errors: list[str] = []
+
+        def writer(idx: int) -> None:
+            try:
+                atomic_write_json(
+                    str(concurrent_path),
+                    {"writer": idx, "payload": f"value-{idx}"},
+                )
+            except Exception as exc:  # pragma: no cover - smoke should stay green
+                errors.append(str(exc))
+
+        threads = [threading.Thread(target=writer, args=(idx,)) for idx in range(30)]
+        for thread in threads:
+            thread.start()
+        for thread in threads:
+            thread.join()
+
+        assert not errors, errors
+        concurrent_payload = json.loads(concurrent_path.read_text(encoding="utf-8"))
+        assert "writer" in concurrent_payload and "payload" in concurrent_payload
 
     print("P1_RECOVERY_SMOKE_OK")
     return 0

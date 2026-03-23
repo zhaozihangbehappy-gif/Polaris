@@ -13,12 +13,13 @@ from hardening import (
 
 
 def main() -> int:
-    with tempfile.TemporaryDirectory(prefix="trialogue-p1-anchor-") as tmp_dir:
+    with tempfile.TemporaryDirectory(prefix="trialogue-p1-anchor-", dir="/tmp") as tmp_dir:
         tmp = Path(tmp_dir)
         chain_dir = tmp / "summary-chain"
         anchor_dir = tmp / "anchor"
         key_path = tmp / "anchor.key"
         key_path.write_text("test-anchor-key", encoding="utf-8")
+        key_path.chmod(0o600)
 
         record1 = {
             "timestamp": "2026-03-23T00:00:00Z",
@@ -102,6 +103,13 @@ def main() -> int:
         )
         assert concurrent_result["ok"] is True
         assert concurrent_result["checked"] == 12
+
+        insecure_key = tmp / "anchor-insecure.key"
+        insecure_key.write_text("test-anchor-key", encoding="utf-8")
+        insecure_key.chmod(0o644)
+        insecure_status = export_anchor_bundle(str(anchor_dir), str(insecure_key), chain1, policy="async")
+        assert insecure_status["status"] == "failed"
+        assert "insecure permissions" in insecure_status["reason"]
 
     print("P1_ANCHOR_SMOKE_OK")
     return 0
