@@ -694,13 +694,19 @@ def main():
         "claude_resume_original_session_id": claude_resume_original_session_id,
         "claude_resume_original_exit_code": claude_resume_original_exit_code,
     }
+    conf_path = env("_L_CONF_PATH")
     audit_log = env("_L_AUDIT_LOG")
-    room_id = env("_L_ROOM_ID", "") or f"room-{target}"
-    anchor_policy = env("TRIALOGUE_EXTERNAL_AUDIT_ANCHOR", "disabled")
-    summary_chain_dir = env("TRIALOGUE_SUMMARY_CHAIN_DIR", "") or os.path.join(os.path.dirname(audit_log), "summary-chain")
-    anchor_dir = env("TRIALOGUE_ANCHOR_DIR", "") or os.path.join(os.path.dirname(audit_log), "anchor")
-    anchor_key_path = env("TRIALOGUE_ANCHOR_KEY_PATH", "") or os.path.join(os.path.dirname(audit_log), "anchor.key")
+    room_id = env("_L_ROOM_ID", "") or env("TRIALOGUE_ROOM_ID", "") or f"room-{target}"
+    if not conf_path:
+        if target == "claude":
+            conf_path = "/tmp/trialogue-claude-runner.conf"
+        elif target == "codex":
+            conf_path = "/tmp/trialogue-codex-runner.conf"
     hardening_settings = load_hardening_settings(conf_path)
+    anchor_policy = env("TRIALOGUE_EXTERNAL_AUDIT_ANCHOR", hardening_settings.external_audit_anchor)
+    summary_chain_dir = hardening_settings.summary_chain_dir
+    anchor_dir = hardening_settings.anchor_dir
+    anchor_key_path = hardening_settings.anchor_key_path
     summary_chain = append_summary_chain(
         summary_chain_dir,
         audit_record,

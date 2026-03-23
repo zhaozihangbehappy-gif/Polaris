@@ -2,9 +2,21 @@
   "block_wrappers": [
     "MEMORY-CONTEXT",
     "MEETING-CONTEXT",
-    "TARGET-CONTEXT"
+    "TARGET-CONTEXT",
+    "SYSTEM-PROMPT",
+    "SYSTEM-MESSAGE",
+    "ASSISTANT-PROMPT"
   ],
   "single_line_headers": [
     "TRIALOGUE-AUDIT"
+  ],
+  "llm_format_patterns": [
+    "^<\\|system\\|>\\s*\\n[\\s\\S]*?\\n\\s*<\\|end\\|>\\s*$",
+    "^<<SYS>>\\s*\\n[\\s\\S]*?\\n\\s*<</SYS>>\\s*$",
+    "^\\[INST\\]\\s*<<SYS>>[\\s\\S]*?<</SYS>>\\s*\\[/INST\\]\\s*$",
+    "^<system_message>\\s*\\n[\\s\\S]*?\\n\\s*</system_message>\\s*$",
+    "^```system\\n[\\s\\S]*?```\\s*$",
+    "^\\[system\\]\\(#[^)]*\\)\\s*$",
+    "^###\\s*System:\\s*.*$"
   ]
 }

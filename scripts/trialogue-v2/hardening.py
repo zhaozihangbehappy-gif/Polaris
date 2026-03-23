@@ -25,9 +25,21 @@ DEFAULT_SANITIZER_PATTERNS = {
         "MEMORY-CONTEXT",
         "MEETING-CONTEXT",
         "TARGET-CONTEXT",
+        "SYSTEM-PROMPT",
+        "SYSTEM-MESSAGE",
+        "ASSISTANT-PROMPT",
     ],
     "single_line_headers": [
         "TRIALOGUE-AUDIT",
+    ],
+    "llm_format_patterns": [
+        r"^<\|system\|>\s*\n[\s\S]*?\n\s*<\|end\|>\s*$",
+        r"^<<SYS>>\s*\n[\s\S]*?\n\s*<</SYS>>\s*$",
+        r"^\[INST\]\s*<<SYS>>[\s\S]*?<</SYS>>\s*\[/INST\]\s*$",
+        r"^<system_message>\s*\n[\s\S]*?\n\s*</system_message>\s*$",
+        r"^```system\n[\s\S]*?```\s*$",
+        r"^\[system\]\(#[^)]*\)\s*$",
+        r"^###\s*System:\s*.*$",
     ],
 }
 
@@ -64,6 +76,16 @@ ETC_WRITE_RE = re.compile(
     re.IGNORECASE,
 )
 BLOCK_TAG_TEMPLATE = r"\[(?P<close>/)?(?P<name>{names})(?=[\s\]])(?P<attrs>[\s\S]*?)\]"
+
+# Unicode characters that can be used to bypass text-based sanitizer patterns.
+# Includes: zero-width space, zero-width non-joiner, zero-width joiner,
+# word joiner, zero-width no-break space (BOM), left-to-right/right-to-left
+# marks and overrides, soft hyphen, combining grapheme joiner.
+_INVISIBLE_UNICODE_RE = re.compile(
+    "[\u200b\u200c\u200d\u2060\ufeff\u200e\u200f\u202a\u202b\u202c\u202d\u202e"
+    "\u2066\u2067\u2068\u2069\u00ad\u034f\u061c\u115f\u1160\u17b4\u17b5"
+    "\u180b\u180c\u180d\u180e\uffa0\ufe00-\ufe0f]"
+)
 
 
 def load_conf_map(conf_path: str) -> dict[str, str]:
@@ -253,9 +275,11 @@ def load_sanitizer_patterns(path: str) -> dict[str, Any]:
     payload = _load_json(path, DEFAULT_SANITIZER_PATTERNS)
     block_wrappers = payload.get("block_wrappers") or []
     single_line_headers = payload.get("single_line_headers") or []
+    llm_format_patterns = payload.get("llm_format_patterns") or []
     return {
         "block_wrappers": [str(x).strip() for x in block_wrappers if str(x).strip()],
         "single_line_headers": [str(x).strip() for x in single_line_headers if str(x).strip()],
+        "llm_format_patterns": [str(x).strip() for x in llm_format_patterns if str(x).strip()],
     }
 
 
@@ -287,6 +311,12 @@ def _sanitize_text_once(text: str, patterns: dict[str, Any]) -> tuple[str, int, 
     updated = text or ""
     modifications = 0
     removed: list[str] = []
+    # Strip invisible Unicode characters first so they cannot break tag matching.
+    stripped = _INVISIBLE_UNICODE_RE.sub("", updated)
+    if stripped != updated:
+        modifications += 1
+        removed.append("INVISIBLE_UNICODE")
+        updated = stripped
     block_wrappers = [wrapper for wrapper in patterns.get("block_wrappers", []) if wrapper]
     if block_wrappers:
         names_expr = "|".join(re.escape(wrapper) for wrapper in block_wrappers)
@@ -336,6 +366,16 @@ def _sanitize_text_once(text: str, patterns: dict[str, Any]) -> tuple[str, int, 
                 cursor = end
             parts.append(updated[cursor:])
             updated = "".join(parts)
+    # Strip known LLM prompt injection formats (non-bracket)
+    for fmt_re in patterns.get("llm_format_patterns", []):
+        try:
+            expr = re.compile(fmt_re, re.IGNORECASE | re.DOTALL | re.MULTILINE)
+            updated, count = expr.subn("", updated)
+            if count:
+                modifications += count
+                removed.extend(["LLM_FORMAT"] * count)
+        except re.error:
+            pass
     for wrapper in patterns.get("single_line_headers", []):
         expr = re.compile(rf"^\[{re.escape(wrapper)}[^\]]*\]\s*$", re.IGNORECASE | re.MULTILINE)
         updated, count = expr.subn("", updated)
@@ -793,6 +833,7 @@ def atomic_write_json(path: str, payload: dict[str, Any]) -> None:
     fd, tmp_path = tempfile.mkstemp(prefix=f".{Path(path).name}.", suffix=".tmp", dir=parent, text=True)
     try:
         with os.fdopen(fd, "w", encoding="utf-8") as f:
+            os.fchmod(f.fileno(), 0o660)
             json.dump(payload, f, ensure_ascii=False, indent=2)
             f.flush()
             os.fsync(f.fileno())
@@ -822,6 +863,10 @@ def read_json_file(path: str, default: dict[str, Any] | None = None) -> dict[str
 def append_jsonl(path: str, payload: dict[str, Any]) -> None:
     ensure_parent_dir(path)
     with open(path, "a", encoding="utf-8") as f:
+        try:
+            os.fchmod(f.fileno(), 0o660)
+        except OSError:
+            pass
         fcntl.flock(f.fileno(), fcntl.LOCK_EX)
         f.write(json.dumps(payload, ensure_ascii=False) + "\n")
         f.flush()
@@ -1020,6 +1065,7 @@ def _rewrite_jsonl(path: str, records: list[dict[str, Any]]) -> None:
     fd, tmp_path = tempfile.mkstemp(prefix=f".{Path(path).name}.", suffix=".tmp", dir=parent, text=True)
     try:
         with os.fdopen(fd, "w", encoding="utf-8") as f:
+            os.fchmod(f.fileno(), 0o660)
             for payload in records:
                 f.write(json.dumps(payload, ensure_ascii=False) + "\n")
             f.flush()

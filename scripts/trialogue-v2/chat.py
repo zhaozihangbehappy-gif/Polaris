@@ -332,6 +332,19 @@ def resolve_agent_target_info(target, target_info, conf_path):
     return resolved
 
 
+def prepare_shared_meta_file():
+    shared_meta_dir = os.environ.get("TRIALOGUE_SHARED_META_DIR", DEFAULT_SHARED_META_DIR)
+    os.makedirs(shared_meta_dir, exist_ok=True)
+    try:
+        os.chmod(shared_meta_dir, 0o2770)
+    except PermissionError:
+        pass
+    meta_fd, meta_path = tempfile.mkstemp(prefix="trialogue-meta-", suffix=".json", dir=shared_meta_dir)
+    os.close(meta_fd)
+    os.chmod(meta_path, 0o660)
+    return shared_meta_dir, meta_path
+
+
 def call_launcher(
     launcher_path,
     conf_path,
@@ -353,12 +366,7 @@ def call_launcher(
     launcher --meta-file = JSON 元数据写入临时文件
     """
     # 创建元数据临时文件
-    shared_meta_dir = os.environ.get("TRIALOGUE_SHARED_META_DIR", DEFAULT_SHARED_META_DIR)
-    os.makedirs(shared_meta_dir, exist_ok=True)
-    os.chmod(shared_meta_dir, 0o777)
-    meta_fd, meta_path = tempfile.mkstemp(prefix="trialogue-meta-", suffix=".json", dir=shared_meta_dir)
-    os.close(meta_fd)
-    os.chmod(meta_path, 0o666)
+    _, meta_path = prepare_shared_meta_file()
 
     cmd = [
         "/bin/bash", "--noprofile", "--norc",
@@ -471,12 +479,8 @@ def call_launcher_stream(
     """
     shared_meta_dir = os.environ.get("TRIALOGUE_SHARED_META_DIR", DEFAULT_SHARED_META_DIR)
     private_tmp_dir = os.environ.get("TRIALOGUE_PRIVATE_TMP_DIR", shared_meta_dir)
-    os.makedirs(shared_meta_dir, exist_ok=True)
     os.makedirs(private_tmp_dir, exist_ok=True)
-    os.chmod(shared_meta_dir, 0o777)
-    meta_fd, meta_path = tempfile.mkstemp(prefix="trialogue-meta-", suffix=".json", dir=shared_meta_dir)
-    os.close(meta_fd)
-    os.chmod(meta_path, 0o666)
+    _, meta_path = prepare_shared_meta_file()
     stdout_fd, stdout_path = tempfile.mkstemp(prefix="trialogue-stdout-", suffix=".txt", dir=private_tmp_dir)
     os.close(stdout_fd)
 

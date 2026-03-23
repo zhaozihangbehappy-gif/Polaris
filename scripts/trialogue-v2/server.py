@@ -305,7 +305,27 @@ class TrialogueState:
         self.last_rid = payload.get("last_rid", "") or ""
         persisted_remote_anchor = dict(payload.get("remote_anchor") or {})
         merged_remote_anchor = copy.deepcopy(self.remote_anchor)
-        merged_remote_anchor.update(persisted_remote_anchor)
+        for key, value in persisted_remote_anchor.items():
+            if key == "policy":
+                continue
+            merged_remote_anchor[key] = value
+        if persisted_remote_anchor.get("policy") != self.hardening.remote_anchor_publish:
+            merged_remote_anchor["state"] = "disabled" if self.hardening.remote_anchor_publish == "disabled" else "healthy"
+            merged_remote_anchor["last_status"] = "disabled" if self.hardening.remote_anchor_publish == "disabled" else "startup-only"
+            merged_remote_anchor["last_reason"] = ""
+            merged_remote_anchor["consecutive_unanchored"] = 0
+            merged_remote_anchor["verify_status"] = "disabled" if self.hardening.remote_anchor_publish == "disabled" else "startup-pending"
+            merged_remote_anchor["verify_reason"] = ""
+            merged_remote_anchor["verify_checked_local"] = 0
+            merged_remote_anchor["verify_checked_remote"] = 0
+            merged_remote_anchor["verify_last_sequence"] = None
+            merged_remote_anchor["verify_last_trigger"] = ""
+            merged_remote_anchor["verify_last_checked_at"] = ""
+            merged_remote_anchor["verify_turn_counter"] = 0
+            merged_remote_anchor["verify_last_turn"] = 0
+            merged_remote_anchor["recovery_publish_ready"] = False
+            merged_remote_anchor["recovery_verify_ready"] = False
+            merged_remote_anchor["verifier_running"] = False
         self.remote_anchor = merged_remote_anchor
         self.degraded_features = copy.deepcopy(payload.get("degraded_features") or {})
         self.system_events = copy.deepcopy(payload.get("system_events") or [])
@@ -1476,6 +1496,8 @@ class TrialogueState:
                         self.current_claude_session = resolved
                 elif target == "codex" and meta.get("session_id"):
                     self.latest_codex_session = meta["session_id"]
+            if meta.get("remote_anchor_policy") or meta.get("remote_anchor_status"):
+                self._update_remote_anchor_state(meta)
             self._persist_room_state()
             self.broadcast()
 
