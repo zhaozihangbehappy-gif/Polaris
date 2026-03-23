@@ -270,12 +270,7 @@ def build_meeting_context(entries, wrapped_message, since_index=0):
     if not lines:
         return wrapped_message, next_cursor, mode, sanitizer_meta
 
-    body_parts = []
-    if sanitizer_meta["notice"]:
-        body_parts.append(sanitizer_meta["notice"])
-    body_parts.append(MEETING_CONTEXT_NOTICE)
-    body_parts.extend(lines)
-    body = "\n".join(body_parts)
+    body = "\n".join([MEETING_CONTEXT_NOTICE, *lines])
     body_sha256 = hashlib.sha256(body.encode("utf-8")).hexdigest()
     header = (
         f"[MEETING-CONTEXT readonly=true untrusted=true semantic=peer-transcript"

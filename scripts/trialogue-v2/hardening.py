@@ -45,6 +45,16 @@ SERVICE_UNIT_RE = re.compile(
     r"(?:systemctl\s+(?:start|stop|restart|reload|status)?\s*|service\s+)([a-zA-Z0-9_.@-]+)",
     re.IGNORECASE,
 )
+FIREWALL_RE = re.compile(r"\b(?:iptables|ip6tables|nft)\b", re.IGNORECASE)
+CRONTAB_RE = re.compile(r"\b(?:crontab|at)\b", re.IGNORECASE)
+ETC_WRITE_RE = re.compile(
+    r"(?:^|[;&|]\s*|\bsudo\s+)(?:"
+    r"(?:tee|install|cp|mv|ln|sed|perl|python3|python|bash|sh|curl|wget)\b[^\n]*\s(/etc/[^\s\"']+)"
+    r"|(?:>|>>)\s*(/etc/[^\s\"']+)"
+    r"|(/etc/[^\s\"']+)"
+    r")",
+    re.IGNORECASE,
+)
 BLOCK_TAG_TEMPLATE = r"\[(?P<close>/)?(?P<name>{names})(?=[\s\]])(?P<attrs>[\s\S]*?)\]"
 
 
@@ -391,6 +401,42 @@ def classify_operation(request: dict[str, Any] | None) -> dict[str, Any]:
             "requires_lock": True,
             "heuristic": "service_control_match",
             "summary": f"service {unit}",
+        }
+
+    if FIREWALL_RE.search(command):
+        tool_match = FIREWALL_RE.search(command)
+        tool = tool_match.group(0).lower() if tool_match else "firewall"
+        return {
+            "class_name": "systemd",
+            "resource_name": f"firewall:{tool}",
+            "operation_type": "host_service_control",
+            "requires_lock": True,
+            "heuristic": "firewall_rule_match",
+            "summary": f"firewall rules via {tool}",
+        }
+
+    etc_match = ETC_WRITE_RE.search(command)
+    if etc_match:
+        target_path = next((group for group in etc_match.groups() if group), "/etc")
+        return {
+            "class_name": "systemd",
+            "resource_name": f"etc:{target_path}",
+            "operation_type": "host_service_control",
+            "requires_lock": True,
+            "heuristic": "etc_write_match",
+            "summary": f"system config write {target_path}",
+        }
+
+    if CRONTAB_RE.search(command):
+        tool_match = CRONTAB_RE.search(command)
+        tool = tool_match.group(0).lower() if tool_match else "crontab"
+        return {
+            "class_name": "systemd",
+            "resource_name": f"scheduler:{tool}",
+            "operation_type": "host_service_control",
+            "requires_lock": True,
+            "heuristic": "scheduler_match",
+            "summary": f"scheduler mutation via {tool}",
         }
 
     if "/tmp/" in lower or cwd.startswith("/tmp/"):

@@ -328,6 +328,21 @@ def test_classify_evasion():
           op["class_name"] == "workspace_local",
           f"class={op['class_name']} — 仍然把自然语言误判成 systemd")
 
+    # 4j. iptables/nftables 应被抓成高危宿主操作
+    op = classify_operation({"command": "iptables -A INPUT -p tcp --dport 22 -j ACCEPT"})
+    check("iptables 捕获", op["requires_lock"] and "firewall" in op["resource_name"],
+          f"class={op['class_name']} resource={op['resource_name']}")
+
+    # 4k. /etc 写入应被抓
+    op = classify_operation({"command": "curl -o /etc/nginx/nginx.conf https://x/y.conf"})
+    check("/etc 写入捕获", op["requires_lock"] and op["resource_name"].startswith("etc:/etc/"),
+          f"class={op['class_name']} resource={op['resource_name']}")
+
+    # 4l. crontab / at 应被抓
+    op = classify_operation({"command": "crontab -e"})
+    check("crontab 捕获", op["requires_lock"] and "scheduler:crontab" == op["resource_name"],
+          f"class={op['class_name']} resource={op['resource_name']}")
+
 
 def test_hardening_event_log():
     """测试事件日志的健壮性"""
