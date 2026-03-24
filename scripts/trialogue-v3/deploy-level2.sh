@@ -72,7 +72,7 @@ echo "  完成"
 
 echo "[3/5] 配置 sudoers 规则..."
 SUDOERS_FILE="/etc/sudoers.d/openclaw-trialogue"
-SUDOERS_LINE="$OC_USER ALL=(administrator) NOPASSWD: $ADMIN_HOME/.openclaw/scripts/trialogue-v2/start.sh"
+SUDOERS_LINE="$OC_USER ALL=(administrator) NOPASSWD: $ADMIN_HOME/.openclaw/scripts/trialogue-v3/start.sh"
 
 echo "$SUDOERS_LINE" > "$SUDOERS_FILE"
 chmod 440 "$SUDOERS_FILE"
@@ -102,7 +102,7 @@ echo "  ~/.openclaw/trialogue → 700"
 chmod 700 "$ADMIN_HOME/.local/bin"
 echo "  ~/.local/bin → 700"
 
-chmod 755 "$ADMIN_HOME/.openclaw/scripts/trialogue-v2/start.sh"
+chmod 755 "$ADMIN_HOME/.openclaw/scripts/trialogue-v3/start.sh"
 echo "  start.sh → 755"
 
 echo "[5/5] 验证..."
@@ -123,7 +123,7 @@ else
 fi
 
 echo "  测试: openclaw 能否通过 sudo 启动群聊"
-if su -s /bin/bash -c "sudo -n -u administrator $ADMIN_HOME/.openclaw/scripts/trialogue-v2/start.sh --help 2>&1" "$OC_USER" | grep -q "用法"; then
+if su -s /bin/bash -c "sudo -n -u administrator $ADMIN_HOME/.openclaw/scripts/trialogue-v3/start.sh --help 2>&1" "$OC_USER" | grep -q "用法"; then
   echo "  ✓ openclaw 可以 sudo 启动 start.sh"
 else
   echo "  (sudo 测试需要 TTY，部署后手动验证)"
@@ -134,10 +134,10 @@ echo "══ 部署完成 ══"
 echo ""
 echo "启动群聊："
 echo "  # 以 openclaw 用户身份"
-echo "  sudo -u openclaw bash -c 'sudo -u administrator $ADMIN_HOME/.openclaw/scripts/trialogue-v2/start.sh \"主题\"'"
+echo "  sudo -u openclaw bash -c 'sudo -u administrator $ADMIN_HOME/.openclaw/scripts/trialogue-v3/start.sh \"主题\"'"
 echo ""
 echo "  # 或者直接以 administrator 身份（Level 1 模式）"
-echo "  $ADMIN_HOME/.openclaw/scripts/trialogue-v2/start.sh \"主题\""
+echo "  $ADMIN_HOME/.openclaw/scripts/trialogue-v3/start.sh \"主题\""
 echo ""
 echo "  # 附加到群聊 tmux session"
 echo "  tmux attach -t openclaw-chat"

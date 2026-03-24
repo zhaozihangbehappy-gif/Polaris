@@ -5,7 +5,7 @@ set -euo pipefail
 
 RID="${1:-}"
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-CONF="${SCRIPT_DIR}/trialogue-v2.conf"
+CONF="${SCRIPT_DIR}/trialogue-v3.conf"
 
 if [[ -z "$RID" ]]; then
   echo "用法: $0 <rid>" >&2

@@ -270,7 +270,7 @@ def test_broker_only_recheck():
     # recheck 结果通过 env vars 传给 launcher → _audit.py
     # 不应出现在 agent 的 --message 里
     # 检查 chat.py 里 version_meta 只通过 env vars 传递
-    chat_py = Path("/home/administrator/.openclaw/workspace/scripts/trialogue-v2/chat.py")
+    chat_py = Path("/home/administrator/.openclaw/workspace/scripts/trialogue-v3/chat.py")
     src = chat_py.read_text(encoding="utf-8")
 
     # 找 call_launcher 和 call_launcher_stream 函数

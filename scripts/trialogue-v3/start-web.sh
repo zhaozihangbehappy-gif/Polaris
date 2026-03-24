@@ -6,7 +6,7 @@ set -euo pipefail
 TOPIC="${1:?用法: start-web.sh <主题> [端口]}"
 PORT="${2:-8765}"
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-CONF="${SCRIPT_DIR}/trialogue-v2.conf"
+CONF="${SCRIPT_DIR}/trialogue-v3.conf"
 SESSION_NAME="openclaw-chat-web"
 DEFAULT_WORKDIR="/home/administrator/trialogue"
 if [[ -d "$DEFAULT_WORKDIR" ]]; then

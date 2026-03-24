@@ -94,7 +94,7 @@ def _free_port() -> int:
 
 
 def _write_conf(root: Path, publish_mode: str, publish_url: str) -> Path:
-    conf = root / "trialogue-v2.conf"
+    conf = root / "trialogue-v3.conf"
     conf.write_text(
         "\n".join(
             [

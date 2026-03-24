@@ -190,10 +190,10 @@ def test_w5_live_config():
     print("\n═══ A-W5. W5 新增包装器 — live 配置路径 ═══")
 
     # 从 live broker 进程实际使用的 conf 出发
-    # (server.py --conf /home/administrator/trialogue/bin/trialogue-v2.conf)
-    live_conf = "/home/administrator/trialogue/bin/trialogue-v2.conf"
+    # (server.py --conf /home/administrator/trialogue/bin/trialogue-v3.conf)
+    live_conf = "/home/administrator/trialogue/bin/trialogue-v3.conf"
     if not os.path.isfile(live_conf):
-        check("live trialogue-v2.conf 存在", False, f"文件不存在: {live_conf}")
+        check("live trialogue-v3.conf 存在", False, f"文件不存在: {live_conf}")
         return
 
     settings = load_hardening_settings(live_conf)

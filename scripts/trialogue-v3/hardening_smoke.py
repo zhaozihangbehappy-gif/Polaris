@@ -16,7 +16,7 @@ from hardening import (
 
 
 def make_conf(tmp: Path, *, sanitizer="strict", version_gate="warn", locks="enabled") -> Path:
-    conf = tmp / "trialogue-v2.conf"
+    conf = tmp / "trialogue-v3.conf"
     conf.write_text(
         "\n".join(
             [

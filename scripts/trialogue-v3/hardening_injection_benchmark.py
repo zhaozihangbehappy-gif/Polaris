@@ -258,11 +258,11 @@ def run_benchmark():
     """运行完整 benchmark 并输出指标。"""
 
     # 加载 live broker 配置
-    live_conf = "/home/administrator/trialogue/bin/trialogue-v2.conf"
+    live_conf = "/home/administrator/trialogue/bin/trialogue-v3.conf"
     if not os.path.isfile(live_conf):
         print(f"SKIP: live conf not found at {live_conf}")
         # 回退到源码树
-        live_conf = os.path.join(os.path.dirname(os.path.abspath(__file__)), "trialogue-v2.conf.example")
+        live_conf = os.path.join(os.path.dirname(os.path.abspath(__file__)), "trialogue-v3.conf.example")
         if not os.path.isfile(live_conf):
             print("FATAL: no conf file available")
             return 1

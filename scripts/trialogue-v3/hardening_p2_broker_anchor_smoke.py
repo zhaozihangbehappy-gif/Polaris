@@ -10,7 +10,7 @@ from server import TrialogueState
 
 
 def _write_conf(root: Path) -> Path:
-    conf = root / "trialogue-v2.conf"
+    conf = root / "trialogue-v3.conf"
     conf.write_text(
         "\n".join(
             [

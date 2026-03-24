@@ -23,7 +23,7 @@ def _find_free_port() -> int:
 def _write_conf(root: Path) -> Path:
     state_root = root / "state"
     audit_root = root / "audit"
-    conf = root / "trialogue-v2.conf"
+    conf = root / "trialogue-v3.conf"
     conf.write_text(
         "\n".join(
             [

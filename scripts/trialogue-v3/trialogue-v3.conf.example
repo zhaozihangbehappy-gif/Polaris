@@ -1,6 +1,6 @@
 # Trialogue v2 配置文件模板
 # 所有路径必须是绝对路径，不依赖 PATH 或 command -v
-# 复制为 scripts/trialogue-v2/trialogue-v2.conf 后按本机环境修改
+# 复制为 scripts/trialogue-v3/trialogue-v3.conf 后按本机环境修改
 
 # 二进制绝对路径
 CLAUDE_BIN=/home/administrator/.local/bin/claude
@@ -47,10 +47,10 @@ BROKER_ROOM_STATE_DIR=/home/administrator/.openclaw/workspace/state/broker-rooms
 
 # P0 hardening
 HARDENING_TRANSCRIPT_SANITIZER=strict
-HARDENING_SANITIZER_PATTERNS=/home/administrator/.openclaw/workspace/scripts/trialogue-v2/sanitizer-patterns.json
+HARDENING_SANITIZER_PATTERNS=/home/administrator/.openclaw/workspace/scripts/trialogue-v3/sanitizer-patterns.json
 HARDENING_VERSION_GATE=warn
 HARDENING_VERSION_GATE_RECHECK=warn
-HARDENING_VERSION_ALLOWLIST=/home/administrator/.openclaw/workspace/scripts/trialogue-v2/runner-version-allowlist.json
+HARDENING_VERSION_ALLOWLIST=/home/administrator/.openclaw/workspace/scripts/trialogue-v3/runner-version-allowlist.json
 HARDENING_OPERATION_LOCKS=enabled
 HARDENING_LOCK_TIMEOUT_SEC=30
 HARDENING_VERSION_RECHECK_FAST_INTERVAL_SEC=10

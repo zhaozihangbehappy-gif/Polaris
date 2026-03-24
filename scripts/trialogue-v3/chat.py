@@ -618,7 +618,7 @@ def main():
     parser = argparse.ArgumentParser(description="Trialogue v2 群聊")
     parser.add_argument("--topic", required=True, help="会议主题")
     parser.add_argument("--launcher", required=True, help="launcher.sh 绝对路径")
-    parser.add_argument("--conf", required=True, help="trialogue-v2.conf 绝对路径")
+    parser.add_argument("--conf", required=True, help="trialogue-v3.conf 绝对路径")
     args = parser.parse_args()
     codex_runner_enabled = has_external_codex_runner(args.conf)
     hardening = load_hardening_settings(args.conf)

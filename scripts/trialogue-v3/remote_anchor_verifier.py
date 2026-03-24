@@ -9,7 +9,7 @@ from hardening import load_hardening_settings, verify_remote_anchor
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="Verify Trialogue remote anchor state for one room.")
-    parser.add_argument("--conf", required=True, help="Path to trialogue-v2.conf")
+    parser.add_argument("--conf", required=True, help="Path to trialogue-v3.conf")
     parser.add_argument("--room-id", required=True, help="Room id to verify")
     parser.add_argument("--expected-backlog", type=int, default=0, help="Expected unpublished suffix count")
     args = parser.parse_args()
