@@ -1,0 +1,277 @@
+#!/usr/bin/env python3
+"""tsan — Trialogue Sanitizer CLI
+
+Zero-dependency single-file tool for stripping structural prompt injection
+from text. Operates on stdin/stdout or files.
+
+Exit codes:
+  0 = no modifications
+  1 = modifications made (strict/permissive mode)
+  2 = error
+"""
+from __future__ import annotations
+
+import argparse
+import json
+import re
+import sys
+from typing import Any
+
+# ── Sanitizer patterns (inlined from hardening.py) ──────────────────────────
+
+DEFAULT_SANITIZER_PATTERNS: dict[str, Any] = {
+    "block_wrappers": [
+        "MEMORY-CONTEXT",
+        "MEETING-CONTEXT",
+        "TARGET-CONTEXT",
+        "SYSTEM-PROMPT",
+        "SYSTEM-MESSAGE",
+        "ASSISTANT-PROMPT",
+    ],
+    "single_line_headers": [
+        "TRIALOGUE-AUDIT",
+    ],
+    "llm_format_patterns": [
+        r"^<\|system\|>\s*\n[\s\S]*?\n\s*<\|end\|>\s*$",
+        r"^<<SYS>>\s*\n[\s\S]*?\n\s*<</SYS>>\s*$",
+        r"^\[INST\]\s*<<SYS>>[\s\S]*?<</SYS>>\s*\[/INST\]\s*$",
+        r"^<system_message>\s*\n[\s\S]*?\n\s*</system_message>\s*$",
+        r"^```system\n[\s\S]*?```\s*$",
+        r"^\[system\]\(#[^)]*\)\s*$",
+        r"^###\s*System:\s*.*$",
+    ],
+}
+
+BLOCK_TAG_TEMPLATE = r"\[(?P<close>/)?(?P<name>{names})(?=[\s\]])(?P<attrs>[\s\S]*?)\]"
+
+_INVISIBLE_UNICODE_RE = re.compile(
+    "[\u200b\u200c\u200d\u2060\ufeff\u200e\u200f\u202a\u202b\u202c\u202d\u202e"
+    "\u2066\u2067\u2068\u2069\u00ad\u034f\u061c\u115f\u1160\u17b4\u17b5"
+    "\u180b\u180c\u180d\u180e\uffa0\ufe00-\ufe0f]"
+)
+
+
+# ── Core sanitization (inlined from hardening.py:310) ───────────────────────
+
+def _sanitize_text_once(
+    text: str, patterns: dict[str, Any]
+) -> tuple[str, int, list[str]]:
+    updated = text or ""
+    modifications = 0
+    removed: list[str] = []
+
+    # Strip invisible Unicode characters first so they cannot break tag matching.
+    stripped = _INVISIBLE_UNICODE_RE.sub("", updated)
+    if stripped != updated:
+        modifications += 1
+        removed.append("INVISIBLE_UNICODE")
+        updated = stripped
+
+    block_wrappers = [w for w in patterns.get("block_wrappers", []) if w]
+    if block_wrappers:
+        names_expr = "|".join(re.escape(w) for w in block_wrappers)
+        token_re = re.compile(
+            BLOCK_TAG_TEMPLATE.format(names=names_expr), re.IGNORECASE
+        )
+        stack: list[tuple[str, int]] = []
+        spans: list[tuple[int, int]] = []
+        for match in token_re.finditer(updated):
+            name = (match.group("name") or "").upper()
+            is_close = bool(match.group("close"))
+            if not is_close:
+                stack.append((name, match.start()))
+                continue
+            close_end = match.end()
+            if not stack:
+                spans.append((match.start(), close_end))
+                modifications += 1
+                removed.append(name)
+                continue
+            same_index = next(
+                (
+                    idx
+                    for idx in range(len(stack) - 1, -1, -1)
+                    if stack[idx][0] == name
+                ),
+                -1,
+            )
+            if same_index >= 0:
+                open_name, open_start = stack[same_index]
+                spans.append((open_start, close_end))
+                removed.extend(item_name for item_name, _ in stack[same_index:])
+                removed.append(name)
+                modifications += 1
+                stack = stack[:same_index]
+            else:
+                spans.append((match.start(), close_end))
+                modifications += 1
+                removed.append(name)
+        for open_name, open_start in stack:
+            spans.append((open_start, len(updated)))
+            modifications += 1
+            removed.append(open_name)
+        if spans:
+            spans.sort()
+            merged: list[tuple[int, int]] = []
+            for start, end in spans:
+                if not merged or start > merged[-1][1]:
+                    merged.append((start, end))
+                else:
+                    merged[-1] = (merged[-1][0], max(merged[-1][1], end))
+            parts: list[str] = []
+            cursor = 0
+            for start, end in merged:
+                parts.append(updated[cursor:start])
+                cursor = end
+            parts.append(updated[cursor:])
+            updated = "".join(parts)
+
+    # Strip known LLM prompt injection formats (non-bracket)
+    for fmt_re in patterns.get("llm_format_patterns", []):
+        try:
+            expr = re.compile(fmt_re, re.IGNORECASE | re.DOTALL | re.MULTILINE)
+            updated, count = expr.subn("", updated)
+            if count:
+                modifications += count
+                removed.extend(["LLM_FORMAT"] * count)
+        except re.error:
+            pass
+
+    for wrapper in patterns.get("single_line_headers", []):
+        expr = re.compile(
+            rf"^\[{re.escape(wrapper)}[^\]]*\]\s*$", re.IGNORECASE | re.MULTILINE
+        )
+        updated, count = expr.subn("", updated)
+        if count:
+            modifications += count
+            removed.extend([wrapper] * count)
+
+    updated = re.sub(r"\n{3,}", "\n\n", updated).strip()
+    return updated, modifications, removed
+
+
+# ── Pattern loading ─────────────────────────────────────────────────────────
+
+def load_sanitizer_patterns(path: str) -> dict[str, Any]:
+    """Load patterns from a JSON file, falling back to defaults."""
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            payload = json.load(f)
+    except (FileNotFoundError, json.JSONDecodeError, OSError):
+        return dict(DEFAULT_SANITIZER_PATTERNS)
+    block_wrappers = payload.get("block_wrappers") or []
+    single_line_headers = payload.get("single_line_headers") or []
+    llm_format_patterns = payload.get("llm_format_patterns") or []
+    return {
+        "block_wrappers": [str(x).strip() for x in block_wrappers if str(x).strip()],
+        "single_line_headers": [
+            str(x).strip() for x in single_line_headers if str(x).strip()
+        ],
+        "llm_format_patterns": [
+            str(x).strip() for x in llm_format_patterns if str(x).strip()
+        ],
+    }
+
+
+# ── CLI ─────────────────────────────────────────────────────────────────────
+
+def main() -> int:
+    parser = argparse.ArgumentParser(
+        prog="tsan",
+        description="Trialogue Sanitizer — strip structural prompt injection from text",
+    )
+    parser.add_argument(
+        "--file", "-f", metavar="PATH", help="Read input from file instead of stdin"
+    )
+    parser.add_argument(
+        "--mode",
+        choices=["strict", "permissive", "report"],
+        default="strict",
+        help="strict=detect+remove (default), permissive=detect+keep+mark, report=report only",
+    )
+    parser.add_argument(
+        "--json", dest="json_output", action="store_true", help="Output as JSON"
+    )
+    parser.add_argument(
+        "--patterns", metavar="PATH", help="Path to custom sanitizer-patterns.json"
+    )
+    args = parser.parse_args()
+
+    # Load input
+    try:
+        if args.file:
+            with open(args.file, "r", encoding="utf-8", errors="replace") as f:
+                text = f.read()
+        else:
+            text = sys.stdin.read()
+    except OSError as e:
+        print(f"tsan: error reading input: {e}", file=sys.stderr)
+        return 2
+
+    # Load patterns
+    if args.patterns:
+        patterns = load_sanitizer_patterns(args.patterns)
+    else:
+        patterns = dict(DEFAULT_SANITIZER_PATTERNS)
+
+    # Sanitize
+    cleaned, modifications, removed = _sanitize_text_once(text, patterns)
+
+    # Output based on mode
+    if args.mode == "report":
+        # Report only, do not modify
+        if args.json_output:
+            result = {
+                "cleaned": text,  # original text unchanged
+                "modifications": modifications,
+                "removed": removed,
+                "mode": "report",
+            }
+            print(json.dumps(result, ensure_ascii=False))
+        else:
+            if modifications > 0:
+                print(
+                    f"tsan: {modifications} modification(s) detected: {removed}",
+                    file=sys.stderr,
+                )
+            sys.stdout.write(text)
+        return 1 if modifications > 0 else 0
+
+    if args.mode == "permissive":
+        # Detect + keep original + mark
+        if args.json_output:
+            result = {
+                "cleaned": text,  # original text preserved
+                "modifications": modifications,
+                "removed": removed,
+                "mode": "permissive",
+            }
+            print(json.dumps(result, ensure_ascii=False))
+        else:
+            if modifications > 0:
+                print(
+                    f"tsan: {modifications} modification(s) detected (permissive, not removed): {removed}",
+                    file=sys.stderr,
+                )
+            sys.stdout.write(text)
+        return 1 if modifications > 0 else 0
+
+    # strict mode (default)
+    if args.json_output:
+        result = {
+            "cleaned": cleaned,
+            "modifications": modifications,
+            "removed": removed,
+            "mode": "strict",
+        }
+        print(json.dumps(result, ensure_ascii=False))
+    else:
+        sys.stdout.write(cleaned)
+        if not cleaned.endswith("\n") and cleaned:
+            sys.stdout.write("\n")
+
+    return 1 if modifications > 0 else 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

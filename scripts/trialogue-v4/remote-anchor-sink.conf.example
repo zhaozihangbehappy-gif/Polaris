@@ -1,0 +1,5 @@
+SINK_HOST=127.0.0.1
+SINK_PORT=8890
+SINK_DB_PATH=/srv/trialogue/remote-anchor/data/anchor.sqlite3
+SINK_PUBLISH_TOKEN_PATH=/srv/trialogue/remote-anchor/tokens/publish.token
+SINK_VERIFY_TOKEN_PATH=/srv/trialogue/remote-anchor/tokens/verify.token

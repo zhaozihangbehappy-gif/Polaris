@@ -82,7 +82,7 @@ This is not an official AgentDojo score. It is an adapted evaluation using the s
 
 ## Adversarial test suite
 
-176 checks across 14 test files, zero failures.
+194 checks across 15 test files, zero failures.
 
 | Suite | Checks | Coverage |
 |-------|--------|----------|
@@ -93,6 +93,7 @@ This is not an official AgentDojo score. It is an adapted evaluation using the s
 | `hardening_p1_recheck_adversarial.py` | 29 | Runtime binary replacement detection, policy coupling, stat short-circuit |
 | `hardening_p1_*.py` (smoke) | 3 files | Anchor export, recovery flow, shared host isolation |
 | `hardening_p2_*.py` | 5 files | Remote sink append/verify, broker state machine, operator recovery |
+| `hardening_protocol_smoke.py` | 18 | 0.116.0 approval types, ReviewDecision enum, schema validation, fake server compliance |
 | `hardening_smoke.py` | — | Fast pre-commit sanity check |
 
 All tests run against live broker configuration path, not source-tree defaults.
@@ -140,7 +141,7 @@ Startup / deploy
 ├── codex-runner.sh            Codex CLI runner wrapper
 ├── codex_app_server_runner.py Codex app server integration
 
-Adversarial tests (14 files)
+Adversarial tests (15 files)
 ├── hardening_smoke.py                    Pre-commit sanity
 ├── hardening_adversarial.py              50 checks: sanitizer, gate, locks, classifier
 ├── hardening_adversarial_r2.py           48 checks: unicode, ReDoS, TOCTOU, deep adversarial
@@ -156,6 +157,8 @@ Adversarial tests (14 files)
 ├── hardening_p2_sink_smoke.py            Sink append/verify
 ├── hardening_p2_verifier_smoke.py        Verifier integration
 ├── hardening_p2_operator_smoke.py        Operator recovery
+├── hardening_protocol_smoke.py          0.116.0 protocol compatibility
+├── fake_codex_app_server.py             Minimal fake Codex CLI for tests
 
 Config / tools
 ├── trialogue-v3.conf.example             Config template
@@ -218,4 +221,5 @@ Detailed technical specifications are maintained in `trialogue-docs/architecture
 
 *Author: Zihang Zhao*
 *Version: v3 (2026-03-24)*
-*Test baseline: 176 adversarial checks + 130 benchmark payloads, zero failures*
+*Test baseline: 194 adversarial checks + 130 benchmark payloads, zero failures*
+*Tested against: Claude Code 2.1.81, Codex CLI 0.116.0 — version gate restores meaningful auditing (warn mode; enforce is an ops decision)*

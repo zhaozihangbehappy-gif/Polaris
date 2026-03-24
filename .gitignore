@@ -30,5 +30,21 @@ Thumbs.db
 # Local ad-hoc debug scripts
 tmp-*.ps1
 
-# Local machine-specific Trialogue v2 config
+# Local machine-specific Trialogue configs
 scripts/trialogue-v2/trialogue-v2.conf
+scripts/trialogue-v4/trialogue-v4.conf
+
+# Trialogue v4 runtime state (audit chains, fake test dirs)
+scripts/trialogue-v4/state/
+scripts/trialogue-v4/fake-*/
+scripts/trialogue-v4/fake-*.json
+scripts/trialogue-v4/fake-*.conf
+scripts/trialogue-v4/trialogue-v3.fake.conf
+
+# Trialogue v3 runtime state
+scripts/trialogue-v3/fake-*/
+scripts/trialogue-v3/fake-*.json
+scripts/trialogue-v3/trialogue-v3.fake.conf
+
+# Temp files
+tmp/

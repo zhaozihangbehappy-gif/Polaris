@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trialogue v3 介绍书</title>
+<style>
+  :root {
+    --bg: #fafaf8;
+    --fg: #1a1a1a;
+    --fg-secondary: #555;
+    --accent: #2d6a4f;
+    --accent-light: #d8f3dc;
+    --border: #d4d0c8;
+    --surface: #fff;
+    --warn: #e07c24;
+    --danger: #c0392b;
+    --code-bg: #f0efe8;
+    --layer-l1: #2d6a4f;
+    --layer-l2: #40916c;
+    --layer-l3: #52b788;
+    --layer-l4: #74c69d;
+    --layer-l5: #1b4332;
+    --layer-l6: #081c15;
+    --layer-l7: #b7e4c7;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    background: var(--bg);
+    color: var(--fg);
+    line-height: 1.7;
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem;
+  }
+  h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    border-bottom: 3px solid var(--accent);
+    padding-bottom: 0.5rem;
+    margin-bottom: 0.3rem;
+  }
+  h1 small {
+    font-size: 0.9rem;
+    font-weight: 400;
+    color: var(--fg-secondary);
+    display: block;
+    margin-top: 0.2rem;
+  }
+  h2 {
+    font-size: 1.35rem;
+    font-weight: 600;
+    color: var(--accent);
+    margin-top: 2.5rem;
+    margin-bottom: 0.8rem;
+    padding-bottom: 0.3rem;
+    border-bottom: 1px solid var(--border);
+  }
+  h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+  p { margin-bottom: 0.8rem; }
+  .subtitle {
+    color: var(--fg-secondary);
+    font-size: 0.95rem;
+    margin-bottom: 2rem;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0 1.5rem;
+    font-size: 0.9rem;
+  }
+  th, td {
+    border: 1px solid var(--border);
+    padding: 0.5rem 0.7rem;
+    text-align: left;
+    vertical-align: top;
+  }
+  th {
+    background: var(--accent-light);
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  tr:nth-child(even) { background: #f8f7f2; }
+  code {
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    background: var(--code-bg);
+    padding: 0.15em 0.35em;
+    border-radius: 3px;
+    font-size: 0.88em;
+  }
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1rem;
+    overflow-x: auto;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    margin: 1rem 0;
+  }
+  pre code { background: none; padding: 0; }
+  .layer-diagram {
+    display: grid;
+    grid-template-columns: 50px 1fr;
+    gap: 0;
+    margin: 1.2rem 0 1.5rem;
+  }
+  .layer-tag {
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.82rem;
+    padding: 0.5rem 0;
+    text-align: center;
+    border: 1px solid rgba(255,255,255,0.15);
+  }
+  .layer-desc {
+    padding: 0.5rem 0.8rem;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.9rem;
+  }
+  .metric-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin: 1rem 0 1.5rem;
+  }
+  .metric-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 1rem;
+    text-align: center;
+  }
+  .metric-card .value {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--accent);
+  }
+  .metric-card .label {
+    font-size: 0.85rem;
+    color: var(--fg-secondary);
+    margin-top: 0.2rem;
+  }
+  .callout {
+    background: #fff8e1;
+    border-left: 4px solid var(--warn);
+    padding: 0.8rem 1rem;
+    margin: 1rem 0;
+    font-size: 0.9rem;
+    border-radius: 0 4px 4px 0;
+  }
+  .callout-danger {
+    background: #fdecea;
+    border-left-color: var(--danger);
+  }
+  .flow-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 1.2rem;
+    margin: 1rem 0;
+    font-family: "SFMono-Regular", Consolas, monospace;
+    font-size: 0.85rem;
+    line-height: 1.6;
+    white-space: pre;
+    overflow-x: auto;
+  }
+  .tag {
+    display: inline-block;
+    padding: 0.1em 0.5em;
+    border-radius: 3px;
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+  .tag-warn { background: #fff3cd; color: #856404; }
+  .tag-enforce { background: #d4edda; color: #155724; }
+  .tag-fixed { background: var(--accent-light); color: var(--accent); }
+  .tag-open { background: #fdecea; color: var(--danger); }
+  footer {
+    margin-top: 3rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+    font-size: 0.85rem;
+    color: var(--fg-secondary);
+  }
+  @media (max-width: 640px) {
+    body { padding: 1rem; }
+    h1 { font-size: 1.5rem; }
+    .metric-grid { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<h1>
+  Trialogue v3
+  <small>多智能体转录代理 &mdash; 7 层纵深防御架构</small>
+</h1>
+<p class="subtitle">
+  版本 v3 &middot; 2026-03-24 &middot;
+  已验证: Claude Code 2.1.81, Codex CLI 0.116.0
+</p>
+
+<!-- ================================================================ -->
+<h2>1. 它是什么</h2>
+
+<p>
+  Trialogue 是一个<strong>多智能体转录代理（transcript broker）</strong>。两个来自不同厂商的
+  CLI 智能体通过转录协议进行协作；Broker 坐在中间，负责收集、清洗和路由转录内容。
+</p>
+<p>
+  核心设计原则：<strong>智能体之间绝不共享执行环境</strong>。协作通过制品交换完成，而不是文件系统访问。
+</p>
+
+<div class="callout">
+  <strong>威胁模型</strong>：系统假定任何智能体都可能被攻陷或产生对抗性输出。Broker 将所有智能体生成的内容视为不可信输入。
+</div>
+
+<!-- ================================================================ -->
+<h2>2. 七层纵深防御</h2>
+
+<p>防御层彼此独立——每一层的失败不会级联到下一层。</p>
+
+<div class="layer-diagram">
+  <div class="layer-tag" style="background:var(--layer-l1)">L1</div>
+  <div class="layer-desc"><strong>转录清洗器</strong> &mdash; 在提示词注入到达之前剥离结构性注入模式。5 条规则按序执行：不可见 Unicode 剥离、块包装器剥离（6 类注册标签）、审计头剥离、LLM 格式模式剥离（7 条锚定正则）、空白压缩。三种模式：<code>strict</code>（默认）/ <code>permissive</code> / <code>disabled</code>。</div>
+
+  <div class="layer-tag" style="background:var(--layer-l2)">L2</div>
+  <div class="layer-desc"><strong>沙箱隔离</strong> &mdash; 每个智能体独立的 OS 用户、HOME、工作区、TMPDIR。Level 2 部署支持 <code>sudo -u</code> 权限降级。</div>
+
+  <div class="layer-tag" style="background:var(--layer-l3)">L3</div>
+  <div class="layer-desc"><strong>操作分类器 + 互斥锁</strong> &mdash; Broker 管理的宿主共享资源互斥。操作分类器识别敏感操作并取锁。</div>
+
+  <div class="layer-tag" style="background:var(--layer-l4)">L4</div>
+  <div class="layer-desc"><strong>版本门</strong> &mdash; 启动时 + 运行时二进制 SHA-256 校验。当前模式：<span class="tag tag-warn">warn</span>（识别不在白名单的二进制并记录告警；升级到 <span class="tag tag-enforce">enforce</span> 是运维决策）。</div>
+
+  <div class="layer-tag" style="background:var(--layer-l5)">L5</div>
+  <div class="layer-desc"><strong>本地审计锚</strong> &mdash; 仅追加（append-only）SHA-256 哈希链 + HMAC 签名。独立链验证工具：<code>verify-summary-chain.py</code>。</div>
+
+  <div class="layer-tag" style="background:var(--layer-l6)">L6</div>
+  <div class="layer-desc"><strong>远程审计锚</strong> &mdash; 独立进程的 Sink HTTP 服务器（SQLite WAL），凭证隔离的 publish/verify 令牌。智能体不持有任何令牌。</div>
+
+  <div class="layer-tag" style="background:var(--layer-l7)">L7</div>
+  <div class="layer-desc"><strong>交叉审计</strong> &mdash; 每轮对话摘要在智能体之间进行比对。</div>
+</div>
+
+<p>
+  设计逻辑：L1 拦截最低成本的结构性注入。绕过 L1 的语义攻击会命中 L2（沙箱限制爆炸半径）、L3（锁约束宿主操作）、L5-L7（完整审计轨迹使所有行为可追溯）。
+</p>
+
+<!-- ================================================================ -->
+<h2>3. 架构总览</h2>
+
+<div class="flow-box">┌─────────────────────────────────────────────────────────┐
+│                      tmux session                       │
+│  ┌──────────────────────┐  ┌─────────────────────────┐  │
+│  │     左 pane: chat     │  │   右 pane: audit tail    │  │
+│  └──────────┬───────────┘  └─────────────────────────┘  │
+│             │                                           │
+│             ▼                                           │
+│  ┌──────────────────────┐                               │
+│  │     chat.py          │  转录路由 / UI                │
+│  └──────────┬───────────┘                               │
+│             │                                           │
+│             ▼                                           │
+│  ┌──────────────────────┐                               │
+│  │     server.py        │  Broker 主进程                │
+│  │   (状态机 + 审计锚)   │  1,885 行                    │
+│  └──────┬─────────┬─────┘                               │
+│         │         │                                     │
+│    ┌────▼───┐ ┌───▼────────────────┐                    │
+│    │launcher│ │codex_app_server    │                    │
+│    │  .sh   │ │  _runner.py        │                    │
+│    │(Claude)│ │(Codex app-server)  │                    │
+│    └────┬───┘ └───┬────────────────┘                    │
+│         │         │                                     │
+│  ┌──────▼───┐ ┌───▼──────┐                              │
+│  │ Claude   │ │ Codex    │  各自隔离的沙箱               │
+│  │ CLI      │ │ CLI      │  (独立用户/HOME/TMPDIR)       │
+│  └──────────┘ └──────────┘                              │
+│                                                         │
+│  ┌──────────────────────┐                               │
+│  │  hardening.py        │  安全核心 1,672 行             │
+│  │  (L1-L5 全部实现)     │                               │
+│  └──────────────────────┘                               │
+│                                                         │
+│  ┌──────────────────────┐     ┌──────────────────────┐  │
+│  │ remote_anchor_sink   │ ←→  │ remote_anchor_verifier│  │
+│  │     .py (L6)         │     │     .py (L6 verify)  │  │
+│  └──────────────────────┘     └──────────────────────┘  │
+└─────────────────────────────────────────────────────────┘</div>
+
+<!-- ================================================================ -->
+<h2>4. 关键数据流</h2>
+
+<h3>4.1 正常对话轮次</h3>
+<ol>
+  <li>用户在 <code>chat.py</code> 输入话题</li>
+  <li><code>server.py</code> 将消息分发给当前轮次的目标智能体</li>
+  <li><code>launcher.sh</code>（Claude）或 <code>codex_app_server_runner.py</code>（Codex）启动子进程</li>
+  <li>运行前执行版本门检查（L4）：比对二进制 SHA-256 和版本字符串</li>
+  <li>智能体输出经 L1 清洗器处理后路由到对方</li>
+  <li>每轮摘要写入本地哈希链（L5），异步发布到远程 Sink（L6）</li>
+  <li>定期执行交叉审计（L7）</li>
+</ol>
+
+<h3>4.2 审批流（Codex 0.116.0+）</h3>
+<p>Codex app-server 的审批请求分为两代协议：</p>
+
+<table>
+  <tr>
+    <th>协议</th>
+    <th>方法</th>
+    <th>决策枚举</th>
+    <th>处理方式</th>
+  </tr>
+  <tr>
+    <td>旧协议</td>
+    <td><code>item/commandExecution/requestApproval</code><br>
+        <code>item/fileChange/requestApproval</code><br>
+        <code>item/permissions/requestApproval</code></td>
+    <td><code>accept</code> / <code>acceptForSession</code> / <code>decline</code> / <code>cancel</code></td>
+    <td>进入 Broker 审批队列，等待人工/策略决策</td>
+  </tr>
+  <tr>
+    <td>0.116.0+ 新协议</td>
+    <td><code>applyPatchApproval</code><br>
+        <code>execCommandApproval</code></td>
+    <td><code>approved</code> / <code>approved_for_session</code> / <code>denied</code> / <code>abort</code></td>
+    <td>自动回复 <code>{"decision": "denied"}</code>（安全默认值）</td>
+  </tr>
+</table>
+
+<div class="callout callout-danger">
+  <strong>协议漂移风险</strong>：两代协议使用不同的决策枚举。旧协议的 <code>decline</code> 不等于新协议的 <code>denied</code>；
+  旧协议的 <code>accept</code> 不等于新协议的 <code>approved</code>。混用会导致协议错误。
+  fake server 测试桩已对齐两套枚举，使用显式集合匹配而非前缀匹配。
+</div>
+
+<h3>4.3 远程审计锚</h3>
+
+<div class="flow-box">Broker (publish.token, 只写)
+    │
+    │  POST /append
+    ▼
+Sink (独立进程, 独立用户)
+    │  SQLite WAL, synchronous=FULL
+    │  序列号: 每房间无间隙递增
+    │  幂等:   相同 (room_id, rid, sha) → 200
+    │  冲突:   相同 (room_id, rid), 不同 sha → 409
+    │
+    │  GET /verify
+    ▲
+Broker (verify.token, 只读)</div>
+
+<p>
+  <strong>状态机</strong>：<code>healthy</code> → <code>degraded</code>（积压待发）→ <code>anchor_blocked</code>（硬上限超限/blocking 模式 3 次未锚定/verify 不一致）→ <code>read_only_diagnostic</code>（启动验证不一致）。恢复需要系统自愈 + 运维手动调用 <code>reset_recovery()</code>。
+</p>
+
+<!-- ================================================================ -->
+<h2>5. 版本门（L4）</h2>
+
+<p>版本门通过 <code>runner-version-allowlist.json</code> 配置：</p>
+
+<pre><code>{
+  "policy": "warn",
+  "runners": {
+    "claude": {
+      "versions": ["2.1.81 (Claude Code)"],
+      "hashes": ["047e3f5..."]
+    },
+    "codex": {
+      "versions": ["codex-cli 0.116.0"],
+      "hashes": ["baefc10..."]
+    }
+  }
+}</code></pre>
+
+<p>匹配逻辑（<code>hardening.py:_version_rule_match()</code>）：</p>
+<ul>
+  <li>版本字符串：精确匹配 <code>$BIN --version</code> 的完整输出（不是裸 semver）</li>
+  <li>SHA-256 哈希：精确匹配二进制文件摘要</li>
+  <li>任一匹配即通过：<code>version in allowed_versions or sha in allowed_hashes</code></li>
+</ul>
+
+<div class="callout">
+  <strong>当前状态</strong>：<span class="tag tag-warn">warn</span> 模式。不在白名单的二进制会被识别并记录告警，但不会被阻断。
+  这恢复了版本门的<em>识别能力</em>（此前白名单为空，等同透传），但<em>强制阻断能力</em>需要运维将策略升级到 <span class="tag tag-enforce">enforce</span>。
+</div>
+
+<!-- ================================================================ -->
+<h2>6. 清洗器详解</h2>
+
+<p><code>_sanitize_text_once()</code> 按序执行 5 条规则：</p>
+
+<table>
+  <tr><th>#</th><th>规则</th><th>说明</th></tr>
+  <tr><td>1</td><td>不可见 Unicode 剥离</td><td>32+ 字符类（零宽、双向覆盖、变体选择器等）</td></tr>
+  <tr><td>2</td><td>块包装器剥离</td><td>基于栈的标签匹配器，6 类注册包装器。处理嵌套、交叉嵌套、孤立标签。不区分大小写。已测试 500 层嵌套，无 ReDoS。</td></tr>
+  <tr><td>3</td><td>审计头剥离</td><td>行级正则，匹配 <code>[TRIALOGUE-AUDIT]</code> 头</td></tr>
+  <tr><td>4</td><td>LLM 格式模式剥离</td><td>7 条锚定正则（ChatML、Llama 2、Copilot、Markdown 标题等）。块级匹配（<code>^...$</code> + <code>re.MULTILINE</code>），避免行内误判。</td></tr>
+  <tr><td>5</td><td>空白压缩</td><td>3+ 连续换行 → 2</td></tr>
+</table>
+
+<p>模式配置从 <code>sanitizer-patterns.json</code> 加载（支持热重载），代码级默认值作为兜底。</p>
+
+<h3>已知局限 (W11)</h3>
+<p>
+  <code>^###\s*System:\s*.*$</code> 模式会匹配 Markdown 代码块内的内容（<code>re.MULTILINE</code> 下 <code>^</code> 锚定到任意行首，不仅是块首）。
+  基准测试确认 1/10 LLM 格式讨论良性样本受影响。良性通过率：96.7%（在门限内）。这是有文档记录的取舍，不是静默故障。
+</p>
+
+<!-- ================================================================ -->
+<h2>7. 注入基准测试</h2>
+
+<p>100 条攻击载荷（AgentDojo 分类法改编：25 IPI + 25 SMS + 25 TKI + 25 IND）+ 30 条良性载荷（20 工程 Q&amp;A + 10 LLM 格式讨论）。</p>
+
+<div class="metric-grid">
+  <div class="metric-card">
+    <div class="value">96%</div>
+    <div class="label">SMS L1 检出率 (24/25)</div>
+  </div>
+  <div class="metric-card">
+    <div class="value">36%</div>
+    <div class="label">标记残留率 (代理下界)</div>
+  </div>
+  <div class="metric-card">
+    <div class="value">96.7%</div>
+    <div class="label">良性通过率 (29/30)</div>
+  </div>
+  <div class="metric-card">
+    <div class="value">100%</div>
+    <div class="label">工程 Q&amp;A 通过率 (20/20)</div>
+  </div>
+</div>
+
+<p>
+  36 个标记残留中：34 个是语义级（IPI/TKI/IND——清洗器设计上不覆盖），2 个是结构性 SMS。语义攻击由 L2-L7 缓解，不由 L1 承担。
+</p>
+
+<!-- ================================================================ -->
+<h2>8. 对抗测试套件</h2>
+
+<p><strong>194 项检查 + 130 基准载荷，跨 15 个测试文件，零失败。</strong></p>
+
+<table>
+  <tr><th>测试文件</th><th>检查数</th><th>覆盖范围</th></tr>
+  <tr><td><code>hardening_adversarial.py</code></td><td>50</td><td>清洗器绕过、版本门、操作锁、分类器逃逸、事件日志、配置边界</td></tr>
+  <tr><td><code>hardening_adversarial_r2.py</code></td><td>48</td><td>零宽字符、CRLF、孤立标签、ReDoS、TOCTOU、深度对抗锁、并发日志</td></tr>
+  <tr><td><code>hardening_injection_benchmark.py</code></td><td>130</td><td>100 攻击 + 30 良性载荷，双层测量</td></tr>
+  <tr><td><code>hardening_p1_adversarial.py</code></td><td>49</td><td>哈希链篡改、签名伪造、验证器绕过、原子写入、端口注册、并发链</td></tr>
+  <tr><td><code>hardening_p1_recheck_adversarial.py</code></td><td>29</td><td>运行时二进制替换检测、策略耦合、stat 短路</td></tr>
+  <tr><td><code>hardening_p1_*.py</code>（3 个 smoke）</td><td>&mdash;</td><td>锚导出、恢复流、共享宿主隔离</td></tr>
+  <tr><td><code>hardening_p2_*.py</code>（5 个文件）</td><td>&mdash;</td><td>远程 Sink 追加/验证、Broker 状态机、运维恢复</td></tr>
+  <tr><td><code>hardening_protocol_smoke.py</code></td><td>18</td><td>0.116.0 审批类型、ReviewDecision 枚举、schema 验证、fake server 合规性</td></tr>
+  <tr><td><code>hardening_smoke.py</code></td><td>&mdash;</td><td>快速预提交健全检查</td></tr>
+</table>
+
+<p>所有测试在生产配置路径上运行，不使用源码树默认值。</p>
+
+<!-- ================================================================ -->
+<h2>9. 已记录弱点</h2>
+
+<p>11 个弱点已公开映射，每个弱点对应具体防御层。</p>
+
+<table>
+  <tr><th>ID</th><th>描述</th><th>L1?</th><th>缓解</th><th>状态</th></tr>
+  <tr><td>W1</td><td>语义/修辞注入</td><td>&times;</td><td>L2+L3+L7</td><td>沙箱兜底</td></tr>
+  <tr><td>W2</td><td>不可见 Unicode 绕过</td><td>&check;</td><td>L1</td><td><span class="tag tag-fixed">已修复</span></td></tr>
+  <tr><td>W3</td><td>同形字攻击</td><td>&times;</td><td>L1 部分 + L2</td><td><span class="tag tag-open">未来工作</span></td></tr>
+  <tr><td>W4</td><td>多轮碎片化注入</td><td>&times;</td><td>L5+L6+L7</td><td><span class="tag tag-open">未来工作</span></td></tr>
+  <tr><td>W5</td><td>未注册包装器标签</td><td>&check;</td><td>L1</td><td><span class="tag tag-fixed">已修复，实测验证</span></td></tr>
+  <tr><td>W6</td><td>HTML/Markdown 隐藏</td><td>&times;</td><td>L2</td><td>沙箱兜底</td></tr>
+  <tr><td>W7</td><td>Base64/编码绕过</td><td>&times;</td><td>L2+L5</td><td>沙箱兜底</td></tr>
+  <tr><td>W8</td><td>标签属性注入</td><td>&check;</td><td>L1</td><td><span class="tag tag-fixed">已测试</span></td></tr>
+  <tr><td>W9</td><td>超长载荷 DoS</td><td>&check;</td><td>L1</td><td><span class="tag tag-fixed">已测试</span>（100KB, 500 层）</td></tr>
+  <tr><td>W10</td><td>类似指令的自然语言</td><td>&mdash;</td><td>L7</td><td>设计容忍</td></tr>
+  <tr><td>W11</td><td>LLM 格式规则误判</td><td>&mdash;</td><td>L1 副作用</td><td>已知局限</td></tr>
+</table>
+
+<!-- ================================================================ -->
+<h2>10. 文件结构</h2>
+
+<table>
+  <tr><th>类别</th><th>文件</th><th>说明</th></tr>
+  <tr><td rowspan="7">核心运行时</td><td><code>server.py</code></td><td>Broker 主进程（状态机、远程锚、恢复）&mdash; 1,885 行</td></tr>
+  <tr><td><code>chat.py</code></td><td>对话 UI / 转录路由 &mdash; 1,029 行</td></tr>
+  <tr><td><code>launcher.sh</code></td><td>Runner 启动器（沙箱、TMPDIR 隔离）&mdash; 261 行</td></tr>
+  <tr><td><code>codex_app_server_runner.py</code></td><td>Codex app-server 集成 &mdash; 1,060 行</td></tr>
+  <tr><td><code>hardening.py</code></td><td>安全核心（L1-L5 全部实现）&mdash; 1,672 行</td></tr>
+  <tr><td><code>_audit.py</code></td><td>审计日志 / 会话确认</td></tr>
+  <tr><td><code>_memory.py</code></td><td>智能体记忆</td></tr>
+  <tr><td rowspan="4">远程审计锚</td><td><code>remote_anchor_sink.py</code></td><td>Sink HTTP 服务器（SQLite WAL）&mdash; 315 行</td></tr>
+  <tr><td><code>remote_anchor_verifier.py</code></td><td>独立链验证器</td></tr>
+  <tr><td><code>start-remote-anchor-sink.sh</code></td><td>Sink 启动脚本</td></tr>
+  <tr><td><code>remote-anchor-sink.conf.example</code></td><td>Sink 配置模板</td></tr>
+  <tr><td rowspan="3">启动 / 部署</td><td><code>start.sh</code></td><td>tmux 会话启动器</td></tr>
+  <tr><td><code>start-web.sh</code></td><td>Web UI 启动器</td></tr>
+  <tr><td><code>deploy-level2.sh</code></td><td>Level 2 部署（每智能体独立 OS 用户）</td></tr>
+  <tr><td rowspan="3">配置 / 工具</td><td><code>trialogue-v3.conf.example</code></td><td>配置模板</td></tr>
+  <tr><td><code>runner-version-allowlist.json</code></td><td>Runner 二进制白名单</td></tr>
+  <tr><td><code>sanitizer-patterns.json</code></td><td>清洗器规则（支持热重载）</td></tr>
+  <tr><td>测试</td><td colspan="2">15 个测试文件，194 项检查 + 130 基准载荷（详见第 8 节）</td></tr>
+</table>
+
+<!-- ================================================================ -->
+<h2>11. 快速开始</h2>
+
+<pre><code># 复制配置
+cp trialogue-v3.conf.example trialogue-v3.conf
+
+# 启动 Broker + 智能体
+bash start.sh "讨论主题"
+
+# 启动 Web UI
+bash start-web.sh
+
+# 启动远程审计 Sink（独立进程）
+bash start-remote-anchor-sink.sh
+
+# 运行对抗测试
+python3 hardening_adversarial.py
+python3 hardening_adversarial_r2.py
+python3 hardening_injection_benchmark.py
+python3 hardening_p1_adversarial.py
+python3 hardening_p1_recheck_adversarial.py
+python3 hardening_protocol_smoke.py
+
+# 独立验证哈希链完整性
+python3 verify-summary-chain.py /path/to/room.jsonl</code></pre>
+
+<!-- ================================================================ -->
+<h2>12. 配置参考</h2>
+
+<table>
+  <tr><th>键</th><th>默认值</th><th>说明</th></tr>
+  <tr><td><code>HARDENING_SANITIZER</code></td><td><code>strict</code></td><td>清洗器模式</td></tr>
+  <tr><td><code>HARDENING_VERSION_GATE</code></td><td><code>warn</code></td><td>二进制验证策略（warn / enforce）</td></tr>
+  <tr><td><code>HARDENING_REMOTE_AUDIT_PUBLISH</code></td><td><code>disabled</code></td><td>远程锚模式：disabled / async / blocking</td></tr>
+  <tr><td><code>HARDENING_REMOTE_AUDIT_HARD_CAP</code></td><td><code>500</code></td><td>积压条目硬上限</td></tr>
+  <tr><td><code>HARDENING_REMOTE_AUDIT_VERIFY_INTERVAL_TURNS</code></td><td><code>10</code></td><td>远程验证间隔轮次（最大 50）</td></tr>
+  <tr><td><code>HARDENING_SANITIZER_PATTERNS</code></td><td>（自动）</td><td><code>sanitizer-patterns.json</code> 路径</td></tr>
+</table>
+
+<p>完整配置参考（11 个远程锚键）见 <code>hardening.py:load_hardening_settings()</code>。</p>
+
+<!-- ================================================================ -->
+
+<footer>
+  <p>
+    作者: Zihang Zhao &middot;
+    版本: v3 (2026-03-24) &middot;
+    测试基线: 194 项对抗检查 + 130 基准载荷，零失败 &middot;
+    已验证: Claude Code 2.1.81, Codex CLI 0.116.0
+  </p>
+  <p>
+    版本门恢复了有意义的版本审计（warn 模式）；升级到 enforce 是运维决策。
+  </p>
+</footer>
+
+</body>
+</html>

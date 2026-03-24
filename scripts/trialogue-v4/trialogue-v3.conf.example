@@ -1,0 +1,75 @@
+# Trialogue v2 配置文件模板
+# 所有路径必须是绝对路径，不依赖 PATH 或 command -v
+# 复制为 scripts/trialogue-v3/trialogue-v3.conf 后按本机环境修改
+
+# 二进制绝对路径
+CLAUDE_BIN=/home/administrator/.local/bin/claude
+CODEX_BIN=/home/administrator/.local/bin/codex
+
+# 可选：将 Codex 调用委托给独立 runner。
+# 为空时维持当前本地直接调用；设置后 launcher.sh 会转交给该 runner。
+CODEX_RUNNER=
+CODEX_RUNNER_CONF=
+CODEX_RUNNER_USER=codex-agent
+CODEX_RUNNER_HOME=/srv/trialogue/codex/home
+CODEX_RUNNER_WORKSPACE=/srv/trialogue/codex/workspace
+CODEX_RUNNER_AUDIT_LOG=/srv/trialogue/codex/audit/audit.jsonl
+CODEX_APP_EVENTS_DIR=/srv/trialogue/codex/audit/events
+CODEX_ROOM_STATE_DIR=/srv/trialogue/codex/state/rooms
+CODEX_MEMORY_SOURCE_DIR=/srv/trialogue/codex/home/.codex-facts
+CODEX_MEMORY_LIVE_DIR=/srv/trialogue/codex/workspace/state/codex-memory-live
+CODEX_APP_SERVER_BIN=/srv/trialogue/codex/home/.local/bin/codex
+# 可选：测试或调试时覆盖完整 app-server 启动命令。
+CODEX_APP_SERVER_COMMAND=
+CODEX_SANDBOX_MODE=workspace-write
+# Codex app-server runner 支持真实 approval request -> broker -> user -> runner 回传。
+CODEX_APPROVAL_MODE=on-request
+CODEX_APPROVAL_TIMEOUT_SEC=120
+
+# 审计日志
+AUDIT_LOG=/home/administrator/.openclaw/trialogue/audit.jsonl
+
+# Claude session store
+CLAUDE_SESSIONS=/home/administrator/.claude/sessions
+CLAUDE_PROJECTS=/home/administrator/.claude/projects
+CLAUDE_HISTORY=/home/administrator/.claude/history.jsonl
+
+# Codex session store
+CODEX_SESSIONS=/home/administrator/.codex/sessions
+
+# 工作目录
+WORKSPACE=/home/administrator/.openclaw/workspace
+TRIALOGUE_STATE_ROOT=/home/administrator/.openclaw/workspace/state
+TRIALOGUE_PRIVATE_TMP_DIR=/home/administrator/.openclaw/workspace/state/tmp
+TRIALOGUE_SHARED_META_DIR=/srv/trialogue/shared-meta
+TRIALOGUE_PORT_REGISTRY_PATH=/home/administrator/.openclaw/workspace/state/port-registry.json
+BROKER_ROOM_STATE_DIR=/home/administrator/.openclaw/workspace/state/broker-rooms
+
+# P0 hardening
+HARDENING_TRANSCRIPT_SANITIZER=strict
+HARDENING_SANITIZER_PATTERNS=/home/administrator/.openclaw/workspace/scripts/trialogue-v3/sanitizer-patterns.json
+HARDENING_VERSION_GATE=warn
+HARDENING_VERSION_GATE_RECHECK=warn
+HARDENING_VERSION_ALLOWLIST=/home/administrator/.openclaw/workspace/scripts/trialogue-v3/runner-version-allowlist.json
+HARDENING_OPERATION_LOCKS=enabled
+HARDENING_LOCK_TIMEOUT_SEC=30
+HARDENING_VERSION_RECHECK_FAST_INTERVAL_SEC=10
+HARDENING_VERSION_RECHECK_FULL_INTERVAL_SEC=60
+HARDENING_EXTERNAL_AUDIT_ANCHOR=disabled
+HARDENING_BROKER_RECOVERY_MODE=auto
+HARDENING_SHARED_HOST_COLLISION_GUARD=enabled
+HARDENING_SUMMARY_CHAIN_DIR=/srv/trialogue/shared-anchor/summary-chain
+HARDENING_ANCHOR_DIR=/home/administrator/.openclaw/trialogue/anchor
+HARDENING_ANCHOR_KEY_PATH=/home/administrator/.openclaw/trialogue/anchor.key
+HARDENING_REMOTE_AUDIT_PUBLISH=disabled
+HARDENING_REMOTE_AUDIT_PUBLISH_URL=
+HARDENING_REMOTE_AUDIT_VERIFY_URL=
+HARDENING_REMOTE_AUDIT_PUBLISH_CREDENTIAL_PATH=/srv/trialogue/shared-secrets/remote-anchor-publish.token
+HARDENING_REMOTE_AUDIT_VERIFY_CREDENTIAL_PATH=/home/administrator/.openclaw/trialogue/remote-anchor-verify.token
+HARDENING_REMOTE_AUDIT_BACKLOG_DIR=/srv/trialogue/shared-anchor/backlog
+HARDENING_REMOTE_AUDIT_SOFT_CAP=100
+HARDENING_REMOTE_AUDIT_HARD_CAP=500
+HARDENING_REMOTE_AUDIT_DRAIN_BATCH_SIZE=10
+HARDENING_REMOTE_AUDIT_REQUEST_TIMEOUT_SEC=5
+HARDENING_REMOTE_AUDIT_VERIFY_INTERVAL_TURNS=10
+HARDENING_ALERT_LOG=/home/administrator/.openclaw/trialogue/hardening-events.jsonl

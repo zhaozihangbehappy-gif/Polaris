@@ -1,0 +1,32 @@
+# Trialogue v4 Configuration
+# Copy to trialogue-v4.conf and customize as needed.
+# Env var TRIALOGUE_CONF can override the config file path.
+
+# Audit mode: local (default), strict, disabled
+# local:    best-effort — audit failure surfaces metadata but returns content
+# strict:   audit failure blocks pipeline — no content delivered
+# disabled: skip audit chain entirely
+# NOTE: "remote" is not yet implemented — setting it will behave as "local".
+audit_mode=local
+
+# Pipeline settings
+max_response_bytes=524288
+default_timeout=15
+
+# Sanitizer mode: strict (default), permissive, report
+sanitizer_mode=strict
+
+# Search endpoint (optional — WebSearch passthrough when empty)
+# Set to a search API URL to enable sanitized web search.
+# Example: search_endpoint=https://api.search-provider.com/v1/search
+search_endpoint=
+
+# Remote audit anchor (optional — publish chain head hash to external sink)
+# sink type: webhook (POST JSON) or file (append JSONL)
+# remote_anchor_sink=webhook
+# remote_anchor_url=https://audit.example.com/v1/anchor
+# interval: publish every N ingestions (0 = every ingestion)
+# remote_anchor_interval=0
+remote_anchor_sink=
+remote_anchor_url=
+remote_anchor_interval=0

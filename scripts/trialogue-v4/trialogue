@@ -1,0 +1,719 @@
+#!/usr/bin/env python3
+"""Trialogue — Unified CLI for Broker (v3) + Guard (v4).
+
+Usage:
+    trialogue guard on      Enable v4 content security gateway
+    trialogue guard off     Disable v4 gateway (preserves audit data)
+    trialogue start <topic> Start Broker + auto-enable Guard
+    trialogue start <topic> --no-guard  Start Broker only
+    trialogue stop          Stop Broker + disable Guard
+    trialogue status        Show full system status
+"""
+from __future__ import annotations
+
+import json
+import os
+import subprocess
+import sys
+import time
+from pathlib import Path
+
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+
+# ── Claude Code settings paths ───────────────────────────────────────────────
+
+def _real_home() -> str:
+    """Return the real user's home directory, even under sudo."""
+    sudo_user = os.environ.get("SUDO_USER")
+    if sudo_user:
+        import pwd
+        try:
+            return pwd.getpwnam(sudo_user).pw_dir
+        except KeyError:
+            pass
+    return os.path.expanduser("~")
+
+
+def _find_settings_path() -> str:
+    """Find Claude Code settings.json. Prefer project-level, fall back to global."""
+    # Project-level
+    cwd = os.getcwd()
+    project_settings = os.path.join(cwd, ".claude", "settings.json")
+    if os.path.exists(project_settings):
+        return project_settings
+    # Global — use real user's home, not root's under sudo
+    home = _real_home()
+    global_settings = os.path.join(home, ".claude", "settings.json")
+    return global_settings
+
+
+def _find_codex() -> str | None:
+    """Find the codex binary path, even under sudo where PATH is stripped."""
+    import shutil
+    found = shutil.which("codex")
+    if found:
+        return found
+    # sudo strips user PATH — check common user-local locations
+    candidates = [os.path.expanduser("~/.local/bin/codex")]
+    sudo_user = os.environ.get("SUDO_USER")
+    if sudo_user:
+        candidates.append(f"/home/{sudo_user}/.local/bin/codex")
+    for candidate in candidates:
+        if os.path.isfile(candidate) and os.access(candidate, os.X_OK):
+            return candidate
+    return None
+
+
+def _codex_available() -> bool:
+    """Check if Codex CLI is installed and reachable."""
+    return _find_codex() is not None
+
+
+def _codex_mcp_add(as_trialogue_user: bool = False) -> tuple[bool, str]:
+    """Add trialogue-guard MCP server to Codex via `codex mcp add`.
+
+    When as_trialogue_user=True (kernel egress mode), wraps the command with
+    sudo -u _trialogue so Codex's MCP server runs under the _trialogue identity,
+    matching the iptables owner rule.
+
+    Returns (success, message).
+    """
+    codex = _find_codex()
+    if not codex:
+        return False, "codex binary not found"
+    mcp_server_path = os.path.join(SCRIPT_DIR, "mcp-server.py")
+    if as_trialogue_user:
+        cmd = [codex, "mcp", "add", GUARD_MCP_KEY, "--",
+               "sudo", "-u", "_trialogue", sys.executable, mcp_server_path]
+    else:
+        cmd = [codex, "mcp", "add", GUARD_MCP_KEY, "--",
+               sys.executable, mcp_server_path]
+    result = subprocess.run(
+        cmd, capture_output=True, text=True, timeout=10,
+    )
+    if result.returncode == 0:
+        return True, result.stdout.strip()
+    return False, result.stderr.strip()
+
+
+def _codex_mcp_remove() -> tuple[bool, str]:
+    """Remove trialogue-guard MCP server from Codex via `codex mcp remove`.
+
+    Returns (success, message).
+    """
+    codex = _find_codex()
+    if not codex:
+        return False, "codex binary not found"
+    result = subprocess.run(
+        [codex, "mcp", "remove", GUARD_MCP_KEY],
+        capture_output=True, text=True, timeout=10,
+    )
+    if result.returncode == 0:
+        return True, result.stdout.strip()
+    return False, result.stderr.strip()
+
+
+def _codex_has_guard() -> bool:
+    """Check if trialogue-guard is already in Codex MCP list."""
+    codex = _find_codex()
+    if not codex:
+        return False
+    result = subprocess.run(
+        [codex, "mcp", "list"],
+        capture_output=True, text=True, timeout=10,
+    )
+    return GUARD_MCP_KEY in result.stdout
+
+
+def _load_settings(path: str) -> dict:
+    """Load settings.json, return empty dict if not found."""
+    if os.path.exists(path):
+        with open(path, "r", encoding="utf-8") as f:
+            return json.load(f)
+    return {}
+
+
+def _save_settings(path: str, settings: dict) -> None:
+    """Save settings.json with proper formatting."""
+    Path(path).parent.mkdir(parents=True, exist_ok=True)
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(settings, f, indent=2, ensure_ascii=False)
+        f.write("\n")
+
+
+# ── Guard configuration ─────────────────────────────────────────────────────
+
+GUARD_MCP_KEY = "trialogue-guard"
+
+
+def _ensure_trialogue_access(script_dir: str) -> None:
+    """Ensure _trialogue user can read the script directory and all parents.
+
+    When trialogue is installed under a user's home directory (e.g. /home/user/trialogue-v4),
+    the home dir is typically 750 and _trialogue can't traverse it. We add o+x on each
+    ancestor that blocks access, and o+rX on the script dir itself.
+    Requires root (caller already verified).
+    """
+    from egress import TRIALOGUE_USER
+    # Check if _trialogue can actually read mcp-server.py
+    test = subprocess.run(
+        ["sudo", "-u", TRIALOGUE_USER, "test", "-r", os.path.join(script_dir, "mcp-server.py")],
+        capture_output=True, timeout=5,
+    )
+    if test.returncode == 0:
+        return  # already accessible
+
+    # Walk up from script_dir to / and add o+x where missing
+    path = os.path.abspath(script_dir)
+    ancestors = []
+    while path != "/":
+        ancestors.append(path)
+        path = os.path.dirname(path)
+    ancestors.reverse()  # root-first
+
+    for d in ancestors:
+        st = os.stat(d)
+        if not (st.st_mode & 0o001):  # no o+x
+            os.chmod(d, st.st_mode | 0o001)
+            print(f"  Fixed traverse permission: o+x on {d}")
+
+    # Ensure script dir contents are world-readable
+    for root, dirs, files in os.walk(script_dir):
+        for name in dirs + files:
+            fp = os.path.join(root, name)
+            try:
+                st = os.stat(fp)
+                if not (st.st_mode & 0o004):  # no o+r
+                    os.chmod(fp, st.st_mode | 0o004)
+            except OSError:
+                pass
+        # Dirs also need o+x
+        for name in dirs:
+            fp = os.path.join(root, name)
+            try:
+                st = os.stat(fp)
+                if not (st.st_mode & 0o001):
+                    os.chmod(fp, st.st_mode | 0o001)
+            except OSError:
+                pass
+
+
+def _proxy_env() -> dict[str, str]:
+    """Collect proxy environment variables to pass through to MCP server."""
+    env = {}
+    for var in ("http_proxy", "HTTP_PROXY", "https_proxy", "HTTPS_PROXY", "no_proxy", "NO_PROXY"):
+        val = os.environ.get(var, "")
+        if val:
+            env[var] = val
+    return env
+
+
+def _build_mcp_config(as_trialogue_user: bool = False) -> dict:
+    """Build MCP server config. When as_trialogue_user=True, wraps with sudo -u _trialogue."""
+    mcp_server_path = os.path.join(SCRIPT_DIR, "mcp-server.py")
+    env = _proxy_env()
+    if as_trialogue_user:
+        return {
+            "command": "sudo",
+            "args": ["-u", "_trialogue", sys.executable, mcp_server_path],
+            "env": env,
+        }
+    return {
+        "command": sys.executable,
+        "args": [mcp_server_path],
+        "env": env,
+    }
+
+
+GUARD_MCP_CONFIG = _build_mcp_config(as_trialogue_user=False)
+
+# Claude Code hooks use {"hooks": {"PreToolUse": [{"matcher": "...", "hooks": [...]}]}}
+# Each entry in the PreToolUse array matches a tool name pattern.
+GUARD_HOOK_ENTRIES = [
+    {
+        "matcher": "WebFetch",
+        "hooks": [
+            {
+                "type": "command",
+                "command": f"bash {os.path.join(SCRIPT_DIR, 'hooks', 'intercept-webfetch.sh')}",
+            }
+        ],
+        "_trialogue_id": "guard-webfetch",
+    },
+    {
+        "matcher": "WebSearch",
+        "hooks": [
+            {
+                "type": "command",
+                "command": f"bash {os.path.join(SCRIPT_DIR, 'hooks', 'intercept-websearch.sh')}",
+            }
+        ],
+        "_trialogue_id": "guard-websearch",
+    },
+    {
+        "matcher": "Bash",
+        "hooks": [
+            {
+                "type": "command",
+                "command": f"bash {os.path.join(SCRIPT_DIR, 'hooks', 'intercept-curl.sh')}",
+            }
+        ],
+        "_trialogue_id": "guard-curl",
+    },
+]
+
+# Files to precompile
+PRECOMPILE_FILES = ["mcp-server.py", "pipeline.py", "hardening.py", "audit.py", "config.py", "egress.py"]
+
+
+def _inject_guard(settings: dict) -> dict:
+    """Add Guard MCP server + hooks to settings. Returns modified copy."""
+    s = json.loads(json.dumps(settings))  # deep copy
+
+    # MCP server
+    if "mcpServers" not in s:
+        s["mcpServers"] = {}
+    s["mcpServers"][GUARD_MCP_KEY] = GUARD_MCP_CONFIG
+
+    # Hooks — Claude Code format: {"hooks": {"PreToolUse": [...]}}
+    if "hooks" not in s:
+        s["hooks"] = {}
+    if not isinstance(s["hooks"], dict):
+        s["hooks"] = {}
+    if "PreToolUse" not in s["hooks"]:
+        s["hooks"]["PreToolUse"] = []
+
+    # Remove any existing trialogue hook entries
+    s["hooks"]["PreToolUse"] = [
+        h for h in s["hooks"]["PreToolUse"]
+        if not h.get("_trialogue_id", "").startswith("guard-")
+    ]
+    # Add guard hooks
+    s["hooks"]["PreToolUse"].extend(GUARD_HOOK_ENTRIES)
+
+    return s
+
+
+def _remove_guard(settings: dict) -> dict:
+    """Remove Guard MCP server + hooks from settings. Returns modified copy."""
+    s = json.loads(json.dumps(settings))  # deep copy
+
+    # Remove MCP server
+    if "mcpServers" in s and GUARD_MCP_KEY in s["mcpServers"]:
+        del s["mcpServers"][GUARD_MCP_KEY]
+        if not s["mcpServers"]:
+            del s["mcpServers"]
+
+    # Remove hooks — Claude Code format: {"hooks": {"PreToolUse": [...]}}
+    if "hooks" in s and isinstance(s["hooks"], dict):
+        if "PreToolUse" in s["hooks"]:
+            s["hooks"]["PreToolUse"] = [
+                h for h in s["hooks"]["PreToolUse"]
+                if not h.get("_trialogue_id", "").startswith("guard-")
+            ]
+            if not s["hooks"]["PreToolUse"]:
+                del s["hooks"]["PreToolUse"]
+        if not s["hooks"]:
+            del s["hooks"]
+
+    return s
+
+
+def _guard_is_on(settings: dict) -> bool:
+    """Check if Guard is configured in settings."""
+    return GUARD_MCP_KEY in settings.get("mcpServers", {})
+
+
+def _precompile() -> bool:
+    """Precompile Python files to .pyc. Returns True on success."""
+    for fname in PRECOMPILE_FILES:
+        fpath = os.path.join(SCRIPT_DIR, fname)
+        if os.path.exists(fpath):
+            result = subprocess.run(
+                [sys.executable, "-m", "py_compile", fpath],
+                capture_output=True, text=True
+            )
+            if result.returncode != 0:
+                print(f"  Warning: failed to precompile {fname}: {result.stderr.strip()}")
+                return False
+    return True
+
+
+# Tools that must NOT be in the allowlist — if they are, hook deny is ignored by Claude Code
+GUARD_CONFLICTING_TOOLS = ["WebFetch", "WebSearch"]
+
+
+def _check_allowlist_conflicts(fix: bool = False) -> tuple[list[str], list[str]]:
+    """Check if conflicting tools are in any Claude Code allowlist.
+
+    Returns (conflicts_found, paths_fixed).
+    If fix=True, removes conflicting entries from allowlists.
+    """
+    home = _real_home()
+    cwd = os.getcwd()
+
+    # All settings files to check (global + project-level)
+    candidates = [
+        os.path.join(home, ".claude", "settings.json"),
+        os.path.join(home, ".claude", "settings.local.json"),
+        os.path.join(cwd, ".claude", "settings.json"),
+        os.path.join(cwd, ".claude", "settings.local.json"),
+    ]
+
+    conflicts: list[str] = []
+    fixed_paths: list[str] = []
+
+    for spath in candidates:
+        if not os.path.exists(spath):
+            continue
+        try:
+            with open(spath, "r", encoding="utf-8") as f:
+                sdata = json.load(f)
+        except (json.JSONDecodeError, OSError):
+            continue
+
+        allow_list = sdata.get("permissions", {}).get("allow", [])
+        if not isinstance(allow_list, list):
+            continue
+
+        found_in_file = []
+        for tool in GUARD_CONFLICTING_TOOLS:
+            if tool in allow_list:
+                found_in_file.append(tool)
+                conflicts.append(f"{tool} in {spath}")
+
+        if found_in_file and fix:
+            new_allow = [t for t in allow_list if t not in GUARD_CONFLICTING_TOOLS]
+            sdata["permissions"]["allow"] = new_allow
+            with open(spath, "w", encoding="utf-8") as f:
+                json.dump(sdata, f, indent=2, ensure_ascii=False)
+                f.write("\n")
+            fixed_paths.append(spath)
+
+    return conflicts, fixed_paths
+
+
+def _verify_mcp(mcp_config: dict | None = None) -> bool:
+    """Verify MCP server responds to initialize.
+
+    If mcp_config is provided, uses its command+args (the actual command that
+    Claude Code will invoke). Otherwise falls back to direct python3 invocation.
+    Returns True on success.
+    """
+    init_msg = json.dumps({
+        "jsonrpc": "2.0", "id": 1, "method": "initialize",
+        "params": {"protocolVersion": "2024-11-05", "capabilities": {},
+                    "clientInfo": {"name": "trialogue-verify", "version": "1.0"}}
+    }) + "\n"
+    if mcp_config:
+        cmd = [mcp_config["command"]] + mcp_config.get("args", [])
+    else:
+        cmd = [sys.executable, os.path.join(SCRIPT_DIR, "mcp-server.py")]
+    try:
+        proc = subprocess.run(
+            cmd,
+            input=init_msg, capture_output=True, text=True,
+            timeout=10, cwd=SCRIPT_DIR,
+        )
+        if proc.returncode != 0 and proc.stdout.strip() == "":
+            return False
+        resp = json.loads(proc.stdout.strip().split("\n")[0])
+        return "result" in resp and "serverInfo" in resp["result"]
+    except Exception:
+        return False
+
+
+# ── Commands ─────────────────────────────────────────────────────────────────
+
+def cmd_guard_on(fix_allowlist: bool = False, egress: bool = False) -> int:
+    """Enable v4 Guard."""
+    # Pre-check: allowlist conflicts (hard fail unless --fix)
+    conflicts, fixed_paths = _check_allowlist_conflicts(fix=fix_allowlist)
+    if conflicts and not fix_allowlist:
+        print("ERROR: Guard hooks will be ignored — conflicting tools in Claude Code allowlist:")
+        for c in conflicts:
+            print(f"  - {c}")
+        print()
+        print("Hook deny decisions are silently ignored by Claude Code when the tool is allowlisted.")
+        print("Run 'trialogue guard on --fix' to auto-remove conflicting entries, then retry.")
+        return 1
+    if fixed_paths:
+        print("Fixed allowlist conflicts:")
+        for p in fixed_paths:
+            print(f"  Removed conflicting tools from {p}")
+
+    settings_path = _find_settings_path()
+    original = _load_settings(settings_path)
+
+    if _guard_is_on(original):
+        print("Guard is already ON.")
+        return 0
+
+    # Step 1-3: Inject MCP + hooks
+    modified = _inject_guard(original)
+
+    # Step 4: Precompile
+    print("Precompiling Python files...")
+    _precompile()
+
+    # Step 5: Generate default conf if needed
+    conf_path = os.path.join(SCRIPT_DIR, "trialogue-v4.conf")
+    example_path = os.path.join(SCRIPT_DIR, "trialogue-v4.conf.example")
+    if not os.path.exists(conf_path) and os.path.exists(example_path):
+        import shutil
+        shutil.copy2(example_path, conf_path)
+        print(f"Created default config: {conf_path}")
+
+    # Step 6: Verify MCP server (basic — current user, before egress rewrite)
+    print("Verifying MCP server...")
+    if not _verify_mcp():
+        print("ERROR: MCP server verification failed. Rolling back.")
+        return 1
+
+    # Step 7: Network egress control (BEFORE saving settings — may rewrite MCP config)
+    egress_mode = "pattern_only"
+    if egress:
+        from egress import enable_egress, disable_egress, get_status, ensure_sudoers
+        egress_mode, egress_msg = enable_egress()
+        print(f"  Egress: {egress_mode} — {egress_msg}")
+        if egress_mode == "kernel":
+            # Ensure _trialogue can read the script directory (e.g. if installed under /home/user)
+            _ensure_trialogue_access(SCRIPT_DIR)
+            # Ensure sudoers rule so Claude Code can launch MCP as _trialogue without password
+            sudo_ok, sudo_msg = ensure_sudoers()
+            if not sudo_ok:
+                print(f"  WARNING: sudoers setup failed: {sudo_msg}")
+                print(f"  Falling back to pattern_only — cannot run MCP as _trialogue without NOPASSWD")
+                egress_mode = "pattern_only"
+                # Roll back iptables since MCP can't run as _trialogue
+                disable_egress()
+            else:
+                # Rewrite MCP config to run as _trialogue user
+                new_mcp_config = _build_mcp_config(as_trialogue_user=True)
+                modified["mcpServers"][GUARD_MCP_KEY] = new_mcp_config
+                print(f"  MCP server rewired to run as _trialogue (matches iptables owner rule)")
+                # Re-verify with the ACTUAL command Claude will use (sudo -u _trialogue ...)
+                print("  Re-verifying MCP server as _trialogue...")
+                if not _verify_mcp(mcp_config=new_mcp_config):
+                    print("  ERROR: MCP server fails to start as _trialogue. Rolling back egress.")
+                    egress_mode = "pattern_only"
+                    modified["mcpServers"][GUARD_MCP_KEY] = _build_mcp_config(as_trialogue_user=False)
+                    disable_egress()
+                else:
+                    print("  MCP server verified as _trialogue — kernel egress chain complete")
+    else:
+        print(f"  Egress: pattern_only (use --egress with root for kernel-level control)")
+
+    # All good — save Claude Code settings
+    _save_settings(settings_path, modified)
+    print(f"Guard ON — Claude Code settings written to {settings_path}")
+    print(f"  MCP server: {GUARD_MCP_KEY}")
+    print(f"  Hooks: WebFetch (block+route), WebSearch (block or passthrough), Bash (curl/wget block)")
+
+    # Codex MCP config via `codex mcp add` (best-effort — Codex may not be installed)
+    if _codex_available():
+        if _codex_has_guard():
+            # Re-register if egress mode changed (kernel needs sudo wrapper)
+            if egress_mode == "kernel":
+                _codex_mcp_remove()
+                ok, msg = _codex_mcp_add(as_trialogue_user=True)
+                if ok:
+                    print(f"  Codex: MCP server re-registered as _trialogue (kernel egress)")
+                else:
+                    print(f"  Codex: failed to re-register as _trialogue: {msg}")
+                    print(f"  Codex: MCP server will be blocked by iptables — Codex egress NOT functional")
+            else:
+                print(f"  Codex: {GUARD_MCP_KEY} already registered")
+        else:
+            ok, msg = _codex_mcp_add(as_trialogue_user=(egress_mode == "kernel"))
+            if ok:
+                suffix = " (as _trialogue)" if egress_mode == "kernel" else ""
+                print(f"  Codex: MCP server registered via `codex mcp add`{suffix}")
+            else:
+                print(f"  Codex: failed to register MCP server: {msg}")
+        print(f"  NOTE: Codex lacks PreToolUse hooks — MCP tools available but not enforced")
+    else:
+        print(f"  Codex: not detected (skipped)")
+
+    # Check for .pyc
+    pycache = os.path.join(SCRIPT_DIR, "__pycache__")
+    if os.path.exists(pycache) and os.listdir(pycache):
+        print(f"  Precompiled: {len(os.listdir(pycache))} .pyc files")
+
+    return 0
+
+
+def cmd_guard_off() -> int:
+    """Disable v4 Guard."""
+    settings_path = _find_settings_path()
+    original = _load_settings(settings_path)
+
+    if not _guard_is_on(original):
+        print("Guard is already OFF.")
+        return 0
+
+    modified = _remove_guard(original)
+    _save_settings(settings_path, modified)
+
+    # Remove egress control if active
+    try:
+        from egress import get_status, disable_egress
+        status = get_status()
+        if status.get("egress_mode") == "kernel":
+            ok, msg = disable_egress()
+            print(f"  Egress: {msg}")
+    except Exception:
+        pass  # egress module may not be importable in all envs
+
+    # Remove from Codex too
+    if _codex_available() and _codex_has_guard():
+        ok, msg = _codex_mcp_remove()
+        if ok:
+            print(f"  Codex: MCP server removed")
+        else:
+            print(f"  Codex: failed to remove MCP server: {msg}")
+    print(f"Guard OFF — removed from {settings_path}")
+    print("  Audit chain data preserved.")
+    return 0
+
+
+def cmd_start(topic: str, no_guard: bool = False) -> int:
+    """Start Broker + optionally Guard."""
+    # Enable guard first (unless --no-guard)
+    if not no_guard:
+        settings_path = _find_settings_path()
+        settings = _load_settings(settings_path)
+        if not _guard_is_on(settings):
+            print("Enabling Guard...")
+            rc = cmd_guard_on()
+            if rc != 0:
+                print("WARNING: Guard failed to enable, continuing with Broker only.")
+
+    # Start Broker via start.sh
+    start_sh = os.path.join(SCRIPT_DIR, "start.sh")
+    if not os.path.exists(start_sh):
+        print(f"ERROR: {start_sh} not found.")
+        return 1
+
+    print(f"\nStarting Broker with topic: {topic}")
+    result = subprocess.run(["bash", start_sh, topic], cwd=SCRIPT_DIR)
+    return result.returncode
+
+
+def cmd_stop() -> int:
+    """Stop Broker + Guard."""
+    # Stop tmux session
+    print("Stopping Broker...")
+    subprocess.run(
+        ["tmux", "kill-session", "-t", "openclaw-chat"],
+        capture_output=True, text=True
+    )
+
+    # Disable guard
+    print("Disabling Guard...")
+    return cmd_guard_off()
+
+
+def cmd_status() -> int:
+    """Show system status."""
+    print("Trialogue Status")
+    print("=" * 40)
+
+    # Broker status
+    tmux_result = subprocess.run(
+        ["tmux", "has-session", "-t", "openclaw-chat"],
+        capture_output=True, text=True
+    )
+    if tmux_result.returncode == 0:
+        print("Broker: running (session: openclaw-chat)")
+    else:
+        print("Broker: not running")
+
+    # Guard status
+    settings_path = _find_settings_path()
+    settings = _load_settings(settings_path)
+
+    if _guard_is_on(settings):
+        print("Guard:  ON")
+        # Check hooks — Claude Code format: {"hooks": {"PreToolUse": [...]}}
+        hooks_obj = settings.get("hooks", {})
+        pre_hooks = hooks_obj.get("PreToolUse", []) if isinstance(hooks_obj, dict) else []
+        guard_hooks = [h for h in pre_hooks if h.get("_trialogue_id", "").startswith("guard-")]
+        hook_names = [h.get("_trialogue_id", "").replace("guard-", "") for h in guard_hooks]
+        if hook_names:
+            print(f"  Hooks: {', '.join(hook_names)}")
+
+        # Audit chain stats
+        chain_dir = os.path.join(SCRIPT_DIR, "state", "ingestion-chain")
+        if os.path.exists(chain_dir):
+            total_entries = 0
+            for fname in os.listdir(chain_dir):
+                if fname.endswith(".jsonl"):
+                    chain_path = os.path.join(chain_dir, fname)
+                    with open(chain_path, "r") as f:
+                        total_entries += sum(1 for line in f if line.strip())
+            print(f"  Audit chain: {total_entries} entries ({chain_dir})")
+        else:
+            print("  Audit chain: no entries yet")
+
+        # Egress control status
+        try:
+            from egress import get_status as _egress_status
+            es = _egress_status()
+            print(f"  Egress: {es.get('egress_mode', 'unknown')}")
+        except Exception:
+            print(f"  Egress: unknown")
+
+        print(f"  Settings: {settings_path}")
+    else:
+        print("Guard:  OFF")
+        print("  Run 'trialogue guard on' to enable guard only.")
+        print("  Run 'trialogue start <topic>' to start broker + guard.")
+
+    return 0
+
+
+# ── Main ─────────────────────────────────────────────────────────────────────
+
+def main() -> int:
+    args = sys.argv[1:]
+
+    if not args:
+        print(__doc__)
+        return 2
+
+    cmd = args[0]
+
+    if cmd == "guard":
+        if len(args) < 2 or args[1] not in ("on", "off"):
+            print("Usage: trialogue guard on|off [--fix]")
+            return 2
+        if args[1] == "on":
+            fix = "--fix" in args
+            egress = "--egress" in args
+            return cmd_guard_on(fix_allowlist=fix, egress=egress)
+        else:
+            return cmd_guard_off()
+
+    elif cmd == "start":
+        if len(args) < 2:
+            print("Usage: trialogue start <topic> [--no-guard]")
+            return 2
+        topic = args[1]
+        no_guard = "--no-guard" in args
+        return cmd_start(topic, no_guard=no_guard)
+
+    elif cmd == "stop":
+        return cmd_stop()
+
+    elif cmd == "status":
+        return cmd_status()
+
+    else:
+        print(f"Unknown command: {cmd}")
+        print(__doc__)
+        return 2
+
+
+if __name__ == "__main__":
+    sys.exit(main())
