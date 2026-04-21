@@ -1,0 +1,5 @@
+{
+  "stderr": "/home/user/project/lib/csv_reader.rb:15:in `read': incompatible character encodings: ISO-8859-1 and UTF-8 (Encoding::CompatibilityError)\n\tfrom /home/user/project/lib/csv_reader.rb:15:in `parse_row'\n\tfrom /home/user/project/app.rb:8:in `<main>'",
+  "error_class": "encoding_error",
+  "source": "Encoding::CompatibilityError reading ISO-8859-1 CSV"
+}

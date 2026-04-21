@@ -1,0 +1,5 @@
+{
+  "stderr": "Bundler::PermissionError: There was an error while trying to create `/usr/local/lib/ruby/gems/3.2.0/extensions/x86_64-linux/3.2.0/ffi-1.16.3`.\nIt is likely that you need to grant write permissions for that path.",
+  "error_class": "permission_denial",
+  "source": "Bundler permission error writing native extension cache"
+}

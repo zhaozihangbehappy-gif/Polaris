@@ -1,0 +1,709 @@
+{
+  "ecosystem": "docker",
+  "error_class": "build_error",
+  "schema_version": 4,
+  "records": [
+    {
+      "pattern_id": "candidate.docker.build_error.000",
+      "ecosystem": "docker",
+      "error_class": "build_error",
+      "description": "COPY source path not in context",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "COPY failed.*no such file or directory"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "docker info 2>&1 | head -5",
+        "trigger_env": {},
+        "expected_stderr_match": "COPY failed.*no such file or directory"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Docker build_error: COPY source path not in context"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.docker.build_error.001",
+      "ecosystem": "docker",
+      "error_class": "build_error",
+      "description": "ADD with URL failed HTTPS",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "ADD failed.*https"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "docker info 2>&1 | head -5",
+        "trigger_env": {},
+        "expected_stderr_match": "ADD failed.*https"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Docker build_error: ADD with URL failed HTTPS"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.docker.build_error.002",
+      "ecosystem": "docker",
+      "error_class": "build_error",
+      "description": "RUN apt-get update 404 suite",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "E: Failed to fetch .* 404 Not Found"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "docker info 2>&1 | head -5",
+        "trigger_env": {},
+        "expected_stderr_match": "E: Failed to fetch .* 404 Not Found"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Docker build_error: RUN apt-get update 404 suite"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.docker.build_error.003",
+      "ecosystem": "docker",
+      "error_class": "build_error",
+      "description": "RUN apk add package not found",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "ERROR: unable to select packages"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "docker info 2>&1 | head -5",
+        "trigger_env": {},
+        "expected_stderr_match": "ERROR: unable to select packages"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Docker build_error: RUN apk add package not found"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.docker.build_error.004",
+      "ecosystem": "docker",
+      "error_class": "build_error",
+      "description": "Dockerfile syntax frontend parse error",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "dockerfile parse error"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "docker info 2>&1 | head -5",
+        "trigger_env": {},
+        "expected_stderr_match": "dockerfile parse error"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Docker build_error: Dockerfile syntax frontend parse error"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.docker.build_error.005",
+      "ecosystem": "docker",
+      "error_class": "build_error",
+      "description": "heredoc syntax requires buildkit",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "--mount.*requires BuildKit"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "docker info 2>&1 | head -5",
+        "trigger_env": {},
+        "expected_stderr_match": "--mount.*requires BuildKit"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Docker build_error: heredoc syntax requires buildkit"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.docker.build_error.006",
+      "ecosystem": "docker",
+      "error_class": "build_error",
+      "description": "FROM image manifest unknown",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "manifest for .* not found"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "docker info 2>&1 | head -5",
+        "trigger_env": {},
+        "expected_stderr_match": "manifest for .* not found"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Docker build_error: FROM image manifest unknown"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.docker.build_error.007",
+      "ecosystem": "docker",
+      "error_class": "build_error",
+      "description": "buildx platform not supported",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "no match for platform"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "docker info 2>&1 | head -5",
+        "trigger_env": {},
+        "expected_stderr_match": "no match for platform"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Docker build_error: buildx platform not supported"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.docker.build_error.008",
+      "ecosystem": "docker",
+      "error_class": "build_error",
+      "description": "ARG used before FROM",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "ARG requires exactly one argument"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "docker info 2>&1 | head -5",
+        "trigger_env": {},
+        "expected_stderr_match": "ARG requires exactly one argument"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Docker build_error: ARG used before FROM"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.docker.build_error.009",
+      "ecosystem": "docker",
+      "error_class": "build_error",
+      "description": "multi-stage COPY --from unknown",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "COPY failed.*stage"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "docker info 2>&1 | head -5",
+        "trigger_env": {},
+        "expected_stderr_match": "COPY failed.*stage"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Docker build_error: multi-stage COPY --from unknown"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.docker.build_error.010",
+      "ecosystem": "docker",
+      "error_class": "build_error",
+      "description": "WORKDIR absolute path required",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "WORKDIR.*must be absolute"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "docker info 2>&1 | head -5",
+        "trigger_env": {},
+        "expected_stderr_match": "WORKDIR.*must be absolute"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Docker build_error: WORKDIR absolute path required"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.docker.build_error.011",
+      "ecosystem": "docker",
+      "error_class": "build_error",
+      "description": "SHELL command parse error",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "SHELL.*invalid"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "docker info 2>&1 | head -5",
+        "trigger_env": {},
+        "expected_stderr_match": "SHELL.*invalid"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Docker build_error: SHELL command parse error"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.docker.build_error.012",
+      "ecosystem": "docker",
+      "error_class": "build_error",
+      "description": "USER numeric id not in passwd",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "unable to find user.*no matching entries"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "docker info 2>&1 | head -5",
+        "trigger_env": {},
+        "expected_stderr_match": "unable to find user.*no matching entries"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Docker build_error: USER numeric id not in passwd"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.docker.build_error.013",
+      "ecosystem": "docker",
+      "error_class": "build_error",
+      "description": "ENV with = and space confusion",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "environment variable.*empty"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "docker info 2>&1 | head -5",
+        "trigger_env": {},
+        "expected_stderr_match": "environment variable.*empty"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Docker build_error: ENV with = and space confusion"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.docker.build_error.014",
+      "ecosystem": "docker",
+      "error_class": "build_error",
+      "description": "HEALTHCHECK missing CMD",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "HEALTHCHECK requires the CMD"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "docker info 2>&1 | head -5",
+        "trigger_env": {},
+        "expected_stderr_match": "HEALTHCHECK requires the CMD"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Docker build_error: HEALTHCHECK missing CMD"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.docker.build_error.015",
+      "ecosystem": "docker",
+      "error_class": "build_error",
+      "description": "ENTRYPOINT json array syntax",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "entrypoint.*JSON"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "docker info 2>&1 | head -5",
+        "trigger_env": {},
+        "expected_stderr_match": "entrypoint.*JSON"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Docker build_error: ENTRYPOINT json array syntax"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.docker.build_error.016",
+      "ecosystem": "docker",
+      "error_class": "build_error",
+      "description": "Dockerfile not found in context",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "unable to prepare context.*Dockerfile"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "docker info 2>&1 | head -5",
+        "trigger_env": {},
+        "expected_stderr_match": "unable to prepare context.*Dockerfile"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Docker build_error: Dockerfile not found in context"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.docker.build_error.017",
+      "ecosystem": "docker",
+      "error_class": "build_error",
+      "description": "buildkit inline cache missing",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "inline cache.*failed"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "docker info 2>&1 | head -5",
+        "trigger_env": {},
+        "expected_stderr_match": "inline cache.*failed"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Docker build_error: buildkit inline cache missing"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    }
+  ]
+}

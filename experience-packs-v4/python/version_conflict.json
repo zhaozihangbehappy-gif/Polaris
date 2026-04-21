@@ -1,0 +1,229 @@
+{
+  "ecosystem": "python",
+  "error_class": "version_conflict",
+  "schema_version": 4,
+  "records": [
+    {
+      "pattern_id": "python.version_conflict.000",
+      "ecosystem": "python",
+      "error_class": "version_conflict",
+      "description": "Package requires a newer Python version \u2014 cannot fix via env; report the constraint to the user",
+      "source": "prebuilt",
+      "trigger_signals": {
+        "stderr_regex": [
+          "requires a different Python version.*not in '>="
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "python3 -c \"import sys; print(f'Python {sys.version}'); exit(1) if sys.version_info < (3,99) else None\" 2>&1; echo 'ERROR: requires Python >=3.99' >&2 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "requires.*Python|version",
+        "expected_fix_outcome": "different_error_or_success"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "PIP_PYTHON_VERSION": ""
+            }
+          }
+        ],
+        "fix_command": "bash -c 'echo \"PIP_PYTHON_VERSION= applied (simulated fix)\"; exit 0'",
+        "fix_env": {},
+        "description": "Package requires a newer Python version \u2014 cannot fix via env; report the constraint to the user"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "legacy_v3": {
+        "stderr_pattern": "requires a different Python version.*not in '>=",
+        "avoidance_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "PIP_PYTHON_VERSION": ""
+            }
+          }
+        ],
+        "description": "Package requires a newer Python version \u2014 cannot fix via env; report the constraint to the user",
+        "source": "prebuilt",
+        "reproduction": {
+          "command": "python3 -c \"import sys; print(f'Python {sys.version}'); exit(1) if sys.version_info < (3,99) else None\" 2>&1; echo 'ERROR: requires Python >=3.99' >&2 || true",
+          "trigger_env": {},
+          "expected_stderr_match": "requires.*Python|version",
+          "fix_env": {},
+          "expected_fix_outcome": "different_error_or_success",
+          "fix_command": "bash -c 'echo \"PIP_PYTHON_VERSION= applied (simulated fix)\"; exit 0'"
+        }
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ],
+      "authored_fixture": {
+        "authored_at": "2026-04-20T03:07:52+00:00",
+        "authored_by": "codex",
+        "authored_with_prompt_sha256": "1cf137246e74c133b422e93f8038d0c6878fa2d5132655eb1ee964d1891dae75",
+        "verification_command": "PYTHONDONTWRITEBYTECODE=1 python3 -m unittest -q tests.test_python_requirement",
+        "expected_stderr_regex": "requires a different Python version.*not in '>=3\\.13'",
+        "files": [
+          {
+            "path": "pyproject.toml",
+            "content": "[project]\nname = \"python-version-conflict-demo\"\nversion = \"0.1.0\"\nrequires-python = \">=3.13\"\n"
+          },
+          {
+            "path": "tests/__init__.py",
+            "content": "\n"
+          },
+          {
+            "path": "tests/test_python_requirement.py",
+            "content": "import sys\nimport tomllib\nimport unittest\nfrom pathlib import Path\n\n\nclass PythonRequirementTest(unittest.TestCase):\n    def test_declared_python_requirement_matches_runtime(self):\n        data = tomllib.loads(Path(\"pyproject.toml\").read_text())\n        project = data[\"project\"]\n        required = project[\"requires-python\"]\n        minimum = tuple(map(int, required.removeprefix(\">=\").split(\".\")))\n        current = sys.version_info[: len(minimum)]\n\n        if current < minimum:\n            version = \".\".join(map(str, sys.version_info[:3]))\n            self.fail(\n                f\"{project['name']} requires a different Python version: \"\n                f\"{version} not in '{required}'\"\n            )\n\n\nif __name__ == \"__main__\":\n    unittest.main()\n"
+          }
+        ],
+        "reference_fix_files": [
+          {
+            "path": "pyproject.toml",
+            "content": "[project]\nname = \"python-version-conflict-demo\"\nversion = \"0.1.0\"\nrequires-python = \">=3.12\"\n"
+          }
+        ],
+        "fix_rationale": "The project metadata currently requires Python 3.13 or newer, so lowering the declared minimum to Python 3.12 makes it compatible with the runtime used by the verifier.",
+        "reviewer_record": {
+          "validated_in_sandbox_at": "2026-04-20T03:07:52+00:00",
+          "sandbox_pre_fix_exit_code": 1,
+          "sandbox_pre_fix_stderr_match": true,
+          "sandbox_post_fix_exit_code": 0,
+          "sandbox_workdir_hash_pre": "d81ef98775f9e989cf7a55026a9e303508b7c04bdf3a36df59ede1afcab5a7e0",
+          "sandbox_workdir_hash_post": "d4e4837120b7fe3eb78f861cf8266e785d8f54b55d8702294f4c76969db43406",
+          "notes": "authored by codex; pre-fix fails+matches regex, post-fix passes"
+        }
+      }
+    },
+    {
+      "pattern_id": "python.version_conflict.001",
+      "ecosystem": "python",
+      "error_class": "version_conflict",
+      "description": "pip dependency resolution conflict \u2014 cannot resolve automatically; report conflict details to user",
+      "source": "prebuilt",
+      "trigger_signals": {
+        "stderr_regex": [
+          "ERROR:.*dependency resolver.*conflicting dependencies|ResolutionImpossible"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "bash -c 'echo \"ERROR: pip dependency resolver found conflicting dependencies: urllib3==1.25.0 incompatible with requests==2.31.0 (requires urllib3>=1.26)\" >&2; exit 1' 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "conflict|incompatible|ResolutionImpossible|Cannot install",
+        "expected_fix_outcome": "different_error_or_success"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "PIP_NO_DEPS": "0"
+            }
+          }
+        ],
+        "fix_command": "bash -c 'echo \"Conflict reported to user \u2014 manual resolution required (simulated)\"; exit 0' 2>&1 || true",
+        "fix_env": {},
+        "description": "pip dependency resolution conflict \u2014 cannot resolve automatically; report conflict details to user"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": [
+          {
+            "agent": "claude_code",
+            "agent_version": "unknown",
+            "model": "claude-haiku-4-5-20251001",
+            "date_verified": "2026-04-20T12:14:24+00:00",
+            "status": "verified_live",
+            "artifact_path": "eval/runs/20260420T201220/transcripts/claude_code__generated_python_version_conflict_001__polaris.txt",
+            "transcript_hash": "b8de93fd37700c7a4ec9bd567fcf48f84ecfcec6763e1bb74764d25980d2157a",
+            "pre_failure_reproduced": true,
+            "workdir_manifest_hash": "26e299ea57a52dbbda17f02c43bea5f9b57610177b39c9181fd96bead11c6dbd",
+            "notes": "case=generated_python_version_conflict_001 polaris_enabled=True rounds=1 tool_calls=10 tokens=396"
+          }
+        ]
+      },
+      "legacy_v3": {
+        "stderr_pattern": "ERROR:.*dependency resolver.*conflicting dependencies|ResolutionImpossible",
+        "avoidance_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "PIP_NO_DEPS": "0"
+            }
+          }
+        ],
+        "description": "pip dependency resolution conflict \u2014 cannot resolve automatically; report conflict details to user",
+        "source": "prebuilt",
+        "reproduction": {
+          "command": "bash -c 'echo \"ERROR: pip dependency resolver found conflicting dependencies: urllib3==1.25.0 incompatible with requests==2.31.0 (requires urllib3>=1.26)\" >&2; exit 1' 2>&1 || true",
+          "trigger_env": {},
+          "expected_stderr_match": "conflict|incompatible|ResolutionImpossible|Cannot install",
+          "fix_command": "bash -c 'echo \"Conflict reported to user \u2014 manual resolution required (simulated)\"; exit 0' 2>&1 || true",
+          "fix_env": {},
+          "expected_fix_outcome": "different_error_or_success"
+        }
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds"
+      ],
+      "authored_fixture": {
+        "authored_at": "2026-04-20T03:08:44+00:00",
+        "authored_by": "codex",
+        "authored_with_prompt_sha256": "270de9bdf30989123b1d3f0ef886dcd003a913d24457230e5c631c14b949b67e",
+        "verification_command": "python3 -m pip install --dry-run --user --no-index --no-build-isolation --no-cache-dir --break-system-packages -r requirements.txt",
+        "expected_stderr_regex": "ResolutionImpossible",
+        "files": [
+          {
+            "path": "requirements.txt",
+            "content": "./shared_v1\n./shared_v2\n"
+          },
+          {
+            "path": "shared_v1/setup.py",
+            "content": "from setuptools import setup\n\nsetup(name=\"shared\", version=\"1.0.0\")\n"
+          },
+          {
+            "path": "shared_v2/setup.py",
+            "content": "from setuptools import setup\n\nsetup(name=\"shared\", version=\"2.0.0\")\n"
+          }
+        ],
+        "reference_fix_files": [
+          {
+            "path": "requirements.txt",
+            "content": "./shared_v1\n"
+          }
+        ],
+        "fix_rationale": "Removing one direct requirement leaves pip with a single version of the shared distribution to resolve.",
+        "reviewer_record": {
+          "validated_in_sandbox_at": "2026-04-20T03:08:44+00:00",
+          "sandbox_pre_fix_exit_code": 1,
+          "sandbox_pre_fix_stderr_match": true,
+          "sandbox_post_fix_exit_code": 0,
+          "sandbox_workdir_hash_pre": "26e299ea57a52dbbda17f02c43bea5f9b57610177b39c9181fd96bead11c6dbd",
+          "sandbox_workdir_hash_post": "30f7e481a16abd7cce8221c721c24afe8e175cbd3dcb6d9fa49b4412f7b49f13",
+          "notes": "authored by codex; pre-fix fails+matches regex, post-fix passes"
+        }
+      }
+    }
+  ]
+}

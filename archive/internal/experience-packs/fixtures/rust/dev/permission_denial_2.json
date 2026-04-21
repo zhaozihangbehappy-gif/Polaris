@@ -1,0 +1,5 @@
+{
+  "stderr": "error: could not create directories for `/usr/local/cargo/registry/index/index.crates.io-6f17d22bba15001f`\n\nCaused by:\n  Permission denied (os error 13)\n\nwarning: please ensure the user has write access to the cargo home directory",
+  "error_class": "permission_denial",
+  "source": "cargo install in Docker container with read-only CARGO_HOME at /usr/local/cargo"
+}

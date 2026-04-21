@@ -1,0 +1,5 @@
+[service]
+name = "tiny-api"
+port = 8080
+enabled = true
+timeout_seconds =

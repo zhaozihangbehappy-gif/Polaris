@@ -1,0 +1,120 @@
+{
+  "ecosystem": "node",
+  "error_class": "port_conflict",
+  "schema_version": 4,
+  "records": [
+    {
+      "pattern_id": "node.port_conflict.000",
+      "ecosystem": "node",
+      "error_class": "port_conflict",
+      "description": "TCP port already in use \u2014 set PORT=0 to let the OS assign a free port",
+      "source": "prebuilt",
+      "trigger_signals": {
+        "stderr_regex": [
+          "EADDRINUSE.*address already in use.*:(\\d+)"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "node -e \"const net=require('net'); const s1=net.createServer(); s1.listen(0,()=>{const port=s1.address().port; const s2=net.createServer(); s2.on('error',e=>{console.error(e.message);s1.close();process.exit(1)}); s2.listen(port)})\" 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "EADDRINUSE",
+        "expected_fix_outcome": "different_error_or_success"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "PORT": "0"
+            }
+          }
+        ],
+        "fix_command": "node -e \"const net=require('net'); const s=net.createServer(); s.listen(0,()=>{console.log('listening on port '+s.address().port); s.close()})\" 2>&1 || true",
+        "fix_env": {
+          "PORT": "0"
+        },
+        "description": "TCP port already in use \u2014 set PORT=0 to let the OS assign a free port"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": [
+          {
+            "agent": "claude_code",
+            "agent_version": "unknown",
+            "model": "claude-opus-4-7",
+            "date_verified": "2026-04-20T11:29:34+00:00",
+            "status": "verified_live",
+            "artifact_path": "eval/runs/20260420T192903/transcripts/claude_code__generated_node_port_conflict_000__polaris.txt",
+            "transcript_hash": "91b0720785f5dd2f620233da72d1f8fe771405933278effd310195a01d54a037",
+            "pre_failure_reproduced": true,
+            "workdir_manifest_hash": "f0e6ffc45a7fa6d971859b9617e8e090f78009a6056d370b99f63b12d5d94082",
+            "notes": "case=generated_node_port_conflict_000 polaris_enabled=True rounds=1 tool_calls=5 tokens=346"
+          }
+        ]
+      },
+      "legacy_v3": {
+        "stderr_pattern": "EADDRINUSE.*address already in use.*:(\\d+)",
+        "avoidance_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "PORT": "0"
+            }
+          }
+        ],
+        "description": "TCP port already in use \u2014 set PORT=0 to let the OS assign a free port",
+        "source": "prebuilt",
+        "reproduction": {
+          "command": "node -e \"const net=require('net'); const s1=net.createServer(); s1.listen(0,()=>{const port=s1.address().port; const s2=net.createServer(); s2.on('error',e=>{console.error(e.message);s1.close();process.exit(1)}); s2.listen(port)})\" 2>&1 || true",
+          "trigger_env": {},
+          "expected_stderr_match": "EADDRINUSE",
+          "fix_command": "node -e \"const net=require('net'); const s=net.createServer(); s.listen(0,()=>{console.log('listening on port '+s.address().port); s.close()})\" 2>&1 || true",
+          "fix_env": {
+            "PORT": "0"
+          },
+          "expected_fix_outcome": "different_error_or_success"
+        }
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds"
+      ],
+      "authored_fixture": {
+        "authored_at": "2026-04-20T02:55:42+00:00",
+        "authored_by": "codex",
+        "authored_with_prompt_sha256": "acc0a4bc30cab8df6d9d9c35763547a93f850c2a79d3387cdaeda769d5d559d9",
+        "verification_command": "node conflict.js",
+        "expected_stderr_regex": "EADDRINUSE.*address already in use.*:(\\d+)",
+        "files": [
+          {
+            "path": "conflict.js",
+            "content": "const net = require(\"node:net\");\n\nconst port = 3000;\nconst host = \"127.0.0.1\";\n\nconst first = net.createServer();\nconst second = net.createServer();\n\nfirst.listen(port, host, () => {\n  second.listen(port, host, () => {\n    second.close();\n    first.close();\n  });\n});\n"
+          }
+        ],
+        "reference_fix_files": [
+          {
+            "path": "conflict.js",
+            "content": "const net = require(\"node:net\");\n\nconst port = 0;\nconst host = \"127.0.0.1\";\n\nconst first = net.createServer();\nconst second = net.createServer();\n\nfirst.listen(port, host, () => {\n  second.listen(port, host, () => {\n    second.close();\n    first.close();\n  });\n});\n"
+          }
+        ],
+        "fix_rationale": "Changing the configured port to 0 lets the OS assign each listener a free TCP port instead of forcing both servers onto the same fixed port.",
+        "reviewer_record": {
+          "validated_in_sandbox_at": "2026-04-20T02:55:42+00:00",
+          "sandbox_pre_fix_exit_code": 1,
+          "sandbox_pre_fix_stderr_match": true,
+          "sandbox_post_fix_exit_code": 0,
+          "sandbox_workdir_hash_pre": "f0e6ffc45a7fa6d971859b9617e8e090f78009a6056d370b99f63b12d5d94082",
+          "sandbox_workdir_hash_post": "6f7b0b5b88a94c51e13a3f31d892bfddbb10782ae36a00a7764ffb445c8351fe",
+          "notes": "authored by codex; pre-fix fails+matches regex, post-fix passes"
+        }
+      }
+    }
+  ]
+}

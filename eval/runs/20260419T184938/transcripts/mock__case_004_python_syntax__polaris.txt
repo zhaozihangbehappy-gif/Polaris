@@ -1,0 +1,28 @@
+[pre_failure_command]
+cd /tmp/_polaris_runs/20260419T184938/mock/case_004_python_syntax/polaris && python3 app.py
+[pre_failure_output]
+
+  File "/tmp/_polaris_runs/20260419T184938/mock/case_004_python_syntax/polaris/app.py", line 1
+    def greet(name)
+                   ^
+SyntaxError: expected ':'
+
+[pre_failure_reproduced]
+true
+[agent_transcript]
+[MOCK transcript for case_004_python_syntax polaris=True seed=7]
+rounds=7 tokens=7120 tool_calls=12 ci_pass=True
+
+[post_fix_command]
+cd /tmp/_polaris_runs/20260419T184938/mock/case_004_python_syntax/polaris && python3 app.py
+[post_fix_output]
+
+  File "/tmp/_polaris_runs/20260419T184938/mock/case_004_python_syntax/polaris/app.py", line 1
+    def greet(name)
+                   ^
+SyntaxError: expected ':'
+
+[post_fix_ci_pass]
+False
+[contamination_hits]
+[]

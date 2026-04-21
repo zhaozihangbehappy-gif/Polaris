@@ -1,0 +1,109 @@
+[pre_failure_command]
+cd /tmp/_polaris_runs/20260420T170630/claude_code/generated_node_resource_exhaustion_001/baseline && npm test
+[pre_failure_output]
+
+> node-resource-exhaustion-emfile@1.0.0 test
+> bash -c 'ulimit -n 64; node exhaust.js'
+
+
+node:fs:560
+  return binding.open(
+                 ^
+
+Error: EMFILE: too many open files, open '/tmp/_polaris_runs/20260420T170630/claude_code/generated_node_resource_exhaustion_001/baseline/payload.txt'
+    at Object.openSync (node:fs:560:18)
+    at Object.<anonymous> (/tmp/_polaris_runs/20260420T170630/claude_code/generated_node_resource_exhaustion_001/baseline/exhaust.js:8:23)
+    at Module._compile (node:internal/modules/cjs/loader:1705:14)
+    at Object..js (node:internal/modules/cjs/loader:1838:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Function._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)
+    at node:internal/main/run_main_module:36:49 {
+  errno: -24,
+  code: 'EMFILE',
+  syscall: 'open',
+  path: '/tmp/_polaris_runs/20260420T170630/claude_code/generated_node_resource_exhaustion_001/baseline/payload.txt'
+}
+
+Node.js v22.22.1
+
+[pre_failure_reproduced]
+true
+[agent_transcript]
+[claude exit=1 rate_limited=False num_turns=1]
+---
+{"type":"system","subtype":"init","cwd":"/tmp/_polaris_runs/20260420T170630/claude_code/generated_node_resource_exhaustion_001/baseline","session_id":"d4c29859-f799-4721-ba28-43fba559af30","tools":["Task","AskUserQuestion","Bash","CronCreate","CronDelete","CronList","Edit","EnterPlanMode","EnterWorktree","ExitPlanMode","ExitWorktree","Glob","Grep","Monitor","NotebookEdit","PushNotification","Read","RemoteTrigger","ScheduleWakeup","Skill","TaskOutput","TaskStop","TodoWrite","ToolSearch","WebFetch","WebSearch","Write"],"mcp_servers":[],"model":"claude-haiku-4-5-20251001","permissionMode":"bypassPermissions","slash_commands":["update-config","debug","simplify","batch","fewer-permission-prompts","loop","schedule","claude-api","compact","context","cost","heapdump","init","review","security-review","extra-usage","insights","team-onboarding"],"apiKeySource":"none","claude_code_version":"2.1.114","output_style":"default","agents":["Explore","general-purpose","Plan","statusline-setup"],"skills":["update-config","debug","simplify","batch","fewer-permission-prompts","loop","schedule","claude-api"],"plugins":[],"uuid":"7b1e08ee-41ea-45eb-920e-e93595499f19","memory_paths":{"auto":"/home/administrator/.claude/projects/-tmp--polaris-runs-20260420T170630-claude-code-generated-node-resource-exhaustion-001-baseline/memory/"},"fast_mode_state":"off"}
+{"type":"rate_limit_event","rate_limit_info":{"status":"rejected","resetsAt":1776690000,"rateLimitType":"five_hour","overageStatus":"rejected","overageDisabledReason":"org_level_disabled","isUsingOverage":false},"uuid":"9e4d1b3b-b253-428f-bf52-ad4283e7d5df","session_id":"d4c29859-f799-4721-ba28-43fba559af30"}
+{"type":"assistant","message":{"id":"a4290125-eb74-4649-a0fb-dec73312842a","container":null,"model":"<synthetic>","role":"assistant","stop_reason":"stop_sequence","stop_sequence":"","type":"message","usage":{"input_tokens":0,"output_tokens":0,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"server_tool_use":{"web_search_requests":0,"web_fetch_requests":0},"service_tier":null,"cache_creation":{"ephemeral_1h_input_tokens":0,"ephemeral_5m_input_tokens":0},"inference_geo":null,"iterations":null,"speed":null},"content":[{"type":"text","text":"You've hit your limit · resets 9pm (Asia/Shanghai)"}],"context_management":null},"parent_tool_use_id":null,"session_id":"d4c29859-f799-4721-ba28-43fba559af30","uuid":"a51285cd-bcdb-45a3-85ee-00ef68df8cbb","error":"rate_limit"}
+{"type":"result","subtype":"success","is_error":true,"api_error_status":429,"duration_ms":1055,"duration_api_ms":0,"num_turns":1,"result":"You've hit your limit · resets 9pm (Asia/Shanghai)","stop_reason":"stop_sequence","session_id":"d4c29859-f799-4721-ba28-43fba559af30","total_cost_usd":0,"usage":{"input_tokens":0,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"output_tokens":0,"server_tool_use":{"web_search_requests":0,"web_fetch_requests":0},"service_tier":"standard","cache_creation":{"ephemeral_1h_input_tokens":0,"ephemeral_5m_input_tokens":0},"inference_geo":"","iterations":[],"speed":"standard"},"modelUsage":{},"permission_denials":[],"terminal_reason":"completed","fast_mode_state":"off","uuid":"df1b5f9e-bea4-42d0-be12-2abfc6b4453d"}
+
+---
+[stderr]
+
+---
+[fix_command_test output]
+
+> node-resource-exhaustion-emfile@1.0.0 test
+> bash -c 'ulimit -n 64; node exhaust.js'
+
+
+node:fs:560
+  return binding.open(
+                 ^
+
+Error: EMFILE: too many open files, open '/tmp/_polaris_runs/20260420T170630/claude_code/generated_node_resource_exhaustion_001/baseline/payload.txt'
+    at Object.openSync (node:fs:560:18)
+    at Object.<anonymous> (/tmp/_polaris_runs/20260420T170630/claude_code/generated_node_resource_exhaustion_001/baseline/exhaust.js:8:23)
+    at Module._compile (node:internal/modules/cjs/loader:1705:14)
+    at Object..js (node:internal/modules/cjs/loader:1838:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Function._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)
+    at node:internal/main/run_main_module:36:49 {
+  errno: -24,
+  code: 'EMFILE',
+  syscall: 'open',
+  path: '/tmp/_polaris_runs/20260420T170630/claude_code/generated_node_resource_exhaustion_001/baseline/payload.txt'
+}
+
+Node.js v22.22.1
+
+[post_fix_command]
+cd /tmp/_polaris_runs/20260420T170630/claude_code/generated_node_resource_exhaustion_001/baseline && npm test
+[post_fix_output]
+
+> node-resource-exhaustion-emfile@1.0.0 test
+> bash -c 'ulimit -n 64; node exhaust.js'
+
+
+node:fs:560
+  return binding.open(
+                 ^
+
+Error: EMFILE: too many open files, open '/tmp/_polaris_runs/20260420T170630/claude_code/generated_node_resource_exhaustion_001/baseline/payload.txt'
+    at Object.openSync (node:fs:560:18)
+    at Object.<anonymous> (/tmp/_polaris_runs/20260420T170630/claude_code/generated_node_resource_exhaustion_001/baseline/exhaust.js:8:23)
+    at Module._compile (node:internal/modules/cjs/loader:1705:14)
+    at Object..js (node:internal/modules/cjs/loader:1838:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Function._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)
+    at node:internal/main/run_main_module:36:49 {
+  errno: -24,
+  code: 'EMFILE',
+  syscall: 'open',
+  path: '/tmp/_polaris_runs/20260420T170630/claude_code/generated_node_resource_exhaustion_001/baseline/payload.txt'
+}
+
+Node.js v22.22.1
+
+[post_fix_ci_pass]
+False
+[contamination_hits]
+[]

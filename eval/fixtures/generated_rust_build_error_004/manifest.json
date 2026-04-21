@@ -1,0 +1,15 @@
+{
+  "case_id": "generated_rust_build_error_004",
+  "files": [
+    "Cargo.toml",
+    "src/lib.rs"
+  ],
+  "dependencies": {},
+  "build_commands": [],
+  "expected_failure_command": "cd {workdir} && CARGO_INCREMENTAL=0 RUST_BACKTRACE=1 RUSTC=\"$(rustup which rustc)\" \"$(rustup which cargo)\" check",
+  "expected_failure_stderr_regex": "error\\[E0061\\]",
+  "manifest_schema_version": 1,
+  "bash_self_contained": false,
+  "reverse_from_pattern": "rust.build_error.004",
+  "source_pool": "official"
+}

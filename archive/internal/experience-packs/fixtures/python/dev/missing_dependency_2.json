@@ -1,0 +1,5 @@
+{
+  "stderr": "Traceback (most recent call last):\n  File \"/home/user/project/main.py\", line 1, in <module>\n    from mypackage.utils import helper\nModuleNotFoundError: No module named 'mypackage'\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/home/user/project/main.py\", line 5, in <module>\n    sys.exit(1)\nSystemExit: 1",
+  "error_class": "missing_dependency",
+  "source": "local package not on PYTHONPATH"
+}

@@ -1,0 +1,14 @@
+{
+  "case_id": "generated_java_network_error_000",
+  "files": [
+    "App.java"
+  ],
+  "dependencies": {},
+  "build_commands": [],
+  "expected_failure_command": "cd {workdir} && javac App.java && java App 65432",
+  "expected_failure_stderr_regex": "Could not transfer artifact.*Connection refused",
+  "manifest_schema_version": 1,
+  "bash_self_contained": false,
+  "reverse_from_pattern": "java.network_error.000",
+  "source_pool": "official"
+}

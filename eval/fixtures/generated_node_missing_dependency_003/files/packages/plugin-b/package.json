@@ -1,0 +1,8 @@
+{
+  "name": "plugin-b",
+  "version": "1.0.0",
+  "private": true,
+  "peerDependencies": {
+    "host-lib": "^2.0.0"
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "nonrepair_stop": false,
+  "candidate_fixes": [
+    "install or enable the missing dependency in the active local environment",
+    "switch to an existing local environment that already provides the dependency"
+  ],
+  "confidence": "high",
+  "depth_reason": "first_failure",
+  "escalate": false,
+  "evidence": [
+    "ModuleNotFoundError: No module named pywinauto"
+  ],
+  "failure_type": "missing_dependency",
+  "next_depth": "medium",
+  "probe_budget": 2,
+  "recommended_tree": "dependency_probe_tree",
+  "references": [
+    "Polaris/references/repair-actions.md",
+    "Polaris/references/stop-classifications.md"
+  ],
+  "repair_class": "env_probe_tree",
+  "repair_depth": "shallow",
+  "retry_guidance": "retry after confirming the dependency resolves in the current interpreter or PATH",
+  "should_deepen": true,
+  "suggested_rule_layer": "soft"
+}

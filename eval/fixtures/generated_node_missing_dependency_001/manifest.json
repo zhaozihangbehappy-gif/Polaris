@@ -1,0 +1,17 @@
+{
+  "case_id": "generated_node_missing_dependency_001",
+  "files": [
+    "package.json",
+    "app.mjs",
+    "node-path-loader.mjs",
+    "vendor/shelf-message/index.mjs"
+  ],
+  "dependencies": {},
+  "build_commands": [],
+  "expected_failure_command": "cd {workdir} && npm test",
+  "expected_failure_stderr_regex": "ERR_MODULE_NOT_FOUND|Cannot find package 'shelf-message'",
+  "manifest_schema_version": 1,
+  "bash_self_contained": false,
+  "reverse_from_pattern": "node.missing_dependency.001",
+  "source_pool": "official"
+}

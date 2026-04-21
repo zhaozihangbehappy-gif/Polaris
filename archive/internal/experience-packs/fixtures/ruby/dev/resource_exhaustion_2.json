@@ -1,0 +1,5 @@
+{
+  "stderr": "ruby: failed to allocate memory (NoMemoryError)\n\tfrom /home/user/project/lib/loader.rb:22:in `read'\n\tfrom /home/user/project/lib/loader.rb:10:in `load_all'\n\tfrom /home/user/project/app.rb:5:in `<main>'",
+  "error_class": "resource_exhaustion",
+  "source": "NoMemoryError from excessive allocation"
+}

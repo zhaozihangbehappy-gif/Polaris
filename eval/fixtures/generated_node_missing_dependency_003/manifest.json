@@ -1,0 +1,17 @@
+{
+  "case_id": "generated_node_missing_dependency_003",
+  "files": [
+    "package.json",
+    "packages/host-lib/package.json",
+    "packages/plugin-a/package.json",
+    "packages/plugin-b/package.json"
+  ],
+  "dependencies": {},
+  "build_commands": [],
+  "expected_failure_command": "cd {workdir} && npm run verify",
+  "expected_failure_stderr_regex": "ERESOLVE[\\s\\S]*peer dependency|Could not resolve dependency:[\\s\\S]*peer host-lib",
+  "manifest_schema_version": 1,
+  "bash_self_contained": false,
+  "reverse_from_pattern": "node.missing_dependency.003",
+  "source_pool": "official"
+}

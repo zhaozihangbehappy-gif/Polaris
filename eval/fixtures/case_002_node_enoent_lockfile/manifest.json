@@ -1,0 +1,35 @@
+{
+  "case_id": "case_002_node_enoent_lockfile",
+  "files": [
+    {
+      "relpath": "package.json",
+      "sha256": "c743eda44db332ad06ec49551be61309aacf7ba9e8dfd819d3a9cfd0c02fefd7",
+      "size": 161
+    },
+    {
+      "relpath": "packages/renamed-pkg/package.json",
+      "sha256": "bfd1d9564fda9d67cfddf6f7f233055aa75cbfe7415f0d49882113e4d0f4a6d0",
+      "size": 66
+    },
+    {
+      "relpath": "pnpm-lock.yaml",
+      "sha256": "de55e7d5aa8d23e8bc832020e93535b8fbcc65f319eccde50d7bf588d02fd2b1",
+      "size": 273
+    },
+    {
+      "relpath": "pnpm-workspace.yaml",
+      "sha256": "477e6c5f8b033a1ecb7f8919ad2726e4328c7893c4ad6228d62471425b22dbe7",
+      "size": 27
+    }
+  ],
+  "dependencies": {
+    "pnpm": ">=9.0"
+  },
+  "build_commands": [
+    "rm -rf {workdir} && mkdir -p {workdir}",
+    "cp -r files/. {workdir}/"
+  ],
+  "expected_failure_command": "cd {workdir} && pnpm install --frozen-lockfile",
+  "expected_failure_stderr_regex": "old-name|ERR_PNPM_OUTDATED_LOCKFILE|ENOENT",
+  "manifest_schema_version": 1
+}

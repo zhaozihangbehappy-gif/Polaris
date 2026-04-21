@@ -1,0 +1,12 @@
+{
+  "case_id": "case_005_python_file_path",
+  "source": "pattern_reverse",
+  "reverse_from_pattern": "python.file_not_found.000",
+  "ecosystem": "python",
+  "initial_prompt": "The Python script at {workdir}/scripts/read_value.py fails with FileNotFoundError when run from its scripts directory. Fix the relative path handling so the command works from that directory without requiring callers to cd to the project root.",
+  "success_criteria": {
+    "root_cause_regex": "FileNotFoundError|cwd|relative path|Path\\(__file__\\)|project root",
+    "fix_command_test": "cd {workdir}/scripts && python3 read_value.py"
+  },
+  "max_rounds": 8
+}

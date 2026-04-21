@@ -1,0 +1,8 @@
+{
+  "name": "node-network-error-001",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "test": "node registry-fetch.js"
+  }
+}

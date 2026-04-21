@@ -1,0 +1,34 @@
+{
+  "entries": {
+    "b9ab9ab3b9e56839": {
+      "failure_count": 0,
+      "last_score": 48,
+      "last_status": "success",
+      "last_success_at": "2026-03-14T02:35:37.735933+00:00",
+      "prerequisite_snapshot": {
+        "checks": [
+          {
+            "available": true,
+            "name": "python3"
+          }
+        ],
+        "ready": true
+      },
+      "scenario": {
+        "execution_profile": "standard",
+        "failure_type": "moderate_local_task",
+        "max_cost": 5,
+        "max_trust": "workspace",
+        "mode": "short",
+        "require_durable_status": false,
+        "required_capabilities": [
+          "local-exec",
+          "reporting"
+        ]
+      },
+      "selected_adapter": "python-local",
+      "updated_at": "2026-03-14T02:35:37.735921+00:00"
+    }
+  },
+  "schema_version": 1
+}

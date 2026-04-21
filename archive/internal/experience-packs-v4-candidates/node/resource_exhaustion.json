@@ -1,0 +1,241 @@
+{
+  "ecosystem": "node",
+  "error_class": "resource_exhaustion",
+  "schema_version": 4,
+  "records": [
+    {
+      "pattern_id": "candidate.node.resource_exhaustion.000",
+      "ecosystem": "node",
+      "error_class": "resource_exhaustion",
+      "description": "Node heap OOM during build",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "FATAL ERROR.*Allocation failed.*heap out of memory"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "node -e 'console.log(process.memoryUsage())' 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "FATAL ERROR.*Allocation failed.*heap out of memory"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Resource: Node heap OOM during build"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.node.resource_exhaustion.001",
+      "ecosystem": "node",
+      "error_class": "resource_exhaustion",
+      "description": "EMFILE too many open files",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "EMFILE.*too many open files"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "node -e 'console.log(process.memoryUsage())' 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "EMFILE.*too many open files"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Resource: EMFILE too many open files"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.node.resource_exhaustion.002",
+      "ecosystem": "node",
+      "error_class": "resource_exhaustion",
+      "description": "ulimit small in Docker build",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "resource temporarily unavailable"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "node -e 'console.log(process.memoryUsage())' 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "resource temporarily unavailable"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Resource: ulimit small in Docker build"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.node.resource_exhaustion.003",
+      "ecosystem": "node",
+      "error_class": "resource_exhaustion",
+      "description": "pnpm install disk full",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "ENOSPC.*no space left"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "node -e 'console.log(process.memoryUsage())' 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "ENOSPC.*no space left"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Resource: pnpm install disk full"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.node.resource_exhaustion.004",
+      "ecosystem": "node",
+      "error_class": "resource_exhaustion",
+      "description": "webpack cache corruption",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "Pack has been invalidated"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "node -e 'console.log(process.memoryUsage())' 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "Pack has been invalidated"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Resource: webpack cache corruption"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.node.resource_exhaustion.005",
+      "ecosystem": "node",
+      "error_class": "resource_exhaustion",
+      "description": "swc workers stack overflow",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "Maximum call stack size exceeded"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "node -e 'console.log(process.memoryUsage())' 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "Maximum call stack size exceeded"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Resource: swc workers stack overflow"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    }
+  ]
+}

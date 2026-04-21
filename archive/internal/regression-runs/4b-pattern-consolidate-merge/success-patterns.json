@@ -1,0 +1,60 @@
+{
+  "patterns": [
+    {
+      "adapter": null,
+      "asset_version": 2,
+      "best_lifecycle_state": "validated",
+      "confidence": 75,
+      "created_at": "2026-01-01T00:00:00+00:00",
+      "demotion_count": 0,
+      "evidence": [
+        "e1",
+        "e2"
+      ],
+      "evidence_count": 2,
+      "expires_at": null,
+      "fingerprint": "consol-target",
+      "history": [
+        {
+          "best_lifecycle_state": "experimental",
+          "confidence": 75,
+          "event": "merged_validation",
+          "evidence_count": 2,
+          "reason": "rerun_capture",
+          "retained_lifecycle": "experimental",
+          "ts": "2026-03-15T13:36:50.614519+00:00",
+          "validation_count": 2
+        },
+        {
+          "event": "auto_promoted",
+          "reason": "evidence_threshold_met",
+          "to": "validated",
+          "ts": "2026-03-15T13:36:50.614525+00:00"
+        }
+      ],
+      "last_validated_at": "2026-03-15T13:36:50.614526+00:00",
+      "lifecycle_state": "validated",
+      "modes": [
+        "long"
+      ],
+      "outcome": "pass",
+      "pattern_id": "consol-target",
+      "promotion_count": 1,
+      "reusable": true,
+      "selection_count": 0,
+      "sequence": [
+        "a",
+        "b"
+      ],
+      "strategy_hints": {},
+      "summary": "consolidated",
+      "tags": [
+        "test"
+      ],
+      "trigger": "test",
+      "updated_at": "2026-03-15T13:36:50.614517+00:00",
+      "validation_count": 2
+    }
+  ],
+  "schema_version": 1
+}

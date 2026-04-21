@@ -1,0 +1,274 @@
+{
+  "ecosystem": "node",
+  "error_class": "permission_denial",
+  "schema_version": 4,
+  "records": [
+    {
+      "pattern_id": "candidate.node.permission_denial.000",
+      "ecosystem": "node",
+      "error_class": "permission_denial",
+      "description": "EACCES on global npm install",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "EACCES.*permission denied.*npm"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "id && umask 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "EACCES.*permission denied.*npm"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Permissions: EACCES on global npm install"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ],
+      "authored_fixture": {
+        "authored_at": "2026-04-20T10:28:38+00:00",
+        "authored_by": "codex",
+        "authored_with_prompt_sha256": "5244560c4d140efcb50687a648620998cbbd895d11185ce1fe58ea35e6d7b29c",
+        "verification_command": "npm test",
+        "expected_stderr_regex": "EACCES[\\s\\S]*permission denied[\\s\\S]*npm",
+        "files": [
+          {
+            "path": "package.json",
+            "content": "{\n  \"name\": \"permission-denial-fixture\",\n  \"version\": \"1.0.0\",\n  \"private\": true,\n  \"scripts\": {\n    \"test\": \"node deny-global-install.js\"\n  }\n}\n"
+          },
+          {
+            "path": "deny-global-install.js",
+            "content": "const { chmodSync, mkdirSync, mkdtempSync, rmSync } = require(\"node:fs\");\nconst { tmpdir } = require(\"node:os\");\nconst path = require(\"node:path\");\nconst { spawnSync } = require(\"node:child_process\");\n\nconst root = mkdtempSync(path.join(tmpdir(), \"npm-global-denial-\"));\nconst prefix = path.join(root, \"prefix\");\nmkdirSync(prefix, { recursive: true });\nchmodSync(prefix, 0o555);\n\nconst npm = process.platform === \"win32\" ? \"npm.cmd\" : \"npm\";\nconst result = spawnSync(npm, [\"install\", \"--global\", \".\", \"--prefix\", prefix], {\n  cwd: __dirname,\n  stdio: \"inherit\"\n});\n\nchmodSync(prefix, 0o755);\nrmSync(root, { recursive: true, force: true });\nprocess.exit(result.status ?? 1);\n"
+          }
+        ],
+        "reference_fix_files": [
+          {
+            "path": "deny-global-install.js",
+            "content": "const { mkdirSync, mkdtempSync, rmSync } = require(\"node:fs\");\nconst { tmpdir } = require(\"node:os\");\nconst path = require(\"node:path\");\nconst { spawnSync } = require(\"node:child_process\");\n\nconst root = mkdtempSync(path.join(tmpdir(), \"npm-global-ok-\"));\nconst prefix = path.join(root, \"prefix\");\nmkdirSync(prefix, { recursive: true });\n\nconst npm = process.platform === \"win32\" ? \"npm.cmd\" : \"npm\";\nconst result = spawnSync(npm, [\"install\", \"--global\", \".\", \"--prefix\", prefix], {\n  cwd: __dirname,\n  stdio: \"inherit\"\n});\n\nrmSync(root, { recursive: true, force: true });\nprocess.exit(result.status ?? 1);\n"
+          }
+        ],
+        "fix_rationale": "Use a writable npm global prefix instead of forcing npm to install into a read-only directory.",
+        "reviewer_record": {
+          "validated_in_sandbox_at": "2026-04-20T10:28:38+00:00",
+          "sandbox_pre_fix_exit_code": 243,
+          "sandbox_pre_fix_stderr_match": true,
+          "sandbox_post_fix_exit_code": 0,
+          "sandbox_workdir_hash_pre": "ec723ccaeb8df8bad80f157cba0626d80b522458bd6fc05db88e07949d2e1395",
+          "sandbox_workdir_hash_post": "66c82cc88f30134bc0354b7723851981d785de978d8c55a4eb86fa72c2cbd739",
+          "notes": "authored by codex; pre-fix fails+matches regex, post-fix passes"
+        }
+      }
+    },
+    {
+      "pattern_id": "candidate.node.permission_denial.001",
+      "ecosystem": "node",
+      "error_class": "permission_denial",
+      "description": "pnpm store dir unwritable",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "EACCES.*\\.pnpm-store"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "id && umask 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "EACCES.*\\.pnpm-store"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Permissions: pnpm store dir unwritable"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.node.permission_denial.002",
+      "ecosystem": "node",
+      "error_class": "permission_denial",
+      "description": "EPERM on Windows rename during install",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "EPERM.*rename"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "id && umask 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "EPERM.*rename"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Permissions: EPERM on Windows rename during install"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.node.permission_denial.003",
+      "ecosystem": "node",
+      "error_class": "permission_denial",
+      "description": "eslint cache dir read-only",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "EACCES.*\\.eslintcache"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "id && umask 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "EACCES.*\\.eslintcache"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Permissions: eslint cache dir read-only"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.node.permission_denial.004",
+      "ecosystem": "node",
+      "error_class": "permission_denial",
+      "description": "tsbuildinfo readonly",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "EACCES.*tsbuildinfo"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "id && umask 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "EACCES.*tsbuildinfo"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Permissions: tsbuildinfo readonly"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.node.permission_denial.005",
+      "ecosystem": "node",
+      "error_class": "permission_denial",
+      "description": "ci cache write denied",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "EACCES.*\\.cache"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "id && umask 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "EACCES.*\\.cache"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Permissions: ci cache write denied"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    }
+  ]
+}

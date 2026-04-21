@@ -1,0 +1,5 @@
+{
+  "stderr": "[ERROR] [ERROR] Some problems were encountered while processing the POMs:\n[FATAL] Non-parseable POM /home/user/project/pom.xml: processing instruction can not have PITarget with reserved xml name (position: START_DOCUMENT seen <?xml version=\"1.0\" encoding=\"UTF-8\"?>\\n<?xml ... @2:6)  @ line 2, column 6\n @ \n[ERROR] The build could not read 1 project -> [Help 1]\n[ERROR]   The project  (/home/user/project/pom.xml) has 1 error\n[ERROR]     Non-parseable POM /home/user/project/pom.xml: processing instruction can not have PITarget with reserved xml name",
+  "error_class": "config_error",
+  "source": "malformed pom.xml with duplicate xml declaration"
+}

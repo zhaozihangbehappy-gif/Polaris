@@ -1,0 +1,17 @@
+{
+  "case_id": "generated_python_config_error_000",
+  "source": "authored_fixture",
+  "reverse_from_pattern": "python.config_error.000",
+  "pattern_id": "python.config_error.000",
+  "source_pool": "official",
+  "ecosystem": "python",
+  "error_class": "config_error",
+  "initial_prompt": "In the project at {workdir}, this python config_error fails: Config file has missing section or parsing error \u2014 ensure config file exists with required sections. Reproduce the failure with `python3 app.py`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+  "success_criteria": {
+    "root_cause_regex": ".+",
+    "fix_command_test": "cd {workdir} && python3 app.py"
+  },
+  "max_rounds": 6,
+  "fixture_strategy": "authored_files",
+  "promotion_eligible": true
+}

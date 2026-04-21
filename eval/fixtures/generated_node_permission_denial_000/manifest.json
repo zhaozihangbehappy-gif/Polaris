@@ -1,0 +1,15 @@
+{
+  "case_id": "generated_node_permission_denial_000",
+  "files": [
+    "package.json",
+    "scripts/check-cache.js"
+  ],
+  "dependencies": {},
+  "build_commands": [],
+  "expected_failure_command": "cd {workdir} && npm test",
+  "expected_failure_stderr_regex": "npm error code EACCES",
+  "manifest_schema_version": 1,
+  "bash_self_contained": false,
+  "reverse_from_pattern": "node.permission_denial.000",
+  "source_pool": "official"
+}

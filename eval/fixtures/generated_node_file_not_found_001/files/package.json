@@ -1,0 +1,8 @@
+{
+  "name": "node-file-not-found-repro",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "test": "node reader.js"
+  }
+}

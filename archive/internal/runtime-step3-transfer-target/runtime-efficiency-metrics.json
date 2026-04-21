@@ -1,0 +1,21 @@
+{
+  "adapter_selection_cost": 0,
+  "budget_profile": "standard",
+  "cold_path_cost": 0,
+  "expected_benefit": "lower hot-path cost with stricter validation replay",
+  "family_transfer_applied": true,
+  "hot_path_budget_source": "standard-local-success-marker-success-5328e8b69290",
+  "learning_hot_path_ops": 1,
+  "max_learning_hot_path_ops": 1,
+  "max_repair_probe_steps": 4,
+  "max_retry_actions": 0,
+  "max_selection_inputs": 4,
+  "max_stage_count": 3,
+  "max_state_writes": 56,
+  "repair_probe_steps": 0,
+  "retry_actions": 0,
+  "selection_inputs": 2,
+  "stage_count": 2,
+  "state_write_count": 49,
+  "validator_directness_rank": 2
+}

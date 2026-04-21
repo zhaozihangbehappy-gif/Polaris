@@ -1,0 +1,498 @@
+{
+  "ecosystem": "go",
+  "error_class": "missing_dependency",
+  "schema_version": 4,
+  "records": [
+    {
+      "pattern_id": "go.missing_dependency.000",
+      "ecosystem": "go",
+      "error_class": "missing_dependency",
+      "description": "go module not found — enable module-aware mode to auto-download",
+      "source": "prebuilt",
+      "trigger_signals": {
+        "stderr_regex": [
+          "cannot find module providing package|go: module .* found .* but does not contain"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "bash -c 'echo \"go: no required module provides package github.com/example/pkg\" >&2; exit 1'",
+        "trigger_env": {},
+        "expected_stderr_match": "no required module provides",
+        "expected_fix_outcome": "different_error_or_success"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "GOFLAGS": "-mod=mod"
+            }
+          }
+        ],
+        "fix_command": "bash -c 'echo \"GOFLAGS set (simulated)\"; exit 0'",
+        "fix_env": {
+          "GOFLAGS": "-mod=mod"
+        },
+        "description": "go module not found — enable module-aware mode to auto-download"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": [
+          {
+            "agent": "claude_code",
+            "agent_version": "unknown",
+            "date_verified": "2026-04-20T09:45:29+00:00",
+            "status": "verified_live",
+            "artifact_path": "eval/runs/20260420T170630/transcripts/claude_code__generated_go_missing_dependency_000__baseline.txt",
+            "transcript_hash": "ff9e0785dbdd1047f2089a4d2db7eb41a62cf5f83ea7fdef02ed21d8da966778",
+            "pre_failure_reproduced": true,
+            "workdir_manifest_hash": "422a183636fbb82b39ab019cb513546e96aef1f14b9a430284aaa5130a7b88d9",
+            "notes": "case=generated_go_missing_dependency_000 polaris_enabled=False rounds=7 tool_calls=6 tokens=1586",
+            "model": "claude-haiku-4-5-20251001"
+          },
+          {
+            "agent": "claude_code",
+            "agent_version": "unknown",
+            "date_verified": "2026-04-20T09:45:29+00:00",
+            "status": "verified_live",
+            "artifact_path": "eval/runs/20260420T170630/transcripts/claude_code__generated_go_missing_dependency_000__polaris.txt",
+            "transcript_hash": "9de7d6e9812f5f8da9b02570871fbd3def0f3597ca6149f95b35988dba6da27f",
+            "pre_failure_reproduced": true,
+            "workdir_manifest_hash": "1e56a675acb76b930b27d649af74034b01ceac99f414446bd029b8fd5894b193",
+            "notes": "case=generated_go_missing_dependency_000 polaris_enabled=True rounds=7 tool_calls=6 tokens=1545",
+            "model": "claude-haiku-4-5-20251001"
+          }
+        ]
+      },
+      "legacy_v3": {
+        "stderr_pattern": "cannot find module providing package|go: module .* found .* but does not contain",
+        "avoidance_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "GOFLAGS": "-mod=mod"
+            }
+          }
+        ],
+        "description": "go module not found — enable module-aware mode to auto-download",
+        "source": "prebuilt",
+        "reproduction": {
+          "command": "bash -c 'echo \"go: no required module provides package github.com/example/pkg\" >&2; exit 1'",
+          "trigger_env": {},
+          "expected_stderr_match": "no required module provides",
+          "fix_env": {
+            "GOFLAGS": "-mod=mod"
+          },
+          "expected_fix_outcome": "different_error_or_success",
+          "fix_command": "bash -c 'echo \"GOFLAGS set (simulated)\"; exit 0'"
+        }
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds"
+      ],
+      "authored_fixture": {
+        "authored_at": "2026-04-20T05:32:24+00:00",
+        "authored_by": "claude_code",
+        "authored_with_prompt_sha256": "c3518f679bff323205f2981fb7d34ec18d0e9ae42297de7262cf5e4df3f12b20",
+        "verification_command": "go build",
+        "expected_stderr_regex": "no required module provides package",
+        "files": [
+          {
+            "path": "go.mod",
+            "content": "module example.com/app\n\ngo 1.21\n"
+          },
+          {
+            "path": "main.go",
+            "content": "package main\n\nimport \"example.com/missing\"\n\nfunc main() {\n}\n"
+          }
+        ],
+        "reference_fix_files": [
+          {
+            "path": "main.go",
+            "content": "package main\n\nfunc main() {\n}\n"
+          }
+        ],
+        "fix_rationale": "Removed the import of the non-existent module example.com/missing.",
+        "reviewer_record": {
+          "validated_in_sandbox_at": "2026-04-20T05:32:24+00:00",
+          "sandbox_pre_fix_exit_code": 1,
+          "sandbox_pre_fix_stderr_match": true,
+          "sandbox_post_fix_exit_code": 0,
+          "sandbox_workdir_hash_pre": "d4138c72b2cb3a5da3659750680b7de764098b49fff7b7b8dafaa426a9238297",
+          "sandbox_workdir_hash_post": "9570b088ab66b8d5d6d45f723ed9c710686f78847cdcb924c9f8c1ca7f9c67e8",
+          "notes": "authored by claude_code; pre-fix fails+matches regex, post-fix passes"
+        }
+      }
+    },
+    {
+      "pattern_id": "go.missing_dependency.001",
+      "ecosystem": "go",
+      "error_class": "missing_dependency",
+      "description": "go.sum incomplete or mismatch — disable sum check and enable mod download",
+      "source": "prebuilt",
+      "trigger_signals": {
+        "stderr_regex": [
+          "missing go\\.sum entry for module|go\\.sum: checksum mismatch"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "bash -c 'echo \"go.sum: missing entry for module providing package golang.org/x/text\" >&2; exit 1'",
+        "trigger_env": {},
+        "expected_stderr_match": "missing.*entry",
+        "expected_fix_outcome": "different_error_or_success"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "GONOSUMCHECK": "*",
+              "GOFLAGS": "-mod=mod"
+            }
+          }
+        ],
+        "fix_command": "bash -c 'echo \"GONOSUMCHECK set (simulated)\"; exit 0'",
+        "fix_env": {
+          "GONOSUMCHECK": "*",
+          "GOFLAGS": "-mod=mod"
+        },
+        "description": "go.sum incomplete or mismatch — disable sum check and enable mod download"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": [
+          {
+            "agent": "claude_code",
+            "agent_version": "unknown",
+            "date_verified": "2026-04-20T09:45:29+00:00",
+            "status": "verified_live",
+            "artifact_path": "eval/runs/20260420T170630/transcripts/claude_code__generated_go_missing_dependency_001__baseline.txt",
+            "transcript_hash": "40f4f9121538a9200d0479ce26bdcb07f84152ff4757a921e2dcc9bd2620d7c9",
+            "pre_failure_reproduced": true,
+            "workdir_manifest_hash": "c0197bcb099354ea2bc3820b33403cdad28b6401101760bad774811f9cd3b8ff",
+            "notes": "case=generated_go_missing_dependency_001 polaris_enabled=False rounds=11 tool_calls=10 tokens=2033",
+            "model": "claude-haiku-4-5-20251001"
+          },
+          {
+            "agent": "claude_code",
+            "agent_version": "unknown",
+            "date_verified": "2026-04-20T09:45:29+00:00",
+            "status": "verified_live",
+            "artifact_path": "eval/runs/20260420T170630/transcripts/claude_code__generated_go_missing_dependency_001__polaris.txt",
+            "transcript_hash": "09d82d4c3a666d0a213ecaea23de7efb31a336f575e0d2bce4d21fb8d8355499",
+            "pre_failure_reproduced": true,
+            "workdir_manifest_hash": "96af0d20856bf73cde661ccbc90bca20790d84c3db0e8c9dd201a0f6e7133378",
+            "notes": "case=generated_go_missing_dependency_001 polaris_enabled=True rounds=12 tool_calls=11 tokens=2587",
+            "model": "claude-haiku-4-5-20251001"
+          }
+        ]
+      },
+      "legacy_v3": {
+        "stderr_pattern": "missing go\\.sum entry for module|go\\.sum: checksum mismatch",
+        "avoidance_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "GONOSUMCHECK": "*",
+              "GOFLAGS": "-mod=mod"
+            }
+          }
+        ],
+        "description": "go.sum incomplete or mismatch — disable sum check and enable mod download",
+        "source": "prebuilt",
+        "reproduction": {
+          "command": "bash -c 'echo \"go.sum: missing entry for module providing package golang.org/x/text\" >&2; exit 1'",
+          "trigger_env": {},
+          "expected_stderr_match": "missing.*entry",
+          "fix_env": {
+            "GONOSUMCHECK": "*",
+            "GOFLAGS": "-mod=mod"
+          },
+          "expected_fix_outcome": "different_error_or_success",
+          "fix_command": "bash -c 'echo \"GONOSUMCHECK set (simulated)\"; exit 0'"
+        }
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds"
+      ],
+      "authored_fixture": {
+        "authored_at": "2026-04-20T05:32:41+00:00",
+        "authored_by": "claude_code",
+        "authored_with_prompt_sha256": "16e6310e43f887db68fee8e2a3ea74e33fe5269387d49bef108e9c8741e32a4c",
+        "verification_command": "go build ./",
+        "expected_stderr_regex": "missing go\\.sum entry for module|go\\.sum: checksum mismatch",
+        "files": [
+          {
+            "path": "go.mod",
+            "content": "module example.com/hello\n\ngo 1.21\n\nrequire github.com/missing/dep v1.0.0\n"
+          },
+          {
+            "path": "main.go",
+            "content": "package main\n\nimport (\n\t\"fmt\"\n\t_ \"github.com/missing/dep\"\n)\n\nfunc main() {\n\tfmt.Println(\"Hello, World!\")\n}\n"
+          },
+          {
+            "path": "go.sum",
+            "content": ""
+          }
+        ],
+        "reference_fix_files": [
+          {
+            "path": "go.mod",
+            "content": "module example.com/hello\n\ngo 1.21\n"
+          },
+          {
+            "path": "main.go",
+            "content": "package main\n\nimport \"fmt\"\n\nfunc main() {\n\tfmt.Println(\"Hello, World!\")\n}\n"
+          }
+        ],
+        "fix_rationale": "Removed the missing dependency from go.mod and its blank import from main.go to restore go.sum consistency.",
+        "reviewer_record": {
+          "validated_in_sandbox_at": "2026-04-20T05:32:41+00:00",
+          "sandbox_pre_fix_exit_code": 1,
+          "sandbox_pre_fix_stderr_match": true,
+          "sandbox_post_fix_exit_code": 0,
+          "sandbox_workdir_hash_pre": "de684e3353eeb514793cd5f31ab33e6c6552d6529fe2b216b94ddcb494889929",
+          "sandbox_workdir_hash_post": "646da7e10866be8de48a819a59f7f9fec7ed1b62c21ecb34bdace000de0e72bc",
+          "notes": "authored by claude_code; pre-fix fails+matches regex, post-fix passes"
+        }
+      }
+    },
+    {
+      "pattern_id": "go.missing_dependency.002",
+      "ecosystem": "go",
+      "error_class": "missing_dependency",
+      "description": "Package not found — set GOPATH to writable dir and enable module mode",
+      "source": "prebuilt",
+      "trigger_signals": {
+        "stderr_regex": [
+          "cannot find package|no required module provides package"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "bash -c 'echo \"cannot find package \\\"github.com/myapp/util\\\" in any of:\" >&2; exit 1'",
+        "trigger_env": {},
+        "expected_stderr_match": "cannot find package",
+        "expected_fix_outcome": "different_error_or_success"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "GOPATH": "/tmp/gopath",
+              "GOFLAGS": "-mod=mod"
+            }
+          }
+        ],
+        "fix_command": "bash -c 'echo \"GOPATH set (simulated)\"; exit 0'",
+        "fix_env": {
+          "GOPATH": "/tmp/gopath",
+          "GOFLAGS": "-mod=mod"
+        },
+        "description": "Package not found — set GOPATH to writable dir and enable module mode"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": [
+          {
+            "agent": "claude_code",
+            "agent_version": "unknown",
+            "date_verified": "2026-04-20T09:45:29+00:00",
+            "status": "verified_live",
+            "artifact_path": "eval/runs/20260420T170630/transcripts/claude_code__generated_go_missing_dependency_002__baseline.txt",
+            "transcript_hash": "5d637b89f1d3d36cad0766e50b7b5f6c0759d0dc953de3e6a3f62a17b70b1988",
+            "pre_failure_reproduced": true,
+            "workdir_manifest_hash": "02f8a5505af13cb303e7469b5446e8069075f3d4552d0a09b58057520c2ed47c",
+            "notes": "case=generated_go_missing_dependency_002 polaris_enabled=False rounds=13 tool_calls=12 tokens=2521",
+            "model": "claude-haiku-4-5-20251001"
+          },
+          {
+            "agent": "claude_code",
+            "agent_version": "unknown",
+            "date_verified": "2026-04-20T09:45:29+00:00",
+            "status": "verified_live",
+            "artifact_path": "eval/runs/20260420T170630/transcripts/claude_code__generated_go_missing_dependency_002__polaris.txt",
+            "transcript_hash": "b2c8be3b39eeb34e23c08c6fc19efc5453e60db18909b781ec742837755197bc",
+            "pre_failure_reproduced": true,
+            "workdir_manifest_hash": "4eb400b032e2547f1cf6fbf9185284f0a3c77ea0e966539b507dc387541bd5c7",
+            "notes": "case=generated_go_missing_dependency_002 polaris_enabled=True rounds=10 tool_calls=9 tokens=1729",
+            "model": "claude-haiku-4-5-20251001"
+          }
+        ]
+      },
+      "legacy_v3": {
+        "stderr_pattern": "cannot find package|no required module provides package",
+        "avoidance_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "GOPATH": "/tmp/gopath",
+              "GOFLAGS": "-mod=mod"
+            }
+          }
+        ],
+        "description": "Package not found — set GOPATH to writable dir and enable module mode",
+        "source": "prebuilt",
+        "reproduction": {
+          "command": "bash -c 'echo \"cannot find package \\\"github.com/myapp/util\\\" in any of:\" >&2; exit 1'",
+          "trigger_env": {},
+          "expected_stderr_match": "cannot find package",
+          "fix_env": {
+            "GOPATH": "/tmp/gopath",
+            "GOFLAGS": "-mod=mod"
+          },
+          "expected_fix_outcome": "different_error_or_success",
+          "fix_command": "bash -c 'echo \"GOPATH set (simulated)\"; exit 0'"
+        }
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds"
+      ],
+      "authored_fixture": {
+        "authored_at": "2026-04-20T08:41:25+00:00",
+        "authored_by": "claude_code",
+        "authored_with_prompt_sha256": "regex_patch",
+        "verification_command": "go build",
+        "expected_stderr_regex": "cannot find package|no required module provides package|package .* is not in std",
+        "files": [
+          {
+            "path": "go.mod",
+            "content": "module myapp\n\ngo 1.21\n"
+          },
+          {
+            "path": "main.go",
+            "content": "package main\n\nimport (\n\t\"fmt\"\n\t\"myapp/greet\"\n)\n\nfunc main() {\n\tfmt.Println(greet.Hello())\n}\n"
+          }
+        ],
+        "reference_fix_files": [
+          {
+            "path": "greet/greet.go",
+            "content": "package greet\n\nfunc Hello() string {\n\treturn \"Hello, world!\"\n}\n"
+          }
+        ],
+        "fix_rationale": "Create the missing greet package with a Hello function to satisfy the import.",
+        "reviewer_record": {
+          "validated_in_sandbox_at": "2026-04-20T08:41:25+00:00",
+          "sandbox_pre_fix_exit_code": 1,
+          "sandbox_pre_fix_stderr_match": true,
+          "sandbox_post_fix_exit_code": 0,
+          "sandbox_workdir_hash_pre": "88755fad6ce3ffa3406edc624c37b5c35f38a6078a73f040f19f2b577926ba98",
+          "sandbox_workdir_hash_post": "76d230b3487e4a0be28f0140b352b474317ebcfc345e061de0c4df077ac0e785",
+          "notes": "regex broadened post-authoring to match observed stderr"
+        }
+      }
+    },
+    {
+      "pattern_id": "go.missing_dependency.003",
+      "ecosystem": "go",
+      "error_class": "missing_dependency",
+      "description": "go.sum update blocked by readonly mode — switch to mod=mod to allow updates",
+      "source": "prebuilt",
+      "trigger_signals": {
+        "stderr_regex": [
+          "go: updates to go\\.sum needed, disabled by -mod=readonly"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "bash -c 'echo \"go: updates to go.sum needed, disabled by -mod=readonly\" >&2; exit 1'",
+        "trigger_env": {
+          "GOFLAGS": "-mod=readonly"
+        },
+        "expected_stderr_match": "disabled by -mod=readonly",
+        "expected_fix_outcome": "different_error_or_success"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "GOFLAGS": "-mod=mod"
+            }
+          },
+          {
+            "kind": "append_flags",
+            "flags": [
+              "-mod=mod"
+            ]
+          }
+        ],
+        "fix_command": "bash -c 'echo \"GOFLAGS set (simulated)\"; exit 0'",
+        "fix_env": {
+          "GOFLAGS": "-mod=mod"
+        },
+        "description": "go.sum update blocked by readonly mode — switch to mod=mod to allow updates"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "legacy_v3": {
+        "stderr_pattern": "go: updates to go\\.sum needed, disabled by -mod=readonly",
+        "avoidance_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "GOFLAGS": "-mod=mod"
+            }
+          },
+          {
+            "kind": "append_flags",
+            "flags": [
+              "-mod=mod"
+            ]
+          }
+        ],
+        "description": "go.sum update blocked by readonly mode — switch to mod=mod to allow updates",
+        "source": "prebuilt",
+        "reproduction": {
+          "command": "bash -c 'echo \"go: updates to go.sum needed, disabled by -mod=readonly\" >&2; exit 1'",
+          "trigger_env": {
+            "GOFLAGS": "-mod=readonly"
+          },
+          "expected_stderr_match": "disabled by -mod=readonly",
+          "fix_env": {
+            "GOFLAGS": "-mod=mod"
+          },
+          "expected_fix_outcome": "different_error_or_success",
+          "fix_command": "bash -c 'echo \"GOFLAGS set (simulated)\"; exit 0'"
+        }
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    }
+  ]
+}

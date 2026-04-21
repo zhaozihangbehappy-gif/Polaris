@@ -1,0 +1,2493 @@
+{
+  "artifacts": {
+    "baseline_execution_contract": {
+      "adapter": "python-runtime-local",
+      "applied_rule_ids": [
+        "stop-on-nonrepair-denial"
+      ],
+      "args": [
+        "--goal",
+        "Demonstrate Polaris resumed failure flow",
+        "--state",
+        "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/deep-resumed-failure/execution-state.json",
+        "--output",
+        "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/deep-resumed-failure/runtime-execution-result.json",
+        "--mode",
+        "long",
+        "--execution-profile",
+        "deep",
+        "--adapter",
+        "python-runtime-local",
+        "--applied-rules-json",
+        "[{\"action\": \"Stop and reduce scope instead of retrying the blocked path\", \"layer\": \"hard\", \"priority\": 100, \"rule_id\": \"stop-on-nonrepair-denial\", \"scope\": \"all Polaris runs\", \"tags\": [\"stop\", \"runtime\", \"local\"], \"trigger\": \"an explicit non-repair denial appears\"}]",
+        "--selected-pattern-json",
+        "{}",
+        "--execution-contract-json",
+        "{\"kind\": \"script\", \"pattern\": null, \"rule_count\": 1, \"strategy\": {\"execution_ordering\": [\"execute\", \"validate\"], \"fallback_choice\": \"selected-adapter-only\", \"retry_policy\": \"respect-hard-stop-rules\", \"strategy_trace\": {\"execution_kind\": \"runner\", \"execution_profile\": \"deep\", \"experimental_rules\": [], \"hard_rules\": [\"stop-on-nonrepair-denial\"], \"selected_pattern\": null, \"slot_permissions\": {\"experimental\": [\"fallback_choice\", \"validation_strategy\"], \"hard\": [\"retry_policy\"], \"pattern\": [\"execution_ordering\", \"fallback_choice\", \"validation_strategy\"], \"soft\": [\"execution_ordering\", \"fallback_choice\", \"retry_policy\", \"validation_strategy\"]}, \"slot_resolution\": {\"execution_ordering\": {\"candidates\": [], \"default\": [\"execute\", \"validate\"], \"ignored\": [], \"winner\": null}, \"fallback_choice\": {\"candidates\": [], \"default\": \"selected-adapter-only\", \"ignored\": [], \"winner\": null}, \"retry_policy\": {\"candidates\": [{\"confidence\": 0, \"layer\": \"hard\", \"priority\": 100, \"reason\": \"rule:stop-on-nonrepair-denial\", \"source_id\": \"stop-on-nonrepair-denial\", \"value\": \"respect-hard-stop-rules\"}], \"default\": \"bounded-repair\", \"ignored\": [], \"winner\": {\"layer\": \"hard\", \"reason\": \"rule:stop-on-nonrepair-denial\", \"source_id\": \"stop-on-nonrepair-denial\", \"value\": \"respect-hard-stop-rules\"}}, \"validation_strategy\": {\"candidates\": [], \"default\": \"runner-contract-match\", \"ignored\": [], \"winner\": null}}, \"soft_rules\": []}, \"validation_strategy\": \"runner-contract-match\"}, \"validator\": {\"baseline_stage_count\": 2, \"budget_profile\": \"deep\", \"expected_adapter\": \"python-runtime-local\", \"expected_execution_ordering\": [], \"expected_goal\": \"Demonstrate Polaris resumed failure flow\", \"expected_pattern\": null, \"expected_rule_ids\": [\"stop-on-nonrepair-denial\"], \"expected_stage_order\": [], \"expected_status\": \"ok\", \"expected_strategy\": null, \"hot_path_budget_source\": \"baseline\", \"kind\": \"runner_result_contract\", \"max_learning_hot_path_ops\": 2, \"max_repair_probe_steps\": 6, \"max_retry_actions\": 0, \"max_selection_inputs\": 8, \"max_stage_count\": 2, \"max_stage_growth\": 0, \"max_state_writes\": 72, \"observed_selection_inputs\": 1, \"output_file\": \"/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/deep-resumed-failure/runtime-execution-result.json\", \"required_fields\": [\"status\", \"adapter\", \"goal\", \"result\"]}}",
+        "--simulate-error",
+        "ModuleNotFoundError: No module named pywinauto"
+      ],
+      "execution_profile": "deep",
+      "goal": "Demonstrate Polaris resumed failure flow",
+      "kind": "script",
+      "mode": "long",
+      "output_file": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/deep-resumed-failure/runtime-execution-result.json",
+      "script_path": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/scripts/polaris_task_runner.py",
+      "selected_pattern": null,
+      "selected_pattern_sequence": [],
+      "simulate_error": "ModuleNotFoundError: No module named pywinauto",
+      "strategy": {
+        "execution_ordering": [
+          "execute",
+          "validate"
+        ],
+        "fallback_choice": "selected-adapter-only",
+        "retry_policy": "respect-hard-stop-rules",
+        "strategy_trace": {
+          "execution_kind": "runner",
+          "execution_profile": "deep",
+          "experimental_rules": [],
+          "hard_rules": [
+            "stop-on-nonrepair-denial"
+          ],
+          "selected_pattern": null,
+          "slot_permissions": {
+            "experimental": [
+              "fallback_choice",
+              "validation_strategy"
+            ],
+            "hard": [
+              "retry_policy"
+            ],
+            "pattern": [
+              "execution_ordering",
+              "fallback_choice",
+              "validation_strategy"
+            ],
+            "soft": [
+              "execution_ordering",
+              "fallback_choice",
+              "retry_policy",
+              "validation_strategy"
+            ]
+          },
+          "slot_resolution": {
+            "execution_ordering": {
+              "candidates": [],
+              "default": [
+                "execute",
+                "validate"
+              ],
+              "ignored": [],
+              "winner": null
+            },
+            "fallback_choice": {
+              "candidates": [],
+              "default": "selected-adapter-only",
+              "ignored": [],
+              "winner": null
+            },
+            "retry_policy": {
+              "candidates": [
+                {
+                  "confidence": 0,
+                  "layer": "hard",
+                  "priority": 100,
+                  "reason": "rule:stop-on-nonrepair-denial",
+                  "source_id": "stop-on-nonrepair-denial",
+                  "value": "respect-hard-stop-rules"
+                }
+              ],
+              "default": "bounded-repair",
+              "ignored": [],
+              "winner": {
+                "layer": "hard",
+                "reason": "rule:stop-on-nonrepair-denial",
+                "source_id": "stop-on-nonrepair-denial",
+                "value": "respect-hard-stop-rules"
+              }
+            },
+            "validation_strategy": {
+              "candidates": [],
+              "default": "runner-contract-match",
+              "ignored": [],
+              "winner": null
+            }
+          },
+          "soft_rules": []
+        },
+        "validation_strategy": "runner-contract-match"
+      },
+      "validator": {
+        "baseline_stage_count": 2,
+        "budget_profile": "deep",
+        "expected_adapter": "python-runtime-local",
+        "expected_execution_ordering": [],
+        "expected_goal": "Demonstrate Polaris resumed failure flow",
+        "expected_pattern": null,
+        "expected_rule_ids": [
+          "stop-on-nonrepair-denial"
+        ],
+        "expected_stage_order": [],
+        "expected_status": "ok",
+        "expected_strategy": null,
+        "hot_path_budget_source": "baseline",
+        "kind": "runner_result_contract",
+        "max_learning_hot_path_ops": 2,
+        "max_repair_probe_steps": 6,
+        "max_retry_actions": 0,
+        "max_selection_inputs": 8,
+        "max_stage_count": 2,
+        "max_stage_growth": 0,
+        "max_state_writes": 72,
+        "observed_selection_inputs": 1,
+        "output_file": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/deep-resumed-failure/runtime-execution-result.json",
+        "required_fields": [
+          "status",
+          "adapter",
+          "goal",
+          "result"
+        ]
+      }
+    },
+    "baseline_validator": {
+      "baseline_stage_count": 2,
+      "budget_profile": "deep",
+      "expected_adapter": "python-runtime-local",
+      "expected_execution_ordering": [],
+      "expected_goal": "Demonstrate Polaris resumed failure flow",
+      "expected_pattern": null,
+      "expected_rule_ids": [
+        "stop-on-nonrepair-denial"
+      ],
+      "expected_stage_order": [],
+      "expected_status": "ok",
+      "expected_strategy": null,
+      "hot_path_budget_source": "baseline",
+      "kind": "runner_result_contract",
+      "max_learning_hot_path_ops": 2,
+      "max_repair_probe_steps": 6,
+      "max_retry_actions": 0,
+      "max_selection_inputs": 8,
+      "max_stage_count": 2,
+      "max_stage_growth": 0,
+      "max_state_writes": 72,
+      "observed_selection_inputs": 1,
+      "output_file": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/deep-resumed-failure/runtime-execution-result.json",
+      "required_fields": [
+        "status",
+        "adapter",
+        "goal",
+        "result"
+      ]
+    },
+    "efficiency_metrics": {
+      "adapter_selection_cost": 0,
+      "budget_profile": "deep",
+      "cold_path_cost": 2,
+      "expected_benefit": "lower hot-path cost with stricter validation replay",
+      "family_transfer_applied": true,
+      "hot_path_budget_source": "bounded-local-repair",
+      "learning_hot_path_ops": 2,
+      "max_learning_hot_path_ops": 2,
+      "max_repair_probe_steps": 6,
+      "max_retry_actions": 0,
+      "max_selection_inputs": 8,
+      "max_stage_count": 5,
+      "max_state_writes": 72,
+      "repair_probe_steps": 6,
+      "retry_actions": 1,
+      "selection_inputs": 2,
+      "stage_count": 5,
+      "state_write_count": 56,
+      "validator_directness_rank": 2
+    },
+    "execution_contract": {
+      "adapter": "python-runtime-local",
+      "applied_rule_ids": [
+        "stop-on-nonrepair-denial"
+      ],
+      "args": [
+        "--goal",
+        "Demonstrate Polaris resumed failure flow",
+        "--state",
+        "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/deep-resumed-failure/execution-state.json",
+        "--output",
+        "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/deep-resumed-failure/runtime-execution-result.json",
+        "--mode",
+        "long",
+        "--execution-profile",
+        "deep",
+        "--adapter",
+        "python-runtime-local",
+        "--applied-rules-json",
+        "[{\"action\": \"Stop and reduce scope instead of retrying the blocked path\", \"layer\": \"hard\", \"priority\": 100, \"rule_id\": \"stop-on-nonrepair-denial\", \"scope\": \"all Polaris runs\", \"tags\": [\"stop\", \"runtime\", \"local\"], \"trigger\": \"an explicit non-repair denial appears\"}]",
+        "--selected-pattern-json",
+        "{\"adapter\": null, \"asset_version\": 2, \"best_lifecycle_state\": \"validated\", \"confidence\": 72, \"created_at\": \"2026-03-15T13:36:19.293589+00:00\", \"demotion_count\": 0, \"evidence\": [\"/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/references/repair-actions.md\"], \"evidence_count\": 1, \"expires_at\": null, \"fingerprint\": \"bounded-local-repair\", \"history\": [{\"event\": \"captured\", \"reason\": \"new_pattern\", \"ts\": \"2026-03-15T13:36:19.293612+00:00\"}], \"last_selected_at\": \"2026-03-15T13:36:19.648192+00:00\", \"last_validated_at\": \"2026-03-15T13:36:19.293604+00:00\", \"lifecycle_state\": \"validated\", \"modes\": [\"long\"], \"outcome\": \"bounded recovery without crossing safeguards\", \"pattern_id\": \"bounded-local-repair\", \"promotion_count\": 0, \"reusable\": true, \"selection_count\": 1, \"sequence\": [\"detect\", \"branch\", \"probe\", \"recover\", \"record\"], \"strategy_hints\": {}, \"summary\": \"Local repair branches should stay probe-only and feed explicit recovery references\", \"tags\": [\"repair\", \"local\", \"orchestration\"], \"trigger\": \"repairable local runtime failure\", \"updated_at\": \"2026-03-15T13:36:19.293602+00:00\", \"validation_count\": 1}",
+        "--execution-contract-json",
+        "{\"kind\": \"script\", \"pattern\": \"bounded-local-repair\", \"rule_count\": 1, \"strategy\": {\"execution_ordering\": [\"detect\", \"branch\", \"probe\", \"recover\", \"record\"], \"fallback_choice\": \"sticky-adapter-first\", \"retry_policy\": \"respect-hard-stop-rules\", \"strategy_trace\": {\"execution_kind\": \"runner\", \"execution_profile\": \"deep\", \"experimental_rules\": [], \"hard_rules\": [\"stop-on-nonrepair-denial\"], \"selected_pattern\": \"bounded-local-repair\", \"slot_permissions\": {\"experimental\": [\"fallback_choice\", \"validation_strategy\"], \"hard\": [\"retry_policy\"], \"pattern\": [\"execution_ordering\", \"fallback_choice\", \"validation_strategy\"], \"soft\": [\"execution_ordering\", \"fallback_choice\", \"retry_policy\", \"validation_strategy\"]}, \"slot_resolution\": {\"execution_ordering\": {\"candidates\": [{\"confidence\": 72, \"layer\": \"pattern\", \"priority\": 1, \"reason\": \"pattern:bounded-local-repair\", \"source_id\": \"bounded-local-repair\", \"value\": [\"detect\", \"branch\", \"probe\", \"recover\", \"record\"]}], \"default\": [\"execute\", \"validate\"], \"ignored\": [], \"winner\": {\"layer\": \"pattern\", \"reason\": \"pattern:bounded-local-repair\", \"source_id\": \"bounded-local-repair\", \"value\": [\"detect\", \"branch\", \"probe\", \"recover\", \"record\"]}}, \"fallback_choice\": {\"candidates\": [{\"confidence\": 72, \"layer\": \"pattern\", \"priority\": 1, \"reason\": \"pattern:bounded-local-repair\", \"source_id\": \"bounded-local-repair\", \"value\": \"sticky-adapter-first\"}], \"default\": \"selected-adapter-only\", \"ignored\": [], \"winner\": {\"layer\": \"pattern\", \"reason\": \"pattern:bounded-local-repair\", \"source_id\": \"bounded-local-repair\", \"value\": \"sticky-adapter-first\"}}, \"retry_policy\": {\"candidates\": [{\"confidence\": 0, \"layer\": \"hard\", \"priority\": 100, \"reason\": \"rule:stop-on-nonrepair-denial\", \"source_id\": \"stop-on-nonrepair-denial\", \"value\": \"respect-hard-stop-rules\"}], \"default\": \"bounded-repair\", \"ignored\": [], \"winner\": {\"layer\": \"hard\", \"reason\": \"rule:stop-on-nonrepair-denial\", \"source_id\": \"stop-on-nonrepair-denial\", \"value\": \"respect-hard-stop-rules\"}}, \"validation_strategy\": {\"candidates\": [{\"confidence\": 72, \"layer\": \"pattern\", \"priority\": 1, \"reason\": \"pattern:bounded-local-repair\", \"source_id\": \"bounded-local-repair\", \"value\": \"runner-contract-strict\"}], \"default\": \"runner-contract-match\", \"ignored\": [], \"winner\": {\"layer\": \"pattern\", \"reason\": \"pattern:bounded-local-repair\", \"source_id\": \"bounded-local-repair\", \"value\": \"runner-contract-strict\"}}}, \"soft_rules\": []}, \"validation_strategy\": \"runner-contract-strict\"}, \"validator\": {\"baseline_stage_count\": 2, \"budget_profile\": \"deep\", \"expected_adapter\": \"python-runtime-local\", \"expected_execution_ordering\": [\"detect\", \"branch\", \"probe\", \"recover\", \"record\"], \"expected_goal\": \"Demonstrate Polaris resumed failure flow\", \"expected_pattern\": \"bounded-local-repair\", \"expected_rule_ids\": [\"stop-on-nonrepair-denial\"], \"expected_stage_order\": [\"detect\", \"branch\", \"probe\", \"recover\", \"record\"], \"expected_status\": \"ok\", \"expected_strategy\": {\"execution_ordering\": [\"detect\", \"branch\", \"probe\", \"recover\", \"record\"], \"fallback_choice\": \"sticky-adapter-first\", \"retry_policy\": \"respect-hard-stop-rules\", \"strategy_trace\": {\"execution_kind\": \"runner\", \"execution_profile\": \"deep\", \"experimental_rules\": [], \"hard_rules\": [\"stop-on-nonrepair-denial\"], \"selected_pattern\": \"bounded-local-repair\", \"slot_permissions\": {\"experimental\": [\"fallback_choice\", \"validation_strategy\"], \"hard\": [\"retry_policy\"], \"pattern\": [\"execution_ordering\", \"fallback_choice\", \"validation_strategy\"], \"soft\": [\"execution_ordering\", \"fallback_choice\", \"retry_policy\", \"validation_strategy\"]}, \"slot_resolution\": {\"execution_ordering\": {\"candidates\": [{\"confidence\": 72, \"layer\": \"pattern\", \"priority\": 1, \"reason\": \"pattern:bounded-local-repair\", \"source_id\": \"bounded-local-repair\", \"value\": [\"detect\", \"branch\", \"probe\", \"recover\", \"record\"]}], \"default\": [\"execute\", \"validate\"], \"ignored\": [], \"winner\": {\"layer\": \"pattern\", \"reason\": \"pattern:bounded-local-repair\", \"source_id\": \"bounded-local-repair\", \"value\": [\"detect\", \"branch\", \"probe\", \"recover\", \"record\"]}}, \"fallback_choice\": {\"candidates\": [{\"confidence\": 72, \"layer\": \"pattern\", \"priority\": 1, \"reason\": \"pattern:bounded-local-repair\", \"source_id\": \"bounded-local-repair\", \"value\": \"sticky-adapter-first\"}], \"default\": \"selected-adapter-only\", \"ignored\": [], \"winner\": {\"layer\": \"pattern\", \"reason\": \"pattern:bounded-local-repair\", \"source_id\": \"bounded-local-repair\", \"value\": \"sticky-adapter-first\"}}, \"retry_policy\": {\"candidates\": [{\"confidence\": 0, \"layer\": \"hard\", \"priority\": 100, \"reason\": \"rule:stop-on-nonrepair-denial\", \"source_id\": \"stop-on-nonrepair-denial\", \"value\": \"respect-hard-stop-rules\"}], \"default\": \"bounded-repair\", \"ignored\": [], \"winner\": {\"layer\": \"hard\", \"reason\": \"rule:stop-on-nonrepair-denial\", \"source_id\": \"stop-on-nonrepair-denial\", \"value\": \"respect-hard-stop-rules\"}}, \"validation_strategy\": {\"candidates\": [{\"confidence\": 72, \"layer\": \"pattern\", \"priority\": 1, \"reason\": \"pattern:bounded-local-repair\", \"source_id\": \"bounded-local-repair\", \"value\": \"runner-contract-strict\"}], \"default\": \"runner-contract-match\", \"ignored\": [], \"winner\": {\"layer\": \"pattern\", \"reason\": \"pattern:bounded-local-repair\", \"source_id\": \"bounded-local-repair\", \"value\": \"runner-contract-strict\"}}}, \"soft_rules\": []}, \"validation_strategy\": \"runner-contract-strict\"}, \"hot_path_budget_source\": \"bounded-local-repair\", \"kind\": \"runner_result_contract\", \"max_learning_hot_path_ops\": 2, \"max_repair_probe_steps\": 6, \"max_retry_actions\": 0, \"max_selection_inputs\": 8, \"max_stage_count\": 5, \"max_stage_growth\": 3, \"max_state_writes\": 72, \"observed_selection_inputs\": 2, \"output_file\": \"/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/deep-resumed-failure/runtime-execution-result.json\", \"required_fields\": [\"status\", \"adapter\", \"goal\", \"result\", \"strategy\", \"executed_ordering\", \"stage_results\"]}}",
+        "--simulate-error",
+        "ModuleNotFoundError: No module named pywinauto"
+      ],
+      "execution_profile": "deep",
+      "goal": "Demonstrate Polaris resumed failure flow",
+      "kind": "script",
+      "mode": "long",
+      "output_file": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/deep-resumed-failure/runtime-execution-result.json",
+      "script_path": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/scripts/polaris_task_runner.py",
+      "selected_pattern": "bounded-local-repair",
+      "selected_pattern_sequence": [
+        "detect",
+        "branch",
+        "probe",
+        "recover",
+        "record"
+      ],
+      "simulate_error": "ModuleNotFoundError: No module named pywinauto",
+      "strategy": {
+        "execution_ordering": [
+          "detect",
+          "branch",
+          "probe",
+          "recover",
+          "record"
+        ],
+        "fallback_choice": "sticky-adapter-first",
+        "retry_policy": "respect-hard-stop-rules",
+        "strategy_trace": {
+          "execution_kind": "runner",
+          "execution_profile": "deep",
+          "experimental_rules": [],
+          "hard_rules": [
+            "stop-on-nonrepair-denial"
+          ],
+          "selected_pattern": "bounded-local-repair",
+          "slot_permissions": {
+            "experimental": [
+              "fallback_choice",
+              "validation_strategy"
+            ],
+            "hard": [
+              "retry_policy"
+            ],
+            "pattern": [
+              "execution_ordering",
+              "fallback_choice",
+              "validation_strategy"
+            ],
+            "soft": [
+              "execution_ordering",
+              "fallback_choice",
+              "retry_policy",
+              "validation_strategy"
+            ]
+          },
+          "slot_resolution": {
+            "execution_ordering": {
+              "candidates": [
+                {
+                  "confidence": 72,
+                  "layer": "pattern",
+                  "priority": 1,
+                  "reason": "pattern:bounded-local-repair",
+                  "source_id": "bounded-local-repair",
+                  "value": [
+                    "detect",
+                    "branch",
+                    "probe",
+                    "recover",
+                    "record"
+                  ]
+                }
+              ],
+              "default": [
+                "execute",
+                "validate"
+              ],
+              "ignored": [],
+              "winner": {
+                "layer": "pattern",
+                "reason": "pattern:bounded-local-repair",
+                "source_id": "bounded-local-repair",
+                "value": [
+                  "detect",
+                  "branch",
+                  "probe",
+                  "recover",
+                  "record"
+                ]
+              }
+            },
+            "fallback_choice": {
+              "candidates": [
+                {
+                  "confidence": 72,
+                  "layer": "pattern",
+                  "priority": 1,
+                  "reason": "pattern:bounded-local-repair",
+                  "source_id": "bounded-local-repair",
+                  "value": "sticky-adapter-first"
+                }
+              ],
+              "default": "selected-adapter-only",
+              "ignored": [],
+              "winner": {
+                "layer": "pattern",
+                "reason": "pattern:bounded-local-repair",
+                "source_id": "bounded-local-repair",
+                "value": "sticky-adapter-first"
+              }
+            },
+            "retry_policy": {
+              "candidates": [
+                {
+                  "confidence": 0,
+                  "layer": "hard",
+                  "priority": 100,
+                  "reason": "rule:stop-on-nonrepair-denial",
+                  "source_id": "stop-on-nonrepair-denial",
+                  "value": "respect-hard-stop-rules"
+                }
+              ],
+              "default": "bounded-repair",
+              "ignored": [],
+              "winner": {
+                "layer": "hard",
+                "reason": "rule:stop-on-nonrepair-denial",
+                "source_id": "stop-on-nonrepair-denial",
+                "value": "respect-hard-stop-rules"
+              }
+            },
+            "validation_strategy": {
+              "candidates": [
+                {
+                  "confidence": 72,
+                  "layer": "pattern",
+                  "priority": 1,
+                  "reason": "pattern:bounded-local-repair",
+                  "source_id": "bounded-local-repair",
+                  "value": "runner-contract-strict"
+                }
+              ],
+              "default": "runner-contract-match",
+              "ignored": [],
+              "winner": {
+                "layer": "pattern",
+                "reason": "pattern:bounded-local-repair",
+                "source_id": "bounded-local-repair",
+                "value": "runner-contract-strict"
+              }
+            }
+          },
+          "soft_rules": []
+        },
+        "validation_strategy": "runner-contract-strict"
+      },
+      "validator": {
+        "baseline_stage_count": 2,
+        "budget_profile": "deep",
+        "expected_adapter": "python-runtime-local",
+        "expected_execution_ordering": [
+          "detect",
+          "branch",
+          "probe",
+          "recover",
+          "record"
+        ],
+        "expected_goal": "Demonstrate Polaris resumed failure flow",
+        "expected_pattern": "bounded-local-repair",
+        "expected_rule_ids": [
+          "stop-on-nonrepair-denial"
+        ],
+        "expected_stage_order": [
+          "detect",
+          "branch",
+          "probe",
+          "recover",
+          "record"
+        ],
+        "expected_status": "ok",
+        "expected_strategy": {
+          "execution_ordering": [
+            "detect",
+            "branch",
+            "probe",
+            "recover",
+            "record"
+          ],
+          "fallback_choice": "sticky-adapter-first",
+          "retry_policy": "respect-hard-stop-rules",
+          "strategy_trace": {
+            "execution_kind": "runner",
+            "execution_profile": "deep",
+            "experimental_rules": [],
+            "hard_rules": [
+              "stop-on-nonrepair-denial"
+            ],
+            "selected_pattern": "bounded-local-repair",
+            "slot_permissions": {
+              "experimental": [
+                "fallback_choice",
+                "validation_strategy"
+              ],
+              "hard": [
+                "retry_policy"
+              ],
+              "pattern": [
+                "execution_ordering",
+                "fallback_choice",
+                "validation_strategy"
+              ],
+              "soft": [
+                "execution_ordering",
+                "fallback_choice",
+                "retry_policy",
+                "validation_strategy"
+              ]
+            },
+            "slot_resolution": {
+              "execution_ordering": {
+                "candidates": [
+                  {
+                    "confidence": 72,
+                    "layer": "pattern",
+                    "priority": 1,
+                    "reason": "pattern:bounded-local-repair",
+                    "source_id": "bounded-local-repair",
+                    "value": [
+                      "detect",
+                      "branch",
+                      "probe",
+                      "recover",
+                      "record"
+                    ]
+                  }
+                ],
+                "default": [
+                  "execute",
+                  "validate"
+                ],
+                "ignored": [],
+                "winner": {
+                  "layer": "pattern",
+                  "reason": "pattern:bounded-local-repair",
+                  "source_id": "bounded-local-repair",
+                  "value": [
+                    "detect",
+                    "branch",
+                    "probe",
+                    "recover",
+                    "record"
+                  ]
+                }
+              },
+              "fallback_choice": {
+                "candidates": [
+                  {
+                    "confidence": 72,
+                    "layer": "pattern",
+                    "priority": 1,
+                    "reason": "pattern:bounded-local-repair",
+                    "source_id": "bounded-local-repair",
+                    "value": "sticky-adapter-first"
+                  }
+                ],
+                "default": "selected-adapter-only",
+                "ignored": [],
+                "winner": {
+                  "layer": "pattern",
+                  "reason": "pattern:bounded-local-repair",
+                  "source_id": "bounded-local-repair",
+                  "value": "sticky-adapter-first"
+                }
+              },
+              "retry_policy": {
+                "candidates": [
+                  {
+                    "confidence": 0,
+                    "layer": "hard",
+                    "priority": 100,
+                    "reason": "rule:stop-on-nonrepair-denial",
+                    "source_id": "stop-on-nonrepair-denial",
+                    "value": "respect-hard-stop-rules"
+                  }
+                ],
+                "default": "bounded-repair",
+                "ignored": [],
+                "winner": {
+                  "layer": "hard",
+                  "reason": "rule:stop-on-nonrepair-denial",
+                  "source_id": "stop-on-nonrepair-denial",
+                  "value": "respect-hard-stop-rules"
+                }
+              },
+              "validation_strategy": {
+                "candidates": [
+                  {
+                    "confidence": 72,
+                    "layer": "pattern",
+                    "priority": 1,
+                    "reason": "pattern:bounded-local-repair",
+                    "source_id": "bounded-local-repair",
+                    "value": "runner-contract-strict"
+                  }
+                ],
+                "default": "runner-contract-match",
+                "ignored": [],
+                "winner": {
+                  "layer": "pattern",
+                  "reason": "pattern:bounded-local-repair",
+                  "source_id": "bounded-local-repair",
+                  "value": "runner-contract-strict"
+                }
+              }
+            },
+            "soft_rules": []
+          },
+          "validation_strategy": "runner-contract-strict"
+        },
+        "hot_path_budget_source": "bounded-local-repair",
+        "kind": "runner_result_contract",
+        "max_learning_hot_path_ops": 2,
+        "max_repair_probe_steps": 6,
+        "max_retry_actions": 0,
+        "max_selection_inputs": 8,
+        "max_stage_count": 5,
+        "max_stage_growth": 3,
+        "max_state_writes": 72,
+        "observed_selection_inputs": 2,
+        "output_file": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/deep-resumed-failure/runtime-execution-result.json",
+        "required_fields": [
+          "status",
+          "adapter",
+          "goal",
+          "result",
+          "strategy",
+          "executed_ordering",
+          "stage_results"
+        ]
+      }
+    },
+    "execution_contract_diff": {
+      "selected_pattern": {
+        "after": "bounded-local-repair",
+        "before": null
+      },
+      "strategy": {
+        "after": {
+          "execution_ordering": [
+            "detect",
+            "branch",
+            "probe",
+            "recover",
+            "record"
+          ],
+          "fallback_choice": "sticky-adapter-first",
+          "retry_policy": "respect-hard-stop-rules",
+          "strategy_trace": {
+            "execution_kind": "runner",
+            "execution_profile": "deep",
+            "experimental_rules": [],
+            "hard_rules": [
+              "stop-on-nonrepair-denial"
+            ],
+            "selected_pattern": "bounded-local-repair",
+            "slot_permissions": {
+              "experimental": [
+                "fallback_choice",
+                "validation_strategy"
+              ],
+              "hard": [
+                "retry_policy"
+              ],
+              "pattern": [
+                "execution_ordering",
+                "fallback_choice",
+                "validation_strategy"
+              ],
+              "soft": [
+                "execution_ordering",
+                "fallback_choice",
+                "retry_policy",
+                "validation_strategy"
+              ]
+            },
+            "slot_resolution": {
+              "execution_ordering": {
+                "candidates": [
+                  {
+                    "confidence": 72,
+                    "layer": "pattern",
+                    "priority": 1,
+                    "reason": "pattern:bounded-local-repair",
+                    "source_id": "bounded-local-repair",
+                    "value": [
+                      "detect",
+                      "branch",
+                      "probe",
+                      "recover",
+                      "record"
+                    ]
+                  }
+                ],
+                "default": [
+                  "execute",
+                  "validate"
+                ],
+                "ignored": [],
+                "winner": {
+                  "layer": "pattern",
+                  "reason": "pattern:bounded-local-repair",
+                  "source_id": "bounded-local-repair",
+                  "value": [
+                    "detect",
+                    "branch",
+                    "probe",
+                    "recover",
+                    "record"
+                  ]
+                }
+              },
+              "fallback_choice": {
+                "candidates": [
+                  {
+                    "confidence": 72,
+                    "layer": "pattern",
+                    "priority": 1,
+                    "reason": "pattern:bounded-local-repair",
+                    "source_id": "bounded-local-repair",
+                    "value": "sticky-adapter-first"
+                  }
+                ],
+                "default": "selected-adapter-only",
+                "ignored": [],
+                "winner": {
+                  "layer": "pattern",
+                  "reason": "pattern:bounded-local-repair",
+                  "source_id": "bounded-local-repair",
+                  "value": "sticky-adapter-first"
+                }
+              },
+              "retry_policy": {
+                "candidates": [
+                  {
+                    "confidence": 0,
+                    "layer": "hard",
+                    "priority": 100,
+                    "reason": "rule:stop-on-nonrepair-denial",
+                    "source_id": "stop-on-nonrepair-denial",
+                    "value": "respect-hard-stop-rules"
+                  }
+                ],
+                "default": "bounded-repair",
+                "ignored": [],
+                "winner": {
+                  "layer": "hard",
+                  "reason": "rule:stop-on-nonrepair-denial",
+                  "source_id": "stop-on-nonrepair-denial",
+                  "value": "respect-hard-stop-rules"
+                }
+              },
+              "validation_strategy": {
+                "candidates": [
+                  {
+                    "confidence": 72,
+                    "layer": "pattern",
+                    "priority": 1,
+                    "reason": "pattern:bounded-local-repair",
+                    "source_id": "bounded-local-repair",
+                    "value": "runner-contract-strict"
+                  }
+                ],
+                "default": "runner-contract-match",
+                "ignored": [],
+                "winner": {
+                  "layer": "pattern",
+                  "reason": "pattern:bounded-local-repair",
+                  "source_id": "bounded-local-repair",
+                  "value": "runner-contract-strict"
+                }
+              }
+            },
+            "soft_rules": []
+          },
+          "validation_strategy": "runner-contract-strict"
+        },
+        "before": {
+          "execution_ordering": [
+            "execute",
+            "validate"
+          ],
+          "fallback_choice": "selected-adapter-only",
+          "retry_policy": "respect-hard-stop-rules",
+          "strategy_trace": {
+            "execution_kind": "runner",
+            "execution_profile": "deep",
+            "experimental_rules": [],
+            "hard_rules": [
+              "stop-on-nonrepair-denial"
+            ],
+            "selected_pattern": null,
+            "slot_permissions": {
+              "experimental": [
+                "fallback_choice",
+                "validation_strategy"
+              ],
+              "hard": [
+                "retry_policy"
+              ],
+              "pattern": [
+                "execution_ordering",
+                "fallback_choice",
+                "validation_strategy"
+              ],
+              "soft": [
+                "execution_ordering",
+                "fallback_choice",
+                "retry_policy",
+                "validation_strategy"
+              ]
+            },
+            "slot_resolution": {
+              "execution_ordering": {
+                "candidates": [],
+                "default": [
+                  "execute",
+                  "validate"
+                ],
+                "ignored": [],
+                "winner": null
+              },
+              "fallback_choice": {
+                "candidates": [],
+                "default": "selected-adapter-only",
+                "ignored": [],
+                "winner": null
+              },
+              "retry_policy": {
+                "candidates": [
+                  {
+                    "confidence": 0,
+                    "layer": "hard",
+                    "priority": 100,
+                    "reason": "rule:stop-on-nonrepair-denial",
+                    "source_id": "stop-on-nonrepair-denial",
+                    "value": "respect-hard-stop-rules"
+                  }
+                ],
+                "default": "bounded-repair",
+                "ignored": [],
+                "winner": {
+                  "layer": "hard",
+                  "reason": "rule:stop-on-nonrepair-denial",
+                  "source_id": "stop-on-nonrepair-denial",
+                  "value": "respect-hard-stop-rules"
+                }
+              },
+              "validation_strategy": {
+                "candidates": [],
+                "default": "runner-contract-match",
+                "ignored": [],
+                "winner": null
+              }
+            },
+            "soft_rules": []
+          },
+          "validation_strategy": "runner-contract-match"
+        }
+      },
+      "validator_shape": {
+        "after": {
+          "baseline_stage_count": 2,
+          "budget_profile": "deep",
+          "expected_adapter": "python-runtime-local",
+          "expected_execution_ordering": [
+            "detect",
+            "branch",
+            "probe",
+            "recover",
+            "record"
+          ],
+          "expected_goal": "Demonstrate Polaris resumed failure flow",
+          "expected_pattern": "bounded-local-repair",
+          "expected_rule_ids": [
+            "stop-on-nonrepair-denial"
+          ],
+          "expected_stage_order": [
+            "detect",
+            "branch",
+            "probe",
+            "recover",
+            "record"
+          ],
+          "expected_status": "ok",
+          "expected_strategy": {
+            "execution_ordering": [
+              "detect",
+              "branch",
+              "probe",
+              "recover",
+              "record"
+            ],
+            "fallback_choice": "sticky-adapter-first",
+            "retry_policy": "respect-hard-stop-rules",
+            "strategy_trace": {
+              "execution_kind": "runner",
+              "execution_profile": "deep",
+              "experimental_rules": [],
+              "hard_rules": [
+                "stop-on-nonrepair-denial"
+              ],
+              "selected_pattern": "bounded-local-repair",
+              "slot_permissions": {
+                "experimental": [
+                  "fallback_choice",
+                  "validation_strategy"
+                ],
+                "hard": [
+                  "retry_policy"
+                ],
+                "pattern": [
+                  "execution_ordering",
+                  "fallback_choice",
+                  "validation_strategy"
+                ],
+                "soft": [
+                  "execution_ordering",
+                  "fallback_choice",
+                  "retry_policy",
+                  "validation_strategy"
+                ]
+              },
+              "slot_resolution": {
+                "execution_ordering": {
+                  "candidates": [
+                    {
+                      "confidence": 72,
+                      "layer": "pattern",
+                      "priority": 1,
+                      "reason": "pattern:bounded-local-repair",
+                      "source_id": "bounded-local-repair",
+                      "value": [
+                        "detect",
+                        "branch",
+                        "probe",
+                        "recover",
+                        "record"
+                      ]
+                    }
+                  ],
+                  "default": [
+                    "execute",
+                    "validate"
+                  ],
+                  "ignored": [],
+                  "winner": {
+                    "layer": "pattern",
+                    "reason": "pattern:bounded-local-repair",
+                    "source_id": "bounded-local-repair",
+                    "value": [
+                      "detect",
+                      "branch",
+                      "probe",
+                      "recover",
+                      "record"
+                    ]
+                  }
+                },
+                "fallback_choice": {
+                  "candidates": [
+                    {
+                      "confidence": 72,
+                      "layer": "pattern",
+                      "priority": 1,
+                      "reason": "pattern:bounded-local-repair",
+                      "source_id": "bounded-local-repair",
+                      "value": "sticky-adapter-first"
+                    }
+                  ],
+                  "default": "selected-adapter-only",
+                  "ignored": [],
+                  "winner": {
+                    "layer": "pattern",
+                    "reason": "pattern:bounded-local-repair",
+                    "source_id": "bounded-local-repair",
+                    "value": "sticky-adapter-first"
+                  }
+                },
+                "retry_policy": {
+                  "candidates": [
+                    {
+                      "confidence": 0,
+                      "layer": "hard",
+                      "priority": 100,
+                      "reason": "rule:stop-on-nonrepair-denial",
+                      "source_id": "stop-on-nonrepair-denial",
+                      "value": "respect-hard-stop-rules"
+                    }
+                  ],
+                  "default": "bounded-repair",
+                  "ignored": [],
+                  "winner": {
+                    "layer": "hard",
+                    "reason": "rule:stop-on-nonrepair-denial",
+                    "source_id": "stop-on-nonrepair-denial",
+                    "value": "respect-hard-stop-rules"
+                  }
+                },
+                "validation_strategy": {
+                  "candidates": [
+                    {
+                      "confidence": 72,
+                      "layer": "pattern",
+                      "priority": 1,
+                      "reason": "pattern:bounded-local-repair",
+                      "source_id": "bounded-local-repair",
+                      "value": "runner-contract-strict"
+                    }
+                  ],
+                  "default": "runner-contract-match",
+                  "ignored": [],
+                  "winner": {
+                    "layer": "pattern",
+                    "reason": "pattern:bounded-local-repair",
+                    "source_id": "bounded-local-repair",
+                    "value": "runner-contract-strict"
+                  }
+                }
+              },
+              "soft_rules": []
+            },
+            "validation_strategy": "runner-contract-strict"
+          },
+          "hot_path_budget_source": "bounded-local-repair",
+          "kind": "runner_result_contract",
+          "max_learning_hot_path_ops": 2,
+          "max_repair_probe_steps": 6,
+          "max_retry_actions": 0,
+          "max_selection_inputs": 8,
+          "max_stage_count": 5,
+          "max_stage_growth": 3,
+          "max_state_writes": 72,
+          "observed_selection_inputs": 2,
+          "required_fields": [
+            "status",
+            "adapter",
+            "goal",
+            "result",
+            "strategy",
+            "executed_ordering",
+            "stage_results"
+          ]
+        },
+        "before": {
+          "baseline_stage_count": 2,
+          "budget_profile": "deep",
+          "expected_adapter": "python-runtime-local",
+          "expected_execution_ordering": [],
+          "expected_goal": "Demonstrate Polaris resumed failure flow",
+          "expected_pattern": null,
+          "expected_rule_ids": [
+            "stop-on-nonrepair-denial"
+          ],
+          "expected_stage_order": [],
+          "expected_status": "ok",
+          "expected_strategy": null,
+          "hot_path_budget_source": "baseline",
+          "kind": "runner_result_contract",
+          "max_learning_hot_path_ops": 2,
+          "max_repair_probe_steps": 6,
+          "max_retry_actions": 0,
+          "max_selection_inputs": 8,
+          "max_stage_count": 2,
+          "max_stage_growth": 0,
+          "max_state_writes": 72,
+          "observed_selection_inputs": 1,
+          "required_fields": [
+            "status",
+            "adapter",
+            "goal",
+            "result"
+          ]
+        }
+      }
+    },
+    "execution_family_trace": {
+      "reason": "explicit-request",
+      "requested_kind": "runner"
+    },
+    "execution_kind": "runner",
+    "execution_result": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/deep-resumed-failure/runtime-execution-result.json",
+    "executor_result": "runtime-executor-result.json",
+    "family_transfer_applied": true,
+    "repair_plan": "runtime-repair-plan.json",
+    "repair_report": "runtime-repair-report.json",
+    "repair_results": "runtime-repair-results.json",
+    "resumed_execution_contract": {
+      "adapter": "python-runtime-local",
+      "applied_rule_ids": [
+        "stop-on-nonrepair-denial"
+      ],
+      "args": [
+        "--goal",
+        "Demonstrate Polaris resumed failure flow",
+        "--state",
+        "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/deep-resumed-failure/execution-state.json",
+        "--output",
+        "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/deep-resumed-failure/runtime-execution-result.json",
+        "--mode",
+        "long",
+        "--execution-profile",
+        "deep",
+        "--adapter",
+        "python-runtime-local",
+        "--applied-rules-json",
+        "[{\"action\": \"Stop and reduce scope instead of retrying the blocked path\", \"layer\": \"hard\", \"priority\": 100, \"rule_id\": \"stop-on-nonrepair-denial\", \"scope\": \"all Polaris runs\", \"tags\": [\"stop\", \"runtime\", \"local\"], \"trigger\": \"an explicit non-repair denial appears\"}]",
+        "--selected-pattern-json",
+        "{\"adapter\": null, \"asset_version\": 2, \"best_lifecycle_state\": \"validated\", \"confidence\": 72, \"created_at\": \"2026-03-15T13:36:19.293589+00:00\", \"demotion_count\": 0, \"evidence\": [\"/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/references/repair-actions.md\"], \"evidence_count\": 1, \"expires_at\": null, \"fingerprint\": \"bounded-local-repair\", \"history\": [{\"event\": \"captured\", \"reason\": \"new_pattern\", \"ts\": \"2026-03-15T13:36:19.293612+00:00\"}], \"last_selected_at\": \"2026-03-15T13:36:19.648192+00:00\", \"last_validated_at\": \"2026-03-15T13:36:19.293604+00:00\", \"lifecycle_state\": \"validated\", \"modes\": [\"long\"], \"outcome\": \"bounded recovery without crossing safeguards\", \"pattern_id\": \"bounded-local-repair\", \"promotion_count\": 0, \"reusable\": true, \"selection_count\": 1, \"sequence\": [\"detect\", \"branch\", \"probe\", \"recover\", \"record\"], \"strategy_hints\": {}, \"summary\": \"Local repair branches should stay probe-only and feed explicit recovery references\", \"tags\": [\"repair\", \"local\", \"orchestration\"], \"trigger\": \"repairable local runtime failure\", \"updated_at\": \"2026-03-15T13:36:19.293602+00:00\", \"validation_count\": 1}",
+        "--execution-contract-json",
+        "{\"kind\": \"script\", \"pattern\": \"bounded-local-repair\", \"rule_count\": 1, \"strategy\": {\"execution_ordering\": [\"detect\", \"branch\", \"probe\", \"recover\", \"record\"], \"fallback_choice\": \"sticky-adapter-first\", \"retry_policy\": \"respect-hard-stop-rules\", \"strategy_trace\": {\"execution_kind\": \"runner\", \"execution_profile\": \"deep\", \"experimental_rules\": [], \"hard_rules\": [\"stop-on-nonrepair-denial\"], \"selected_pattern\": \"bounded-local-repair\", \"slot_permissions\": {\"experimental\": [\"fallback_choice\", \"validation_strategy\"], \"hard\": [\"retry_policy\"], \"pattern\": [\"execution_ordering\", \"fallback_choice\", \"validation_strategy\"], \"soft\": [\"execution_ordering\", \"fallback_choice\", \"retry_policy\", \"validation_strategy\"]}, \"slot_resolution\": {\"execution_ordering\": {\"candidates\": [{\"confidence\": 72, \"layer\": \"pattern\", \"priority\": 1, \"reason\": \"pattern:bounded-local-repair\", \"source_id\": \"bounded-local-repair\", \"value\": [\"detect\", \"branch\", \"probe\", \"recover\", \"record\"]}], \"default\": [\"execute\", \"validate\"], \"ignored\": [], \"winner\": {\"layer\": \"pattern\", \"reason\": \"pattern:bounded-local-repair\", \"source_id\": \"bounded-local-repair\", \"value\": [\"detect\", \"branch\", \"probe\", \"recover\", \"record\"]}}, \"fallback_choice\": {\"candidates\": [{\"confidence\": 72, \"layer\": \"pattern\", \"priority\": 1, \"reason\": \"pattern:bounded-local-repair\", \"source_id\": \"bounded-local-repair\", \"value\": \"sticky-adapter-first\"}], \"default\": \"selected-adapter-only\", \"ignored\": [], \"winner\": {\"layer\": \"pattern\", \"reason\": \"pattern:bounded-local-repair\", \"source_id\": \"bounded-local-repair\", \"value\": \"sticky-adapter-first\"}}, \"retry_policy\": {\"candidates\": [{\"confidence\": 0, \"layer\": \"hard\", \"priority\": 100, \"reason\": \"rule:stop-on-nonrepair-denial\", \"source_id\": \"stop-on-nonrepair-denial\", \"value\": \"respect-hard-stop-rules\"}], \"default\": \"bounded-repair\", \"ignored\": [], \"winner\": {\"layer\": \"hard\", \"reason\": \"rule:stop-on-nonrepair-denial\", \"source_id\": \"stop-on-nonrepair-denial\", \"value\": \"respect-hard-stop-rules\"}}, \"validation_strategy\": {\"candidates\": [{\"confidence\": 72, \"layer\": \"pattern\", \"priority\": 1, \"reason\": \"pattern:bounded-local-repair\", \"source_id\": \"bounded-local-repair\", \"value\": \"runner-contract-strict\"}], \"default\": \"runner-contract-match\", \"ignored\": [], \"winner\": {\"layer\": \"pattern\", \"reason\": \"pattern:bounded-local-repair\", \"source_id\": \"bounded-local-repair\", \"value\": \"runner-contract-strict\"}}}, \"soft_rules\": []}, \"validation_strategy\": \"runner-contract-strict\"}, \"validator\": {\"baseline_stage_count\": 2, \"budget_profile\": \"deep\", \"expected_adapter\": \"python-runtime-local\", \"expected_execution_ordering\": [\"detect\", \"branch\", \"probe\", \"recover\", \"record\"], \"expected_goal\": \"Demonstrate Polaris resumed failure flow\", \"expected_pattern\": \"bounded-local-repair\", \"expected_rule_ids\": [\"stop-on-nonrepair-denial\"], \"expected_stage_order\": [\"detect\", \"branch\", \"probe\", \"recover\", \"record\"], \"expected_status\": \"ok\", \"expected_strategy\": {\"execution_ordering\": [\"detect\", \"branch\", \"probe\", \"recover\", \"record\"], \"fallback_choice\": \"sticky-adapter-first\", \"retry_policy\": \"respect-hard-stop-rules\", \"strategy_trace\": {\"execution_kind\": \"runner\", \"execution_profile\": \"deep\", \"experimental_rules\": [], \"hard_rules\": [\"stop-on-nonrepair-denial\"], \"selected_pattern\": \"bounded-local-repair\", \"slot_permissions\": {\"experimental\": [\"fallback_choice\", \"validation_strategy\"], \"hard\": [\"retry_policy\"], \"pattern\": [\"execution_ordering\", \"fallback_choice\", \"validation_strategy\"], \"soft\": [\"execution_ordering\", \"fallback_choice\", \"retry_policy\", \"validation_strategy\"]}, \"slot_resolution\": {\"execution_ordering\": {\"candidates\": [{\"confidence\": 72, \"layer\": \"pattern\", \"priority\": 1, \"reason\": \"pattern:bounded-local-repair\", \"source_id\": \"bounded-local-repair\", \"value\": [\"detect\", \"branch\", \"probe\", \"recover\", \"record\"]}], \"default\": [\"execute\", \"validate\"], \"ignored\": [], \"winner\": {\"layer\": \"pattern\", \"reason\": \"pattern:bounded-local-repair\", \"source_id\": \"bounded-local-repair\", \"value\": [\"detect\", \"branch\", \"probe\", \"recover\", \"record\"]}}, \"fallback_choice\": {\"candidates\": [{\"confidence\": 72, \"layer\": \"pattern\", \"priority\": 1, \"reason\": \"pattern:bounded-local-repair\", \"source_id\": \"bounded-local-repair\", \"value\": \"sticky-adapter-first\"}], \"default\": \"selected-adapter-only\", \"ignored\": [], \"winner\": {\"layer\": \"pattern\", \"reason\": \"pattern:bounded-local-repair\", \"source_id\": \"bounded-local-repair\", \"value\": \"sticky-adapter-first\"}}, \"retry_policy\": {\"candidates\": [{\"confidence\": 0, \"layer\": \"hard\", \"priority\": 100, \"reason\": \"rule:stop-on-nonrepair-denial\", \"source_id\": \"stop-on-nonrepair-denial\", \"value\": \"respect-hard-stop-rules\"}], \"default\": \"bounded-repair\", \"ignored\": [], \"winner\": {\"layer\": \"hard\", \"reason\": \"rule:stop-on-nonrepair-denial\", \"source_id\": \"stop-on-nonrepair-denial\", \"value\": \"respect-hard-stop-rules\"}}, \"validation_strategy\": {\"candidates\": [{\"confidence\": 72, \"layer\": \"pattern\", \"priority\": 1, \"reason\": \"pattern:bounded-local-repair\", \"source_id\": \"bounded-local-repair\", \"value\": \"runner-contract-strict\"}], \"default\": \"runner-contract-match\", \"ignored\": [], \"winner\": {\"layer\": \"pattern\", \"reason\": \"pattern:bounded-local-repair\", \"source_id\": \"bounded-local-repair\", \"value\": \"runner-contract-strict\"}}}, \"soft_rules\": []}, \"validation_strategy\": \"runner-contract-strict\"}, \"hot_path_budget_source\": \"bounded-local-repair\", \"kind\": \"runner_result_contract\", \"max_learning_hot_path_ops\": 2, \"max_repair_probe_steps\": 6, \"max_retry_actions\": 0, \"max_selection_inputs\": 8, \"max_stage_count\": 5, \"max_stage_growth\": 3, \"max_state_writes\": 72, \"observed_selection_inputs\": 2, \"output_file\": \"/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/deep-resumed-failure/runtime-execution-result.json\", \"required_fields\": [\"status\", \"adapter\", \"goal\", \"result\", \"strategy\", \"executed_ordering\", \"stage_results\"]}}",
+        "--simulate-error",
+        "ModuleNotFoundError: No module named pywinauto"
+      ],
+      "execution_profile": "deep",
+      "goal": "Demonstrate Polaris resumed failure flow",
+      "kind": "script",
+      "mode": "long",
+      "output_file": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/deep-resumed-failure/runtime-execution-result.json",
+      "script_path": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/scripts/polaris_task_runner.py",
+      "selected_pattern": "bounded-local-repair",
+      "selected_pattern_sequence": [
+        "detect",
+        "branch",
+        "probe",
+        "recover",
+        "record"
+      ],
+      "simulate_error": "ModuleNotFoundError: No module named pywinauto",
+      "strategy": {
+        "execution_ordering": [
+          "detect",
+          "branch",
+          "probe",
+          "recover",
+          "record"
+        ],
+        "fallback_choice": "sticky-adapter-first",
+        "retry_policy": "respect-hard-stop-rules",
+        "strategy_trace": {
+          "execution_kind": "runner",
+          "execution_profile": "deep",
+          "experimental_rules": [],
+          "hard_rules": [
+            "stop-on-nonrepair-denial"
+          ],
+          "selected_pattern": "bounded-local-repair",
+          "slot_permissions": {
+            "experimental": [
+              "fallback_choice",
+              "validation_strategy"
+            ],
+            "hard": [
+              "retry_policy"
+            ],
+            "pattern": [
+              "execution_ordering",
+              "fallback_choice",
+              "validation_strategy"
+            ],
+            "soft": [
+              "execution_ordering",
+              "fallback_choice",
+              "retry_policy",
+              "validation_strategy"
+            ]
+          },
+          "slot_resolution": {
+            "execution_ordering": {
+              "candidates": [
+                {
+                  "confidence": 72,
+                  "layer": "pattern",
+                  "priority": 1,
+                  "reason": "pattern:bounded-local-repair",
+                  "source_id": "bounded-local-repair",
+                  "value": [
+                    "detect",
+                    "branch",
+                    "probe",
+                    "recover",
+                    "record"
+                  ]
+                }
+              ],
+              "default": [
+                "execute",
+                "validate"
+              ],
+              "ignored": [],
+              "winner": {
+                "layer": "pattern",
+                "reason": "pattern:bounded-local-repair",
+                "source_id": "bounded-local-repair",
+                "value": [
+                  "detect",
+                  "branch",
+                  "probe",
+                  "recover",
+                  "record"
+                ]
+              }
+            },
+            "fallback_choice": {
+              "candidates": [
+                {
+                  "confidence": 72,
+                  "layer": "pattern",
+                  "priority": 1,
+                  "reason": "pattern:bounded-local-repair",
+                  "source_id": "bounded-local-repair",
+                  "value": "sticky-adapter-first"
+                }
+              ],
+              "default": "selected-adapter-only",
+              "ignored": [],
+              "winner": {
+                "layer": "pattern",
+                "reason": "pattern:bounded-local-repair",
+                "source_id": "bounded-local-repair",
+                "value": "sticky-adapter-first"
+              }
+            },
+            "retry_policy": {
+              "candidates": [
+                {
+                  "confidence": 0,
+                  "layer": "hard",
+                  "priority": 100,
+                  "reason": "rule:stop-on-nonrepair-denial",
+                  "source_id": "stop-on-nonrepair-denial",
+                  "value": "respect-hard-stop-rules"
+                }
+              ],
+              "default": "bounded-repair",
+              "ignored": [],
+              "winner": {
+                "layer": "hard",
+                "reason": "rule:stop-on-nonrepair-denial",
+                "source_id": "stop-on-nonrepair-denial",
+                "value": "respect-hard-stop-rules"
+              }
+            },
+            "validation_strategy": {
+              "candidates": [
+                {
+                  "confidence": 72,
+                  "layer": "pattern",
+                  "priority": 1,
+                  "reason": "pattern:bounded-local-repair",
+                  "source_id": "bounded-local-repair",
+                  "value": "runner-contract-strict"
+                }
+              ],
+              "default": "runner-contract-match",
+              "ignored": [],
+              "winner": {
+                "layer": "pattern",
+                "reason": "pattern:bounded-local-repair",
+                "source_id": "bounded-local-repair",
+                "value": "runner-contract-strict"
+              }
+            }
+          },
+          "soft_rules": []
+        },
+        "validation_strategy": "runner-contract-strict"
+      },
+      "validator": {
+        "baseline_stage_count": 2,
+        "budget_profile": "deep",
+        "expected_adapter": "python-runtime-local",
+        "expected_execution_ordering": [
+          "detect",
+          "branch",
+          "probe",
+          "recover",
+          "record"
+        ],
+        "expected_goal": "Demonstrate Polaris resumed failure flow",
+        "expected_pattern": "bounded-local-repair",
+        "expected_rule_ids": [
+          "stop-on-nonrepair-denial"
+        ],
+        "expected_stage_order": [
+          "detect",
+          "branch",
+          "probe",
+          "recover",
+          "record"
+        ],
+        "expected_status": "ok",
+        "expected_strategy": {
+          "execution_ordering": [
+            "detect",
+            "branch",
+            "probe",
+            "recover",
+            "record"
+          ],
+          "fallback_choice": "sticky-adapter-first",
+          "retry_policy": "respect-hard-stop-rules",
+          "strategy_trace": {
+            "execution_kind": "runner",
+            "execution_profile": "deep",
+            "experimental_rules": [],
+            "hard_rules": [
+              "stop-on-nonrepair-denial"
+            ],
+            "selected_pattern": "bounded-local-repair",
+            "slot_permissions": {
+              "experimental": [
+                "fallback_choice",
+                "validation_strategy"
+              ],
+              "hard": [
+                "retry_policy"
+              ],
+              "pattern": [
+                "execution_ordering",
+                "fallback_choice",
+                "validation_strategy"
+              ],
+              "soft": [
+                "execution_ordering",
+                "fallback_choice",
+                "retry_policy",
+                "validation_strategy"
+              ]
+            },
+            "slot_resolution": {
+              "execution_ordering": {
+                "candidates": [
+                  {
+                    "confidence": 72,
+                    "layer": "pattern",
+                    "priority": 1,
+                    "reason": "pattern:bounded-local-repair",
+                    "source_id": "bounded-local-repair",
+                    "value": [
+                      "detect",
+                      "branch",
+                      "probe",
+                      "recover",
+                      "record"
+                    ]
+                  }
+                ],
+                "default": [
+                  "execute",
+                  "validate"
+                ],
+                "ignored": [],
+                "winner": {
+                  "layer": "pattern",
+                  "reason": "pattern:bounded-local-repair",
+                  "source_id": "bounded-local-repair",
+                  "value": [
+                    "detect",
+                    "branch",
+                    "probe",
+                    "recover",
+                    "record"
+                  ]
+                }
+              },
+              "fallback_choice": {
+                "candidates": [
+                  {
+                    "confidence": 72,
+                    "layer": "pattern",
+                    "priority": 1,
+                    "reason": "pattern:bounded-local-repair",
+                    "source_id": "bounded-local-repair",
+                    "value": "sticky-adapter-first"
+                  }
+                ],
+                "default": "selected-adapter-only",
+                "ignored": [],
+                "winner": {
+                  "layer": "pattern",
+                  "reason": "pattern:bounded-local-repair",
+                  "source_id": "bounded-local-repair",
+                  "value": "sticky-adapter-first"
+                }
+              },
+              "retry_policy": {
+                "candidates": [
+                  {
+                    "confidence": 0,
+                    "layer": "hard",
+                    "priority": 100,
+                    "reason": "rule:stop-on-nonrepair-denial",
+                    "source_id": "stop-on-nonrepair-denial",
+                    "value": "respect-hard-stop-rules"
+                  }
+                ],
+                "default": "bounded-repair",
+                "ignored": [],
+                "winner": {
+                  "layer": "hard",
+                  "reason": "rule:stop-on-nonrepair-denial",
+                  "source_id": "stop-on-nonrepair-denial",
+                  "value": "respect-hard-stop-rules"
+                }
+              },
+              "validation_strategy": {
+                "candidates": [
+                  {
+                    "confidence": 72,
+                    "layer": "pattern",
+                    "priority": 1,
+                    "reason": "pattern:bounded-local-repair",
+                    "source_id": "bounded-local-repair",
+                    "value": "runner-contract-strict"
+                  }
+                ],
+                "default": "runner-contract-match",
+                "ignored": [],
+                "winner": {
+                  "layer": "pattern",
+                  "reason": "pattern:bounded-local-repair",
+                  "source_id": "bounded-local-repair",
+                  "value": "runner-contract-strict"
+                }
+              }
+            },
+            "soft_rules": []
+          },
+          "validation_strategy": "runner-contract-strict"
+        },
+        "hot_path_budget_source": "bounded-local-repair",
+        "kind": "runner_result_contract",
+        "max_learning_hot_path_ops": 2,
+        "max_repair_probe_steps": 6,
+        "max_retry_actions": 0,
+        "max_selection_inputs": 8,
+        "max_stage_count": 5,
+        "max_stage_growth": 3,
+        "max_state_writes": 72,
+        "observed_selection_inputs": 2,
+        "output_file": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/deep-resumed-failure/runtime-execution-result.json",
+        "required_fields": [
+          "status",
+          "adapter",
+          "goal",
+          "result",
+          "strategy",
+          "executed_ordering",
+          "stage_results"
+        ]
+      }
+    },
+    "resumed_executor_result": "runtime-resumed-executor-result.json",
+    "resumed_validation_result": "runtime-resumed-validation-result.json",
+    "selected_adapter": "python-runtime-local",
+    "selected_pattern": "bounded-local-repair",
+    "transfer_contract_diff": {
+      "selected_pattern": {
+        "after": "bounded-local-repair",
+        "before": null
+      },
+      "strategy": {
+        "after": {
+          "execution_ordering": [
+            "detect",
+            "branch",
+            "probe",
+            "recover",
+            "record"
+          ],
+          "fallback_choice": "sticky-adapter-first",
+          "retry_policy": "respect-hard-stop-rules",
+          "strategy_trace": {
+            "execution_kind": "runner",
+            "execution_profile": "deep",
+            "experimental_rules": [],
+            "hard_rules": [
+              "stop-on-nonrepair-denial"
+            ],
+            "selected_pattern": "bounded-local-repair",
+            "slot_permissions": {
+              "experimental": [
+                "fallback_choice",
+                "validation_strategy"
+              ],
+              "hard": [
+                "retry_policy"
+              ],
+              "pattern": [
+                "execution_ordering",
+                "fallback_choice",
+                "validation_strategy"
+              ],
+              "soft": [
+                "execution_ordering",
+                "fallback_choice",
+                "retry_policy",
+                "validation_strategy"
+              ]
+            },
+            "slot_resolution": {
+              "execution_ordering": {
+                "candidates": [
+                  {
+                    "confidence": 72,
+                    "layer": "pattern",
+                    "priority": 1,
+                    "reason": "pattern:bounded-local-repair",
+                    "source_id": "bounded-local-repair",
+                    "value": [
+                      "detect",
+                      "branch",
+                      "probe",
+                      "recover",
+                      "record"
+                    ]
+                  }
+                ],
+                "default": [
+                  "execute",
+                  "validate"
+                ],
+                "ignored": [],
+                "winner": {
+                  "layer": "pattern",
+                  "reason": "pattern:bounded-local-repair",
+                  "source_id": "bounded-local-repair",
+                  "value": [
+                    "detect",
+                    "branch",
+                    "probe",
+                    "recover",
+                    "record"
+                  ]
+                }
+              },
+              "fallback_choice": {
+                "candidates": [
+                  {
+                    "confidence": 72,
+                    "layer": "pattern",
+                    "priority": 1,
+                    "reason": "pattern:bounded-local-repair",
+                    "source_id": "bounded-local-repair",
+                    "value": "sticky-adapter-first"
+                  }
+                ],
+                "default": "selected-adapter-only",
+                "ignored": [],
+                "winner": {
+                  "layer": "pattern",
+                  "reason": "pattern:bounded-local-repair",
+                  "source_id": "bounded-local-repair",
+                  "value": "sticky-adapter-first"
+                }
+              },
+              "retry_policy": {
+                "candidates": [
+                  {
+                    "confidence": 0,
+                    "layer": "hard",
+                    "priority": 100,
+                    "reason": "rule:stop-on-nonrepair-denial",
+                    "source_id": "stop-on-nonrepair-denial",
+                    "value": "respect-hard-stop-rules"
+                  }
+                ],
+                "default": "bounded-repair",
+                "ignored": [],
+                "winner": {
+                  "layer": "hard",
+                  "reason": "rule:stop-on-nonrepair-denial",
+                  "source_id": "stop-on-nonrepair-denial",
+                  "value": "respect-hard-stop-rules"
+                }
+              },
+              "validation_strategy": {
+                "candidates": [
+                  {
+                    "confidence": 72,
+                    "layer": "pattern",
+                    "priority": 1,
+                    "reason": "pattern:bounded-local-repair",
+                    "source_id": "bounded-local-repair",
+                    "value": "runner-contract-strict"
+                  }
+                ],
+                "default": "runner-contract-match",
+                "ignored": [],
+                "winner": {
+                  "layer": "pattern",
+                  "reason": "pattern:bounded-local-repair",
+                  "source_id": "bounded-local-repair",
+                  "value": "runner-contract-strict"
+                }
+              }
+            },
+            "soft_rules": []
+          },
+          "validation_strategy": "runner-contract-strict"
+        },
+        "before": {
+          "execution_ordering": [
+            "execute",
+            "validate"
+          ],
+          "fallback_choice": "selected-adapter-only",
+          "retry_policy": "respect-hard-stop-rules",
+          "strategy_trace": {
+            "execution_kind": "runner",
+            "execution_profile": "deep",
+            "experimental_rules": [],
+            "hard_rules": [
+              "stop-on-nonrepair-denial"
+            ],
+            "selected_pattern": null,
+            "slot_permissions": {
+              "experimental": [
+                "fallback_choice",
+                "validation_strategy"
+              ],
+              "hard": [
+                "retry_policy"
+              ],
+              "pattern": [
+                "execution_ordering",
+                "fallback_choice",
+                "validation_strategy"
+              ],
+              "soft": [
+                "execution_ordering",
+                "fallback_choice",
+                "retry_policy",
+                "validation_strategy"
+              ]
+            },
+            "slot_resolution": {
+              "execution_ordering": {
+                "candidates": [],
+                "default": [
+                  "execute",
+                  "validate"
+                ],
+                "ignored": [],
+                "winner": null
+              },
+              "fallback_choice": {
+                "candidates": [],
+                "default": "selected-adapter-only",
+                "ignored": [],
+                "winner": null
+              },
+              "retry_policy": {
+                "candidates": [
+                  {
+                    "confidence": 0,
+                    "layer": "hard",
+                    "priority": 100,
+                    "reason": "rule:stop-on-nonrepair-denial",
+                    "source_id": "stop-on-nonrepair-denial",
+                    "value": "respect-hard-stop-rules"
+                  }
+                ],
+                "default": "bounded-repair",
+                "ignored": [],
+                "winner": {
+                  "layer": "hard",
+                  "reason": "rule:stop-on-nonrepair-denial",
+                  "source_id": "stop-on-nonrepair-denial",
+                  "value": "respect-hard-stop-rules"
+                }
+              },
+              "validation_strategy": {
+                "candidates": [],
+                "default": "runner-contract-match",
+                "ignored": [],
+                "winner": null
+              }
+            },
+            "soft_rules": []
+          },
+          "validation_strategy": "runner-contract-match"
+        }
+      },
+      "validator_shape": {
+        "after": {
+          "baseline_stage_count": 2,
+          "budget_profile": "deep",
+          "expected_adapter": "python-runtime-local",
+          "expected_execution_ordering": [
+            "detect",
+            "branch",
+            "probe",
+            "recover",
+            "record"
+          ],
+          "expected_goal": "Demonstrate Polaris resumed failure flow",
+          "expected_pattern": "bounded-local-repair",
+          "expected_rule_ids": [
+            "stop-on-nonrepair-denial"
+          ],
+          "expected_stage_order": [
+            "detect",
+            "branch",
+            "probe",
+            "recover",
+            "record"
+          ],
+          "expected_status": "ok",
+          "expected_strategy": {
+            "execution_ordering": [
+              "detect",
+              "branch",
+              "probe",
+              "recover",
+              "record"
+            ],
+            "fallback_choice": "sticky-adapter-first",
+            "retry_policy": "respect-hard-stop-rules",
+            "strategy_trace": {
+              "execution_kind": "runner",
+              "execution_profile": "deep",
+              "experimental_rules": [],
+              "hard_rules": [
+                "stop-on-nonrepair-denial"
+              ],
+              "selected_pattern": "bounded-local-repair",
+              "slot_permissions": {
+                "experimental": [
+                  "fallback_choice",
+                  "validation_strategy"
+                ],
+                "hard": [
+                  "retry_policy"
+                ],
+                "pattern": [
+                  "execution_ordering",
+                  "fallback_choice",
+                  "validation_strategy"
+                ],
+                "soft": [
+                  "execution_ordering",
+                  "fallback_choice",
+                  "retry_policy",
+                  "validation_strategy"
+                ]
+              },
+              "slot_resolution": {
+                "execution_ordering": {
+                  "candidates": [
+                    {
+                      "confidence": 72,
+                      "layer": "pattern",
+                      "priority": 1,
+                      "reason": "pattern:bounded-local-repair",
+                      "source_id": "bounded-local-repair",
+                      "value": [
+                        "detect",
+                        "branch",
+                        "probe",
+                        "recover",
+                        "record"
+                      ]
+                    }
+                  ],
+                  "default": [
+                    "execute",
+                    "validate"
+                  ],
+                  "ignored": [],
+                  "winner": {
+                    "layer": "pattern",
+                    "reason": "pattern:bounded-local-repair",
+                    "source_id": "bounded-local-repair",
+                    "value": [
+                      "detect",
+                      "branch",
+                      "probe",
+                      "recover",
+                      "record"
+                    ]
+                  }
+                },
+                "fallback_choice": {
+                  "candidates": [
+                    {
+                      "confidence": 72,
+                      "layer": "pattern",
+                      "priority": 1,
+                      "reason": "pattern:bounded-local-repair",
+                      "source_id": "bounded-local-repair",
+                      "value": "sticky-adapter-first"
+                    }
+                  ],
+                  "default": "selected-adapter-only",
+                  "ignored": [],
+                  "winner": {
+                    "layer": "pattern",
+                    "reason": "pattern:bounded-local-repair",
+                    "source_id": "bounded-local-repair",
+                    "value": "sticky-adapter-first"
+                  }
+                },
+                "retry_policy": {
+                  "candidates": [
+                    {
+                      "confidence": 0,
+                      "layer": "hard",
+                      "priority": 100,
+                      "reason": "rule:stop-on-nonrepair-denial",
+                      "source_id": "stop-on-nonrepair-denial",
+                      "value": "respect-hard-stop-rules"
+                    }
+                  ],
+                  "default": "bounded-repair",
+                  "ignored": [],
+                  "winner": {
+                    "layer": "hard",
+                    "reason": "rule:stop-on-nonrepair-denial",
+                    "source_id": "stop-on-nonrepair-denial",
+                    "value": "respect-hard-stop-rules"
+                  }
+                },
+                "validation_strategy": {
+                  "candidates": [
+                    {
+                      "confidence": 72,
+                      "layer": "pattern",
+                      "priority": 1,
+                      "reason": "pattern:bounded-local-repair",
+                      "source_id": "bounded-local-repair",
+                      "value": "runner-contract-strict"
+                    }
+                  ],
+                  "default": "runner-contract-match",
+                  "ignored": [],
+                  "winner": {
+                    "layer": "pattern",
+                    "reason": "pattern:bounded-local-repair",
+                    "source_id": "bounded-local-repair",
+                    "value": "runner-contract-strict"
+                  }
+                }
+              },
+              "soft_rules": []
+            },
+            "validation_strategy": "runner-contract-strict"
+          },
+          "hot_path_budget_source": "bounded-local-repair",
+          "kind": "runner_result_contract",
+          "max_learning_hot_path_ops": 2,
+          "max_repair_probe_steps": 6,
+          "max_retry_actions": 0,
+          "max_selection_inputs": 8,
+          "max_stage_count": 5,
+          "max_stage_growth": 3,
+          "max_state_writes": 72,
+          "observed_selection_inputs": 2,
+          "required_fields": [
+            "status",
+            "adapter",
+            "goal",
+            "result",
+            "strategy",
+            "executed_ordering",
+            "stage_results"
+          ]
+        },
+        "before": {
+          "baseline_stage_count": 2,
+          "budget_profile": "deep",
+          "expected_adapter": "python-runtime-local",
+          "expected_execution_ordering": [],
+          "expected_goal": "Demonstrate Polaris resumed failure flow",
+          "expected_pattern": null,
+          "expected_rule_ids": [
+            "stop-on-nonrepair-denial"
+          ],
+          "expected_stage_order": [],
+          "expected_status": "ok",
+          "expected_strategy": null,
+          "hot_path_budget_source": "baseline",
+          "kind": "runner_result_contract",
+          "max_learning_hot_path_ops": 2,
+          "max_repair_probe_steps": 6,
+          "max_retry_actions": 0,
+          "max_selection_inputs": 8,
+          "max_stage_count": 2,
+          "max_stage_growth": 0,
+          "max_state_writes": 72,
+          "observed_selection_inputs": 1,
+          "required_fields": [
+            "status",
+            "adapter",
+            "goal",
+            "result"
+          ]
+        }
+      }
+    },
+    "transfer_key": "deep:long:python-runtime-local:runner",
+    "transfer_reason": "fresh runner task reused family-level pattern bounded-local-repair",
+    "transfer_source_pattern": "bounded-local-repair",
+    "validation_result": "runtime-validation-result.json",
+    "validator_diff": {
+      "expected_execution_ordering": {
+        "after": [
+          "detect",
+          "branch",
+          "probe",
+          "recover",
+          "record"
+        ],
+        "before": []
+      },
+      "expected_pattern": {
+        "after": "bounded-local-repair",
+        "before": null
+      },
+      "expected_stage_order": {
+        "after": [
+          "detect",
+          "branch",
+          "probe",
+          "recover",
+          "record"
+        ],
+        "before": []
+      },
+      "expected_strategy": {
+        "after": {
+          "execution_ordering": [
+            "detect",
+            "branch",
+            "probe",
+            "recover",
+            "record"
+          ],
+          "fallback_choice": "sticky-adapter-first",
+          "retry_policy": "respect-hard-stop-rules",
+          "strategy_trace": {
+            "execution_kind": "runner",
+            "execution_profile": "deep",
+            "experimental_rules": [],
+            "hard_rules": [
+              "stop-on-nonrepair-denial"
+            ],
+            "selected_pattern": "bounded-local-repair",
+            "slot_permissions": {
+              "experimental": [
+                "fallback_choice",
+                "validation_strategy"
+              ],
+              "hard": [
+                "retry_policy"
+              ],
+              "pattern": [
+                "execution_ordering",
+                "fallback_choice",
+                "validation_strategy"
+              ],
+              "soft": [
+                "execution_ordering",
+                "fallback_choice",
+                "retry_policy",
+                "validation_strategy"
+              ]
+            },
+            "slot_resolution": {
+              "execution_ordering": {
+                "candidates": [
+                  {
+                    "confidence": 72,
+                    "layer": "pattern",
+                    "priority": 1,
+                    "reason": "pattern:bounded-local-repair",
+                    "source_id": "bounded-local-repair",
+                    "value": [
+                      "detect",
+                      "branch",
+                      "probe",
+                      "recover",
+                      "record"
+                    ]
+                  }
+                ],
+                "default": [
+                  "execute",
+                  "validate"
+                ],
+                "ignored": [],
+                "winner": {
+                  "layer": "pattern",
+                  "reason": "pattern:bounded-local-repair",
+                  "source_id": "bounded-local-repair",
+                  "value": [
+                    "detect",
+                    "branch",
+                    "probe",
+                    "recover",
+                    "record"
+                  ]
+                }
+              },
+              "fallback_choice": {
+                "candidates": [
+                  {
+                    "confidence": 72,
+                    "layer": "pattern",
+                    "priority": 1,
+                    "reason": "pattern:bounded-local-repair",
+                    "source_id": "bounded-local-repair",
+                    "value": "sticky-adapter-first"
+                  }
+                ],
+                "default": "selected-adapter-only",
+                "ignored": [],
+                "winner": {
+                  "layer": "pattern",
+                  "reason": "pattern:bounded-local-repair",
+                  "source_id": "bounded-local-repair",
+                  "value": "sticky-adapter-first"
+                }
+              },
+              "retry_policy": {
+                "candidates": [
+                  {
+                    "confidence": 0,
+                    "layer": "hard",
+                    "priority": 100,
+                    "reason": "rule:stop-on-nonrepair-denial",
+                    "source_id": "stop-on-nonrepair-denial",
+                    "value": "respect-hard-stop-rules"
+                  }
+                ],
+                "default": "bounded-repair",
+                "ignored": [],
+                "winner": {
+                  "layer": "hard",
+                  "reason": "rule:stop-on-nonrepair-denial",
+                  "source_id": "stop-on-nonrepair-denial",
+                  "value": "respect-hard-stop-rules"
+                }
+              },
+              "validation_strategy": {
+                "candidates": [
+                  {
+                    "confidence": 72,
+                    "layer": "pattern",
+                    "priority": 1,
+                    "reason": "pattern:bounded-local-repair",
+                    "source_id": "bounded-local-repair",
+                    "value": "runner-contract-strict"
+                  }
+                ],
+                "default": "runner-contract-match",
+                "ignored": [],
+                "winner": {
+                  "layer": "pattern",
+                  "reason": "pattern:bounded-local-repair",
+                  "source_id": "bounded-local-repair",
+                  "value": "runner-contract-strict"
+                }
+              }
+            },
+            "soft_rules": []
+          },
+          "validation_strategy": "runner-contract-strict"
+        },
+        "before": null
+      },
+      "hot_path_budget_source": {
+        "after": "bounded-local-repair",
+        "before": "baseline"
+      },
+      "max_stage_count": {
+        "after": 5,
+        "before": 2
+      },
+      "max_stage_growth": {
+        "after": 3,
+        "before": 0
+      },
+      "observed_selection_inputs": {
+        "after": 2,
+        "before": 1
+      },
+      "required_fields": {
+        "after": [
+          "status",
+          "adapter",
+          "goal",
+          "result",
+          "strategy",
+          "executed_ordering",
+          "stage_results"
+        ],
+        "before": [
+          "status",
+          "adapter",
+          "goal",
+          "result"
+        ]
+      }
+    }
+  },
+  "attempts": [
+    {
+      "branch_id": "execution-main",
+      "evidence": [
+        "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/deep-resumed-failure/runtime-execution-result.json"
+      ],
+      "status": "failed",
+      "step": "execute_adapter_contract",
+      "summary": "ModuleNotFoundError: No module named pywinauto",
+      "ts": "2026-03-15T13:36:20.752372+00:00"
+    },
+    {
+      "branch_id": "repair-local",
+      "evidence": [
+        "runtime-repair-results.json"
+      ],
+      "status": "passed",
+      "step": "repair_guidance_recorded",
+      "summary": "Repair guidance captured and rule stored",
+      "ts": "2026-03-15T13:36:21.312526+00:00"
+    },
+    {
+      "branch_id": "execution-main",
+      "evidence": [
+        "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/deep-resumed-failure/runtime-execution-result.json"
+      ],
+      "status": "failed",
+      "step": "execute_after_repair",
+      "summary": "ModuleNotFoundError: No module named pywinauto",
+      "ts": "2026-03-15T13:36:21.665433+00:00"
+    }
+  ],
+  "checkpoints": [],
+  "compat": {
+    "resumed_count": 0,
+    "runtime_format": 1,
+    "upgraded_at": null,
+    "upgraded_from": null
+  },
+  "current_step": "Execution failed after repair",
+  "event_budget": "deep",
+  "execution_profile": "deep",
+  "goal": "Demonstrate Polaris resumed failure flow",
+  "learning_backlog": [
+    {
+      "asset_version": 2,
+      "kind": "rule_candidate",
+      "payload": {
+        "action": "Verify interpreter, pip visibility, and dependency availability before retrying the same local runtime path",
+        "evidence": [
+          "runtime-repair-results.json",
+          "runtime-repair-plan.json",
+          "runtime-repair-report.json"
+        ],
+        "fingerprint": "repair-rule-d51b976714fa",
+        "layer": "experimental",
+        "priority": 70,
+        "rule_id": "repair-rule-d51b976714fa",
+        "scope": "repair-python-env",
+        "strategy_overrides": {
+          "retry_policy": "bounded-repair-with-evidence"
+        },
+        "tags": [
+          "repair",
+          "local",
+          "missing_dependency",
+          "env_probe_tree",
+          "deep",
+          "python",
+          "dependency",
+          "orchestration"
+        ],
+        "trigger": "missing_dependency",
+        "validation": "repair action tree probes completed locally"
+      },
+      "queued_at": "2026-03-15T13:36:21.188855+00:00"
+    },
+    {
+      "asset_version": 2,
+      "kind": "success_marker",
+      "payload": {
+        "adapter": "python-runtime-local",
+        "confidence": 78,
+        "evidence": [
+          "runtime-repair-results.json",
+          "runtime-repair-plan.json",
+          "runtime-repair-report.json"
+        ],
+        "fingerprint": "repair-pattern-3d8a1c1fe2ad",
+        "lifecycle_state": "experimental",
+        "modes": [
+          "long"
+        ],
+        "outcome": "dependency repair path documented with local environment evidence",
+        "pattern_id": "repair-pattern-3d8a1c1fe2ad",
+        "reusable": true,
+        "sequence": [
+          "diagnose",
+          "dependency-probes",
+          "record-evidence",
+          "recover"
+        ],
+        "strategy_hints": {
+          "execution_ordering": [
+            "diagnose",
+            "dependency-probes",
+            "record-evidence",
+            "recover"
+          ],
+          "fallback_choice": "sticky-adapter-first",
+          "hot_path_budget": 4,
+          "validation_strategy": "runner-contract-strict"
+        },
+        "summary": "Dependency failures improved after a bounded local environment probe tree captured actionable evidence",
+        "tags": [
+          "repair",
+          "local",
+          "missing_dependency",
+          "env_probe_tree",
+          "deep",
+          "python",
+          "dependency",
+          "orchestration"
+        ],
+        "trigger": "missing_dependency"
+      },
+      "queued_at": "2026-03-15T13:36:21.219181+00:00"
+    }
+  ],
+  "lessons": [],
+  "mode": "long",
+  "next_action": "Inspect repaired environment and retry with fresh evidence",
+  "phase": "blocked",
+  "plan": [
+    {
+      "index": 1,
+      "phase": "planning",
+      "requires": [],
+      "rule_layers": [
+        "hard"
+      ],
+      "status": "completed",
+      "step": "Clarify task scope",
+      "step_id": "planning-1",
+      "success_signal": "scope accepted",
+      "updated_at": "2026-03-15T13:36:20.006147+00:00",
+      "validates_with": null
+    },
+    {
+      "index": 2,
+      "phase": "ready",
+      "requires": [
+        "local-exec"
+      ],
+      "rule_layers": [
+        "hard",
+        "soft"
+      ],
+      "status": "completed",
+      "step": "Choose safe local adapter and rules",
+      "step_id": "ready-2",
+      "success_signal": "execution path chosen",
+      "updated_at": "2026-03-15T13:36:20.123820+00:00",
+      "validates_with": null
+    },
+    {
+      "index": 3,
+      "phase": "executing",
+      "requires": [
+        "local-exec"
+      ],
+      "rule_layers": [
+        "hard",
+        "soft"
+      ],
+      "status": "in_progress",
+      "step": "Execute the next local step",
+      "step_id": "executing-3",
+      "success_signal": "step completed",
+      "updated_at": "2026-03-15T13:36:20.183334+00:00",
+      "validates_with": "runner_result_contract"
+    },
+    {
+      "index": 4,
+      "phase": "validating",
+      "requires": [
+        "local-exec",
+        "reporting"
+      ],
+      "rule_layers": [
+        "hard",
+        "soft",
+        "experimental"
+      ],
+      "status": "pending",
+      "step": "Verify outcomes and inspect failures",
+      "step_id": "validating-4",
+      "success_signal": "evidence captured",
+      "validates_with": "evidence_check"
+    },
+    {
+      "index": 5,
+      "phase": "completed",
+      "requires": [
+        "reporting"
+      ],
+      "rule_layers": [
+        "soft",
+        "experimental"
+      ],
+      "status": "pending",
+      "step": "Record reusable lessons and next actions",
+      "step_id": "completed-5",
+      "success_signal": "state ready to resume",
+      "validates_with": null
+    }
+  ],
+  "progress_pct": 70,
+  "references": [
+    {
+      "kind": "rules",
+      "label": "layered rules store",
+      "ts": "2026-03-15T13:36:19.438641+00:00",
+      "value": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/deep-resumed-failure/rules.json"
+    },
+    {
+      "kind": "patterns",
+      "label": "success pattern store",
+      "ts": "2026-03-15T13:36:19.469308+00:00",
+      "value": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/deep-resumed-failure/success-patterns.json"
+    },
+    {
+      "kind": "adapters",
+      "label": "adapter registry",
+      "ts": "2026-03-15T13:36:19.498424+00:00",
+      "value": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/deep-resumed-failure/adapters.json"
+    }
+  ],
+  "repair_depth": "deep",
+  "rule_context": {
+    "active_layers": [
+      "hard",
+      "soft",
+      "experimental"
+    ],
+    "applied_rules": [
+      {
+        "action": "Stop and reduce scope instead of retrying the blocked path",
+        "layer": "hard",
+        "priority": 100,
+        "rule_id": "stop-on-nonrepair-denial",
+        "scope": "all Polaris runs",
+        "tags": [
+          "stop",
+          "runtime",
+          "local"
+        ],
+        "trigger": "an explicit non-repair denial appears"
+      }
+    ]
+  },
+  "run_id": "polaris-orchestrated-run",
+  "runtime": {
+    "completed_at": null,
+    "durable_status_surfaces": {
+      "live_status": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/deep-resumed-failure/runtime-live-status.json"
+    },
+    "last_heartbeat_at": "2026-03-15T13:36:21.699857+00:00",
+    "last_heartbeat_summary": "repair surfaces updated",
+    "lifecycle_stage": "blocked",
+    "metrics": {
+      "learning_hot_path_ops": 2,
+      "state_write_count": 56
+    },
+    "started_at": "2026-03-15T13:36:19.409671+00:00"
+  },
+  "schema_version": 6,
+  "state_density": "full",
+  "state_machine": {
+    "active_branch": "execution-main",
+    "allowed_transitions": {
+      "blocked": [
+        "planning",
+        "ready",
+        "executing",
+        "completed"
+      ],
+      "completed": [],
+      "executing": [
+        "validating",
+        "repairing",
+        "blocked"
+      ],
+      "intake": [
+        "planning",
+        "blocked"
+      ],
+      "planning": [
+        "ready",
+        "executing",
+        "blocked"
+      ],
+      "ready": [
+        "executing",
+        "blocked"
+      ],
+      "repairing": [
+        "ready",
+        "executing",
+        "blocked"
+      ],
+      "validating": [
+        "completed",
+        "repairing",
+        "blocked"
+      ]
+    },
+    "blocked": {
+      "is_blocked": true,
+      "reason": "ModuleNotFoundError: No module named pywinauto",
+      "references": [
+        "runtime-repair-report.json",
+        "runtime-repair-plan.json",
+        "runtime-repair-results.json"
+      ]
+    },
+    "branches": [
+      {
+        "branch_id": "repair-local",
+        "closed_at": "2026-03-15T13:36:21.281413+00:00",
+        "kind": "repair",
+        "label": "Local repair branch",
+        "opened_at": "2026-03-15T13:36:21.047911+00:00",
+        "origin_node": "executing",
+        "references": [
+          "runtime-repair-report.json",
+          "runtime-repair-plan.json",
+          "runtime-repair-results.json",
+          "runtime-repair-results.json",
+          "runtime-repair-report.json"
+        ],
+        "status": "recovered",
+        "summary": "Execution failure triggered repair branch"
+      },
+      {
+        "branch_id": "execution-main",
+        "kind": "primary",
+        "label": "Primary execution path",
+        "opened_at": "2026-03-15T13:36:21.343503+00:00",
+        "origin_node": "ready",
+        "references": [
+          "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/deep-resumed-failure/execution-state.json"
+        ],
+        "status": "active",
+        "summary": "Execution resumed after repair branch"
+      }
+    ],
+    "history": [
+      {
+        "branch_id": null,
+        "from": "planning",
+        "summary": "Plan and adapter routing completed",
+        "to": "ready",
+        "ts": "2026-03-15T13:36:20.035206+00:00"
+      },
+      {
+        "branch_id": "execution-main",
+        "from": "ready",
+        "summary": "Execution branch started",
+        "to": "executing",
+        "ts": "2026-03-15T13:36:20.153676+00:00"
+      },
+      {
+        "branch_id": "repair-local",
+        "from": "executing",
+        "summary": "Execution failure triggered repair branch",
+        "to": "repairing",
+        "ts": "2026-03-15T13:36:21.078635+00:00"
+      },
+      {
+        "branch_id": "repair-local",
+        "from": "repairing",
+        "summary": "Repair branch completed and run is ready to continue",
+        "to": "ready",
+        "ts": "2026-03-15T13:36:21.281420+00:00"
+      },
+      {
+        "branch_id": "execution-main",
+        "from": "ready",
+        "summary": "Execution resumed after repair branch",
+        "to": "executing",
+        "ts": "2026-03-15T13:36:21.375912+00:00"
+      },
+      {
+        "branch_id": "execution-main",
+        "from": "executing",
+        "summary": "ModuleNotFoundError: No module named pywinauto",
+        "to": "blocked",
+        "ts": "2026-03-15T13:36:21.699855+00:00"
+      }
+    ],
+    "history_summary": [
+      {
+        "by_branch": {
+          "none": 1
+        },
+        "by_node": {
+          "planning": 1
+        },
+        "compacted_at": "2026-03-15T13:36:21.699891+00:00",
+        "entry_count": 1,
+        "first_summary": "Run initialized and routed to the deep profile",
+        "from_ts": "2026-03-15T13:36:19.527386+00:00",
+        "last_summary": "Run initialized and routed to the deep profile",
+        "to_ts": "2026-03-15T13:36:19.527386+00:00"
+      }
+    ],
+    "node": "blocked",
+    "recovery": [
+      {
+        "branch_id": "repair-local",
+        "references": [
+          "runtime-repair-results.json",
+          "runtime-repair-report.json"
+        ],
+        "summary": "Repair branch completed and run is ready to continue",
+        "to": "ready",
+        "ts": "2026-03-15T13:36:21.281417+00:00"
+      }
+    ]
+  },
+  "status": "blocked",
+  "success_patterns": [
+    {
+      "captured_at": "2026-03-15T13:36:21.250082+00:00",
+      "confidence": 78,
+      "evidence": [
+        "runtime-repair-results.json",
+        "runtime-repair-plan.json"
+      ],
+      "pattern_id": "repair-pattern-3d8a1c1fe2ad",
+      "reusable": true,
+      "summary": "Repair branch queued deferred local recovery learning"
+    }
+  ],
+  "summary_outcome": "ModuleNotFoundError: No module named pywinauto",
+  "updated_at": "2026-03-15T13:36:21.765546+00:00"
+}

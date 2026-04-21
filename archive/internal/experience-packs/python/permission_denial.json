@@ -1,0 +1,35 @@
+{
+  "ecosystem": "python",
+  "error_class": "permission_denial",
+  "shard_version": "3.0",
+  "records": [
+    {
+      "stderr_pattern": "PermissionError: \\[Errno 13\\]",
+      "avoidance_hints": [{"kind": "rewrite_cwd", "target": "/tmp"}],
+      "description": "Write permission denied — rewrite cwd to writable directory",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "python3 -c \"open('/root/test_polaris_repro.txt','w')\" 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "PermissionError",
+        "fix_command": "python3 -c \"open('/tmp/test_polaris_repro.txt','w'); print('ok')\" 2>&1 || true",
+        "fix_env": {},
+        "expected_fix_outcome": "different_error_or_success"
+      }
+    },
+    {
+      "stderr_pattern": "OSError: \\[Errno 13\\] Permission denied.*pip|Permission denied.*site-packages",
+      "avoidance_hints": [{"kind": "set_env", "vars": {"PIP_USER": "1", "PYTHONUSERBASE": "/tmp/_polaris_pip_user"}}],
+      "description": "pip install permission denied on system site-packages — use --user install via PIP_USER env var",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "python3 -c \"import os; os.makedirs('/usr/lib/python3/_polaris_test_pkg', exist_ok=True)\" 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "PermissionError|Permission denied",
+        "fix_command": "python3 -c \"import os; os.makedirs('/tmp/_polaris_test_pkg', exist_ok=True); print('ok')\" 2>&1 || true",
+        "fix_env": {"PIP_USER": "1", "PYTHONUSERBASE": "/tmp/_polaris_pip_user"},
+        "expected_fix_outcome": "different_error_or_success"
+      }
+    }
+  ]
+}

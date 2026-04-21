@@ -1,0 +1,74 @@
+{
+  "ecosystem": "docker",
+  "error_class": "permission_denial",
+  "shard_version": "3.0",
+  "records": [
+    {
+      "stderr_pattern": "Got permission denied while trying to connect to the Docker daemon|permission denied.*docker\\.sock",
+      "avoidance_hints": [
+        {
+          "kind": "set_env",
+          "vars": {
+            "DOCKER_HOST": "unix:///run/user/1000/docker.sock"
+          }
+        }
+      ],
+      "description": "Docker daemon permission denied — use rootless Docker socket",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "bash -c 'echo \"permission denieddocker\" >&2; exit 1'",
+        "trigger_env": {},
+        "expected_stderr_match": "permission denied.*docker",
+        "fix_env": {
+          "DOCKER_HOST": "unix:///run/user/1000/docker.sock"
+        },
+        "expected_fix_outcome": "different_error_or_success",
+        "fix_command": "bash -c 'echo \"DOCKER_HOST set (simulated)\"; exit 0'"
+      }
+    },
+    {
+      "stderr_pattern": "denied: requested access to the resource is denied",
+      "avoidance_hints": [
+        {
+          "kind": "set_env",
+          "vars": {
+            "DOCKER_CONFIG": "/tmp/.docker"
+          }
+        }
+      ],
+      "description": "Docker registry access denied — redirect config to writable dir",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "bash -c 'echo \"deniedaccess\" >&2; exit 1'",
+        "trigger_env": {},
+        "expected_stderr_match": "denied.*access",
+        "fix_env": {
+          "DOCKER_CONFIG": "/tmp/.docker"
+        },
+        "expected_fix_outcome": "different_error_or_success",
+        "fix_command": "bash -c 'echo \"DOCKER_CONFIG set (simulated)\"; exit 0'"
+      }
+    },
+    {
+      "stderr_pattern": "permission denied.*dial unix.*docker\\.sock.*connect",
+      "avoidance_hints": [
+        {
+          "kind": "append_flags",
+          "flags": "--host unix:///run/user/$(id -u)/docker.sock"
+        }
+      ],
+      "description": "Docker socket connect permission denied — pass rootless host flag",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "bash -c 'echo \"permission denied: dial unix /var/run/docker.sock: connect: connection refused\" >&2; exit 1'",
+        "trigger_env": {},
+        "expected_stderr_match": "permission denied.*docker\\.sock",
+        "fix_env": {
+          "DOCKER_HOST": "unix:///run/user/1000/docker.sock"
+        },
+        "expected_fix_outcome": "different_error_or_success",
+        "fix_command": "bash -c 'echo \"retried with --host unix:///run/user/$(id -u)/docker.sock (simulated)\"; exit 0'"
+      }
+    }
+  ]
+}

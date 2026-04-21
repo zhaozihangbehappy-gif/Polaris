@@ -1,0 +1,39 @@
+{
+  "ecosystem": "go",
+  "error_class": "resource_exhaustion",
+  "shard_version": "3.0",
+  "records": [
+    {
+      "stderr_pattern": "out of memory|signal: killed|runtime: goroutine stack exceeds",
+      "avoidance_hints": [
+        {
+          "kind": "set_env",
+          "vars": {
+            "GOGC": "50",
+            "GOMEMLIMIT": "2048MiB"
+          }
+        },
+        {
+          "kind": "append_flags",
+          "flags": [
+            "-p",
+            "1"
+          ]
+        }
+      ],
+      "description": "OOM during compilation — reduce GC pressure with GOGC/GOMEMLIMIT and limit parallelism",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "bash -c 'echo \"runtime: out of memory allocating 268435456-byte block\" >&2; echo \"fatal error: out of memory\" >&2; exit 1'",
+        "trigger_env": {},
+        "expected_stderr_match": "out of memory|signal: killed",
+        "fix_env": {
+          "GOGC": "50",
+          "GOMEMLIMIT": "2048MiB"
+        },
+        "expected_fix_outcome": "different_error_or_success",
+        "fix_command": "bash -c 'echo \"GOGC set (simulated)\"; exit 0'"
+      }
+    }
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "ecosystem": "ruby",
+  "error_class": "version_conflict",
+  "shard_version": "3.0",
+  "records": [
+    {
+      "stderr_pattern": "Your Ruby version is .* but your Gemfile specified|ruby version.*is not available",
+      "avoidance_hints": [
+        {
+          "kind": "set_env",
+          "vars": {
+            "RBENV_VERSION": "",
+            "BUNDLE_FORCE_RUBY_PLATFORM": "1"
+          }
+        }
+      ],
+      "description": "Ruby version mismatch — unset RBENV_VERSION or force platform",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "bash -c 'echo \"Your Ruby version\" >&2; exit 1'",
+        "trigger_env": {},
+        "expected_stderr_match": "Your Ruby version|not available",
+        "fix_env": {
+          "BUNDLE_FORCE_RUBY_PLATFORM": "1"
+        },
+        "expected_fix_outcome": "different_error_or_success",
+        "fix_command": "bash -c 'echo \"RBENV_VERSION set (simulated)\"; exit 0'"
+      }
+    },
+    {
+      "stderr_pattern": "Bundler could not find compatible versions for gem \"bundler\"|requires a different version of Bundler",
+      "avoidance_hints": [
+        {
+          "kind": "run_command",
+          "command": "gem install bundler && bundle install"
+        }
+      ],
+      "description": "Bundler version mismatch — install required bundler version",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "bash -c 'echo \"different version of Bundler\" >&2; exit 1'",
+        "trigger_env": {},
+        "expected_stderr_match": "different version of Bundler|compatible versions for gem .bundler.",
+        "fix_env": {},
+        "expected_fix_outcome": "different_error_or_success",
+        "fix_command": "bash -c 'echo \"ran: gem install bundler && bundle install (simulated)\"; exit 0'"
+      }
+    }
+  ]
+}

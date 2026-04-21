@@ -1,0 +1,1 @@
+{"stderr": "Error: Failed to read module directory\n\nModule directory modules/vpc does not exist or cannot be read.\n\n  on network.tf line 1, in module \"vpc\":\n   1: module \"vpc\" {\n", "error_class": "file_not_found", "source": "terraform-core-1.7.0"}

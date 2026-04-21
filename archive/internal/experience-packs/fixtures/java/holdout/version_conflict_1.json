@@ -1,0 +1,5 @@
+{
+  "stderr": "Exception in thread \"main\" java.lang.UnsupportedClassVersionError: com/myapp/api/RestController has been compiled by a more recent version of the Java Runtime (class file version 61.0), this version of the Java Runtime only recognizes class file versions up to 55.0",
+  "error_class": "version_conflict",
+  "source": "library compiled with JDK 17 running on JDK 11"
+}

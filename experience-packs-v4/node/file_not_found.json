@@ -1,0 +1,265 @@
+{
+  "ecosystem": "node",
+  "error_class": "file_not_found",
+  "schema_version": 4,
+  "records": [
+    {
+      "pattern_id": "node.file_not_found.000",
+      "ecosystem": "node",
+      "error_class": "file_not_found",
+      "description": "package.json not found \u2014 cwd may be wrong; rewrite to directory containing package.json",
+      "source": "prebuilt",
+      "trigger_signals": {
+        "stderr_regex": [
+          "ENOENT: no such file or directory, open '([^']*package\\.json[^']*)'"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "rm -rf /tmp/_polaris_repro_nfnf && node -e \"require('fs').readFileSync('/tmp/_polaris_repro_nfnf/package.json')\" 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "ENOENT",
+        "expected_fix_outcome": "different_error_or_success"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "rewrite_cwd",
+            "target": "."
+          }
+        ],
+        "fix_command": "bash -c 'echo \"cwd corrected (simulated fix)\"; exit 0'",
+        "fix_env": {},
+        "description": "package.json not found \u2014 cwd may be wrong; rewrite to directory containing package.json"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": [
+          {
+            "agent": "claude_code",
+            "agent_version": "unknown",
+            "model": "claude-haiku-4-5-20251001",
+            "date_verified": "2026-04-20T12:19:39+00:00",
+            "status": "verified_live",
+            "artifact_path": "eval/runs/20260420T201902/transcripts/claude_code__generated_node_file_not_found_000__polaris.txt",
+            "transcript_hash": "0aa7bbfbbc0c4d508ff6304072a6067fdee583ca1f8b733270a2ad4352d7f52c",
+            "pre_failure_reproduced": true,
+            "workdir_manifest_hash": "456fad2aa5067c6256b955bfa3183510615efb9e4a234fd797ec168bbd8a1c1a",
+            "notes": "case=generated_node_file_not_found_000 polaris_enabled=True rounds=1 tool_calls=9 tokens=430"
+          }
+        ]
+      },
+      "legacy_v3": {
+        "stderr_pattern": "ENOENT: no such file or directory, open '([^']*package\\.json[^']*)'",
+        "avoidance_hints": [
+          {
+            "kind": "rewrite_cwd",
+            "target": "."
+          }
+        ],
+        "description": "package.json not found \u2014 cwd may be wrong; rewrite to directory containing package.json",
+        "source": "prebuilt",
+        "reproduction": {
+          "command": "rm -rf /tmp/_polaris_repro_nfnf && node -e \"require('fs').readFileSync('/tmp/_polaris_repro_nfnf/package.json')\" 2>&1 || true",
+          "trigger_env": {},
+          "expected_stderr_match": "ENOENT",
+          "fix_env": {},
+          "expected_fix_outcome": "different_error_or_success",
+          "fix_command": "bash -c 'echo \"cwd corrected (simulated fix)\"; exit 0'"
+        }
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds"
+      ],
+      "authored_fixture": {
+        "authored_at": "2026-04-20T02:48:21+00:00",
+        "authored_by": "codex",
+        "authored_with_prompt_sha256": "07ad77fb39061a4fb1b2a5e8b0fd087a3ac7308c1cb50097b5c61a9498859321",
+        "verification_command": "node tools/check-package.js",
+        "expected_stderr_regex": "ENOENT: no such file or directory, open 'package\\.json'",
+        "files": [
+          {
+            "path": "app/package.json",
+            "content": "{\n  \"name\": \"nested-demo\",\n  \"version\": \"1.0.0\",\n  \"private\": true\n}\n"
+          },
+          {
+            "path": "tools/check-package.js",
+            "content": "const { execFileSync } = require(\"node:child_process\");\nconst path = require(\"node:path\");\n\nconst projectRoot = path.join(__dirname, \"..\");\nconst probe = [\n  \"const fs = require('node:fs');\",\n  \"const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));\",\n  \"if (pkg.name !== 'nested-demo') process.exit(2);\"\n].join(\" \");\n\nexecFileSync(process.execPath, [\"-e\", probe], {\n  cwd: projectRoot,\n  stdio: \"inherit\"\n});\n"
+          }
+        ],
+        "reference_fix_files": [
+          {
+            "path": "tools/check-package.js",
+            "content": "const { execFileSync } = require(\"node:child_process\");\nconst path = require(\"node:path\");\n\nconst projectRoot = path.join(__dirname, \"..\");\nconst appDir = path.join(projectRoot, \"app\");\nconst probe = [\n  \"const fs = require('node:fs');\",\n  \"const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));\",\n  \"if (pkg.name !== 'nested-demo') process.exit(2);\"\n].join(\" \");\n\nexecFileSync(process.execPath, [\"-e\", probe], {\n  cwd: appDir,\n  stdio: \"inherit\"\n});\n"
+          }
+        ],
+        "fix_rationale": "The checker should run the package probe from the nested app directory, which is where package.json actually exists.",
+        "reviewer_record": {
+          "validated_in_sandbox_at": "2026-04-20T02:48:21+00:00",
+          "sandbox_pre_fix_exit_code": 1,
+          "sandbox_pre_fix_stderr_match": true,
+          "sandbox_post_fix_exit_code": 0,
+          "sandbox_workdir_hash_pre": "456fad2aa5067c6256b955bfa3183510615efb9e4a234fd797ec168bbd8a1c1a",
+          "sandbox_workdir_hash_post": "54abd54bca167ea2077449efd60da238ad0fc1cdb8b2e9755be2164c3b8e7599",
+          "notes": "authored by codex; pre-fix fails+matches regex, post-fix passes"
+        }
+      }
+    },
+    {
+      "pattern_id": "node.file_not_found.001",
+      "ecosystem": "node",
+      "error_class": "file_not_found",
+      "description": "File or directory missing for fs operation \u2014 ensure parent directories exist or build output is present",
+      "source": "prebuilt",
+      "trigger_signals": {
+        "stderr_regex": [
+          "ENOENT: no such file or directory, (stat|open|lstat) '([^']+)'"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "node -e \"require('fs').statSync('/tmp/_polaris_nosuch_dir_abc/file.txt')\" 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "ENOENT",
+        "expected_fix_outcome": "different_error_or_success"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "create_dir",
+            "path": "."
+          }
+        ],
+        "fix_command": "bash -c 'echo \"fix applied (simulated)\"; exit 0'",
+        "fix_env": {},
+        "description": "File or directory missing for fs operation \u2014 ensure parent directories exist or build output is present"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": [
+          {
+            "agent": "claude_code",
+            "agent_version": "unknown",
+            "date_verified": "2026-04-20T09:45:28+00:00",
+            "status": "verified_live",
+            "artifact_path": "eval/runs/20260420T170630/transcripts/claude_code__case_006_node_fs_enoent__baseline.txt",
+            "transcript_hash": "80968ca2ba0d272c0ac8035f47d2f2f796a35ae72725642d22d53ee56dc27aae",
+            "pre_failure_reproduced": true,
+            "workdir_manifest_hash": "c67973011862e8e72b72fd4f613fbf6a77186f4afd0640efc9160a8d9799143f",
+            "notes": "case=case_006_node_fs_enoent polaris_enabled=False rounds=5 tool_calls=4 tokens=1298",
+            "model": "claude-haiku-4-5-20251001"
+          },
+          {
+            "agent": "claude_code",
+            "agent_version": "unknown",
+            "date_verified": "2026-04-20T09:45:28+00:00",
+            "status": "verified_live",
+            "artifact_path": "eval/runs/20260420T170630/transcripts/claude_code__case_006_node_fs_enoent__polaris.txt",
+            "transcript_hash": "5ac15b9a8b91d2ad3199f273e971c9502c41c6f98aea20b5afdac1d9a24ca506",
+            "pre_failure_reproduced": true,
+            "workdir_manifest_hash": "2e30dbd96cd91281039107c5ab36a5f06d2c5f13494ee371ddd4bf9fee318791",
+            "notes": "case=case_006_node_fs_enoent polaris_enabled=True rounds=5 tool_calls=4 tokens=1105",
+            "model": "claude-haiku-4-5-20251001"
+          }
+        ],
+        "invalidated_evidence": [
+          {
+            "agent": "codex",
+            "agent_version": "unknown",
+            "date_verified": "2026-04-19T10:56:10+00:00",
+            "status": "invalidated_synthetic_recipe",
+            "artifact_path": "eval/runs/20260419T185014/transcripts/codex__case_006_node_fs_enoent__baseline.txt",
+            "transcript_hash": "e2a25d44ff0b849a59c3a507029939f1222d1e302a79e3c1aefbf54c15ab6121",
+            "pre_failure_reproduced": true,
+            "workdir_manifest_hash": "b963c938c69c3e7aba77ba1a87afede8ec4be9c454ef79b71f2275a9d411a7bf",
+            "notes": "case=case_006_node_fs_enoent polaris_enabled=False rounds=2 tool_calls=4 tokens=54063",
+            "invalidation_reason": "Evidence produced against a synthetic bash-echo recipe (pre-failure or fix_command that always succeeds/fails irrespective of agent action). Promotion to verified_live requires a pattern-level authored_fixture with a sandbox-validated reviewer_record. See VERIFIED_PROMOTION_REPORT.md and scripts/pattern_schema._is_synthetic_recipe.",
+            "invalidated_at": "2026-04-19T19:30:00+00:00"
+          },
+          {
+            "agent": "codex",
+            "agent_version": "unknown",
+            "date_verified": "2026-04-19T10:56:10+00:00",
+            "status": "invalidated_synthetic_recipe",
+            "artifact_path": "eval/runs/20260419T185014/transcripts/codex__case_006_node_fs_enoent__polaris.txt",
+            "transcript_hash": "da0f6bb800b68e0de94c13984db304cd8c312e4899f0b5af7835595c721a6c46",
+            "pre_failure_reproduced": true,
+            "workdir_manifest_hash": "b963c938c69c3e7aba77ba1a87afede8ec4be9c454ef79b71f2275a9d411a7bf",
+            "notes": "case=case_006_node_fs_enoent polaris_enabled=True rounds=2 tool_calls=6 tokens=68918",
+            "invalidation_reason": "Evidence produced against a synthetic bash-echo recipe (pre-failure or fix_command that always succeeds/fails irrespective of agent action). Promotion to verified_live requires a pattern-level authored_fixture with a sandbox-validated reviewer_record. See VERIFIED_PROMOTION_REPORT.md and scripts/pattern_schema._is_synthetic_recipe.",
+            "invalidated_at": "2026-04-19T19:30:00+00:00"
+          }
+        ]
+      },
+      "legacy_v3": {
+        "stderr_pattern": "ENOENT: no such file or directory, (stat|open|lstat) '([^']+)'",
+        "avoidance_hints": [
+          {
+            "kind": "create_dir",
+            "path": "."
+          }
+        ],
+        "description": "File or directory missing for fs operation \u2014 ensure parent directories exist or build output is present",
+        "source": "prebuilt",
+        "reproduction": {
+          "command": "node -e \"require('fs').statSync('/tmp/_polaris_nosuch_dir_abc/file.txt')\" 2>&1 || true",
+          "trigger_env": {},
+          "expected_stderr_match": "ENOENT",
+          "fix_env": {},
+          "expected_fix_outcome": "different_error_or_success",
+          "fix_command": "bash -c 'echo \"fix applied (simulated)\"; exit 0'"
+        }
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds"
+      ],
+      "authored_fixture": {
+        "authored_at": "2026-04-20T02:49:10+00:00",
+        "authored_by": "codex",
+        "authored_with_prompt_sha256": "d434cca27e1b16bf0e3d524afa19763bd211410dda873f0e619814f48f85ae83",
+        "verification_command": "node reader.js",
+        "expected_stderr_regex": "ENOENT: no such file or directory, open '.*data/config\\.json'",
+        "files": [
+          {
+            "path": "package.json",
+            "content": "{\n  \"name\": \"node-file-not-found-repro\",\n  \"version\": \"1.0.0\",\n  \"private\": true,\n  \"scripts\": {\n    \"test\": \"node reader.js\"\n  }\n}\n"
+          },
+          {
+            "path": "reader.js",
+            "content": "const fs = require(\"node:fs\");\nconst path = require(\"node:path\");\n\nconst configPath = path.join(__dirname, \"data\", \"config.json\");\nconst config = JSON.parse(fs.readFileSync(configPath, \"utf8\"));\n\nif (config.mode !== \"ready\") {\n  throw new Error(\"config.mode must be ready\");\n}\n\nconsole.log(`mode=${config.mode}`);\n"
+          }
+        ],
+        "reference_fix_files": [
+          {
+            "path": "data/config.json",
+            "content": "{\n  \"mode\": \"ready\"\n}\n"
+          }
+        ],
+        "fix_rationale": "The program expects data/config.json at runtime, so the fix supplies the missing file with the expected mode.",
+        "reviewer_record": {
+          "validated_in_sandbox_at": "2026-04-20T02:49:10+00:00",
+          "sandbox_pre_fix_exit_code": 1,
+          "sandbox_pre_fix_stderr_match": true,
+          "sandbox_post_fix_exit_code": 0,
+          "sandbox_workdir_hash_pre": "dfc60909dab0ea01b07ee6994f63aa0ef5dc9462ee0ad3a5d8d470a2f6859827",
+          "sandbox_workdir_hash_post": "0c10f0ff191538959a24d9a125b1a1c124467ce33e174055be29b805f2dfc07d",
+          "notes": "authored by codex; pre-fix fails+matches regex, post-fix passes"
+        }
+      }
+    }
+  ]
+}

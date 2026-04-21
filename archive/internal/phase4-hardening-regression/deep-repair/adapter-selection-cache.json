@@ -1,0 +1,36 @@
+{
+  "entries": {
+    "9feb79ed5234e1e5": {
+      "failure_count": 0,
+      "last_failure_at": "2026-03-14T03:03:24.076534+00:00",
+      "last_score": 86,
+      "last_status": "success",
+      "last_success_at": "2026-03-14T03:03:24.434572+00:00",
+      "prerequisite_snapshot": {
+        "checks": [
+          {
+            "available": true,
+            "name": "python3"
+          }
+        ],
+        "ready": true
+      },
+      "scenario": {
+        "execution_profile": "deep",
+        "failure_type": "long_running_local_task",
+        "max_cost": 5,
+        "max_trust": "workspace",
+        "mode": "long",
+        "require_durable_status": true,
+        "required_capabilities": [
+          "durable-status",
+          "local-exec",
+          "reporting"
+        ]
+      },
+      "selected_adapter": "python-runtime-local",
+      "updated_at": "2026-03-14T03:03:24.434558+00:00"
+    }
+  },
+  "schema_version": 1
+}

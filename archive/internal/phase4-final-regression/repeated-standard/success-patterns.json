@@ -1,0 +1,146 @@
+{
+  "patterns": [
+    {
+      "adapter": "python-local",
+      "best_lifecycle_state": "validated",
+      "confidence": 82,
+      "created_at": "2026-03-14T02:44:39.988050+00:00",
+      "demotion_count": 0,
+      "evidence": [
+        "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/phase4-final-regression/repeated-standard/execution-state.json",
+        "runtime-status.json"
+      ],
+      "evidence_count": 2,
+      "expires_at": null,
+      "fingerprint": "success-cbb278485261",
+      "history": [
+        {
+          "event": "captured",
+          "reason": "new_pattern",
+          "ts": "2026-03-14T02:44:39.988073+00:00"
+        },
+        {
+          "event": "auto_promoted",
+          "reason": "evidence_threshold_met",
+          "to": "validated",
+          "ts": "2026-03-14T02:44:39.988080+00:00"
+        },
+        {
+          "best_lifecycle_state": "validated",
+          "confidence": 79,
+          "event": "merged_validation",
+          "evidence_count": 2,
+          "reason": "rerun_capture",
+          "retained_lifecycle": "validated",
+          "ts": "2026-03-14T02:44:41.474769+00:00",
+          "validation_count": 2
+        },
+        {
+          "best_lifecycle_state": "validated",
+          "confidence": 82,
+          "event": "merged_validation",
+          "evidence_count": 2,
+          "reason": "rerun_capture",
+          "retained_lifecycle": "validated",
+          "ts": "2026-03-14T02:44:42.962871+00:00",
+          "validation_count": 3
+        }
+      ],
+      "last_selected_at": "2026-03-14T02:44:42.094948+00:00",
+      "last_validated_at": "2026-03-14T02:44:42.962870+00:00",
+      "lifecycle_state": "validated",
+      "modes": [
+        "short"
+      ],
+      "outcome": "task completed locally while keeping heavier learning work off the hot path",
+      "pattern_id": "standard-local-success-marker-success-cbb278485261",
+      "promotion_count": 1,
+      "reusable": true,
+      "selection_count": 2,
+      "sequence": [
+        "init",
+        "plan",
+        "select-adapter",
+        "execute",
+        "validate"
+      ],
+      "summary": "Standard profile finished with light foreground orchestration and deferred learning consolidation",
+      "tags": [
+        "orchestration",
+        "local",
+        "standard",
+        "deferred-learning"
+      ],
+      "trigger": "standard local task",
+      "updated_at": "2026-03-14T02:44:42.962869+00:00",
+      "validation_count": 3
+    },
+    {
+      "adapter": null,
+      "best_lifecycle_state": "validated",
+      "confidence": 76,
+      "created_at": "2026-03-14T02:44:38.860729+00:00",
+      "demotion_count": 0,
+      "evidence": [
+        "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/references/repair-actions.md"
+      ],
+      "evidence_count": 1,
+      "expires_at": null,
+      "fingerprint": "bounded-local-repair",
+      "history": [
+        {
+          "event": "captured",
+          "reason": "new_pattern",
+          "ts": "2026-03-14T02:44:38.860754+00:00"
+        },
+        {
+          "best_lifecycle_state": "validated",
+          "confidence": 74,
+          "event": "merged_validation",
+          "evidence_count": 1,
+          "reason": "rerun_capture",
+          "retained_lifecycle": "validated",
+          "ts": "2026-03-14T02:44:40.319556+00:00",
+          "validation_count": 2
+        },
+        {
+          "best_lifecycle_state": "validated",
+          "confidence": 76,
+          "event": "merged_validation",
+          "evidence_count": 1,
+          "reason": "rerun_capture",
+          "retained_lifecycle": "validated",
+          "ts": "2026-03-14T02:44:41.804636+00:00",
+          "validation_count": 3
+        }
+      ],
+      "last_validated_at": "2026-03-14T02:44:41.804635+00:00",
+      "lifecycle_state": "validated",
+      "modes": [
+        "long"
+      ],
+      "outcome": "bounded recovery without crossing safeguards",
+      "pattern_id": "bounded-local-repair",
+      "promotion_count": 0,
+      "reusable": true,
+      "selection_count": 0,
+      "sequence": [
+        "detect",
+        "branch",
+        "probe",
+        "recover",
+        "record"
+      ],
+      "summary": "Local repair branches should stay probe-only and feed explicit recovery references",
+      "tags": [
+        "repair",
+        "local",
+        "orchestration"
+      ],
+      "trigger": "repairable local runtime failure",
+      "updated_at": "2026-03-14T02:44:41.804634+00:00",
+      "validation_count": 3
+    }
+  ],
+  "schema_version": 1
+}

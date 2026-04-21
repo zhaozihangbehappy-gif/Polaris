@@ -1,0 +1,1 @@
+{"stderr": "stat /home/user/projects/myapp/cmd/worker/main.go: no such file or directory\ngo: no Go files in /home/user/projects/myapp/cmd/worker", "error_class": "file_not_found", "source": "go build targeting directory with no Go source files"}

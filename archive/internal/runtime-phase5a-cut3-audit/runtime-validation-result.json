@@ -1,0 +1,10 @@
+{
+  "output_file": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/runtime-phase5a-cut3-audit/runtime-transform-output.txt",
+  "payload": {
+    "contains_expected_marker": true,
+    "input_file": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/runtime-phase5a-cut3-audit/runtime-transform-input.txt",
+    "output_file": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/runtime-phase5a-cut3-audit/runtime-transform-output.txt"
+  },
+  "status": "ok",
+  "validator_kind": "file_transform_result"
+}

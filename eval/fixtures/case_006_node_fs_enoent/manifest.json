@@ -1,0 +1,20 @@
+{
+  "case_id": "case_006_node_fs_enoent",
+  "files": [
+    {
+      "relpath": "build.js",
+      "sha256": "9720b1ab6434604c48af85f586355a8f1236af62fa8638c011b6bbd5bc6f7718",
+      "size": 99
+    }
+  ],
+  "dependencies": {
+    "node": ">=18.0"
+  },
+  "build_commands": [
+    "rm -rf {workdir} && mkdir -p {workdir}",
+    "cp -r files/. {workdir}/"
+  ],
+  "expected_failure_command": "cd {workdir} && node build.js",
+  "expected_failure_stderr_regex": "ENOENT",
+  "manifest_schema_version": 1
+}

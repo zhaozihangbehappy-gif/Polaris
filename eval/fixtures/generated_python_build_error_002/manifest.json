@@ -1,0 +1,16 @@
+{
+  "case_id": "generated_python_build_error_002",
+  "files": [
+    "setup.py",
+    "native_broken/__init__.py",
+    "native_broken/speedups.c"
+  ],
+  "dependencies": {},
+  "build_commands": [],
+  "expected_failure_command": "cd {workdir} && rm -r build dist native_broken.egg-info 2>/dev/null; python3 -m pip wheel . --no-build-isolation -w dist",
+  "expected_failure_stderr_regex": "Failed building wheel for",
+  "manifest_schema_version": 1,
+  "bash_self_contained": false,
+  "reverse_from_pattern": "python.build_error.002",
+  "source_pool": "official"
+}

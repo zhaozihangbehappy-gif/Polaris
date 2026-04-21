@@ -1,0 +1,97 @@
+{
+  "output_file": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/runtime-step2-repeat3/runtime-execution-result.json",
+  "payload": {
+    "adapter": "shell-local",
+    "applied_rule_ids": [
+      "stop-on-nonrepair-denial"
+    ],
+    "applied_rule_layers": [
+      "hard"
+    ],
+    "executed_ordering": [
+      "execute",
+      "validate"
+    ],
+    "execution_contract": {
+      "kind": "runner",
+      "pattern": null,
+      "rule_count": 1,
+      "strategy": {
+        "execution_ordering": [
+          "execute",
+          "validate"
+        ],
+        "fallback_choice": "selected-adapter-only",
+        "retry_policy": "respect-hard-stop-rules",
+        "strategy_trace": {
+          "execution_kind": "runner",
+          "execution_profile": "standard",
+          "experimental_rules": [],
+          "hard_rules": [
+            "stop-on-nonrepair-denial"
+          ],
+          "selected_pattern": null,
+          "soft_rules": []
+        },
+        "validation_strategy": "runner-contract-match"
+      }
+    },
+    "execution_profile": "standard",
+    "goal": "Demonstrate Polaris local orchestration flow",
+    "mode": "short",
+    "notes": [
+      "task executed through adapter contract",
+      "selected rules and pattern were supplied to the runner"
+    ],
+    "result": {
+      "stage_count": 2,
+      "summary": "Executed local task for goal: Demonstrate Polaris local orchestration flow",
+      "used_pattern_guidance": false,
+      "used_rule_guidance": true
+    },
+    "selected_pattern": null,
+    "selected_pattern_sequence": [],
+    "stage_results": [
+      {
+        "details": {
+          "execution_profile": "standard",
+          "mode": "short"
+        },
+        "status": "ok",
+        "step": "execute"
+      },
+      {
+        "details": {
+          "execution_profile": "standard",
+          "mode": "short"
+        },
+        "status": "ok",
+        "step": "validate"
+      }
+    ],
+    "state": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/runtime-step2-repeat3/execution-state.json",
+    "status": "ok",
+    "strategy": {
+      "execution_ordering": [
+        "execute",
+        "validate"
+      ],
+      "fallback_choice": "selected-adapter-only",
+      "retry_policy": "respect-hard-stop-rules",
+      "strategy_trace": {
+        "execution_kind": "runner",
+        "execution_profile": "standard",
+        "experimental_rules": [],
+        "hard_rules": [
+          "stop-on-nonrepair-denial"
+        ],
+        "selected_pattern": null,
+        "soft_rules": []
+      },
+      "validation_strategy": "runner-contract-match"
+    },
+    "ts": "2026-03-14T09:39:25.466398+00:00"
+  },
+  "status": "ok",
+  "validator_kind": "runner_result_contract"
+}

@@ -1,0 +1,1 @@
+{"stderr": "Error: timeout while waiting for plugin to start\n\nTimed out waiting for provider \"registry.terraform.io/hashicorp/aws\"\nto become available. This may indicate the provider binary is crashing\nor the system is under memory pressure.\n\nPlugin start timeout: 1m0s exceeded.\n", "error_class": "timeout", "source": "terraform-core-1.7.0"}

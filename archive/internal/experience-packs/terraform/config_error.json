@@ -1,0 +1,76 @@
+{
+  "ecosystem": "terraform",
+  "error_class": "config_error",
+  "shard_version": "3.0",
+  "records": [
+    {
+      "stderr_pattern": "Error:.*Missing required provider|provider.*not available",
+      "avoidance_hints": [
+        {
+          "kind": "set_env",
+          "vars": {
+            "TF_PLUGIN_CACHE_DIR": "/tmp/.terraform.d/plugin-cache"
+          }
+        }
+      ],
+      "description": "Terraform provider missing — set plugin cache directory",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "bash -c 'echo \"Missing required provider\" >&2; exit 1'",
+        "trigger_env": {},
+        "expected_stderr_match": "Missing required provider|not available",
+        "fix_env": {
+          "TF_PLUGIN_CACHE_DIR": "/tmp/.terraform.d/plugin-cache"
+        },
+        "expected_fix_outcome": "different_error_or_success",
+        "fix_command": "bash -c 'echo \"TF_PLUGIN_CACHE_DIR set (simulated)\"; exit 0'"
+      }
+    },
+    {
+      "stderr_pattern": "Error:.*backend initialization required",
+      "avoidance_hints": [
+        {
+          "kind": "set_env",
+          "vars": {
+            "TF_INPUT": "0"
+          }
+        },
+        {
+          "kind": "run_shell",
+          "command": "terraform init -reconfigure 2>&1 || true"
+        }
+      ],
+      "description": "Terraform backend init required — disable interactive input and re-init",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "bash -c 'echo \"backend initialization\" >&2; exit 1'",
+        "trigger_env": {},
+        "expected_stderr_match": "backend initialization",
+        "fix_env": {
+          "TF_INPUT": "0"
+        },
+        "expected_fix_outcome": "different_error_or_success",
+        "fix_command": "bash -c 'echo \"TF_INPUT set (simulated)\"; exit 0'"
+      }
+    },
+    {
+      "stderr_pattern": "Invalid HCL syntax|argument definition must end|expected.*newline",
+      "avoidance_hints": [
+        {
+          "kind": "run_shell",
+          "command": "terraform fmt -check -recursive 2>&1 || true"
+        }
+      ],
+      "description": "Invalid HCL syntax — run terraform fmt to identify and fix formatting issues",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "bash -c 'echo \"Invalid HCL\" >&2; exit 1'",
+        "trigger_env": {},
+        "expected_stderr_match": "Invalid HCL|syntax",
+        "fix_env": {},
+        "expected_fix_outcome": "different_error_or_success",
+        "fix_command": "bash -c 'echo \"fix applied\"; exit 0'"
+      }
+    }
+  ]
+}

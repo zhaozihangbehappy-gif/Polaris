@@ -1,0 +1,11 @@
+{
+  "name": "polaris-node-gyp-build-from-source",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "test": "node scripts/install-or-build.js"
+  },
+  "config": {
+    "build_from_source": true
+  }
+}

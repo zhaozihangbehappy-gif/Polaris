@@ -1,0 +1,1 @@
+{"stderr": "go: finding module for package github.com/spf13/cobra\ngo: downloading github.com/spf13/cobra v1.8.0\nmain.go:5:2: no required module provides package github.com/spf13/cobra; to add it:\n\tgo get github.com/spf13/cobra", "error_class": "missing_dependency", "source": "go build with unresolved import in module-aware mode"}

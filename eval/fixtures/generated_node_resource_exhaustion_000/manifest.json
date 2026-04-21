@@ -1,0 +1,15 @@
+{
+  "case_id": "generated_node_resource_exhaustion_000",
+  "files": [
+    "package.json",
+    "memory-check.js"
+  ],
+  "dependencies": {},
+  "build_commands": [],
+  "expected_failure_command": "cd {workdir} && npm test",
+  "expected_failure_stderr_regex": "JavaScript heap out of memory|FATAL ERROR:.*Reached heap limit|Ineffective mark-compacts near heap limit",
+  "manifest_schema_version": 1,
+  "bash_self_contained": false,
+  "reverse_from_pattern": "node.resource_exhaustion.000",
+  "source_pool": "official"
+}

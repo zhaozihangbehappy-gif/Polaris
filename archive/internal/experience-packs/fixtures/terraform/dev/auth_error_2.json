@@ -1,0 +1,1 @@
+{"stderr": "Error: error configuring Terraform AWS Provider: failed to get shared config profile, default\n\n  with provider[\"registry.terraform.io/hashicorp/aws\"],\n  on main.tf line 2, in provider \"aws\":\n   2: provider \"aws\" {\n\nNoCredentialProviders: no valid providers in chain. Deprecated.\n", "error_class": "auth_error", "source": "terraform-aws-provider-5.30"}

@@ -1,0 +1,5 @@
+{
+  "stderr": "error: failed to parse manifest at `/home/user/project/Cargo.toml`\n\nCaused by:\n  no `package` section found\n\nnote: create a `[package]` section with required fields like `name` and `version`, or add `[workspace]` if this is a workspace root",
+  "error_class": "config_error",
+  "source": "cargo build on Cargo.toml missing [package] section"
+}

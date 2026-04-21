@@ -1,0 +1,5 @@
+{
+  "stderr": "error: failed to run custom build command for `libsqlite3-sys v0.27.0`\n\nCaused by:\n  process didn't exit successfully: `/tmp/target/debug/build/libsqlite3-sys-abc123/build-script-main` (exit status: 101)\n  --- stderr\n  thread 'main' panicked at 'pkg-config has not been configured to support cross-compilation.\n  Install a sysroot for the target platform and configure it via\n  PKG_CONFIG_SYSROOT_DIR and PKG_CONFIG_PATH, or install a\n  temporary cross-build PKG_CONFIG which wraps pkg-config.'",
+  "error_class": "build_error",
+  "source": "cargo build for cross-compilation target missing pkg-config setup"
+}

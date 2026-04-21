@@ -1,0 +1,179 @@
+{
+  "ecosystem": "ruby",
+  "error_class": "missing_dependency",
+  "schema_version": 4,
+  "records": [
+    {
+      "pattern_id": "candidate.ruby.missing_dependency.000",
+      "ecosystem": "ruby",
+      "error_class": "missing_dependency",
+      "description": "Ruby gem 'rails' missing",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "cannot load such file -- rails",
+          "Could not find gem 'rails'"
+        ],
+        "file_markers": [],
+        "package_managers": [
+          "bundler",
+          "gem"
+        ],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "gem list | grep rails 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "cannot load such file -- rails"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "bundle add rails or gem install rails"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.ruby.missing_dependency.001",
+      "ecosystem": "ruby",
+      "error_class": "missing_dependency",
+      "description": "Ruby gem 'sidekiq' missing",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "cannot load such file -- sidekiq",
+          "Could not find gem 'sidekiq'"
+        ],
+        "file_markers": [],
+        "package_managers": [
+          "bundler",
+          "gem"
+        ],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "gem list | grep sidekiq 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "cannot load such file -- sidekiq"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "bundle add sidekiq or gem install sidekiq"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.ruby.missing_dependency.002",
+      "ecosystem": "ruby",
+      "error_class": "missing_dependency",
+      "description": "Ruby gem 'puma' missing",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "cannot load such file -- puma",
+          "Could not find gem 'puma'"
+        ],
+        "file_markers": [],
+        "package_managers": [
+          "bundler",
+          "gem"
+        ],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "gem list | grep puma 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "cannot load such file -- puma"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "bundle add puma or gem install puma"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.ruby.missing_dependency.003",
+      "ecosystem": "ruby",
+      "error_class": "missing_dependency",
+      "description": "Ruby gem 'rspec' missing",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "cannot load such file -- rspec",
+          "Could not find gem 'rspec'"
+        ],
+        "file_markers": [],
+        "package_managers": [
+          "bundler",
+          "gem"
+        ],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "gem list | grep rspec 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "cannot load such file -- rspec"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "bundle add rspec or gem install rspec"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "case_id": "case_003_docker_layer_cache",
+  "source": "pattern_reverse",
+  "reverse_from_pattern": "docker.build_error.000",
+  "ecosystem": "docker",
+  "initial_prompt": "A multi-stage Dockerfile at {workdir} fails in the build stage with 'executor failed running': a COPY instruction references a path that exists in the repo but was added to .dockerignore. The agent must diagnose the ignore, not just retry. Fix it.",
+  "success_criteria": {
+    "root_cause_regex": "\\.dockerignore|build context|excluded",
+    "fix_command_test": "cd {workdir} && docker build -t polaris-case03 ."
+  },
+  "max_rounds": 10
+}

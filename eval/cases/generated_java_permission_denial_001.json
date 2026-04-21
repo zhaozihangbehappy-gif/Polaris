@@ -1,0 +1,17 @@
+{
+  "case_id": "generated_java_permission_denial_001",
+  "source": "authored_fixture",
+  "reverse_from_pattern": "java.permission_denial.001",
+  "pattern_id": "java.permission_denial.001",
+  "source_pool": "official",
+  "ecosystem": "java",
+  "error_class": "permission_denial",
+  "initial_prompt": "In the project at {workdir}, this java permission_denial fails: Gradle cache permission denied \u2014 redirect GRADLE_USER_HOME to writable directory. Reproduce the failure with `rm -rf .gradle && mkdir -p .gradle && chmod 444 .gradle && javac CacheTest.java && java CacheTest; RESULT=$?; chmod 755 .gradle && rm -rf .gradle; exit $RESULT`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+  "success_criteria": {
+    "root_cause_regex": ".+",
+    "fix_command_test": "cd {workdir} && rm -rf .gradle && mkdir -p .gradle && chmod 444 .gradle && javac CacheTest.java && java CacheTest; RESULT=$?; chmod 755 .gradle && rm -rf .gradle; exit $RESULT"
+  },
+  "max_rounds": 6,
+  "fixture_strategy": "authored_files",
+  "promotion_eligible": true
+}

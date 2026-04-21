@@ -1,0 +1,1 @@
+{"stderr": "go: errors parsing go.mod:\ngo.mod:3: unknown directive: requir\ngo.mod:5: usage: require module/path v1.2.3", "error_class": "config_error", "source": "go build with syntax error in go.mod (typo in directive)"}

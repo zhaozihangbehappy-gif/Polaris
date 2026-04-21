@@ -1,0 +1,241 @@
+{
+  "ecosystem": "rust",
+  "error_class": "linker_error",
+  "schema_version": 4,
+  "records": [
+    {
+      "pattern_id": "candidate.rust.linker_error.000",
+      "ecosystem": "rust",
+      "error_class": "linker_error",
+      "description": "cc linker not found",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "linker `cc` not found"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "cargo --version 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "linker `cc` not found"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Rust linker_error: cc linker not found"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.rust.linker_error.001",
+      "ecosystem": "rust",
+      "error_class": "linker_error",
+      "description": "lld required but missing",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "error: linker `lld`"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "cargo --version 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "error: linker `lld`"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Rust linker_error: lld required but missing"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.rust.linker_error.002",
+      "ecosystem": "rust",
+      "error_class": "linker_error",
+      "description": "musl target libs missing",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "x86_64-unknown-linux-musl.*not found"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "cargo --version 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "x86_64-unknown-linux-musl.*not found"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Rust linker_error: musl target libs missing"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.rust.linker_error.003",
+      "ecosystem": "rust",
+      "error_class": "linker_error",
+      "description": "macOS framework not linked",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "framework not found"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "cargo --version 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "framework not found"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Rust linker_error: macOS framework not linked"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.rust.linker_error.004",
+      "ecosystem": "rust",
+      "error_class": "linker_error",
+      "description": "Windows MSVC linker missing",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "link\\.exe.*not found"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "cargo --version 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "link\\.exe.*not found"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Rust linker_error: Windows MSVC linker missing"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.rust.linker_error.005",
+      "ecosystem": "rust",
+      "error_class": "linker_error",
+      "description": "static link libssl missing",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "ld.*cannot find -lssl"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "cargo --version 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "ld.*cannot find -lssl"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Rust linker_error: static link libssl missing"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    }
+  ]
+}

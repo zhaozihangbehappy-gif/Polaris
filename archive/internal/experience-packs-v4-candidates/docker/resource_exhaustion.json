@@ -1,0 +1,319 @@
+{
+  "ecosystem": "docker",
+  "error_class": "resource_exhaustion",
+  "schema_version": 4,
+  "records": [
+    {
+      "pattern_id": "candidate.docker.resource_exhaustion.000",
+      "ecosystem": "docker",
+      "error_class": "resource_exhaustion",
+      "description": "build disk full in /var/lib/docker",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "no space left on device.*\\/var\\/lib\\/docker"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "docker info 2>&1 | head -5",
+        "trigger_env": {},
+        "expected_stderr_match": "no space left on device.*\\/var\\/lib\\/docker"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Docker resource_exhaustion: build disk full in /var/lib/docker"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.docker.resource_exhaustion.001",
+      "ecosystem": "docker",
+      "error_class": "resource_exhaustion",
+      "description": "buildkit cache full",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "buildkit.*no space"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "docker info 2>&1 | head -5",
+        "trigger_env": {},
+        "expected_stderr_match": "buildkit.*no space"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Docker resource_exhaustion: buildkit cache full"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.docker.resource_exhaustion.002",
+      "ecosystem": "docker",
+      "error_class": "resource_exhaustion",
+      "description": "container OOM killed",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "OOMKilled.*true"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "docker info 2>&1 | head -5",
+        "trigger_env": {},
+        "expected_stderr_match": "OOMKilled.*true"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Docker resource_exhaustion: container OOM killed"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.docker.resource_exhaustion.003",
+      "ecosystem": "docker",
+      "error_class": "resource_exhaustion",
+      "description": "ulimit nofile too low",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "too many open files.*docker"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "docker info 2>&1 | head -5",
+        "trigger_env": {},
+        "expected_stderr_match": "too many open files.*docker"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Docker resource_exhaustion: ulimit nofile too low"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.docker.resource_exhaustion.004",
+      "ecosystem": "docker",
+      "error_class": "resource_exhaustion",
+      "description": "memory limit too small for build",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "runtime: out of memory"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "docker info 2>&1 | head -5",
+        "trigger_env": {},
+        "expected_stderr_match": "runtime: out of memory"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Docker resource_exhaustion: memory limit too small for build"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.docker.resource_exhaustion.005",
+      "ecosystem": "docker",
+      "error_class": "resource_exhaustion",
+      "description": "inode exhaustion overlay2",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "no space left.*inode"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "docker info 2>&1 | head -5",
+        "trigger_env": {},
+        "expected_stderr_match": "no space left.*inode"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Docker resource_exhaustion: inode exhaustion overlay2"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.docker.resource_exhaustion.006",
+      "ecosystem": "docker",
+      "error_class": "resource_exhaustion",
+      "description": "CPU throttling build slowdown",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "cpu.*throttled"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "docker info 2>&1 | head -5",
+        "trigger_env": {},
+        "expected_stderr_match": "cpu.*throttled"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Docker resource_exhaustion: CPU throttling build slowdown"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.docker.resource_exhaustion.007",
+      "ecosystem": "docker",
+      "error_class": "resource_exhaustion",
+      "description": "pid limit hit cgroup",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "pids-limit.*exceeded"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "docker info 2>&1 | head -5",
+        "trigger_env": {},
+        "expected_stderr_match": "pids-limit.*exceeded"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Docker resource_exhaustion: pid limit hit cgroup"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    }
+  ]
+}

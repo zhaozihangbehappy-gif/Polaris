@@ -1,0 +1,67 @@
+{
+  "executed_at": "2026-03-15T13:35:50.958279+00:00",
+  "failure_type": "unknown",
+  "results": [
+    {
+      "action": {
+        "command": "pwd",
+        "kind": "shell",
+        "label": "Capture working directory",
+        "node_id": "pwd",
+        "reversible": true
+      },
+      "outcome": {
+        "command": "pwd",
+        "returncode": 0,
+        "stderr": "",
+        "stdout": "/home/administrator/.openclaw/workspace/projects/polaris-skill\n"
+      }
+    },
+    {
+      "action": {
+        "command": "ls -la",
+        "kind": "shell",
+        "label": "List current directory",
+        "node_id": "ls-root",
+        "reversible": true
+      },
+      "outcome": {
+        "command": "ls -la",
+        "returncode": 0,
+        "stderr": "",
+        "stdout": "total 32\ndrwxrwxr-x  4 administrator administrator 4096 Mar 15 20:47 .\ndrwxrwxr-x  4 administrator administrator 4096 Mar 13 20:07 ..\n-rw-r--r--  1 administrator administrator  150 Mar 15 20:47 .gitignore\ndrwxrwxr-x 54 administrator administrator 4096 Mar 15 21:35 Polaris\n-rw-rw-r--  1 administrator administrator 9878 Mar 14 14:08 README.md\ndrwxrwxr-x  2 administrator administrator 4096 Mar 13 16:33 specs\n"
+      }
+    },
+    {
+      "action": {
+        "command": "python3 --version || true",
+        "kind": "shell",
+        "label": "Capture interpreter version",
+        "node_id": "python-version",
+        "reversible": true
+      },
+      "outcome": {
+        "command": "python3 --version || true",
+        "returncode": 0,
+        "stderr": "",
+        "stdout": "Python 3.12.3\n"
+      }
+    },
+    {
+      "action": {
+        "command": "git status --short || true",
+        "kind": "shell",
+        "label": "Inspect local repo status",
+        "node_id": "git-status",
+        "reversible": true
+      },
+      "outcome": {
+        "command": "git status --short || true",
+        "returncode": 0,
+        "stderr": "",
+        "stdout": " M Polaris/runtime-demo/adapter-selection-cache.json\n M Polaris/runtime-demo/adapters.json\n M Polaris/runtime-demo/execution-state.json\n M Polaris/runtime-demo/rules.json\n M Polaris/runtime-demo/success-patterns.json\n M Polaris/scripts/polaris_bootstrap.json\n M Polaris/scripts/polaris_contract_planner.py\n M Polaris/scripts/polaris_orchestrator.py\n M Polaris/scripts/polaris_regression.sh\n M Polaris/scripts/polaris_runtime_demo.sh\n M Polaris/scripts/polaris_state.py\n?? Polaris/references/platform0-claude-five-layer-learning-and-token-risk-assessment-2026-03-15.md\n?? Polaris/references/platform0-claude-positioning-and-learning-assessment-2026-03-15.md\n?? Polaris/references/platform0-claude-positioning-as-experience-bridge-not-local-llm-2026-03-15.md\n?? Polaris/references/platform0-claude-revolution-distance-and-adoption-path-2026-03-15.md\n?? Polaris/references/platform0-claude-self-assessment-2026-03-15.md\n?? Polaris/references/platform0-stage-cognition-index-2026-03-15.md\n?? Polaris/scripts/polaris_adapter_shell.py\n?? Polaris/scripts/polaris_failure_records.py\n?? Polaris/scripts/polaris_task_fingerprint.py\n"
+      }
+    }
+  ],
+  "safe_to_execute": true
+}

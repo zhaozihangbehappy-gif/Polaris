@@ -1,0 +1,35 @@
+{
+  "ecosystem": "python",
+  "error_class": "config_error",
+  "shard_version": "3.0",
+  "records": [
+    {
+      "stderr_pattern": "configparser\\.(NoSectionError|MissingSectionHeaderError|ParsingError)",
+      "avoidance_hints": [{"kind": "create_dir", "path": "."}],
+      "description": "Config file has missing section or parsing error — ensure config file exists with required sections",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "echo 'no_section_key = val' > /tmp/_polaris_repro_cfg.ini && python3 -c \"import configparser; c=configparser.ConfigParser(); c.read('/tmp/_polaris_repro_cfg.ini'); c.get('database','host')\" 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "NoSectionError|No section",
+        "fix_command": "printf '[database]\\nhost = localhost\\n' > /tmp/_polaris_repro_cfg.ini && python3 -c \"import configparser; c=configparser.ConfigParser(); c.read('/tmp/_polaris_repro_cfg.ini'); print(c.get('database','host'))\" 2>&1 || true",
+        "fix_env": {},
+        "expected_fix_outcome": "different_error_or_success"
+      }
+    },
+    {
+      "stderr_pattern": "toml\\.TOMLDecodeError|tomllib\\._parser\\.TOMLDecodeError|Invalid value",
+      "avoidance_hints": [{"kind": "create_dir", "path": "."}],
+      "description": "TOML config file has invalid syntax — check file for syntax errors",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "echo 'key = [invalid' > /tmp/_polaris_repro_cfg.toml && python3 -c \"import tomllib; tomllib.loads(open('/tmp/_polaris_repro_cfg.toml').read())\" 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "TOMLDecodeError|Invalid value|unexpected character",
+        "fix_command": "echo 'key = \"valid\"' > /tmp/_polaris_repro_cfg.toml && python3 -c \"import tomllib; d=tomllib.loads(open('/tmp/_polaris_repro_cfg.toml').read()); print(d)\" 2>&1 || true",
+        "fix_env": {},
+        "expected_fix_outcome": "different_error_or_success"
+      }
+    }
+  ]
+}

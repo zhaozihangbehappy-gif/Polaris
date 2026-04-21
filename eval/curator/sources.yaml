@@ -1,0 +1,42 @@
+# Real-issue case sources. Hand-curated, no scraping.
+# Per feedback_bigco_scraping: DOM-read or paste-in, not API hammering.
+# Each entry becomes one Case JSON with source=real_issue.
+#
+# Required fields: id, issue_url, title, ecosystem, pain_category
+#   (one of: monorepo, ci_only, long_session_repeat, unfamiliar_ecosystem),
+#   initial_prompt, success_criteria.{root_cause_regex, fix_command_test},
+#   max_rounds.
+#
+# Onboarding gate (locked 2026-04-21): a real-issue case MUST first reproduce
+# its pre_failure on the current host toolchain. Only after that do we lock
+# expected_failure_stderr_regex, provenance, and file it here. No exceptions.
+
+- id: real_001_pnpm_version_drift
+  issue_url: https://github.com/pnpm/pnpm/issues/6526
+  title: "pnpm --frozen-lockfile fails in CI because CI pnpm version differs from the one that wrote the lockfile"
+  ecosystem: node
+  pain_category: ci_only
+  initial_prompt: |
+    At {workdir} is a minimal Node project with a package.json and a
+    pnpm-lock.yaml that was written by a newer pnpm. Running
+    `pnpm install --frozen-lockfile` fails with ERR_PNPM_OUTDATED_LOCKFILE
+    because the pnpm binary on PATH is a different major version than the one
+    that produced the lockfile. Diagnose the version-drift root cause and
+    apply the correct pin so CI and local agree on one pnpm version — do not
+    regenerate the lockfile, and do not turn off --frozen-lockfile.
+  success_criteria:
+    root_cause_regex: "packageManager|corepack|action-setup|pnpm.*version|version mismatch"
+    fix_command_test: "cd {workdir} && pnpm install --frozen-lockfile"
+  max_rounds: 12
+
+# Backlog (not in this round's candidate pool):
+#   - real_002_ruff_match_parser  — invalidated 2026-04-21: ruff 0.9.8 parses
+#     `match` cleanly on current host; expected_failure never fires. Issue
+#     https://github.com/astral-sh/ruff/issues/16417 may need a different
+#     repro shape; re-onboard only after pre_failure reproduces on host.
+#   - real_003_setuptools_editable_pep660 — invalidated 2026-04-21: setuptools
+#     61.0.0 fails to import on Python 3.12 with
+#     `AttributeError: module 'pkgutil' has no attribute 'ImpImporter'`,
+#     preempting the PEP 660 `build_editable` path the fixture was targeting.
+#     Re-onboard only on a host with Python <=3.11 available, or pick a newer
+#     setuptools regression that reproduces under 3.12.

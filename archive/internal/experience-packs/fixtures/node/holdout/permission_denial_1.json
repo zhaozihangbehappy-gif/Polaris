@@ -1,0 +1,5 @@
+{
+  "stderr": "npm ERR! code EACCES\nnpm ERR! syscall access\nnpm ERR! path /home/user/.npm\nnpm ERR! errno -13\nnpm ERR! \nnpm ERR! Error: EACCES: permission denied, access '/home/user/.npm'\nnpm ERR!  [Error: EACCES: permission denied, access '/home/user/.npm'] {\nnpm ERR!   errno: -13,\nnpm ERR!   code: 'EACCES',\nnpm ERR!   syscall: 'access',\nnpm ERR!   path: '/home/user/.npm'\nnpm ERR! }\nnpm ERR! \nnpm ERR! The operation was rejected by your operating system.\n\nnpm ERR! A complete log of this run can be found in: /tmp/.npm/_logs/2024-07-22T13_55_01_234Z-debug-0.log",
+  "error_class": "permission_denial",
+  "source": "npm cache directory access denied in CI container"
+}

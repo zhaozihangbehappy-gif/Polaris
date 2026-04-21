@@ -1,0 +1,202 @@
+{
+  "ecosystem": "python",
+  "error_class": "port_conflict",
+  "schema_version": 4,
+  "records": [
+    {
+      "pattern_id": "candidate.python.port_conflict.000",
+      "ecosystem": "python",
+      "error_class": "port_conflict",
+      "description": "Gunicorn port already in use",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "OSError.*Address already in use.*:\\d+"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "ss -ltn 2>&1 || netstat -ltn 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "OSError.*Address already in use.*:\\d+"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Free port or change binding: Gunicorn port already in use"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.port_conflict.001",
+      "ecosystem": "python",
+      "error_class": "port_conflict",
+      "description": "Uvicorn port busy",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "uvicorn.*address already in use"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "ss -ltn 2>&1 || netstat -ltn 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "uvicorn.*address already in use"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Free port or change binding: Uvicorn port busy"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.port_conflict.002",
+      "ecosystem": "python",
+      "error_class": "port_conflict",
+      "description": "Django runserver 8000 busy",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "Error: That port is already in use"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "ss -ltn 2>&1 || netstat -ltn 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "Error: That port is already in use"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Free port or change binding: Django runserver 8000 busy"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.port_conflict.003",
+      "ecosystem": "python",
+      "error_class": "port_conflict",
+      "description": "Celery flower 5555 conflict",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "5555.*already in use"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "ss -ltn 2>&1 || netstat -ltn 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "5555.*already in use"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Free port or change binding: Celery flower 5555 conflict"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.port_conflict.004",
+      "ecosystem": "python",
+      "error_class": "port_conflict",
+      "description": "Jupyter default port taken",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "jupyter.*port .* already in use"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "ss -ltn 2>&1 || netstat -ltn 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "jupyter.*port .* already in use"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Free port or change binding: Jupyter default port taken"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    }
+  ]
+}

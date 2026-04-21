@@ -1,0 +1,112 @@
+[pre_failure_command]
+cd /tmp/_polaris_runs/20260420T170630/claude_code/generated_node_timeout_001/baseline && node verify.js
+[pre_failure_output]
+
+/tmp/_polaris_runs/20260420T170630/claude_code/generated_node_timeout_001/baseline/runner.js:39
+      throw new Error(`operation timed out after ${timeoutMs}ms`, {
+            ^
+
+Error: operation timed out after 50ms
+    at readSlowStream (/tmp/_polaris_runs/20260420T170630/claude_code/generated_node_timeout_001/baseline/runner.js:39:13)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async /tmp/_polaris_runs/20260420T170630/claude_code/generated_node_timeout_001/baseline/verify.js:5:18 {
+  [cause]: AbortError: The operation was aborted
+      at AbortSignal.abort (node:internal/streams/pipeline:204:16)
+      at [nodejs.internal.kHybridDispatch] (node:internal/event_target:843:20)
+      at AbortSignal.dispatchEvent (node:internal/event_target:776:26)
+      at runAbort (node:internal/abort_controller:486:10)
+      at abortSignal (node:internal/abort_controller:457:3)
+      at Timeout._onTimeout (node:internal/abort_controller:153:7)
+      at listOnTimeout (node:internal/timers:585:17)
+      at process.processTimers (node:internal/timers:521:7) {
+    code: 'ABORT_ERR',
+    [cause]: DOMException [TimeoutError]: The operation was aborted due to timeout
+        at new DOMException (node:internal/per_context/domexception:76:18)
+        at Timeout._onTimeout (node:internal/abort_controller:155:9)
+        at listOnTimeout (node:internal/timers:585:17)
+        at process.processTimers (node:internal/timers:521:7)
+  }
+}
+
+Node.js v22.22.1
+
+[pre_failure_reproduced]
+true
+[agent_transcript]
+[claude exit=1 rate_limited=False num_turns=1]
+---
+{"type":"system","subtype":"init","cwd":"/tmp/_polaris_runs/20260420T170630/claude_code/generated_node_timeout_001/baseline","session_id":"69b30cb9-abf7-4e7e-a46c-4a49c52e87e0","tools":["Task","AskUserQuestion","Bash","CronCreate","CronDelete","CronList","Edit","EnterPlanMode","EnterWorktree","ExitPlanMode","ExitWorktree","Glob","Grep","Monitor","NotebookEdit","PushNotification","Read","RemoteTrigger","ScheduleWakeup","Skill","TaskOutput","TaskStop","TodoWrite","ToolSearch","WebFetch","WebSearch","Write"],"mcp_servers":[],"model":"claude-haiku-4-5-20251001","permissionMode":"bypassPermissions","slash_commands":["update-config","debug","simplify","batch","fewer-permission-prompts","loop","schedule","claude-api","compact","context","cost","heapdump","init","review","security-review","extra-usage","insights","team-onboarding"],"apiKeySource":"none","claude_code_version":"2.1.114","output_style":"default","agents":["Explore","general-purpose","Plan","statusline-setup"],"skills":["update-config","debug","simplify","batch","fewer-permission-prompts","loop","schedule","claude-api"],"plugins":[],"uuid":"15412e40-73ae-4d3e-a14f-74757e6c66f6","memory_paths":{"auto":"/home/administrator/.claude/projects/-tmp--polaris-runs-20260420T170630-claude-code-generated-node-timeout-001-baseline/memory/"},"fast_mode_state":"off"}
+{"type":"rate_limit_event","rate_limit_info":{"status":"rejected","resetsAt":1776690000,"rateLimitType":"five_hour","overageStatus":"rejected","overageDisabledReason":"org_level_disabled","isUsingOverage":false},"uuid":"1ec2e586-0375-48f3-a22b-048e2b3fc3b7","session_id":"69b30cb9-abf7-4e7e-a46c-4a49c52e87e0"}
+{"type":"assistant","message":{"id":"18db815d-cf0b-4bcc-8eba-11b93d871a40","container":null,"model":"<synthetic>","role":"assistant","stop_reason":"stop_sequence","stop_sequence":"","type":"message","usage":{"input_tokens":0,"output_tokens":0,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"server_tool_use":{"web_search_requests":0,"web_fetch_requests":0},"service_tier":null,"cache_creation":{"ephemeral_1h_input_tokens":0,"ephemeral_5m_input_tokens":0},"inference_geo":null,"iterations":null,"speed":null},"content":[{"type":"text","text":"You've hit your limit · resets 9pm (Asia/Shanghai)"}],"context_management":null},"parent_tool_use_id":null,"session_id":"69b30cb9-abf7-4e7e-a46c-4a49c52e87e0","uuid":"ffe66dec-a3b9-4d53-9198-4f782b1f0c4a","error":"rate_limit"}
+{"type":"result","subtype":"success","is_error":true,"api_error_status":429,"duration_ms":833,"duration_api_ms":0,"num_turns":1,"result":"You've hit your limit · resets 9pm (Asia/Shanghai)","stop_reason":"stop_sequence","session_id":"69b30cb9-abf7-4e7e-a46c-4a49c52e87e0","total_cost_usd":0,"usage":{"input_tokens":0,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"output_tokens":0,"server_tool_use":{"web_search_requests":0,"web_fetch_requests":0},"service_tier":"standard","cache_creation":{"ephemeral_1h_input_tokens":0,"ephemeral_5m_input_tokens":0},"inference_geo":"","iterations":[],"speed":"standard"},"modelUsage":{},"permission_denials":[],"terminal_reason":"completed","fast_mode_state":"off","uuid":"8489651b-7716-43ab-9533-e12852350a9a"}
+
+---
+[stderr]
+
+---
+[fix_command_test output]
+
+/tmp/_polaris_runs/20260420T170630/claude_code/generated_node_timeout_001/baseline/runner.js:39
+      throw new Error(`operation timed out after ${timeoutMs}ms`, {
+            ^
+
+Error: operation timed out after 50ms
+    at readSlowStream (/tmp/_polaris_runs/20260420T170630/claude_code/generated_node_timeout_001/baseline/runner.js:39:13)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async /tmp/_polaris_runs/20260420T170630/claude_code/generated_node_timeout_001/baseline/verify.js:5:18 {
+  [cause]: AbortError: The operation was aborted
+      at AbortSignal.abort (node:internal/streams/pipeline:204:16)
+      at [nodejs.internal.kHybridDispatch] (node:internal/event_target:843:20)
+      at AbortSignal.dispatchEvent (node:internal/event_target:776:26)
+      at runAbort (node:internal/abort_controller:486:10)
+      at abortSignal (node:internal/abort_controller:457:3)
+      at Timeout._onTimeout (node:internal/abort_controller:153:7)
+      at listOnTimeout (node:internal/timers:585:17)
+      at process.processTimers (node:internal/timers:521:7) {
+    code: 'ABORT_ERR',
+    [cause]: DOMException [TimeoutError]: The operation was aborted due to timeout
+        at new DOMException (node:internal/per_context/domexception:76:18)
+        at Timeout._onTimeout (node:internal/abort_controller:155:9)
+        at listOnTimeout (node:internal/timers:585:17)
+        at process.processTimers (node:internal/timers:521:7)
+  }
+}
+
+Node.js v22.22.1
+
+[post_fix_command]
+cd /tmp/_polaris_runs/20260420T170630/claude_code/generated_node_timeout_001/baseline && node verify.js
+[post_fix_output]
+
+/tmp/_polaris_runs/20260420T170630/claude_code/generated_node_timeout_001/baseline/runner.js:39
+      throw new Error(`operation timed out after ${timeoutMs}ms`, {
+            ^
+
+Error: operation timed out after 50ms
+    at readSlowStream (/tmp/_polaris_runs/20260420T170630/claude_code/generated_node_timeout_001/baseline/runner.js:39:13)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async /tmp/_polaris_runs/20260420T170630/claude_code/generated_node_timeout_001/baseline/verify.js:5:18 {
+  [cause]: AbortError: The operation was aborted
+      at AbortSignal.abort (node:internal/streams/pipeline:204:16)
+      at [nodejs.internal.kHybridDispatch] (node:internal/event_target:843:20)
+      at AbortSignal.dispatchEvent (node:internal/event_target:776:26)
+      at runAbort (node:internal/abort_controller:486:10)
+      at abortSignal (node:internal/abort_controller:457:3)
+      at Timeout._onTimeout (node:internal/abort_controller:153:7)
+      at listOnTimeout (node:internal/timers:585:17)
+      at process.processTimers (node:internal/timers:521:7) {
+    code: 'ABORT_ERR',
+    [cause]: DOMException [TimeoutError]: The operation was aborted due to timeout
+        at new DOMException (node:internal/per_context/domexception:76:18)
+        at Timeout._onTimeout (node:internal/abort_controller:155:9)
+        at listOnTimeout (node:internal/timers:585:17)
+        at process.processTimers (node:internal/timers:521:7)
+  }
+}
+
+Node.js v22.22.1
+
+[post_fix_ci_pass]
+False
+[contamination_hits]
+[]

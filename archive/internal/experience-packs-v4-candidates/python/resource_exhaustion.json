@@ -1,0 +1,241 @@
+{
+  "ecosystem": "python",
+  "error_class": "resource_exhaustion",
+  "schema_version": 4,
+  "records": [
+    {
+      "pattern_id": "candidate.python.resource_exhaustion.000",
+      "ecosystem": "python",
+      "error_class": "resource_exhaustion",
+      "description": "OOM during numpy allocation",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "MemoryError|numpy\\.core\\._exceptions\\._ArrayMemoryError"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "ulimit -a 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "MemoryError|numpy\\.core\\._exceptions\\._ArrayMemoryError"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Adjust resource limits: OOM during numpy allocation"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.resource_exhaustion.001",
+      "ecosystem": "python",
+      "error_class": "resource_exhaustion",
+      "description": "Too many open files socket",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "OSError.*Too many open files"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "ulimit -a 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "OSError.*Too many open files"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Adjust resource limits: Too many open files socket"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.resource_exhaustion.002",
+      "ecosystem": "python",
+      "error_class": "resource_exhaustion",
+      "description": "Process fork fails in container",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "BlockingIOError.*Resource temporarily unavailable"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "ulimit -a 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "BlockingIOError.*Resource temporarily unavailable"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Adjust resource limits: Process fork fails in container"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.resource_exhaustion.003",
+      "ecosystem": "python",
+      "error_class": "resource_exhaustion",
+      "description": "Recursion depth exceeded",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "RecursionError.*maximum recursion depth"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "ulimit -a 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "RecursionError.*maximum recursion depth"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Adjust resource limits: Recursion depth exceeded"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.resource_exhaustion.004",
+      "ecosystem": "python",
+      "error_class": "resource_exhaustion",
+      "description": "Disk full writing wheel cache",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "No space left on device"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "ulimit -a 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "No space left on device"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Adjust resource limits: Disk full writing wheel cache"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.resource_exhaustion.005",
+      "ecosystem": "python",
+      "error_class": "resource_exhaustion",
+      "description": "ulimit stack size small",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "Fatal Python error.*Cannot recover from stack overflow"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "ulimit -a 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "Fatal Python error.*Cannot recover from stack overflow"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Adjust resource limits: ulimit stack size small"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,243 @@
+{
+  "artifacts": {
+    "selected_adapter": "python-runtime-local",
+    "selected_pattern": "bounded-local-repair"
+  },
+  "attempts": [],
+  "checkpoints": [],
+  "current_step": "Completed",
+  "event_budget": "deep",
+  "execution_profile": "deep",
+  "goal": "Demonstrate Polaris local orchestration flow",
+  "learning_backlog": [],
+  "lessons": [],
+  "mode": "long",
+  "next_action": "Review outputs",
+  "phase": "completed",
+  "plan": [
+    {
+      "index": 1,
+      "phase": "planning",
+      "rule_layers": [
+        "hard"
+      ],
+      "status": "completed",
+      "step": "Clarify task scope",
+      "step_id": "planning-1",
+      "success_signal": "scope accepted",
+      "updated_at": "2026-03-14T02:35:38.532750+00:00"
+    },
+    {
+      "index": 2,
+      "phase": "ready",
+      "rule_layers": [
+        "hard",
+        "soft"
+      ],
+      "status": "completed",
+      "step": "Choose safe local adapter and rules",
+      "step_id": "ready-2",
+      "success_signal": "execution path chosen",
+      "updated_at": "2026-03-14T02:35:38.638251+00:00"
+    },
+    {
+      "index": 3,
+      "phase": "executing",
+      "rule_layers": [
+        "hard",
+        "soft"
+      ],
+      "status": "completed",
+      "step": "Execute the next local step",
+      "step_id": "executing-3",
+      "success_signal": "step completed",
+      "updated_at": "2026-03-14T02:35:38.793040+00:00"
+    },
+    {
+      "index": 4,
+      "phase": "validating",
+      "rule_layers": [
+        "hard",
+        "soft",
+        "experimental"
+      ],
+      "status": "completed",
+      "step": "Verify outcomes and inspect failures",
+      "step_id": "validating-4",
+      "success_signal": "evidence captured",
+      "updated_at": "2026-03-14T02:35:39.025646+00:00"
+    },
+    {
+      "index": 5,
+      "phase": "completed",
+      "rule_layers": [
+        "soft",
+        "experimental"
+      ],
+      "status": "completed",
+      "step": "Record reusable lessons and next actions",
+      "step_id": "completed-5",
+      "success_signal": "state ready to resume",
+      "updated_at": "2026-03-14T02:35:39.140090+00:00"
+    }
+  ],
+  "progress_pct": 100,
+  "references": [
+    {
+      "kind": "rules",
+      "label": "layered rules store",
+      "ts": "2026-03-14T02:35:38.168893+00:00",
+      "value": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/runtime-demo-deep-phase4/rules.json"
+    },
+    {
+      "kind": "patterns",
+      "label": "success pattern store",
+      "ts": "2026-03-14T02:35:38.196386+00:00",
+      "value": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/runtime-demo-deep-phase4/success-patterns.json"
+    },
+    {
+      "kind": "adapters",
+      "label": "adapter registry",
+      "ts": "2026-03-14T02:35:38.223262+00:00",
+      "value": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/runtime-demo-deep-phase4/adapters.json"
+    }
+  ],
+  "repair_depth": "deep",
+  "rule_context": {
+    "active_layers": [
+      "hard",
+      "soft",
+      "experimental"
+    ],
+    "applied_rules": []
+  },
+  "run_id": "polaris-orchestrated-run",
+  "runtime": {
+    "completed_at": "2026-03-14T02:35:39.166317+00:00",
+    "durable_status_surfaces": {
+      "live_status": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/runtime-live-status.json"
+    },
+    "last_heartbeat_at": "2026-03-14T02:35:39.221562+00:00",
+    "last_heartbeat_summary": "run completed",
+    "lifecycle_stage": "completed",
+    "started_at": "2026-03-14T02:35:38.141995+00:00"
+  },
+  "schema_version": 5,
+  "state_density": "full",
+  "state_machine": {
+    "active_branch": null,
+    "allowed_transitions": {
+      "blocked": [
+        "planning",
+        "ready",
+        "executing",
+        "completed"
+      ],
+      "completed": [],
+      "executing": [
+        "validating",
+        "repairing",
+        "blocked"
+      ],
+      "intake": [
+        "planning",
+        "blocked"
+      ],
+      "planning": [
+        "ready",
+        "executing",
+        "blocked"
+      ],
+      "ready": [
+        "executing",
+        "blocked"
+      ],
+      "repairing": [
+        "ready",
+        "executing",
+        "blocked"
+      ],
+      "validating": [
+        "completed",
+        "repairing",
+        "blocked"
+      ]
+    },
+    "blocked": {
+      "is_blocked": false,
+      "reason": null,
+      "references": []
+    },
+    "branches": [
+      {
+        "branch_id": "execution-main",
+        "kind": "primary",
+        "label": "Primary execution path",
+        "opened_at": "2026-03-14T02:35:38.610839+00:00",
+        "origin_node": "ready",
+        "references": [
+          "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/runtime-demo-deep-phase4/adapters.json",
+          "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/runtime-demo-deep-phase4/rules.json"
+        ],
+        "status": "active",
+        "summary": "Main local execution branch opened"
+      }
+    ],
+    "history": [
+      {
+        "branch_id": null,
+        "from": "intake",
+        "summary": "Run initialized and routed to the deep profile",
+        "to": "planning",
+        "ts": "2026-03-14T02:35:38.249388+00:00"
+      },
+      {
+        "branch_id": null,
+        "from": "planning",
+        "summary": "Plan and adapter routing completed",
+        "to": "ready",
+        "ts": "2026-03-14T02:35:38.558813+00:00"
+      },
+      {
+        "branch_id": "execution-main",
+        "from": "ready",
+        "summary": "Execution branch started",
+        "to": "executing",
+        "ts": "2026-03-14T02:35:38.664648+00:00"
+      },
+      {
+        "branch_id": "execution-main",
+        "from": "executing",
+        "summary": "Execution outputs ready for validation",
+        "to": "validating",
+        "ts": "2026-03-14T02:35:38.819508+00:00"
+      },
+      {
+        "branch_id": "execution-main",
+        "from": "validating",
+        "summary": "Run finished cleanly",
+        "to": "completed",
+        "ts": "2026-03-14T02:35:39.166313+00:00"
+      }
+    ],
+    "history_summary": [],
+    "node": "completed",
+    "recovery": []
+  },
+  "status": "completed",
+  "success_patterns": [
+    {
+      "captured_at": "2026-03-14T02:35:38.998305+00:00",
+      "confidence": 90,
+      "evidence": [
+        "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/runtime-demo-deep-phase4/execution-state.json",
+        "runtime-status.json"
+      ],
+      "pattern_id": "layered-local-orchestration",
+      "reusable": true,
+      "summary": "Full run captured a reusable orchestration pattern"
+    }
+  ],
+  "summary_outcome": "Run finished cleanly",
+  "updated_at": "2026-03-14T02:35:39.221565+00:00"
+}

@@ -1,0 +1,15 @@
+{
+  "case_id": "generated_java_config_error_001",
+  "files": [
+    "pom.xml",
+    "PomValidator.java"
+  ],
+  "dependencies": {},
+  "build_commands": [],
+  "expected_failure_command": "cd {workdir} && javac PomValidator.java && java PomValidator",
+  "expected_failure_stderr_regex": "Non-parseable POM.*",
+  "manifest_schema_version": 1,
+  "bash_self_contained": false,
+  "reverse_from_pattern": "java.config_error.001",
+  "source_pool": "official"
+}

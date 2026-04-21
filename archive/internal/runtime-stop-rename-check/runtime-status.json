@@ -1,0 +1,26 @@
+{
+  "active_branch": "execution-main",
+  "active_rule_layers": [
+    "hard",
+    "soft",
+    "experimental"
+  ],
+  "blocked_reason": null,
+  "completed_at": null,
+  "current_step": "Run the next local step",
+  "event_budget": "standard",
+  "execution_profile": "standard",
+  "last_heartbeat_at": "2026-03-14T04:58:50.851257+00:00",
+  "lifecycle_stage": "repairing",
+  "next_action": "Verify outcomes and inspect failures",
+  "phase": "repairing",
+  "progress_pct": 0,
+  "run_id": "polaris-orchestrated-run",
+  "selected_adapter": "python-local",
+  "started_at": "2026-03-14T04:58:49.883429+00:00",
+  "state_density": "minimal",
+  "state_node": "repairing",
+  "status": "in_progress",
+  "summary": "Standard profile ran a shallow repair pass and deferred deeper recovery",
+  "ts": "2026-03-14T04:58:50.874820+00:00"
+}

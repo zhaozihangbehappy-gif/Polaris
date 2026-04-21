@@ -1,0 +1,507 @@
+{
+  "ecosystem": "python",
+  "error_class": "version_conflict",
+  "schema_version": 4,
+  "records": [
+    {
+      "pattern_id": "candidate.python.version_conflict.000",
+      "ecosystem": "python",
+      "error_class": "version_conflict",
+      "description": "Version incompatibility between numpy and pandas: numpy<2 vs pandas>=2.1",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "numpy.*(incompatible|requires|conflict).*pandas",
+          "ERROR: Cannot install.*numpy.*pandas"
+        ],
+        "file_markers": [],
+        "package_managers": [
+          "pip"
+        ],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "pip check 2>&1 | grep -E 'numpy|pandas' || true",
+        "trigger_env": {},
+        "expected_stderr_match": "numpy.*(incompatible|requires|conflict).*pandas"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "pin_versions",
+            "packages": [
+              "numpy",
+              "pandas"
+            ]
+          }
+        ],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Pin both numpy and pandas to compatible versions; see: numpy<2 vs pandas>=2.1"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.version_conflict.001",
+      "ecosystem": "python",
+      "error_class": "version_conflict",
+      "description": "Version incompatibility between protobuf and tensorflow: protobuf 5.x vs tf 2.15",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "protobuf.*(incompatible|requires|conflict).*tensorflow",
+          "ERROR: Cannot install.*protobuf.*tensorflow"
+        ],
+        "file_markers": [],
+        "package_managers": [
+          "pip"
+        ],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "pip check 2>&1 | grep -E 'protobuf|tensorflow' || true",
+        "trigger_env": {},
+        "expected_stderr_match": "protobuf.*(incompatible|requires|conflict).*tensorflow"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "pin_versions",
+            "packages": [
+              "protobuf",
+              "tensorflow"
+            ]
+          }
+        ],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Pin both protobuf and tensorflow to compatible versions; see: protobuf 5.x vs tf 2.15"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.version_conflict.002",
+      "ecosystem": "python",
+      "error_class": "version_conflict",
+      "description": "Version incompatibility between cryptography and pyopenssl: cryptography>=42 vs pyopenssl<24",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "cryptography.*(incompatible|requires|conflict).*pyopenssl",
+          "ERROR: Cannot install.*cryptography.*pyopenssl"
+        ],
+        "file_markers": [],
+        "package_managers": [
+          "pip"
+        ],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "pip check 2>&1 | grep -E 'cryptography|pyopenssl' || true",
+        "trigger_env": {},
+        "expected_stderr_match": "cryptography.*(incompatible|requires|conflict).*pyopenssl"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "pin_versions",
+            "packages": [
+              "cryptography",
+              "pyopenssl"
+            ]
+          }
+        ],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Pin both cryptography and pyopenssl to compatible versions; see: cryptography>=42 vs pyopenssl<24"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.version_conflict.003",
+      "ecosystem": "python",
+      "error_class": "version_conflict",
+      "description": "Version incompatibility between pydantic and fastapi: pydantic v2 vs fastapi<0.100",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "pydantic.*(incompatible|requires|conflict).*fastapi",
+          "ERROR: Cannot install.*pydantic.*fastapi"
+        ],
+        "file_markers": [],
+        "package_managers": [
+          "pip"
+        ],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "pip check 2>&1 | grep -E 'pydantic|fastapi' || true",
+        "trigger_env": {},
+        "expected_stderr_match": "pydantic.*(incompatible|requires|conflict).*fastapi"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "pin_versions",
+            "packages": [
+              "pydantic",
+              "fastapi"
+            ]
+          }
+        ],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Pin both pydantic and fastapi to compatible versions; see: pydantic v2 vs fastapi<0.100"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.version_conflict.004",
+      "ecosystem": "python",
+      "error_class": "version_conflict",
+      "description": "Version incompatibility between sqlalchemy and alembic: sqlalchemy 2.0 vs alembic<1.11",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "sqlalchemy.*(incompatible|requires|conflict).*alembic",
+          "ERROR: Cannot install.*sqlalchemy.*alembic"
+        ],
+        "file_markers": [],
+        "package_managers": [
+          "pip"
+        ],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "pip check 2>&1 | grep -E 'sqlalchemy|alembic' || true",
+        "trigger_env": {},
+        "expected_stderr_match": "sqlalchemy.*(incompatible|requires|conflict).*alembic"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "pin_versions",
+            "packages": [
+              "sqlalchemy",
+              "alembic"
+            ]
+          }
+        ],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Pin both sqlalchemy and alembic to compatible versions; see: sqlalchemy 2.0 vs alembic<1.11"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.version_conflict.005",
+      "ecosystem": "python",
+      "error_class": "version_conflict",
+      "description": "Version incompatibility between urllib3 and requests: urllib3 v2 vs requests<2.30",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "urllib3.*(incompatible|requires|conflict).*requests",
+          "ERROR: Cannot install.*urllib3.*requests"
+        ],
+        "file_markers": [],
+        "package_managers": [
+          "pip"
+        ],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "pip check 2>&1 | grep -E 'urllib3|requests' || true",
+        "trigger_env": {},
+        "expected_stderr_match": "urllib3.*(incompatible|requires|conflict).*requests"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "pin_versions",
+            "packages": [
+              "urllib3",
+              "requests"
+            ]
+          }
+        ],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Pin both urllib3 and requests to compatible versions; see: urllib3 v2 vs requests<2.30"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.version_conflict.006",
+      "ecosystem": "python",
+      "error_class": "version_conflict",
+      "description": "Version incompatibility between typing-extensions and torch: typing_extensions too old for torch>=2",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "typing-extensions.*(incompatible|requires|conflict).*torch",
+          "ERROR: Cannot install.*typing-extensions.*torch"
+        ],
+        "file_markers": [],
+        "package_managers": [
+          "pip"
+        ],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "pip check 2>&1 | grep -E 'typing-extensions|torch' || true",
+        "trigger_env": {},
+        "expected_stderr_match": "typing-extensions.*(incompatible|requires|conflict).*torch"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "pin_versions",
+            "packages": [
+              "typing-extensions",
+              "torch"
+            ]
+          }
+        ],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Pin both typing-extensions and torch to compatible versions; see: typing_extensions too old for torch>=2"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.version_conflict.007",
+      "ecosystem": "python",
+      "error_class": "version_conflict",
+      "description": "Version incompatibility between click and flask: click 8.x vs flask<2.1",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "click.*(incompatible|requires|conflict).*flask",
+          "ERROR: Cannot install.*click.*flask"
+        ],
+        "file_markers": [],
+        "package_managers": [
+          "pip"
+        ],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "pip check 2>&1 | grep -E 'click|flask' || true",
+        "trigger_env": {},
+        "expected_stderr_match": "click.*(incompatible|requires|conflict).*flask"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "pin_versions",
+            "packages": [
+              "click",
+              "flask"
+            ]
+          }
+        ],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Pin both click and flask to compatible versions; see: click 8.x vs flask<2.1"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.version_conflict.008",
+      "ecosystem": "python",
+      "error_class": "version_conflict",
+      "description": "Version incompatibility between importlib-metadata and various: importlib_metadata version mismatch",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "importlib-metadata.*(incompatible|requires|conflict).*various",
+          "ERROR: Cannot install.*importlib-metadata.*various"
+        ],
+        "file_markers": [],
+        "package_managers": [
+          "pip"
+        ],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "pip check 2>&1 | grep -E 'importlib-metadata|various' || true",
+        "trigger_env": {},
+        "expected_stderr_match": "importlib-metadata.*(incompatible|requires|conflict).*various"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "pin_versions",
+            "packages": [
+              "importlib-metadata",
+              "various"
+            ]
+          }
+        ],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Pin both importlib-metadata and various to compatible versions; see: importlib_metadata version mismatch"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.version_conflict.009",
+      "ecosystem": "python",
+      "error_class": "version_conflict",
+      "description": "Version incompatibility between setuptools and pkg_resources: setuptools>=70 dropped pkg_resources",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "setuptools.*(incompatible|requires|conflict).*pkg_resources",
+          "ERROR: Cannot install.*setuptools.*pkg_resources"
+        ],
+        "file_markers": [],
+        "package_managers": [
+          "pip"
+        ],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "pip check 2>&1 | grep -E 'setuptools|pkg_resources' || true",
+        "trigger_env": {},
+        "expected_stderr_match": "setuptools.*(incompatible|requires|conflict).*pkg_resources"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "pin_versions",
+            "packages": [
+              "setuptools",
+              "pkg_resources"
+            ]
+          }
+        ],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Pin both setuptools and pkg_resources to compatible versions; see: setuptools>=70 dropped pkg_resources"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    }
+  ]
+}

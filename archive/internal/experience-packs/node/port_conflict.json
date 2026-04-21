@@ -1,0 +1,21 @@
+{
+  "ecosystem": "node",
+  "error_class": "port_conflict",
+  "shard_version": "3.0",
+  "records": [
+    {
+      "stderr_pattern": "EADDRINUSE.*address already in use.*:(\\d+)",
+      "avoidance_hints": [{"kind": "set_env", "vars": {"PORT": "0"}}],
+      "description": "TCP port already in use — set PORT=0 to let the OS assign a free port",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "node -e \"const net=require('net'); const s1=net.createServer(); s1.listen(0,()=>{const port=s1.address().port; const s2=net.createServer(); s2.on('error',e=>{console.error(e.message);s1.close();process.exit(1)}); s2.listen(port)})\" 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "EADDRINUSE",
+        "fix_command": "node -e \"const net=require('net'); const s=net.createServer(); s.listen(0,()=>{console.log('listening on port '+s.address().port); s.close()})\" 2>&1 || true",
+        "fix_env": {"PORT": "0"},
+        "expected_fix_outcome": "different_error_or_success"
+      }
+    }
+  ]
+}

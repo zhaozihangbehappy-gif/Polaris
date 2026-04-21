@@ -1,0 +1,5 @@
+{
+  "stderr": "> Task :app:compileJava\nPicking up _JAVA_OPTIONS: -Xmx256m\n\nFAILURE: Build completed with 1 failures.\n\n* What went wrong:\nExecution failed for task ':app:compileJava'.\n> java.lang.OutOfMemoryError: Java heap space",
+  "error_class": "resource_exhaustion",
+  "source": "_JAVA_OPTIONS constraining gradle daemon heap to 256m"
+}

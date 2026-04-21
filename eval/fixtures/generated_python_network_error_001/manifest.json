@@ -1,0 +1,17 @@
+{
+  "case_id": "generated_python_network_error_001",
+  "files": [
+    "ssl_client.py",
+    "test_ssl_client.py",
+    "server_cert.pem",
+    "server_key.pem"
+  ],
+  "dependencies": {},
+  "build_commands": [],
+  "expected_failure_command": "cd {workdir} && python3 -m unittest",
+  "expected_failure_stderr_regex": "ssl\\.SSLCertVerificationError: \\[SSL: CERTIFICATE_VERIFY_FAILED\\]",
+  "manifest_schema_version": 1,
+  "bash_self_contained": false,
+  "reverse_from_pattern": "python.network_error.001",
+  "source_pool": "official"
+}

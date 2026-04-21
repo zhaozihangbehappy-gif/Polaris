@@ -1,0 +1,397 @@
+{
+  "ecosystem": "docker",
+  "error_class": "permission_denial",
+  "schema_version": 4,
+  "records": [
+    {
+      "pattern_id": "candidate.docker.permission_denial.000",
+      "ecosystem": "docker",
+      "error_class": "permission_denial",
+      "description": "chown inside container UID conflict",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "chown.*invalid user"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "docker info 2>&1 | head -5",
+        "trigger_env": {},
+        "expected_stderr_match": "chown.*invalid user"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Docker permission_denial: chown inside container UID conflict"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.docker.permission_denial.001",
+      "ecosystem": "docker",
+      "error_class": "permission_denial",
+      "description": "/var/run/docker.sock permission",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "permission denied.*\\/var\\/run\\/docker\\.sock"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "docker info 2>&1 | head -5",
+        "trigger_env": {},
+        "expected_stderr_match": "permission denied.*\\/var\\/run\\/docker\\.sock"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Docker permission_denial: /var/run/docker.sock permission"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.docker.permission_denial.002",
+      "ecosystem": "docker",
+      "error_class": "permission_denial",
+      "description": "COPY preserves wrong owner in slim",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "chown: invalid group"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "docker info 2>&1 | head -5",
+        "trigger_env": {},
+        "expected_stderr_match": "chown: invalid group"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Docker permission_denial: COPY preserves wrong owner in slim"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.docker.permission_denial.003",
+      "ecosystem": "docker",
+      "error_class": "permission_denial",
+      "description": "bind mount selinux context",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "selinux.*permission denied"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "docker info 2>&1 | head -5",
+        "trigger_env": {},
+        "expected_stderr_match": "selinux.*permission denied"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Docker permission_denial: bind mount selinux context"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.docker.permission_denial.004",
+      "ecosystem": "docker",
+      "error_class": "permission_denial",
+      "description": "userns-remap missing subuid entry",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "subuid.*missing"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "docker info 2>&1 | head -5",
+        "trigger_env": {},
+        "expected_stderr_match": "subuid.*missing"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Docker permission_denial: userns-remap missing subuid entry"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.docker.permission_denial.005",
+      "ecosystem": "docker",
+      "error_class": "permission_denial",
+      "description": "read-only rootfs blocks /tmp writes",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "read-only file system.*\\/tmp"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "docker info 2>&1 | head -5",
+        "trigger_env": {},
+        "expected_stderr_match": "read-only file system.*\\/tmp"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Docker permission_denial: read-only rootfs blocks /tmp writes"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.docker.permission_denial.006",
+      "ecosystem": "docker",
+      "error_class": "permission_denial",
+      "description": "cgroup v2 docker older incompat",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "OCI runtime.*cgroup"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "docker info 2>&1 | head -5",
+        "trigger_env": {},
+        "expected_stderr_match": "OCI runtime.*cgroup"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Docker permission_denial: cgroup v2 docker older incompat"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.docker.permission_denial.007",
+      "ecosystem": "docker",
+      "error_class": "permission_denial",
+      "description": "capability drop CAP_NET_ADMIN needed",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "permission denied.*CAP_NET_ADMIN"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "docker info 2>&1 | head -5",
+        "trigger_env": {},
+        "expected_stderr_match": "permission denied.*CAP_NET_ADMIN"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Docker permission_denial: capability drop CAP_NET_ADMIN needed"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.docker.permission_denial.008",
+      "ecosystem": "docker",
+      "error_class": "permission_denial",
+      "description": "container user override without uid",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "unable to find user"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "docker info 2>&1 | head -5",
+        "trigger_env": {},
+        "expected_stderr_match": "unable to find user"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Docker permission_denial: container user override without uid"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.docker.permission_denial.009",
+      "ecosystem": "docker",
+      "error_class": "permission_denial",
+      "description": "volume mount chown loop in start",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "chown: changing ownership"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "docker info 2>&1 | head -5",
+        "trigger_env": {},
+        "expected_stderr_match": "chown: changing ownership"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Docker permission_denial: volume mount chown loop in start"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    }
+  ]
+}

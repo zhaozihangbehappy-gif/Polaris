@@ -1,0 +1,67 @@
+{
+  "executed_at": "2026-03-15T13:36:39.708908+00:00",
+  "failure_type": "path_or_missing_file",
+  "results": [
+    {
+      "action": {
+        "command": "pwd",
+        "kind": "shell",
+        "label": "Capture working directory",
+        "node_id": "pwd",
+        "reversible": true
+      },
+      "outcome": {
+        "command": "pwd",
+        "returncode": 0,
+        "stderr": "",
+        "stdout": "/home/administrator/.openclaw/workspace/projects/polaris-skill\n"
+      }
+    },
+    {
+      "action": {
+        "command": "ls -la",
+        "kind": "shell",
+        "label": "List current directory",
+        "node_id": "ls-root",
+        "reversible": true
+      },
+      "outcome": {
+        "command": "ls -la",
+        "returncode": 0,
+        "stderr": "",
+        "stdout": "total 32\ndrwxrwxr-x  4 administrator administrator 4096 Mar 15 20:47 .\ndrwxrwxr-x  4 administrator administrator 4096 Mar 13 20:07 ..\n-rw-r--r--  1 administrator administrator  150 Mar 15 20:47 .gitignore\ndrwxrwxr-x 54 administrator administrator 4096 Mar 15 21:35 Polaris\n-rw-rw-r--  1 administrator administrator 9878 Mar 14 14:08 README.md\ndrwxrwxr-x  2 administrator administrator 4096 Mar 13 16:33 specs\n"
+      }
+    },
+    {
+      "action": {
+        "command": "ls -la ..",
+        "kind": "shell",
+        "label": "List parent directory",
+        "node_id": "ls-parent",
+        "reversible": true
+      },
+      "outcome": {
+        "command": "ls -la ..",
+        "returncode": 0,
+        "stderr": "",
+        "stdout": "total 16\ndrwxrwxr-x  4 administrator administrator 4096 Mar 13 20:07 .\ndrwxr-xr-x 13 administrator administrator 4096 Mar 13 15:26 ..\ndrwxrwxr-x  2 administrator administrator 4096 Mar 12 21:51 blender-cabinet-12cell\ndrwxrwxr-x  4 administrator administrator 4096 Mar 15 20:47 polaris-skill\n"
+      }
+    },
+    {
+      "action": {
+        "command": "find . -maxdepth 3 -type f | sed -n '1,20p'",
+        "kind": "shell",
+        "label": "List nearby candidate files",
+        "node_id": "find-targets",
+        "reversible": true
+      },
+      "outcome": {
+        "command": "find . -maxdepth 3 -type f | sed -n '1,20p'",
+        "returncode": 0,
+        "stderr": "",
+        "stdout": "./specs/POLARIS_TASK.md\n./.gitignore\n./Polaris/runtime-budget-deep/runtime-execution-result.json\n./Polaris/runtime-budget-deep/execution-state.json\n./Polaris/runtime-budget-deep/runtime-status.json\n./Polaris/runtime-budget-deep/runtime-live-status.json\n./Polaris/runtime-budget-deep/adapter-selection-cache.json\n./Polaris/runtime-budget-deep/runtime-validation-result.json\n./Polaris/runtime-budget-deep/runtime-executor-result.json\n./Polaris/runtime-budget-deep/rules.json\n./Polaris/runtime-budget-deep/success-patterns.json\n./Polaris/runtime-budget-deep/adapters.json\n./Polaris/runtime-budget-deep/runtime-events.jsonl\n./Polaris/runtime-budget-deep/runtime-efficiency-metrics.json\n./Polaris/runtime-execution-result.json\n./Polaris/runtime-phase5a-cut4-transform/execution-state.json\n./Polaris/runtime-phase5a-cut4-transform/runtime-status.json\n./Polaris/runtime-phase5a-cut4-transform/runtime-live-status.json\n./Polaris/runtime-phase5a-cut4-transform/runtime-transform-output.txt\n./Polaris/runtime-phase5a-cut4-transform/adapter-selection-cache.json\n"
+      }
+    }
+  ],
+  "safe_to_execute": true
+}

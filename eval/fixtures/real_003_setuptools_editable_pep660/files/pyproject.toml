@@ -1,0 +1,7 @@
+[build-system]
+requires = ["setuptools==61.0.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "real-003-fixture"
+version = "0.0.0"

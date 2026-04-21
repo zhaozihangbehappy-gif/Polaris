@@ -1,0 +1,16 @@
+{
+  "case_id": "generated_python_missing_dependency_003",
+  "files": [
+    "verify.py",
+    "requirements.txt",
+    "empty-index/polaris-missing-dependency-demo/index.html"
+  ],
+  "dependencies": {},
+  "build_commands": [],
+  "expected_failure_command": "cd {workdir} && python3 verify.py",
+  "expected_failure_stderr_regex": "ERROR: No matching distribution found for polaris-missing-dependency-demo==0\\.0\\.3",
+  "manifest_schema_version": 1,
+  "bash_self_contained": false,
+  "reverse_from_pattern": "python.missing_dependency.003",
+  "source_pool": "official"
+}

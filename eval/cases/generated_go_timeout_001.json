@@ -1,0 +1,17 @@
+{
+  "case_id": "generated_go_timeout_001",
+  "source": "authored_fixture",
+  "reverse_from_pattern": "go.timeout.001",
+  "pattern_id": "go.timeout.001",
+  "source_pool": "official",
+  "ecosystem": "go",
+  "error_class": "timeout",
+  "initial_prompt": "In the project at {workdir}, this go timeout fails: Module download timed out \u2014 switch proxy and retry with backoff. Reproduce the failure with `GOPROXY=http://invalid.test go build ./...`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+  "success_criteria": {
+    "root_cause_regex": ".+",
+    "fix_command_test": "cd {workdir} && GOPROXY=http://invalid.test go build ./..."
+  },
+  "max_rounds": 6,
+  "fixture_strategy": "authored_files",
+  "promotion_eligible": true
+}

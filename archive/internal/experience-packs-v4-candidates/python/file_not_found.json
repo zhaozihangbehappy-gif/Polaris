@@ -1,0 +1,319 @@
+{
+  "ecosystem": "python",
+  "error_class": "file_not_found",
+  "schema_version": 4,
+  "records": [
+    {
+      "pattern_id": "candidate.python.file_not_found.000",
+      "ecosystem": "python",
+      "error_class": "file_not_found",
+      "description": "requirements.txt path resolution",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "ERROR: Could not open requirements file"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "ls -la 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "ERROR: Could not open requirements file"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Resolve path: requirements.txt path resolution"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.file_not_found.001",
+      "ecosystem": "python",
+      "error_class": "file_not_found",
+      "description": "setup.py missing when sdist",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "error: can't copy 'setup\\.py': doesn't exist"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "ls -la 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "error: can't copy 'setup\\.py': doesn't exist"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Resolve path: setup.py missing when sdist"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.file_not_found.002",
+      "ecosystem": "python",
+      "error_class": "file_not_found",
+      "description": "VERSION file missing at install",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "FileNotFoundError.*VERSION"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "ls -la 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "FileNotFoundError.*VERSION"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Resolve path: VERSION file missing at install"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.file_not_found.003",
+      "ecosystem": "python",
+      "error_class": "file_not_found",
+      "description": "README relative path in pyproject",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "readme file .* does not exist"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "ls -la 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "readme file .* does not exist"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Resolve path: README relative path in pyproject"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.file_not_found.004",
+      "ecosystem": "python",
+      "error_class": "file_not_found",
+      "description": ".env not found by python-dotenv",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "dotenv.*\\.env.*not found"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "ls -la 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "dotenv.*\\.env.*not found"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Resolve path: .env not found by python-dotenv"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.file_not_found.005",
+      "ecosystem": "python",
+      "error_class": "file_not_found",
+      "description": "pytest collecting missing test dir",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "ERROR: file or directory not found: tests"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "ls -la 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "ERROR: file or directory not found: tests"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Resolve path: pytest collecting missing test dir"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.file_not_found.006",
+      "ecosystem": "python",
+      "error_class": "file_not_found",
+      "description": "alembic migration file missing",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "Can't locate revision identified by"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "ls -la 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "Can't locate revision identified by"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Resolve path: alembic migration file missing"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.file_not_found.007",
+      "ecosystem": "python",
+      "error_class": "file_not_found",
+      "description": "Django template not found",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "TemplateDoesNotExist"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "ls -la 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "TemplateDoesNotExist"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Resolve path: Django template not found"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    }
+  ]
+}

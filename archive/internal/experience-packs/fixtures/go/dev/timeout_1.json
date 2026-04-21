@@ -1,0 +1,1 @@
+{"stderr": "panic: test timed out after 30s\nrunning tests:\n\tTestIntegrationDatabaseMigration (30s)\n\ngoroutine 18 [running]:\ntesting.(*M).startAlarm.func1()\n\ttesting/testing.go:2036 +0x8c\ncreated by time.goFunc\n\ttime/sleep.go:176 +0x48", "error_class": "timeout", "source": "go test with 30s default timeout exceeded by integration test"}

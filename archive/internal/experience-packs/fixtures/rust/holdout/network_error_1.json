@@ -1,0 +1,5 @@
+{
+  "stderr": "    Updating crates.io index\nerror: failed to get `rand` as a dependency of package `myproject v0.1.0`\n\nCaused by:\n  failed to query replaced source registry `crates-io`\n\nCaused by:\n  download of config.json failed\n\nCaused by:\n  [56] Failure when receiving data from the peer; SSL connection timeout",
+  "error_class": "network_error",
+  "source": "cargo build failing with SSL timeout behind restrictive firewall"
+}

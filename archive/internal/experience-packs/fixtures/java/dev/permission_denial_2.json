@@ -1,0 +1,5 @@
+{
+  "stderr": "FAILURE: Build failed with an exception.\n\n* What went wrong:\nCould not create service of type FileHasher using BuildSessionScopeServices.createFileHasher().\n> java.io.IOException: Permission denied: /home/user/.gradle/caches/8.5/fileHashes/fileHashes.lock\n\n* Try:\n> Run with --stacktrace option to get the full stack trace.\n> Run with --info or --debug option to get more log output.",
+  "error_class": "permission_denial",
+  "source": "gradle cache directory permission denied"
+}

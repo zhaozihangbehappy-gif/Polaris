@@ -1,0 +1,112 @@
+{
+  "ecosystem": "python",
+  "error_class": "timeout",
+  "schema_version": 4,
+  "records": [
+    {
+      "pattern_id": "python.timeout.000",
+      "ecosystem": "python",
+      "error_class": "timeout",
+      "description": "Subprocess timed out \u2014 increase timeout to allow longer execution",
+      "source": "prebuilt",
+      "trigger_signals": {
+        "stderr_regex": [
+          "TimeoutExpired:.*timed out after \\d+ seconds|subprocess\\.TimeoutExpired"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "python3 -c \"import subprocess; subprocess.run(['sleep', '10'], timeout=1)\" 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "TimeoutExpired|timed out",
+        "expected_fix_outcome": "different_error_or_success"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "set_timeout",
+            "timeout_seconds": 300
+          }
+        ],
+        "fix_command": "python3 -c \"import subprocess; subprocess.run(['sleep', '0.1'], timeout=300); print('ok')\" 2>&1 || true",
+        "fix_env": {},
+        "description": "Subprocess timed out \u2014 increase timeout to allow longer execution"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": [
+          {
+            "agent": "claude_code",
+            "agent_version": "unknown",
+            "model": "claude-haiku-4-5-20251001",
+            "date_verified": "2026-04-20T12:12:20+00:00",
+            "status": "verified_live",
+            "artifact_path": "eval/runs/20260420T201142/transcripts/claude_code__generated_python_timeout_000__polaris.txt",
+            "transcript_hash": "9541f0ced02df265e55b898c6f6d166cefe51280fdd8f31d6b4010bb83e75d2b",
+            "pre_failure_reproduced": true,
+            "workdir_manifest_hash": "c54a3737b93a405a44d12b72772275e64ef705191c79c0ba3aea4082e173605a",
+            "notes": "case=generated_python_timeout_000 polaris_enabled=True rounds=1 tool_calls=6 tokens=310"
+          }
+        ]
+      },
+      "legacy_v3": {
+        "stderr_pattern": "TimeoutExpired:.*timed out after \\d+ seconds|subprocess\\.TimeoutExpired",
+        "avoidance_hints": [
+          {
+            "kind": "set_timeout",
+            "timeout_seconds": 300
+          }
+        ],
+        "description": "Subprocess timed out \u2014 increase timeout to allow longer execution",
+        "source": "prebuilt",
+        "reproduction": {
+          "command": "python3 -c \"import subprocess; subprocess.run(['sleep', '10'], timeout=1)\" 2>&1 || true",
+          "trigger_env": {},
+          "expected_stderr_match": "TimeoutExpired|timed out",
+          "fix_command": "python3 -c \"import subprocess; subprocess.run(['sleep', '0.1'], timeout=300); print('ok')\" 2>&1 || true",
+          "fix_env": {},
+          "expected_fix_outcome": "different_error_or_success"
+        }
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds"
+      ],
+      "authored_fixture": {
+        "authored_at": "2026-04-20T03:06:01+00:00",
+        "authored_by": "codex",
+        "authored_with_prompt_sha256": "6caf27268b23f186820e6a7879865ae73b1c2caac5166754c77536815d8a60c5",
+        "verification_command": "python3 runner.py",
+        "expected_stderr_regex": "subprocess\\.TimeoutExpired:.*timed out after [0-9.]+ seconds",
+        "files": [
+          {
+            "path": "runner.py",
+            "content": "import subprocess\nimport sys\n\n\ndef run_worker():\n    subprocess.run(\n        [sys.executable, \"-c\", \"import time; time.sleep(2)\"],\n        check=True,\n        timeout=1,\n    )\n\n\nif __name__ == \"__main__\":\n    run_worker()\n"
+          }
+        ],
+        "reference_fix_files": [
+          {
+            "path": "runner.py",
+            "content": "import subprocess\nimport sys\n\n\ndef run_worker():\n    subprocess.run(\n        [sys.executable, \"-c\", \"import time; time.sleep(2)\"],\n        check=True,\n        timeout=3,\n    )\n\n\nif __name__ == \"__main__\":\n    run_worker()\n"
+          }
+        ],
+        "fix_rationale": "The child process sleeps for two seconds, so raising the subprocess timeout above that duration allows it to complete successfully.",
+        "reviewer_record": {
+          "validated_in_sandbox_at": "2026-04-20T03:06:01+00:00",
+          "sandbox_pre_fix_exit_code": 1,
+          "sandbox_pre_fix_stderr_match": true,
+          "sandbox_post_fix_exit_code": 0,
+          "sandbox_workdir_hash_pre": "c54a3737b93a405a44d12b72772275e64ef705191c79c0ba3aea4082e173605a",
+          "sandbox_workdir_hash_post": "a2d952051007ca7660d8b66a2bc1032aac5ecf6ae6132d1f4c23531f57c5e5b3",
+          "notes": "authored by codex; pre-fix fails+matches regex, post-fix passes"
+        }
+      }
+    }
+  ]
+}

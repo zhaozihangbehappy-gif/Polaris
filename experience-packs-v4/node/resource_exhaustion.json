@@ -1,0 +1,305 @@
+{
+  "ecosystem": "node",
+  "error_class": "resource_exhaustion",
+  "schema_version": 4,
+  "records": [
+    {
+      "pattern_id": "node.resource_exhaustion.000",
+      "ecosystem": "node",
+      "error_class": "resource_exhaustion",
+      "description": "Node.js V8 heap OOM \u2014 increase max old space size via NODE_OPTIONS",
+      "source": "prebuilt",
+      "trigger_signals": {
+        "stderr_regex": [
+          "JavaScript heap out of memory|FATAL ERROR:.*Reached heap limit|Ineffective mark-compacts near heap limit"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "node --max-old-space-size=8 -e \"let a=[]; while(true) a.push(new Array(1e6))\" 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "heap|FATAL ERROR",
+        "expected_fix_outcome": "different_error_or_success"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "NODE_OPTIONS": "--max-old-space-size=4096"
+            }
+          }
+        ],
+        "fix_command": "bash -c 'echo \"NODE_OPTIONS=--max-old-space-size=4096 applied (simulated fix)\"; exit 0'",
+        "fix_env": {
+          "NODE_OPTIONS": "--max-old-space-size=4096"
+        },
+        "description": "Node.js V8 heap OOM \u2014 increase max old space size via NODE_OPTIONS"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "legacy_v3": {
+        "stderr_pattern": "JavaScript heap out of memory|FATAL ERROR:.*Reached heap limit|Ineffective mark-compacts near heap limit",
+        "avoidance_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "NODE_OPTIONS": "--max-old-space-size=4096"
+            }
+          }
+        ],
+        "description": "Node.js V8 heap OOM \u2014 increase max old space size via NODE_OPTIONS",
+        "source": "prebuilt",
+        "reproduction": {
+          "command": "node --max-old-space-size=8 -e \"let a=[]; while(true) a.push(new Array(1e6))\" 2>&1 || true",
+          "trigger_env": {},
+          "expected_stderr_match": "heap|FATAL ERROR",
+          "fix_env": {
+            "NODE_OPTIONS": "--max-old-space-size=4096"
+          },
+          "expected_fix_outcome": "different_error_or_success",
+          "fix_command": "bash -c 'echo \"NODE_OPTIONS=--max-old-space-size=4096 applied (simulated fix)\"; exit 0'"
+        }
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ],
+      "authored_fixture": {
+        "authored_at": "2026-04-20T02:57:20+00:00",
+        "authored_by": "codex",
+        "authored_with_prompt_sha256": "3bafb29d59caef08f877ef85126eaef476bbae22696d397e77b2039073ba52ab",
+        "verification_command": "npm test",
+        "expected_stderr_regex": "JavaScript heap out of memory|FATAL ERROR:.*Reached heap limit|Ineffective mark-compacts near heap limit",
+        "files": [
+          {
+            "path": "package.json",
+            "content": "{\n  \"name\": \"node-resource-exhaustion-oom\",\n  \"version\": \"1.0.0\",\n  \"private\": true,\n  \"type\": \"module\",\n  \"scripts\": {\n    \"test\": \"NODE_OPTIONS=--max-old-space-size=24 node memory-check.js\"\n  }\n}\n"
+          },
+          {
+            "path": "memory-check.js",
+            "content": "import assert from \"node:assert/strict\";\n\nconst rows = [];\n\nfor (let i = 0; i < 750_000; i += 1) {\n  rows.push({\n    id: i,\n    label: `row-${i.toString(36).padStart(6, \"0\")}`,\n    active: (i & 1) === 0\n  });\n}\n\nassert.equal(rows.length, 750_000);\n"
+          }
+        ],
+        "reference_fix_files": [
+          {
+            "path": "package.json",
+            "content": "{\n  \"name\": \"node-resource-exhaustion-oom\",\n  \"version\": \"1.0.0\",\n  \"private\": true,\n  \"type\": \"module\",\n  \"scripts\": {\n    \"test\": \"NODE_OPTIONS=--max-old-space-size=256 node memory-check.js\"\n  }\n}\n"
+          }
+        ],
+        "fix_rationale": "Increasing V8's max old space size gives the test process enough heap to build the lookup table without aborting.",
+        "reviewer_record": {
+          "validated_in_sandbox_at": "2026-04-20T02:57:20+00:00",
+          "sandbox_pre_fix_exit_code": 134,
+          "sandbox_pre_fix_stderr_match": true,
+          "sandbox_post_fix_exit_code": 0,
+          "sandbox_workdir_hash_pre": "b534b2c33869c57e81a6cb5060ffd7e6c1a0ad20adee3e53b0d2d9e2151d10f2",
+          "sandbox_workdir_hash_post": "bf8318272609b6ddf8ea0d917532fbea4f8440a6ad4e85428b8ccd439cd66a6c",
+          "notes": "authored by codex; pre-fix fails+matches regex, post-fix passes"
+        }
+      }
+    },
+    {
+      "pattern_id": "node.resource_exhaustion.001",
+      "ecosystem": "node",
+      "error_class": "resource_exhaustion",
+      "description": "File descriptor limit exhausted \u2014 increase ulimit or reduce concurrency; UV_THREADPOOL_SIZE can help with I/O scheduling",
+      "source": "prebuilt",
+      "trigger_signals": {
+        "stderr_regex": [
+          "EMFILE: too many open files"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "bash -c 'echo \"Error: EMFILE: too many open files, open /dev/null\" >&2; exit 1' 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "EMFILE|too many open files",
+        "expected_fix_outcome": "different_error_or_success"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "UV_THREADPOOL_SIZE": "128"
+            }
+          }
+        ],
+        "fix_command": "bash -c 'echo \"UV_THREADPOOL_SIZE=128 applied \u2014 I/O scheduling adjusted (simulated)\"; exit 0' 2>&1 || true",
+        "fix_env": {
+          "UV_THREADPOOL_SIZE": "128"
+        },
+        "description": "File descriptor limit exhausted \u2014 increase ulimit or reduce concurrency; UV_THREADPOOL_SIZE can help with I/O scheduling"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": [
+          {
+            "agent": "claude_code",
+            "agent_version": "unknown",
+            "model": "claude-opus-4-7",
+            "date_verified": "2026-04-20T11:30:01+00:00",
+            "status": "verified_live",
+            "artifact_path": "eval/runs/20260420T192934/transcripts/claude_code__generated_node_resource_exhaustion_001__polaris.txt",
+            "transcript_hash": "2ef5564e91a09cae0d4fe9d1faec0133ec522a6d9003f7ecc422da75d8c1f6f9",
+            "pre_failure_reproduced": true,
+            "workdir_manifest_hash": "ea619e5a8fe0464db75e57fc8d15213828f3ce2e228bbe45b5fa1ad4f16f8a2b",
+            "notes": "case=generated_node_resource_exhaustion_001 polaris_enabled=True rounds=1 tool_calls=5 tokens=371"
+          }
+        ]
+      },
+      "legacy_v3": {
+        "stderr_pattern": "EMFILE: too many open files",
+        "avoidance_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "UV_THREADPOOL_SIZE": "128"
+            }
+          }
+        ],
+        "description": "File descriptor limit exhausted \u2014 increase ulimit or reduce concurrency; UV_THREADPOOL_SIZE can help with I/O scheduling",
+        "source": "prebuilt",
+        "reproduction": {
+          "command": "bash -c 'echo \"Error: EMFILE: too many open files, open /dev/null\" >&2; exit 1' 2>&1 || true",
+          "trigger_env": {},
+          "expected_stderr_match": "EMFILE|too many open files",
+          "fix_command": "bash -c 'echo \"UV_THREADPOOL_SIZE=128 applied \u2014 I/O scheduling adjusted (simulated)\"; exit 0' 2>&1 || true",
+          "fix_env": {
+            "UV_THREADPOOL_SIZE": "128"
+          },
+          "expected_fix_outcome": "different_error_or_success"
+        }
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds"
+      ],
+      "authored_fixture": {
+        "authored_at": "2026-04-20T02:55:12+00:00",
+        "authored_by": "codex",
+        "authored_with_prompt_sha256": "31290deade3937d0b4383f7c6e21d38d4b0296c278f90cbf6fa364c7c957fe57",
+        "verification_command": "npm test",
+        "expected_stderr_regex": "EMFILE: too many open files",
+        "files": [
+          {
+            "path": "package.json",
+            "content": "{\n  \"name\": \"node-resource-exhaustion-emfile\",\n  \"version\": \"1.0.0\",\n  \"private\": true,\n  \"scripts\": {\n    \"test\": \"bash -c 'ulimit -n 64; node exhaust.js'\"\n  }\n}\n"
+          },
+          {
+            "path": "payload.txt",
+            "content": "one small file opened too many times\n"
+          },
+          {
+            "path": "exhaust.js",
+            "content": "const fs = require(\"node:fs\");\nconst path = require(\"node:path\");\n\nconst target = path.join(__dirname, \"payload.txt\");\nconst descriptors = [];\n\nfor (let i = 0; i < 256; i += 1) {\n  descriptors.push(fs.openSync(target, \"r\"));\n}\n\nfor (const fd of descriptors) {\n  fs.closeSync(fd);\n}\n\nconsole.log(`opened ${descriptors.length} descriptors`);\n"
+          }
+        ],
+        "reference_fix_files": [
+          {
+            "path": "exhaust.js",
+            "content": "const fs = require(\"node:fs\");\nconst path = require(\"node:path\");\n\nconst target = path.join(__dirname, \"payload.txt\");\nlet opened = 0;\n\nfor (let i = 0; i < 256; i += 1) {\n  const fd = fs.openSync(target, \"r\");\n  opened += 1;\n  fs.closeSync(fd);\n}\n\nconsole.log(`opened ${opened} descriptors without exhausting the limit`);\n"
+          }
+        ],
+        "fix_rationale": "Close each file descriptor promptly so the process does not hold more descriptors than the low ulimit allows.",
+        "reviewer_record": {
+          "validated_in_sandbox_at": "2026-04-20T02:55:12+00:00",
+          "sandbox_pre_fix_exit_code": 1,
+          "sandbox_pre_fix_stderr_match": true,
+          "sandbox_post_fix_exit_code": 0,
+          "sandbox_workdir_hash_pre": "ea619e5a8fe0464db75e57fc8d15213828f3ce2e228bbe45b5fa1ad4f16f8a2b",
+          "sandbox_workdir_hash_post": "1e9e61acfa8bc191f2fbb8bfba892480ffcc98c48782ec8a117eaeb031d2a4f8",
+          "notes": "authored by codex; pre-fix fails+matches regex, post-fix passes"
+        }
+      }
+    },
+    {
+      "pattern_id": "node.resource_exhaustion.002",
+      "ecosystem": "node",
+      "error_class": "resource_exhaustion",
+      "description": "System memory exhaustion when spawning processes \u2014 reduce memory footprint or limit parallelism",
+      "source": "prebuilt",
+      "trigger_signals": {
+        "stderr_regex": [
+          "ENOMEM|spawn ENOMEM|Cannot allocate memory"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "bash -c 'echo \"Error: spawn ENOMEM: Cannot allocate memory\" >&2; exit 1' 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "ENOMEM|memory|Cannot allocate",
+        "expected_fix_outcome": "different_error_or_success"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "NODE_OPTIONS": "--max-old-space-size=2048"
+            }
+          }
+        ],
+        "fix_command": "bash -c 'echo \"NODE_OPTIONS=--max-old-space-size=2048 applied \u2014 reduced memory pressure (simulated)\"; exit 0' 2>&1 || true",
+        "fix_env": {
+          "NODE_OPTIONS": "--max-old-space-size=2048"
+        },
+        "description": "System memory exhaustion when spawning processes \u2014 reduce memory footprint or limit parallelism"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "legacy_v3": {
+        "stderr_pattern": "ENOMEM|spawn ENOMEM|Cannot allocate memory",
+        "avoidance_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "NODE_OPTIONS": "--max-old-space-size=2048"
+            }
+          }
+        ],
+        "description": "System memory exhaustion when spawning processes \u2014 reduce memory footprint or limit parallelism",
+        "source": "prebuilt",
+        "reproduction": {
+          "command": "bash -c 'echo \"Error: spawn ENOMEM: Cannot allocate memory\" >&2; exit 1' 2>&1 || true",
+          "trigger_env": {},
+          "expected_stderr_match": "ENOMEM|memory|Cannot allocate",
+          "fix_command": "bash -c 'echo \"NODE_OPTIONS=--max-old-space-size=2048 applied \u2014 reduced memory pressure (simulated)\"; exit 0' 2>&1 || true",
+          "fix_env": {
+            "NODE_OPTIONS": "--max-old-space-size=2048"
+          },
+          "expected_fix_outcome": "different_error_or_success"
+        }
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    }
+  ]
+}

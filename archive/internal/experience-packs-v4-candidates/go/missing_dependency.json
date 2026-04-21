@@ -1,0 +1,487 @@
+{
+  "ecosystem": "go",
+  "error_class": "missing_dependency",
+  "schema_version": 4,
+  "records": [
+    {
+      "pattern_id": "candidate.go.missing_dependency.000",
+      "ecosystem": "go",
+      "error_class": "missing_dependency",
+      "description": "Go module 'github.com/stretchr/testify' not found; run go get",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "no required module provides package github.com/stretchr/testify",
+          "cannot find package \\\"github.com/stretchr/testify\\\""
+        ],
+        "file_markers": [],
+        "package_managers": [
+          "go"
+        ],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "go list github.com/stretchr/testify 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "no required module provides package github.com/stretchr/testify"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "install_package",
+            "manager": "go",
+            "name": "github.com/stretchr/testify"
+          }
+        ],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "go get github.com/stretchr/testify"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.go.missing_dependency.001",
+      "ecosystem": "go",
+      "error_class": "missing_dependency",
+      "description": "Go module 'github.com/pkg/errors' not found; run go get",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "no required module provides package github.com/pkg/errors",
+          "cannot find package \\\"github.com/pkg/errors\\\""
+        ],
+        "file_markers": [],
+        "package_managers": [
+          "go"
+        ],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "go list github.com/pkg/errors 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "no required module provides package github.com/pkg/errors"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "install_package",
+            "manager": "go",
+            "name": "github.com/pkg/errors"
+          }
+        ],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "go get github.com/pkg/errors"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.go.missing_dependency.002",
+      "ecosystem": "go",
+      "error_class": "missing_dependency",
+      "description": "Go module 'go.uber.org/zap' not found; run go get",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "no required module provides package go.uber.org/zap",
+          "cannot find package \\\"go.uber.org/zap\\\""
+        ],
+        "file_markers": [],
+        "package_managers": [
+          "go"
+        ],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "go list go.uber.org/zap 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "no required module provides package go.uber.org/zap"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "install_package",
+            "manager": "go",
+            "name": "go.uber.org/zap"
+          }
+        ],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "go get go.uber.org/zap"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.go.missing_dependency.003",
+      "ecosystem": "go",
+      "error_class": "missing_dependency",
+      "description": "Go module 'github.com/spf13/cobra' not found; run go get",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "no required module provides package github.com/spf13/cobra",
+          "cannot find package \\\"github.com/spf13/cobra\\\""
+        ],
+        "file_markers": [],
+        "package_managers": [
+          "go"
+        ],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "go list github.com/spf13/cobra 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "no required module provides package github.com/spf13/cobra"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "install_package",
+            "manager": "go",
+            "name": "github.com/spf13/cobra"
+          }
+        ],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "go get github.com/spf13/cobra"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.go.missing_dependency.004",
+      "ecosystem": "go",
+      "error_class": "missing_dependency",
+      "description": "Go module 'github.com/gin-gonic/gin' not found; run go get",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "no required module provides package github.com/gin-gonic/gin",
+          "cannot find package \\\"github.com/gin-gonic/gin\\\""
+        ],
+        "file_markers": [],
+        "package_managers": [
+          "go"
+        ],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "go list github.com/gin-gonic/gin 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "no required module provides package github.com/gin-gonic/gin"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "install_package",
+            "manager": "go",
+            "name": "github.com/gin-gonic/gin"
+          }
+        ],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "go get github.com/gin-gonic/gin"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.go.missing_dependency.005",
+      "ecosystem": "go",
+      "error_class": "missing_dependency",
+      "description": "Go module 'gorm.io/gorm' not found; run go get",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "no required module provides package gorm.io/gorm",
+          "cannot find package \\\"gorm.io/gorm\\\""
+        ],
+        "file_markers": [],
+        "package_managers": [
+          "go"
+        ],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "go list gorm.io/gorm 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "no required module provides package gorm.io/gorm"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "install_package",
+            "manager": "go",
+            "name": "gorm.io/gorm"
+          }
+        ],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "go get gorm.io/gorm"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.go.missing_dependency.006",
+      "ecosystem": "go",
+      "error_class": "missing_dependency",
+      "description": "Go module 'google.golang.org/grpc' not found; run go get",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "no required module provides package google.golang.org/grpc",
+          "cannot find package \\\"google.golang.org/grpc\\\""
+        ],
+        "file_markers": [],
+        "package_managers": [
+          "go"
+        ],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "go list google.golang.org/grpc 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "no required module provides package google.golang.org/grpc"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "install_package",
+            "manager": "go",
+            "name": "google.golang.org/grpc"
+          }
+        ],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "go get google.golang.org/grpc"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.go.missing_dependency.007",
+      "ecosystem": "go",
+      "error_class": "missing_dependency",
+      "description": "Go module 'github.com/prometheus/client_golang' not found; run go get",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "no required module provides package github.com/prometheus/client_golang",
+          "cannot find package \\\"github.com/prometheus/client_golang\\\""
+        ],
+        "file_markers": [],
+        "package_managers": [
+          "go"
+        ],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "go list github.com/prometheus/client_golang 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "no required module provides package github.com/prometheus/client_golang"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "install_package",
+            "manager": "go",
+            "name": "github.com/prometheus/client_golang"
+          }
+        ],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "go get github.com/prometheus/client_golang"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.go.missing_dependency.008",
+      "ecosystem": "go",
+      "error_class": "missing_dependency",
+      "description": "Go module 'golang.org/x/sync/errgroup' not found; run go get",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "no required module provides package golang.org/x/sync/errgroup",
+          "cannot find package \\\"golang.org/x/sync/errgroup\\\""
+        ],
+        "file_markers": [],
+        "package_managers": [
+          "go"
+        ],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "go list golang.org/x/sync/errgroup 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "no required module provides package golang.org/x/sync/errgroup"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "install_package",
+            "manager": "go",
+            "name": "golang.org/x/sync/errgroup"
+          }
+        ],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "go get golang.org/x/sync/errgroup"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.go.missing_dependency.009",
+      "ecosystem": "go",
+      "error_class": "missing_dependency",
+      "description": "Go module 'k8s.io/client-go' not found; run go get",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "no required module provides package k8s.io/client-go",
+          "cannot find package \\\"k8s.io/client-go\\\""
+        ],
+        "file_markers": [],
+        "package_managers": [
+          "go"
+        ],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "go list k8s.io/client-go 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "no required module provides package k8s.io/client-go"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "install_package",
+            "manager": "go",
+            "name": "k8s.io/client-go"
+          }
+        ],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "go get k8s.io/client-go"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    }
+  ]
+}

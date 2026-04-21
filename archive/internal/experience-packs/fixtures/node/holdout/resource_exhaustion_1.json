@@ -1,0 +1,5 @@
+{
+  "stderr": "\n<--- Last few GCs --->\n\n[8821:0x4a00a30]    85432 ms: Scavenge 4093.1 (4094.8) -> 4092.5 (4110.8) MB, 15.6 / 0.0 ms  (average mu = 0.112, current mu = 0.065) allocation failure;\n[8821:0x4a00a30]    85901 ms: Mark-sweep 4093.5 (4110.8) -> 4092.9 (4111.3) MB, 612.4 / 0.0 ms  (average mu = 0.078, current mu = 0.031) allocation failure; scavenge might not succeed\n\n\n<--- JS stacktrace --->\n\nFATAL ERROR: Ineffective mark-compacts near heap limit Allocation failed - JavaScript heap out of memory\n 1: 0xb7a940 node::Abort() [node]\n 2: 0xa8e5a3 node::FatalError(char const*, char const*) [node]\n 3: 0xd53f5e v8::Utils::ReportOOMFailure(v8::internal::Isolate*, char const*, bool) [node]\n 4: 0xd543a7 v8::internal::V8::FatalProcessOutOfMemory(v8::internal::Isolate*, char const*, bool) [node]",
+  "error_class": "resource_exhaustion",
+  "source": "Webpack build hitting V8 heap limit on large project"
+}

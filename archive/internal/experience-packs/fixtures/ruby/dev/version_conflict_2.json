@@ -1,0 +1,5 @@
+{
+  "stderr": "Your Ruby version is 3.1.4, but your Gemfile specified 3.2.2",
+  "error_class": "version_conflict",
+  "source": "Ruby version requirement mismatch in Gemfile"
+}

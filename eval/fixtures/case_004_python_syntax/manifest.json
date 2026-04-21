@@ -1,0 +1,20 @@
+{
+  "case_id": "case_004_python_syntax",
+  "files": [
+    {
+      "relpath": "app.py",
+      "sha256": "55c2f8cd7becb0e49ed00dd82dc2832cbd6c67ca83ce5f3b1134f8a141128f95",
+      "size": 68
+    }
+  ],
+  "dependencies": {
+    "python3": ">=3.10"
+  },
+  "build_commands": [
+    "rm -rf {workdir} && mkdir -p {workdir}",
+    "cp -r files/. {workdir}/"
+  ],
+  "expected_failure_command": "cd {workdir} && python3 app.py",
+  "expected_failure_stderr_regex": "SyntaxError",
+  "manifest_schema_version": 1
+}

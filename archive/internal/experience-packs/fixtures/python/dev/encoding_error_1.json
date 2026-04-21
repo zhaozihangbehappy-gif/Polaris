@@ -1,0 +1,5 @@
+{
+  "stderr": "Traceback (most recent call last):\n  File \"/home/user/project/parser.py\", line 22, in read_data\n    content = f.read()\n  File \"/usr/lib/python3.10/codecs.py\", line 322, in decode\n    (result, size) = self._buffer_decode(data, self.errors, final)\nUnicodeDecodeError: 'utf-8' codec can't decode byte 0xe9 in position 1024: invalid continuation byte",
+  "error_class": "encoding_error",
+  "source": "reading Latin-1 file as UTF-8"
+}

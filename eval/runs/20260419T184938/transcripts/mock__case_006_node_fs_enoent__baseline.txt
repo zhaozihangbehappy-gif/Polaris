@@ -1,0 +1,64 @@
+[pre_failure_command]
+cd /tmp/_polaris_runs/20260419T184938/mock/case_006_node_fs_enoent/baseline && node build.js
+[pre_failure_output]
+
+node:fs:2430
+    return binding.writeFileUtf8(
+                   ^
+
+Error: ENOENT: no such file or directory, open 'dist/out.txt'
+    at Object.writeFileSync (node:fs:2430:20)
+    at Object.<anonymous> (/tmp/_polaris_runs/20260419T184938/mock/case_006_node_fs_enoent/baseline/build.js:3:4)
+    at Module._compile (node:internal/modules/cjs/loader:1705:14)
+    at Object..js (node:internal/modules/cjs/loader:1838:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Function._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)
+    at node:internal/main/run_main_module:36:49 {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'dist/out.txt'
+}
+
+Node.js v22.22.1
+
+[pre_failure_reproduced]
+true
+[agent_transcript]
+[MOCK transcript for case_006_node_fs_enoent polaris=False seed=7]
+rounds=9 tokens=6749 tool_calls=16 ci_pass=True
+
+[post_fix_command]
+cd /tmp/_polaris_runs/20260419T184938/mock/case_006_node_fs_enoent/baseline && node build.js && test -f dist/out.txt
+[post_fix_output]
+
+node:fs:2430
+    return binding.writeFileUtf8(
+                   ^
+
+Error: ENOENT: no such file or directory, open 'dist/out.txt'
+    at Object.writeFileSync (node:fs:2430:20)
+    at Object.<anonymous> (/tmp/_polaris_runs/20260419T184938/mock/case_006_node_fs_enoent/baseline/build.js:3:4)
+    at Module._compile (node:internal/modules/cjs/loader:1705:14)
+    at Object..js (node:internal/modules/cjs/loader:1838:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Function._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)
+    at node:internal/main/run_main_module:36:49 {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'dist/out.txt'
+}
+
+Node.js v22.22.1
+
+[post_fix_ci_pass]
+False
+[contamination_hits]
+[]

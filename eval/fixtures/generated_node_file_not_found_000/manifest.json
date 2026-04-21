@@ -1,0 +1,15 @@
+{
+  "case_id": "generated_node_file_not_found_000",
+  "files": [
+    "app/package.json",
+    "tools/check-package.js"
+  ],
+  "dependencies": {},
+  "build_commands": [],
+  "expected_failure_command": "cd {workdir} && node tools/check-package.js",
+  "expected_failure_stderr_regex": "ENOENT: no such file or directory, open 'package\\.json'",
+  "manifest_schema_version": 1,
+  "bash_self_contained": false,
+  "reverse_from_pattern": "node.file_not_found.000",
+  "source_pool": "official"
+}

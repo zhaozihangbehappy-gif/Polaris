@@ -1,0 +1,26 @@
+{
+  "adapter": "python-local",
+  "applied_rule_ids": [
+    "stop-on-nonrepair-denial"
+  ],
+  "applied_rule_layers": [
+    "hard"
+  ],
+  "error": "Permission denied while writing file",
+  "execution_contract": {
+    "pattern": null,
+    "rule_count": 1
+  },
+  "execution_profile": "standard",
+  "goal": "Demonstrate Polaris local orchestration flow",
+  "mode": "short",
+  "notes": [
+    "task executed through adapter contract",
+    "selected rules and pattern were supplied to the runner"
+  ],
+  "selected_pattern": null,
+  "selected_pattern_sequence": [],
+  "state": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/runtime-boundary-permission/execution-state.json",
+  "status": "failed",
+  "ts": "2026-03-14T03:51:48.118454+00:00"
+}

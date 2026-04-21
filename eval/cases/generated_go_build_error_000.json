@@ -1,0 +1,17 @@
+{
+  "case_id": "generated_go_build_error_000",
+  "source": "authored_fixture",
+  "reverse_from_pattern": "go.build_error.000",
+  "pattern_id": "go.build_error.000",
+  "source_pool": "official",
+  "ecosystem": "go",
+  "error_class": "build_error",
+  "initial_prompt": "In the project at {workdir}, this go build_error fails: CGO or platform build constraint failure \u2014 disable CGO. Reproduce the failure with `go build -o /tmp/test.bin .`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+  "success_criteria": {
+    "root_cause_regex": ".+",
+    "fix_command_test": "cd {workdir} && go build -o /tmp/test.bin ."
+  },
+  "max_rounds": 6,
+  "fixture_strategy": "authored_files",
+  "promotion_eligible": true
+}

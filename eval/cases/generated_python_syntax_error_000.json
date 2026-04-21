@@ -1,0 +1,17 @@
+{
+  "case_id": "generated_python_syntax_error_000",
+  "source": "authored_fixture",
+  "reverse_from_pattern": "python.syntax_error.000",
+  "pattern_id": "python.syntax_error.000",
+  "source_pool": "official",
+  "ecosystem": "python",
+  "error_class": "syntax_error",
+  "initial_prompt": "In the project at {workdir}, this python syntax_error fails: Python syntax error \u2014 likely Python version mismatch; disable bytecode cache to avoid stale .pyc. Reproduce the failure with `PYTHONDONTWRITEBYTECODE=1 python3 -B -m unittest discover -s . -p 'test_*.py'`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+  "success_criteria": {
+    "root_cause_regex": ".+",
+    "fix_command_test": "cd {workdir} && PYTHONDONTWRITEBYTECODE=1 python3 -B -m unittest discover -s . -p 'test_*.py'"
+  },
+  "max_rounds": 6,
+  "fixture_strategy": "authored_files",
+  "promotion_eligible": true
+}

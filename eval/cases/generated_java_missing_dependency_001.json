@@ -1,0 +1,17 @@
+{
+  "case_id": "generated_java_missing_dependency_001",
+  "source": "authored_fixture",
+  "reverse_from_pattern": "java.missing_dependency.001",
+  "pattern_id": "java.missing_dependency.001",
+  "source_pool": "official",
+  "ecosystem": "java",
+  "error_class": "missing_dependency",
+  "initial_prompt": "In the project at {workdir}, this java missing_dependency fails: Java NoClassDefFoundError \u2014 extend CLASSPATH to include build output. Reproduce the failure with `javac -d build *.java 2>&1 && java -cp build Main`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+  "success_criteria": {
+    "root_cause_regex": ".+",
+    "fix_command_test": "cd {workdir} && javac -d build *.java 2>&1 && java -cp build Main"
+  },
+  "max_rounds": 6,
+  "fixture_strategy": "authored_files",
+  "promotion_eligible": true
+}

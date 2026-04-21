@@ -1,0 +1,8 @@
+{
+  "name": "node-resource-exhaustion-emfile",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "test": "bash -c 'ulimit -n 64; node exhaust.js'"
+  }
+}

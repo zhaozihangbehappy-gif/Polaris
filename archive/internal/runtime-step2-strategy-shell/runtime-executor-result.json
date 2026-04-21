@@ -1,0 +1,10 @@
+{
+  "adapter": "shell-local",
+  "contract_kind": "command",
+  "output_file": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/runtime-step2-strategy-shell/runtime-execution-result.json",
+  "rendered_command": "bash -lc 'python3 /home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/scripts/polaris_task_runner.py --goal '\"'\"'Demonstrate Polaris local orchestration flow'\"'\"' --state /home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/runtime-step2-strategy-shell/execution-state.json --output /home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/runtime-step2-strategy-shell/runtime-execution-result.json --mode short --execution-profile standard --adapter shell-local --applied-rules-json '\"'\"'[{\"action\": \"Stop and reduce scope instead of retrying the blocked path\", \"layer\": \"hard\", \"priority\": 100, \"rule_id\": \"stop-on-nonrepair-denial\", \"scope\": \"all Polaris runs\", \"tags\": [\"stop\", \"runtime\", \"local\"], \"trigger\": \"an explicit non-repair denial appears\"}]'\"'\"' --selected-pattern-json '\"'\"'{}'\"'\"' --execution-contract-json '\"'\"'{\"pattern\": null, \"rule_count\": 1}'\"'\"''",
+  "returncode": 0,
+  "status": "ok",
+  "stderr": "",
+  "stdout": "{\"adapter\": \"shell-local\", \"output\": \"/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/runtime-step2-strategy-shell/runtime-execution-result.json\", \"status\": \"ok\"}"
+}

@@ -1,0 +1,1 @@
+{"stderr": "/usr/local/go/pkg/tool/linux_amd64/link: running gcc failed: exit status 1\n/usr/bin/ld: cannot find -lpthread\n/usr/bin/ld: cannot find -ldl\ncollect2: error: ld returned 1 exit status", "error_class": "build_error", "source": "go build linker failure due to missing system libraries"}

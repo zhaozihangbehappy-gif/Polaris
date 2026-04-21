@@ -1,0 +1,68 @@
+{
+  "quality_tiers": {
+    "A": {
+      "metric": "verified_live_count",
+      "count": 52,
+      "scope": "official pool only; clean verified_live evidence within liveness window"
+    },
+    "B": {
+      "metric": "sandbox_ready_count",
+      "count": 105,
+      "scope": "official + candidate records with sandbox-valid authored_fixture"
+    },
+    "D": {
+      "metric": "schema_valid_count",
+      "count": 697,
+      "scope": "official + candidate records passing schema validation"
+    }
+  },
+  "tier_a_verified_live_count": 52,
+  "tier_b_sandbox_ready_count": 105,
+  "tier_d_schema_valid_count": 697,
+  "official_verified_count": 52,
+  "official_schema_valid_count": 167,
+  "official_schema_invalid_count": 0,
+  "official_authored_fixture_candidate_count": 84,
+  "official_authored_sandbox_valid_count": 84,
+  "official_synthetic_pre_failure_recipe_count": 107,
+  "official_synthetic_fix_recipe_count": 143,
+  "official_shape_errors_sample": [],
+  "invalid_evidence_examples": [],
+  "official_invalidated_evidence_total": 16,
+  "official_invalidated_evidence_by_pattern": [
+    [
+      "node.file_not_found.001",
+      2
+    ],
+    [
+      "node.missing_dependency.000",
+      4
+    ],
+    [
+      "python.file_not_found.000",
+      2
+    ],
+    [
+      "python.missing_dependency.000",
+      6
+    ],
+    [
+      "python.syntax_error.000",
+      2
+    ]
+  ],
+  "candidate_verified_count": 0,
+  "candidate_schema_valid_count": 530,
+  "candidate_schema_invalid_count": 0,
+  "candidate_authored_fixture_candidate_count": 21,
+  "candidate_authored_sandbox_valid_count": 21,
+  "candidate_synthetic_pre_failure_recipe_count": 0,
+  "candidate_synthetic_fix_recipe_count": 0,
+  "candidate_shape_errors_sample": [],
+  "candidate_live_present": [],
+  "candidate_wrong_source_with_evidence": [],
+  "candidate_sandbox_ready_note": "Codex-authored subset, higher quality than the raw candidate pool but not verified_live. Candidate records remain separate until evidence_writer promotes a verified live run into experience-packs-v4/.",
+  "total_authored_sandbox_valid": 105,
+  "verified_live_gate": "verified_live on >=1 agent within 90 days, clean audit, artifact exists, pattern carries sandbox-valid authored_fixture",
+  "release_positioning": "Small, auditable benchmark: every B-tier fixture can be rerun hermetically; A-tier is live-agent verified."
+}

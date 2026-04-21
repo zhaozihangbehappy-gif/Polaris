@@ -1,0 +1,17 @@
+{
+  "case_id": "generated_node_file_not_found_000",
+  "source": "authored_fixture",
+  "reverse_from_pattern": "node.file_not_found.000",
+  "pattern_id": "node.file_not_found.000",
+  "source_pool": "official",
+  "ecosystem": "node",
+  "error_class": "file_not_found",
+  "initial_prompt": "In the project at {workdir}, this node file_not_found fails: package.json not found \u2014 cwd may be wrong; rewrite to directory containing package.json. Reproduce the failure with `node tools/check-package.js`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+  "success_criteria": {
+    "root_cause_regex": ".+",
+    "fix_command_test": "cd {workdir} && node tools/check-package.js"
+  },
+  "max_rounds": 6,
+  "fixture_strategy": "authored_files",
+  "promotion_eligible": true
+}

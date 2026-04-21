@@ -1,0 +1,202 @@
+{
+  "ecosystem": "rust",
+  "error_class": "feature_flag",
+  "schema_version": 4,
+  "records": [
+    {
+      "pattern_id": "candidate.rust.feature_flag.000",
+      "ecosystem": "rust",
+      "error_class": "feature_flag",
+      "description": "feature 'default-tls' conflicts with 'rustls'",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "features.*default-tls.*rustls"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "cargo --version 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "features.*default-tls.*rustls"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Rust feature_flag: feature 'default-tls' conflicts with 'rustls'"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.rust.feature_flag.001",
+      "ecosystem": "rust",
+      "error_class": "feature_flag",
+      "description": "no-default-features required in CI",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "default feature.*not supported"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "cargo --version 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "default feature.*not supported"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Rust feature_flag: no-default-features required in CI"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.rust.feature_flag.002",
+      "ecosystem": "rust",
+      "error_class": "feature_flag",
+      "description": "feature gate required but stable",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "requires nightly.*feature gate"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "cargo --version 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "requires nightly.*feature gate"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Rust feature_flag: feature gate required but stable"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.rust.feature_flag.003",
+      "ecosystem": "rust",
+      "error_class": "feature_flag",
+      "description": "crate without any features has unused",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "unused features"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "cargo --version 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "unused features"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Rust feature_flag: crate without any features has unused"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.rust.feature_flag.004",
+      "ecosystem": "rust",
+      "error_class": "feature_flag",
+      "description": "dev-dep feature leaks to release",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "dev-dependency.*feature.*leaked"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "cargo --version 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "dev-dependency.*feature.*leaked"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Rust feature_flag: dev-dep feature leaks to release"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    }
+  ]
+}

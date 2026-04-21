@@ -1,0 +1,14 @@
+{
+  "case_id": "generated_java_permission_denial_001",
+  "files": [
+    "CacheTest.java"
+  ],
+  "dependencies": {},
+  "build_commands": [],
+  "expected_failure_command": "cd {workdir} && rm -rf .gradle && mkdir -p .gradle && chmod 444 .gradle && javac CacheTest.java && java CacheTest; RESULT=$?; chmod 755 .gradle && rm -rf .gradle; exit $RESULT",
+  "expected_failure_stderr_regex": "Permission denied.*\\.gradle",
+  "manifest_schema_version": 1,
+  "bash_self_contained": false,
+  "reverse_from_pattern": "java.permission_denial.001",
+  "source_pool": "official"
+}

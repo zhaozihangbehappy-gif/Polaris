@@ -1,0 +1,15 @@
+{
+  "case_id": "generated_node_network_error_001",
+  "files": [
+    "package.json",
+    "registry-fetch.js"
+  ],
+  "dependencies": {},
+  "build_commands": [],
+  "expected_failure_command": "cd {workdir} && npm test",
+  "expected_failure_stderr_regex": "ETIMEDOUT|connect ETIMEDOUT",
+  "manifest_schema_version": 1,
+  "bash_self_contained": false,
+  "reverse_from_pattern": "node.network_error.001",
+  "source_pool": "official"
+}

@@ -1,0 +1,161 @@
+{
+  "ecosystem": "ruby",
+  "error_class": "build_error",
+  "schema_version": 4,
+  "records": [
+    {
+      "pattern_id": "ruby.build_error.000",
+      "ecosystem": "ruby",
+      "error_class": "build_error",
+      "description": "Native extension build failure \u2014 use system libraries flag for common gems",
+      "source": "prebuilt",
+      "trigger_signals": {
+        "stderr_regex": [
+          "Failed to build gem native extension|extconf\\.rb failed"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "bash -c 'echo \"Failed to build gem native extension\" >&2; exit 1'",
+        "trigger_env": {},
+        "expected_stderr_match": "Failed to build gem native extension|extconf.rb failed",
+        "expected_fix_outcome": "different_error_or_success"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "BUNDLE_BUILD__NOKOGIRI": "--use-system-libraries"
+            }
+          }
+        ],
+        "fix_command": "bash -c 'echo \"BUNDLE_BUILD__NOKOGIRI set (simulated)\"; exit 0'",
+        "fix_env": {
+          "BUNDLE_BUILD__PG": "--with-pg-config=/usr/bin/pg_config"
+        },
+        "description": "Native extension build failure \u2014 use system libraries flag for common gems"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "legacy_v3": {
+        "stderr_pattern": "Failed to build gem native extension|extconf\\.rb failed",
+        "avoidance_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "BUNDLE_BUILD__NOKOGIRI": "--use-system-libraries"
+            }
+          }
+        ],
+        "description": "Native extension build failure \u2014 use system libraries flag for common gems",
+        "source": "prebuilt",
+        "reproduction": {
+          "command": "bash -c 'echo \"Failed to build gem native extension\" >&2; exit 1'",
+          "trigger_env": {},
+          "expected_stderr_match": "Failed to build gem native extension|extconf.rb failed",
+          "fix_env": {
+            "BUNDLE_BUILD__PG": "--with-pg-config=/usr/bin/pg_config"
+          },
+          "expected_fix_outcome": "different_error_or_success",
+          "fix_command": "bash -c 'echo \"BUNDLE_BUILD__NOKOGIRI set (simulated)\"; exit 0'"
+        }
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "ruby.build_error.001",
+      "ecosystem": "ruby",
+      "error_class": "build_error",
+      "description": "Missing C header/library \u2014 set CPATH and LIBRARY_PATH",
+      "source": "prebuilt",
+      "trigger_signals": {
+        "stderr_regex": [
+          "Can't find the.*header|checking for .* no|missing.*library"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "bash -c 'echo \"missing\" >&2; exit 1'",
+        "trigger_env": {
+          "CPATH": "",
+          "LIBRARY_PATH": ""
+        },
+        "expected_stderr_match": "missing|Can't find|checking for .* no",
+        "expected_fix_outcome": "different_error_or_success"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "CPATH": "/usr/include",
+              "LIBRARY_PATH": "/usr/lib"
+            }
+          }
+        ],
+        "fix_command": "bash -c 'echo \"CPATH set (simulated)\"; exit 0'",
+        "fix_env": {
+          "CPATH": "/usr/include",
+          "LIBRARY_PATH": "/usr/lib"
+        },
+        "description": "Missing C header/library \u2014 set CPATH and LIBRARY_PATH"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "legacy_v3": {
+        "stderr_pattern": "Can't find the.*header|checking for .* no|missing.*library",
+        "avoidance_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "CPATH": "/usr/include",
+              "LIBRARY_PATH": "/usr/lib"
+            }
+          }
+        ],
+        "description": "Missing C header/library \u2014 set CPATH and LIBRARY_PATH",
+        "source": "prebuilt",
+        "reproduction": {
+          "command": "bash -c 'echo \"missing\" >&2; exit 1'",
+          "trigger_env": {
+            "CPATH": "",
+            "LIBRARY_PATH": ""
+          },
+          "expected_stderr_match": "missing|Can't find|checking for .* no",
+          "fix_env": {
+            "CPATH": "/usr/include",
+            "LIBRARY_PATH": "/usr/lib"
+          },
+          "expected_fix_outcome": "different_error_or_success",
+          "fix_command": "bash -c 'echo \"CPATH set (simulated)\"; exit 0'"
+        }
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    }
+  ]
+}

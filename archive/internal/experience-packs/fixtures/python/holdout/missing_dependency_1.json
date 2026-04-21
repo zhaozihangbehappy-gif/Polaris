@@ -1,0 +1,5 @@
+{
+  "stderr": "Traceback (most recent call last):\n  File \"/home/user/project/src/api/views.py\", line 5, in <module>\n    from django.http import JsonResponse\nModuleNotFoundError: No module named 'django'",
+  "error_class": "missing_dependency",
+  "source": "Django not installed in virtualenv"
+}

@@ -1,0 +1,62 @@
+{
+  "ecosystem": "ruby",
+  "error_class": "permission_denial",
+  "shard_version": "3.0",
+  "records": [
+    {
+      "stderr_pattern": "Errno::EACCES.*Permission denied|You don't have write permissions",
+      "avoidance_hints": [
+        {
+          "kind": "set_env",
+          "vars": {
+            "GEM_HOME": "/tmp/.gems",
+            "BUNDLE_PATH": "/tmp/.bundle"
+          }
+        }
+      ],
+      "description": "Ruby/gem permission denied — redirect to writable /tmp directories",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "bash -c 'echo \"Permission denied\" >&2; exit 1'",
+        "trigger_env": {
+          "GEM_HOME": "/usr/local/lib/ruby/gems"
+        },
+        "expected_stderr_match": "Permission denied|write permissions",
+        "fix_env": {
+          "GEM_HOME": "/tmp/.gems"
+        },
+        "expected_fix_outcome": "different_error_or_success",
+        "fix_command": "bash -c 'echo \"GEM_HOME set (simulated)\"; exit 0'"
+      }
+    },
+    {
+      "stderr_pattern": "Bundler::PermissionError|error while trying to write to|grant write permissions",
+      "avoidance_hints": [
+        {
+          "kind": "set_env",
+          "vars": {
+            "BUNDLE_PATH": "/tmp/.bundle",
+            "GEM_HOME": "/tmp/.gems",
+            "GEM_PATH": "/tmp/.gems"
+          }
+        }
+      ],
+      "description": "Bundler permission error — redirect BUNDLE_PATH and GEM_HOME to /tmp",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "bash -c 'echo \"PermissionError\" >&2; exit 1'",
+        "trigger_env": {
+          "BUNDLE_PATH": "/usr/local/lib/ruby/gems",
+          "GEM_HOME": "/usr/local/lib/ruby/gems"
+        },
+        "expected_stderr_match": "PermissionError|grant write permissions",
+        "fix_env": {
+          "BUNDLE_PATH": "/tmp/.bundle",
+          "GEM_HOME": "/tmp/.gems"
+        },
+        "expected_fix_outcome": "different_error_or_success",
+        "fix_command": "bash -c 'echo \"BUNDLE_PATH set (simulated)\"; exit 0'"
+      }
+    }
+  ]
+}

@@ -1,0 +1,132 @@
+{
+  "sampled": 10,
+  "seed": 20260419,
+  "rows": [
+    {
+      "pattern_id": "ruby.network_error.000",
+      "description": "Bundler network fetch failure \u2014 increase retry count and reduce parallelism",
+      "false_paths_count": 0,
+      "applicability_do_not_apply_when_count": 0,
+      "agent_repro_evidence_count": 0,
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "python.build_error.000",
+      "description": "Missing Python.h header \u2014 python3-dev package likely not installed; set CFLAGS to include ",
+      "false_paths_count": 0,
+      "applicability_do_not_apply_when_count": 0,
+      "agent_repro_evidence_count": 0,
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "python.missing_dependency.001",
+      "description": "C extension cannot find shared library \u2014 add system lib dirs to LD_LIBRARY_PATH",
+      "false_paths_count": 0,
+      "applicability_do_not_apply_when_count": 0,
+      "agent_repro_evidence_count": 0,
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "go.missing_dependency.001",
+      "description": "go.sum incomplete or mismatch \u2014 disable sum check and enable mod download",
+      "false_paths_count": 0,
+      "applicability_do_not_apply_when_count": 0,
+      "agent_repro_evidence_count": 0,
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "go.missing_dependency.000",
+      "description": "go module not found \u2014 enable module-aware mode to auto-download",
+      "false_paths_count": 0,
+      "applicability_do_not_apply_when_count": 0,
+      "agent_repro_evidence_count": 0,
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "terraform.auth_error.000",
+      "description": "Terraform AWS credential failure \u2014 set default profile and load config",
+      "false_paths_count": 0,
+      "applicability_do_not_apply_when_count": 0,
+      "agent_repro_evidence_count": 0,
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "ruby.config_error.000",
+      "description": "Gemfile syntax/parse error \u2014 check Gemfile for Ruby syntax issues",
+      "false_paths_count": 0,
+      "applicability_do_not_apply_when_count": 0,
+      "agent_repro_evidence_count": 0,
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "go.permission_denial.000",
+      "description": "Module cache directory not writable \u2014 redirect GOPATH and GOCACHE to /tmp",
+      "false_paths_count": 0,
+      "applicability_do_not_apply_when_count": 0,
+      "agent_repro_evidence_count": 0,
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "java.permission_denial.000",
+      "description": "Maven repository permission denied \u2014 redirect to writable /tmp",
+      "false_paths_count": 0,
+      "applicability_do_not_apply_when_count": 0,
+      "agent_repro_evidence_count": 0,
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "node.permission_denial.001",
+      "description": "npm operation not permitted \u2014 typically cache corruption or cross-user ownership; redirect",
+      "false_paths_count": 0,
+      "applicability_do_not_apply_when_count": 0,
+      "agent_repro_evidence_count": 0,
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    }
+  ],
+  "summary": {
+    "false_paths_non_empty": 0,
+    "applicability_bounds_authored": 0,
+    "agent_repro_evidenced": 0
+  },
+  "verdict": "Migration preserved v3 content faithfully. false_paths, applicability_bounds, and agent_reproducibility are intentionally empty \u2014 these are the three human/eval-authored fields that Gate 2 and subsequent curation must populate before any pattern counts toward the 1000 target."
+}

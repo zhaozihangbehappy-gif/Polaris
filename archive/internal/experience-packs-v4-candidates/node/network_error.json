@@ -1,0 +1,434 @@
+{
+  "ecosystem": "node",
+  "error_class": "network_error",
+  "schema_version": 4,
+  "records": [
+    {
+      "pattern_id": "candidate.node.network_error.000",
+      "ecosystem": "node",
+      "error_class": "network_error",
+      "description": "npm registry 503",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "npm ERR!.*503 Service Unavailable"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "npm ping 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "npm ERR!.*503 Service Unavailable"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Network: npm registry 503"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ],
+      "authored_fixture": {
+        "authored_at": "2026-04-20T10:24:29+00:00",
+        "authored_by": "codex",
+        "authored_with_prompt_sha256": "06bcad233d4a1e5f128e4492708fbe88ba84789cb44fa3f9f3ab074e47523a4a",
+        "verification_command": "node check-registry.js",
+        "expected_stderr_regex": "npm ERR!.*503 Service Unavailable",
+        "files": [
+          {
+            "path": "package.json",
+            "content": "{\n  \"name\": \"polaris-npm-503-fixture\",\n  \"version\": \"1.0.0\",\n  \"private\": true,\n  \"scripts\": {\n    \"test\": \"node check-registry.js\"\n  }\n}\n"
+          },
+          {
+            "path": "check-registry.js",
+            "content": "const fs = require(\"node:fs\");\nconst path = require(\"node:path\");\n\nconst fixturePath = path.join(__dirname, \"registry-response.json\");\nconst response = JSON.parse(fs.readFileSync(fixturePath, \"utf8\"));\n\nif (response.status !== 200) {\n  console.error(`npm ERR! ${response.status} ${response.statusText} - GET ${response.url}`);\n  process.exit(1);\n}\n\nif (!response.package || response.package.name !== \"polaris-network-fixture\") {\n  throw new Error(\"registry response did not contain the expected package\");\n}\n\nconsole.log(response.package.version);\n"
+          },
+          {
+            "path": "registry-response.json",
+            "content": "{\n  \"status\": 503,\n  \"statusText\": \"Service Unavailable\",\n  \"url\": \"https://registry.npmjs.org/polaris-network-fixture\",\n  \"package\": null\n}\n"
+          }
+        ],
+        "reference_fix_files": [
+          {
+            "path": "registry-response.json",
+            "content": "{\n  \"status\": 200,\n  \"statusText\": \"OK\",\n  \"url\": \"https://registry.npmjs.org/polaris-network-fixture\",\n  \"package\": {\n    \"name\": \"polaris-network-fixture\",\n    \"version\": \"1.0.0\"\n  }\n}\n"
+          }
+        ],
+        "fix_rationale": "The fix replaces the simulated 503 registry response with a successful package metadata response so the registry check exits cleanly.",
+        "reviewer_record": {
+          "validated_in_sandbox_at": "2026-04-20T10:24:29+00:00",
+          "sandbox_pre_fix_exit_code": 1,
+          "sandbox_pre_fix_stderr_match": true,
+          "sandbox_post_fix_exit_code": 0,
+          "sandbox_workdir_hash_pre": "578c05849c4c930ae4d6a066339853a3e016acb6f8b0b36dede3c1e820856e64",
+          "sandbox_workdir_hash_post": "45e9e3c149c3646c2ed681b9960a15a77bcea69c25b88272140710c651d419e8",
+          "notes": "authored by codex; pre-fix fails+matches regex, post-fix passes"
+        }
+      }
+    },
+    {
+      "pattern_id": "candidate.node.network_error.001",
+      "ecosystem": "node",
+      "error_class": "network_error",
+      "description": "pnpm registry certificate error",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "SELF_SIGNED_CERT_IN_CHAIN"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "npm ping 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "SELF_SIGNED_CERT_IN_CHAIN"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Network: pnpm registry certificate error"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.node.network_error.002",
+      "ecosystem": "node",
+      "error_class": "network_error",
+      "description": "yarn network timeout",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "Request failed \\\"ETIMEDOUT\\\""
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "npm ping 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "Request failed \\\"ETIMEDOUT\\\""
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Network: yarn network timeout"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.node.network_error.003",
+      "ecosystem": "node",
+      "error_class": "network_error",
+      "description": "corepack download 403",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "corepack.*403 Forbidden"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "npm ping 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "corepack.*403 Forbidden"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Network: corepack download 403"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.node.network_error.004",
+      "ecosystem": "node",
+      "error_class": "network_error",
+      "description": "github packages auth 401",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "npm ERR!.*401.*github"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "npm ping 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "npm ERR!.*401.*github"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Network: github packages auth 401"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.node.network_error.005",
+      "ecosystem": "node",
+      "error_class": "network_error",
+      "description": "npm proxy env ignored",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "npm ERR!.*ECONNREFUSED"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "npm ping 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "npm ERR!.*ECONNREFUSED"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Network: npm proxy env ignored"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.node.network_error.006",
+      "ecosystem": "node",
+      "error_class": "network_error",
+      "description": "DNS lookup failed in CI",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "getaddrinfo ENOTFOUND"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "npm ping 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "getaddrinfo ENOTFOUND"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Network: DNS lookup failed in CI"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.node.network_error.007",
+      "ecosystem": "node",
+      "error_class": "network_error",
+      "description": "TLS version too old for registry",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "TLSV1_ALERT_PROTOCOL_VERSION"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "npm ping 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "TLSV1_ALERT_PROTOCOL_VERSION"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Network: TLS version too old for registry"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.node.network_error.008",
+      "ecosystem": "node",
+      "error_class": "network_error",
+      "description": "ETIMEDOUT during fetch-metadata",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "ETIMEDOUT.*registry"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "npm ping 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "ETIMEDOUT.*registry"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Network: ETIMEDOUT during fetch-metadata"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.node.network_error.009",
+      "ecosystem": "node",
+      "error_class": "network_error",
+      "description": "ECONNRESET during tarball fetch",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "ECONNRESET.*\\.tgz"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "npm ping 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "ECONNRESET.*\\.tgz"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Network: ECONNRESET during tarball fetch"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    }
+  ]
+}

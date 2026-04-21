@@ -1,0 +1,17 @@
+{
+  "case_id": "generated_python_missing_dependency_003",
+  "source": "authored_fixture",
+  "reverse_from_pattern": "python.missing_dependency.003",
+  "pattern_id": "python.missing_dependency.003",
+  "source_pool": "official",
+  "ecosystem": "python",
+  "error_class": "missing_dependency",
+  "initial_prompt": "In the project at {workdir}, this python missing_dependency fails: pip cannot find package \u2014 ensure pip index URL is set to default PyPI. Reproduce the failure with `python3 verify.py`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+  "success_criteria": {
+    "root_cause_regex": ".+",
+    "fix_command_test": "cd {workdir} && python3 verify.py"
+  },
+  "max_rounds": 6,
+  "fixture_strategy": "authored_files",
+  "promotion_eligible": true
+}

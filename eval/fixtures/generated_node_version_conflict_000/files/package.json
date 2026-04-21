@@ -1,0 +1,9 @@
+{
+  "name": "node-version-conflict-000",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Minimal project with an npm engine version conflict.",
+  "engines": {
+    "node": ">=999.0.0"
+  }
+}

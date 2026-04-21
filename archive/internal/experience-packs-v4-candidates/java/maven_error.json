@@ -1,0 +1,319 @@
+{
+  "ecosystem": "java",
+  "error_class": "maven_error",
+  "schema_version": 4,
+  "records": [
+    {
+      "pattern_id": "candidate.java.maven_error.000",
+      "ecosystem": "java",
+      "error_class": "maven_error",
+      "description": "settings.xml mirror auth missing",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "401.*repository"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "java --version 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "401.*repository"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Java maven_error: settings.xml mirror auth missing"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.java.maven_error.001",
+      "ecosystem": "java",
+      "error_class": "maven_error",
+      "description": "snapshot pom not updated",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "SNAPSHOT.*resolving"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "java --version 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "SNAPSHOT.*resolving"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Java maven_error: snapshot pom not updated"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.java.maven_error.002",
+      "ecosystem": "java",
+      "error_class": "maven_error",
+      "description": "plugin version not pinned",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "plugin.*latest.*warning"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "java --version 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "plugin.*latest.*warning"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Java maven_error: plugin version not pinned"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.java.maven_error.003",
+      "ecosystem": "java",
+      "error_class": "maven_error",
+      "description": "missing parent POM relativePath",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "Non-resolvable parent POM"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "java --version 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "Non-resolvable parent POM"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Java maven_error: missing parent POM relativePath"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.java.maven_error.004",
+      "ecosystem": "java",
+      "error_class": "maven_error",
+      "description": "reactor build order broken",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "reactor.*Failed to build"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "java --version 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "reactor.*Failed to build"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Java maven_error: reactor build order broken"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.java.maven_error.005",
+      "ecosystem": "java",
+      "error_class": "maven_error",
+      "description": "dependencyManagement scope wrong",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "scope.*overridden"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "java --version 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "scope.*overridden"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Java maven_error: dependencyManagement scope wrong"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.java.maven_error.006",
+      "ecosystem": "java",
+      "error_class": "maven_error",
+      "description": "profile not activated by env",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "profile.*not active"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "java --version 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "profile.*not active"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Java maven_error: profile not activated by env"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.java.maven_error.007",
+      "ecosystem": "java",
+      "error_class": "maven_error",
+      "description": "maven-release-plugin SCM not set",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "release-plugin.*SCM"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "java --version 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "release-plugin.*SCM"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Java maven_error: maven-release-plugin SCM not set"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,5 @@
+{
+  "stderr": "Gem::MissingSpecError: Could not find 'pg' (>= 0) among 47 total gem(s)\nChecked in 'GEM_PATH=/usr/lib/ruby/gems/3.2.0', execute `gem env` for more information",
+  "error_class": "missing_dependency",
+  "source": "Gem::MissingSpecError for pg adapter"
+}

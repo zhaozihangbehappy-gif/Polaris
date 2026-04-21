@@ -1,0 +1,1 @@
+{"stderr": "go install golang.org/x/tools/gopls@latest: open /usr/local/go/bin/gopls: EACCES: permission denied\ngo: writing to GOBIN failed", "error_class": "permission_denial", "source": "go install to system-wide GOBIN without sufficient permissions"}

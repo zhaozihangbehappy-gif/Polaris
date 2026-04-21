@@ -1,0 +1,5 @@
+{
+  "stderr": "error: could not compile `rustc_middle`\n\nCaused by:\n  process didn't exit successfully (exit status: 137)\n  --- stderr\n  LLVM ERROR: out of memory\n  Allocation of 268435456 bytes failed\n  LLVM ERROR: out of memory",
+  "error_class": "resource_exhaustion",
+  "source": "cargo build --release on large project exhausting LLVM memory during codegen"
+}

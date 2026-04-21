@@ -1,0 +1,17 @@
+{
+  "case_id": "generated_python_missing_dependency_000",
+  "source": "authored_fixture",
+  "reverse_from_pattern": "python.missing_dependency.000",
+  "pattern_id": "python.missing_dependency.000",
+  "source_pool": "official",
+  "ecosystem": "python",
+  "error_class": "missing_dependency",
+  "initial_prompt": "In the project at {workdir}, this python missing_dependency fails: Python cannot import module \u2014 add cwd and src to PYTHONPATH. Reproduce the failure with `python3 run_tests.py`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+  "success_criteria": {
+    "root_cause_regex": ".+",
+    "fix_command_test": "cd {workdir} && python3 run_tests.py"
+  },
+  "max_rounds": 6,
+  "fixture_strategy": "authored_files",
+  "promotion_eligible": true
+}

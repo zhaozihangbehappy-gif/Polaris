@@ -1,0 +1,1 @@
+{"stderr": "go: github.com/gin-gonic/gin@v1.9.1: Get \"https://proxy.golang.org/github.com/gin-gonic/gin/@v/v1.9.1.info\": dial tcp 142.251.46.17:443: i/o timeout\ngo: downloading github.com/gin-gonic/gin v1.9.1", "error_class": "network_error", "source": "go mod download timeout reaching default Go module proxy"}

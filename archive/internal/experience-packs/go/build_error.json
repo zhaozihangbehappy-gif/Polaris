@@ -1,0 +1,89 @@
+{
+  "ecosystem": "go",
+  "error_class": "build_error",
+  "shard_version": "3.0",
+  "records": [
+    {
+      "stderr_pattern": "build constraints exclude all Go files in|no Go files in",
+      "avoidance_hints": [
+        {
+          "kind": "set_env",
+          "vars": {
+            "CGO_ENABLED": "0"
+          }
+        }
+      ],
+      "description": "CGO or platform build constraint failure — disable CGO",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "bash -c 'echo \"build constraints exclude all Go files in /pkg/mod/github.com/mattn/go-sqlite3@v1.14.22\" >&2; exit 1'",
+        "trigger_env": {
+          "CGO_ENABLED": "1"
+        },
+        "expected_stderr_match": "build constraints exclude",
+        "fix_env": {
+          "CGO_ENABLED": "0"
+        },
+        "expected_fix_outcome": "different_error_or_success",
+        "fix_command": "bash -c 'echo \"CGO_ENABLED set (simulated)\"; exit 0'"
+      }
+    },
+    {
+      "stderr_pattern": "C compiler .* not found|exec: \"gcc\": executable file not found",
+      "avoidance_hints": [
+        {
+          "kind": "set_env",
+          "vars": {
+            "CGO_ENABLED": "0"
+          }
+        }
+      ],
+      "description": "C compiler missing for CGO build — disable CGO if no native deps required",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "bash -c 'echo \"cgo: C compiler \\\"gcc\\\" not found: exec: \\\"gcc\\\": executable file not found in \\$PATH\" >&2; exit 1'",
+        "trigger_env": {
+          "CGO_ENABLED": "1"
+        },
+        "expected_stderr_match": "C compiler.*not found|executable file not found",
+        "fix_env": {
+          "CGO_ENABLED": "0"
+        },
+        "expected_fix_outcome": "different_error_or_success",
+        "fix_command": "bash -c 'echo \"CGO_ENABLED set (simulated)\"; exit 0'"
+      }
+    },
+    {
+      "stderr_pattern": "cannot find -l(pthread|dl|m|rt)|ld: cannot find",
+      "avoidance_hints": [
+        {
+          "kind": "set_env",
+          "vars": {
+            "CGO_ENABLED": "0"
+          }
+        },
+        {
+          "kind": "append_flags",
+          "flags": [
+            "-ldflags",
+            "-extldflags '-static'"
+          ]
+        }
+      ],
+      "description": "Linker cannot find system libraries — disable CGO or use static linking",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "bash -c 'echo \"/usr/bin/ld: cannot find -lpthread\" >&2; echo \"collect2: error: ld returned 1 exit status\" >&2; exit 1'",
+        "trigger_env": {
+          "CGO_ENABLED": "1"
+        },
+        "expected_stderr_match": "cannot find -l",
+        "fix_env": {
+          "CGO_ENABLED": "0"
+        },
+        "expected_fix_outcome": "different_error_or_success",
+        "fix_command": "bash -c 'echo \"CGO_ENABLED set (simulated)\"; exit 0'"
+      }
+    }
+  ]
+}

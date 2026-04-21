@@ -1,0 +1,640 @@
+{
+  "ecosystem": "java",
+  "error_class": "missing_dependency",
+  "schema_version": 4,
+  "records": [
+    {
+      "pattern_id": "java.missing_dependency.000",
+      "ecosystem": "java",
+      "error_class": "missing_dependency",
+      "description": "Java ClassNotFoundException — add cwd and lib to CLASSPATH",
+      "source": "prebuilt",
+      "trigger_signals": {
+        "stderr_regex": [
+          "java\\.lang\\.ClassNotFoundException:"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "bash -c 'echo \"Exception in thread \\\"main\\\" java.lang.ClassNotFoundException: com.example.Missing\" >&2; exit 1'",
+        "trigger_env": {},
+        "expected_stderr_match": "ClassNotFoundException",
+        "expected_fix_outcome": "different_error_or_success"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "CLASSPATH": ".:lib/*"
+            }
+          }
+        ],
+        "fix_command": "bash -c 'echo \"CLASSPATH set (simulated)\"; exit 0'",
+        "fix_env": {
+          "CLASSPATH": ".:lib/*"
+        },
+        "description": "Java ClassNotFoundException — add cwd and lib to CLASSPATH"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": [
+          {
+            "agent": "claude_code",
+            "agent_version": "unknown",
+            "date_verified": "2026-04-20T09:45:29+00:00",
+            "status": "verified_live",
+            "artifact_path": "eval/runs/20260420T170630/transcripts/claude_code__generated_java_missing_dependency_000__baseline.txt",
+            "transcript_hash": "1a9578b0593c97b656bed9393c6fff73a37cf1a798d56e7dad71ec39503904c6",
+            "pre_failure_reproduced": true,
+            "workdir_manifest_hash": "45ba55427afb4fe1d70af8042ab10ba1955e56a04b91ded7f859cba096ecf1f4",
+            "notes": "case=generated_java_missing_dependency_000 polaris_enabled=False rounds=9 tool_calls=8 tokens=1899",
+            "model": "claude-haiku-4-5-20251001"
+          },
+          {
+            "agent": "claude_code",
+            "agent_version": "unknown",
+            "date_verified": "2026-04-20T09:45:29+00:00",
+            "status": "verified_live",
+            "artifact_path": "eval/runs/20260420T170630/transcripts/claude_code__generated_java_missing_dependency_000__polaris.txt",
+            "transcript_hash": "2e2bfc979945d515c82c7d1f5d602a46a38ddab7ec9475b23e97263bbd05ec36",
+            "pre_failure_reproduced": true,
+            "workdir_manifest_hash": "45ba55427afb4fe1d70af8042ab10ba1955e56a04b91ded7f859cba096ecf1f4",
+            "notes": "case=generated_java_missing_dependency_000 polaris_enabled=True rounds=12 tool_calls=11 tokens=2304",
+            "model": "claude-haiku-4-5-20251001"
+          }
+        ]
+      },
+      "legacy_v3": {
+        "stderr_pattern": "java\\.lang\\.ClassNotFoundException:",
+        "avoidance_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "CLASSPATH": ".:lib/*"
+            }
+          }
+        ],
+        "description": "Java ClassNotFoundException — add cwd and lib to CLASSPATH",
+        "source": "prebuilt",
+        "reproduction": {
+          "command": "bash -c 'echo \"Exception in thread \\\"main\\\" java.lang.ClassNotFoundException: com.example.Missing\" >&2; exit 1'",
+          "trigger_env": {},
+          "expected_stderr_match": "ClassNotFoundException",
+          "fix_env": {
+            "CLASSPATH": ".:lib/*"
+          },
+          "expected_fix_outcome": "different_error_or_success",
+          "fix_command": "bash -c 'echo \"CLASSPATH set (simulated)\"; exit 0'"
+        }
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds"
+      ],
+      "authored_fixture": {
+        "authored_at": "2026-04-20T05:23:41+00:00",
+        "authored_by": "claude_code",
+        "authored_with_prompt_sha256": "efabd67f84913b09c8f2365894595672d08500aa0813003da2924c101f6cab78",
+        "verification_command": "bash build.sh",
+        "expected_stderr_regex": "java\\.lang\\.ClassNotFoundException: Helper",
+        "files": [
+          {
+            "path": "src/Main.java",
+            "content": "public class Main {\n  public static void main(String[] args) {\n    Helper.greet();\n  }\n}\n"
+          },
+          {
+            "path": "src/Helper.java",
+            "content": "public class Helper {\n  public static void greet() {\n    System.out.println(\"Hello from Helper!\");\n  }\n}\n"
+          },
+          {
+            "path": "build.sh",
+            "content": "#!/bin/bash\nset -e\nmkdir -p bin lib\njavac -d lib src/Helper.java\njavac -cp lib -d bin src/Main.java\njava -cp bin Main\n"
+          }
+        ],
+        "reference_fix_files": [
+          {
+            "path": "build.sh",
+            "content": "#!/bin/bash\nset -e\nmkdir -p bin lib\njavac -d lib src/Helper.java\njavac -cp lib -d bin src/Main.java\njava -cp bin:lib Main\n"
+          }
+        ],
+        "fix_rationale": "Add lib directory to the Java classpath so Helper class is found at runtime.",
+        "reviewer_record": {
+          "validated_in_sandbox_at": "2026-04-20T05:23:41+00:00",
+          "sandbox_pre_fix_exit_code": 1,
+          "sandbox_pre_fix_stderr_match": true,
+          "sandbox_post_fix_exit_code": 0,
+          "sandbox_workdir_hash_pre": "2060b653ee1d42c1babcc8d26a70fb75d8380692a7a8532238f537d1a40d4fc2",
+          "sandbox_workdir_hash_post": "e083ec80ab453d0e499b59db6eda74537e930edb6b59854a450c9e8aa8e5037a",
+          "notes": "authored by claude_code; pre-fix fails+matches regex, post-fix passes"
+        }
+      }
+    },
+    {
+      "pattern_id": "java.missing_dependency.001",
+      "ecosystem": "java",
+      "error_class": "missing_dependency",
+      "description": "Java NoClassDefFoundError — extend CLASSPATH to include build output",
+      "source": "prebuilt",
+      "trigger_signals": {
+        "stderr_regex": [
+          "java\\.lang\\.NoClassDefFoundError:"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "bash -c 'echo \"Exception in thread \\\"main\\\" java.lang.NoClassDefFoundError: org/slf4j/LoggerFactory\" >&2; exit 1'",
+        "trigger_env": {},
+        "expected_stderr_match": "NoClassDefFoundError",
+        "expected_fix_outcome": "different_error_or_success"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "CLASSPATH": ".:lib/*:target/classes"
+            }
+          }
+        ],
+        "fix_command": "bash -c 'echo \"CLASSPATH set (simulated)\"; exit 0'",
+        "fix_env": {
+          "CLASSPATH": ".:lib/*:target/classes"
+        },
+        "description": "Java NoClassDefFoundError — extend CLASSPATH to include build output"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": [
+          {
+            "agent": "claude_code",
+            "agent_version": "unknown",
+            "date_verified": "2026-04-20T09:45:29+00:00",
+            "status": "verified_live",
+            "artifact_path": "eval/runs/20260420T170630/transcripts/claude_code__generated_java_missing_dependency_001__baseline.txt",
+            "transcript_hash": "cb3608f93fd8660b4f0c8e335086f446cd7edcfb53db36cd22d38970027925b6",
+            "pre_failure_reproduced": true,
+            "workdir_manifest_hash": "5402d6aa362bc07acc9f8b0b8eedae63c2933b9d7b85b37966828fbf0f163737",
+            "notes": "case=generated_java_missing_dependency_001 polaris_enabled=False rounds=7 tool_calls=6 tokens=1239",
+            "model": "claude-haiku-4-5-20251001"
+          },
+          {
+            "agent": "claude_code",
+            "agent_version": "unknown",
+            "date_verified": "2026-04-20T09:45:29+00:00",
+            "status": "verified_live",
+            "artifact_path": "eval/runs/20260420T170630/transcripts/claude_code__generated_java_missing_dependency_001__polaris.txt",
+            "transcript_hash": "af3500ae18f8620bd8e7436cd4d19988291c99e7d6f726b225a88de326cece67",
+            "pre_failure_reproduced": true,
+            "workdir_manifest_hash": "5402d6aa362bc07acc9f8b0b8eedae63c2933b9d7b85b37966828fbf0f163737",
+            "notes": "case=generated_java_missing_dependency_001 polaris_enabled=True rounds=8 tool_calls=7 tokens=1410",
+            "model": "claude-haiku-4-5-20251001"
+          }
+        ]
+      },
+      "legacy_v3": {
+        "stderr_pattern": "java\\.lang\\.NoClassDefFoundError:",
+        "avoidance_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "CLASSPATH": ".:lib/*:target/classes"
+            }
+          }
+        ],
+        "description": "Java NoClassDefFoundError — extend CLASSPATH to include build output",
+        "source": "prebuilt",
+        "reproduction": {
+          "command": "bash -c 'echo \"Exception in thread \\\"main\\\" java.lang.NoClassDefFoundError: org/slf4j/LoggerFactory\" >&2; exit 1'",
+          "trigger_env": {},
+          "expected_stderr_match": "NoClassDefFoundError",
+          "fix_env": {
+            "CLASSPATH": ".:lib/*:target/classes"
+          },
+          "expected_fix_outcome": "different_error_or_success",
+          "fix_command": "bash -c 'echo \"CLASSPATH set (simulated)\"; exit 0'"
+        }
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds"
+      ],
+      "authored_fixture": {
+        "authored_at": "2026-04-20T07:45:11+00:00",
+        "authored_by": "claude_code",
+        "authored_with_prompt_sha256": "092b2b2012e10e5f5b824f30192886c04f4bb243c75065eda9b920f93c5349e7",
+        "verification_command": "javac -d build *.java 2>&1 && java -cp build Main",
+        "expected_stderr_regex": "cannot find symbol",
+        "files": [
+          {
+            "path": "Main.java",
+            "content": "public class Main {\n    public static void main(String[] args) {\n        Helper helper = new Helper();\n        helper.execute();\n    }\n}\n"
+          }
+        ],
+        "reference_fix_files": [
+          {
+            "path": "Main.java",
+            "content": "public class Main {\n    public static void main(String[] args) {\n        Helper helper = new Helper();\n        helper.execute();\n    }\n}\n"
+          },
+          {
+            "path": "Helper.java",
+            "content": "public class Helper {\n    public void execute() {\n        System.out.println(\"Helper executed successfully\");\n    }\n}\n"
+          }
+        ],
+        "fix_rationale": "Add missing Helper.java class that Main depends on to resolve the compilation error.",
+        "reviewer_record": {
+          "validated_in_sandbox_at": "2026-04-20T07:45:11+00:00",
+          "sandbox_pre_fix_exit_code": 1,
+          "sandbox_pre_fix_stderr_match": true,
+          "sandbox_post_fix_exit_code": 0,
+          "sandbox_workdir_hash_pre": "93bd8454d1483faf39f4ec7b4089fd8c163d94a4b348180b47fe27858b17e4e2",
+          "sandbox_workdir_hash_post": "2ce0e315330ed3cc40ee002ff7aebc33309d2ecc848d183f76bc280bb3851212",
+          "notes": "authored by claude_code; pre-fix fails+matches regex, post-fix passes"
+        }
+      }
+    },
+    {
+      "pattern_id": "java.missing_dependency.002",
+      "ecosystem": "java",
+      "error_class": "missing_dependency",
+      "description": "Maven dependency resolution failure — use local repo override",
+      "source": "prebuilt",
+      "trigger_signals": {
+        "stderr_regex": [
+          "Could not resolve dependencies|Could not find artifact"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "bash -c 'echo \"[ERROR] Could not resolve dependencies for project com.myapp:myapp:jar:1.0\" >&2; exit 1'",
+        "trigger_env": {},
+        "expected_stderr_match": "Could not resolve",
+        "expected_fix_outcome": "different_error_or_success"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "MAVEN_OPTS": "-Dmaven.repo.local=.m2"
+            }
+          }
+        ],
+        "fix_command": "bash -c 'echo \"MAVEN_OPTS set (simulated)\"; exit 0'",
+        "fix_env": {
+          "MAVEN_OPTS": "-Dmaven.repo.local=.m2"
+        },
+        "description": "Maven dependency resolution failure — use local repo override"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": [
+          {
+            "agent": "claude_code",
+            "agent_version": "unknown",
+            "date_verified": "2026-04-20T09:45:29+00:00",
+            "status": "verified_live",
+            "artifact_path": "eval/runs/20260420T170630/transcripts/claude_code__generated_java_missing_dependency_002__baseline.txt",
+            "transcript_hash": "11d9d48613e955389fe4732b01c14e53795517076ecc286594d7e98275c96027",
+            "pre_failure_reproduced": true,
+            "workdir_manifest_hash": "005ecad06c33b19125dea0f74a8e8b56a19f8a81cb95a903b9f6d444688983a5",
+            "notes": "case=generated_java_missing_dependency_002 polaris_enabled=False rounds=8 tool_calls=7 tokens=1508",
+            "model": "claude-haiku-4-5-20251001"
+          },
+          {
+            "agent": "claude_code",
+            "agent_version": "unknown",
+            "date_verified": "2026-04-20T09:45:29+00:00",
+            "status": "verified_live",
+            "artifact_path": "eval/runs/20260420T170630/transcripts/claude_code__generated_java_missing_dependency_002__polaris.txt",
+            "transcript_hash": "56bc4e0c8c1ab0d024ee9cc03741cb90f347bdd51b1bb498f46bc44dbcfd6ec6",
+            "pre_failure_reproduced": true,
+            "workdir_manifest_hash": "005ecad06c33b19125dea0f74a8e8b56a19f8a81cb95a903b9f6d444688983a5",
+            "notes": "case=generated_java_missing_dependency_002 polaris_enabled=True rounds=11 tool_calls=10 tokens=2323",
+            "model": "claude-haiku-4-5-20251001"
+          }
+        ]
+      },
+      "legacy_v3": {
+        "stderr_pattern": "Could not resolve dependencies|Could not find artifact",
+        "avoidance_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "MAVEN_OPTS": "-Dmaven.repo.local=.m2"
+            }
+          }
+        ],
+        "description": "Maven dependency resolution failure — use local repo override",
+        "source": "prebuilt",
+        "reproduction": {
+          "command": "bash -c 'echo \"[ERROR] Could not resolve dependencies for project com.myapp:myapp:jar:1.0\" >&2; exit 1'",
+          "trigger_env": {},
+          "expected_stderr_match": "Could not resolve",
+          "fix_env": {
+            "MAVEN_OPTS": "-Dmaven.repo.local=.m2"
+          },
+          "expected_fix_outcome": "different_error_or_success",
+          "fix_command": "bash -c 'echo \"MAVEN_OPTS set (simulated)\"; exit 0'"
+        }
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds"
+      ],
+      "authored_fixture": {
+        "authored_at": "2026-04-20T05:38:05+00:00",
+        "authored_by": "claude_code",
+        "authored_with_prompt_sha256": "682edcfd70153ddfc3cc602ea902d0aaf142c95e04a021800dae6739fc9d509f",
+        "verification_command": "javac Main.java && java Main",
+        "expected_stderr_regex": "Could not find artifact: lib/helper-lib\\.jar",
+        "files": [
+          {
+            "path": "Main.java",
+            "content": "import java.nio.file.Files;\nimport java.nio.file.Paths;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        if (!Files.exists(Paths.get(\"lib/helper-lib.jar\"))) {\n            System.err.println(\"Could not find artifact: lib/helper-lib.jar\");\n            System.exit(1);\n        }\n        System.out.println(\"Dependency resolved!\");\n    }\n}\n"
+          }
+        ],
+        "reference_fix_files": [
+          {
+            "path": "Main.java",
+            "content": "import java.nio.file.Files;\nimport java.nio.file.Paths;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        String artifactPath = \"lib/helper-lib.jar\";\n        Files.createDirectories(Paths.get(\"lib\"));\n        if (!Files.exists(Paths.get(artifactPath))) {\n            Files.write(Paths.get(artifactPath), new byte[]{});\n        }\n        System.out.println(\"Dependency resolved!\");\n    }\n}\n"
+          }
+        ],
+        "fix_rationale": "Create missing artifact in local repository to resolve dependency.",
+        "reviewer_record": {
+          "validated_in_sandbox_at": "2026-04-20T05:38:05+00:00",
+          "sandbox_pre_fix_exit_code": 1,
+          "sandbox_pre_fix_stderr_match": true,
+          "sandbox_post_fix_exit_code": 0,
+          "sandbox_workdir_hash_pre": "5e7d25851730e800863317815f7099f825d54c38100178d73d63f54632a3bd49",
+          "sandbox_workdir_hash_post": "5b78eba245ff601f0123aa066577aaf119e623fc46d12de87221e2f5418ce575",
+          "notes": "authored by claude_code; pre-fix fails+matches regex, post-fix passes"
+        }
+      }
+    },
+    {
+      "pattern_id": "java.missing_dependency.003",
+      "ecosystem": "java",
+      "error_class": "missing_dependency",
+      "description": "Java compilation error: package not found — add jars to compilation classpath",
+      "source": "prebuilt",
+      "trigger_signals": {
+        "stderr_regex": [
+          "package .+ does not exist"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "bash -c 'echo \"error: package org.apache.commons.lang3 does not exist\" >&2; exit 1'",
+        "trigger_env": {},
+        "expected_stderr_match": "package .+ does not exist",
+        "expected_fix_outcome": "different_error_or_success"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "append_flags",
+            "flags": [
+              "-cp",
+              "lib/*:."
+            ]
+          }
+        ],
+        "fix_command": "bash -c 'echo \"retried with -cp lib/*:. (simulated)\"; exit 0'",
+        "fix_env": {
+          "CLASSPATH": "lib/*:."
+        },
+        "description": "Java compilation error: package not found — add jars to compilation classpath"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": [
+          {
+            "agent": "claude_code",
+            "agent_version": "unknown",
+            "date_verified": "2026-04-20T09:45:29+00:00",
+            "status": "verified_live",
+            "artifact_path": "eval/runs/20260420T170630/transcripts/claude_code__generated_java_missing_dependency_003__baseline.txt",
+            "transcript_hash": "20354d208afa0993d9c9bad34dad6e96f9de93db218a45556d69d2ef40e7cd3e",
+            "pre_failure_reproduced": true,
+            "workdir_manifest_hash": "ed236f7d3a5d2c0691a6dbf813c645888708fc0d3b46c1c68b8751b21f1ce8f7",
+            "notes": "case=generated_java_missing_dependency_003 polaris_enabled=False rounds=9 tool_calls=8 tokens=1808",
+            "model": "claude-haiku-4-5-20251001"
+          },
+          {
+            "agent": "claude_code",
+            "agent_version": "unknown",
+            "date_verified": "2026-04-20T09:45:29+00:00",
+            "status": "verified_live",
+            "artifact_path": "eval/runs/20260420T170630/transcripts/claude_code__generated_java_missing_dependency_003__polaris.txt",
+            "transcript_hash": "686d4f9dbf68b69968e6f6f4bcecb38208f344987d1444d9cffecb29163c6ced",
+            "pre_failure_reproduced": true,
+            "workdir_manifest_hash": "ed236f7d3a5d2c0691a6dbf813c645888708fc0d3b46c1c68b8751b21f1ce8f7",
+            "notes": "case=generated_java_missing_dependency_003 polaris_enabled=True rounds=12 tool_calls=11 tokens=2470",
+            "model": "claude-haiku-4-5-20251001"
+          }
+        ]
+      },
+      "legacy_v3": {
+        "stderr_pattern": "package .+ does not exist",
+        "avoidance_hints": [
+          {
+            "kind": "append_flags",
+            "flags": [
+              "-cp",
+              "lib/*:."
+            ]
+          }
+        ],
+        "description": "Java compilation error: package not found — add jars to compilation classpath",
+        "source": "prebuilt",
+        "reproduction": {
+          "command": "bash -c 'echo \"error: package org.apache.commons.lang3 does not exist\" >&2; exit 1'",
+          "trigger_env": {},
+          "expected_stderr_match": "package .+ does not exist",
+          "fix_env": {
+            "CLASSPATH": "lib/*:."
+          },
+          "expected_fix_outcome": "different_error_or_success",
+          "fix_command": "bash -c 'echo \"retried with -cp lib/*:. (simulated)\"; exit 0'"
+        }
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds"
+      ],
+      "authored_fixture": {
+        "authored_at": "2026-04-20T05:37:55+00:00",
+        "authored_by": "claude_code",
+        "authored_with_prompt_sha256": "1304049c68d479e15df2413e8346a9833dbfccefef7bd7cada6de55635dc23bf",
+        "verification_command": "javac Main.java && java Main",
+        "expected_stderr_regex": "package .+ does not exist",
+        "files": [
+          {
+            "path": "Main.java",
+            "content": "import com.example.utils.StringHelper;\n\npublic class Main {\n    public static void main(String[] args) {\n        System.out.println(StringHelper.getMessage());\n    }\n}"
+          }
+        ],
+        "reference_fix_files": [
+          {
+            "path": "Main.java",
+            "content": "public class Main {\n    public static void main(String[] args) {\n        System.out.println(\"Hello World\");\n    }\n}"
+          }
+        ],
+        "fix_rationale": "Remove the import of the non-existent package and use only standard library functionality.",
+        "reviewer_record": {
+          "validated_in_sandbox_at": "2026-04-20T05:37:55+00:00",
+          "sandbox_pre_fix_exit_code": 1,
+          "sandbox_pre_fix_stderr_match": true,
+          "sandbox_post_fix_exit_code": 0,
+          "sandbox_workdir_hash_pre": "8fc4f37390f8d2c9ece99707b06359aef0555d6d9fbda579e6f17dc736396900",
+          "sandbox_workdir_hash_post": "cd7b0700a35dfc5ad292739361281825bc11a7d913b9b4698e3be5dfe703b994",
+          "notes": "authored by claude_code; pre-fix fails+matches regex, post-fix passes"
+        }
+      }
+    },
+    {
+      "pattern_id": "java.missing_dependency.004",
+      "ecosystem": "java",
+      "error_class": "missing_dependency",
+      "description": "Gradle dependency not found in configured repositories — retry or check repository config",
+      "source": "prebuilt",
+      "trigger_signals": {
+        "stderr_regex": [
+          "Could not find .+ in any of the configured repositories|Could not resolve all files for configuration"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "bash -c 'echo \"Could not find io.jsonwebtoken:jjwt-api:0.12.3 in any of the configured repositories\" >&2; exit 1'",
+        "trigger_env": {},
+        "expected_stderr_match": "Could not find .+ in any of the configured repositories",
+        "expected_fix_outcome": "different_error_or_success"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "retry_with_backoff",
+            "max_retries": 3,
+            "base_delay_ms": 2000
+          }
+        ],
+        "fix_command": "bash -c 'echo \"fix applied\"; exit 0'",
+        "fix_env": {},
+        "description": "Gradle dependency not found in configured repositories — retry or check repository config"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": [
+          {
+            "agent": "claude_code",
+            "agent_version": "unknown",
+            "date_verified": "2026-04-20T09:45:29+00:00",
+            "status": "verified_live",
+            "artifact_path": "eval/runs/20260420T170630/transcripts/claude_code__generated_java_missing_dependency_004__baseline.txt",
+            "transcript_hash": "79dc4f6e36ac5859e5adfac9091fa7324a98276aec47aafbd13a2c539b6c8e23",
+            "pre_failure_reproduced": true,
+            "workdir_manifest_hash": "c2f13138e47e0920f1cf259564de517c2faa4cee4dbc25e69f2f27400fd2b39c",
+            "notes": "case=generated_java_missing_dependency_004 polaris_enabled=False rounds=8 tool_calls=7 tokens=1503",
+            "model": "claude-haiku-4-5-20251001"
+          },
+          {
+            "agent": "claude_code",
+            "agent_version": "unknown",
+            "date_verified": "2026-04-20T09:45:29+00:00",
+            "status": "verified_live",
+            "artifact_path": "eval/runs/20260420T170630/transcripts/claude_code__generated_java_missing_dependency_004__polaris.txt",
+            "transcript_hash": "308a413699d5c450f45af87335004d68d6a21c47aacef2f7f4efd5514c5228ed",
+            "pre_failure_reproduced": true,
+            "workdir_manifest_hash": "c2f13138e47e0920f1cf259564de517c2faa4cee4dbc25e69f2f27400fd2b39c",
+            "notes": "case=generated_java_missing_dependency_004 polaris_enabled=True rounds=8 tool_calls=7 tokens=1520",
+            "model": "claude-haiku-4-5-20251001"
+          }
+        ]
+      },
+      "legacy_v3": {
+        "stderr_pattern": "Could not find .+ in any of the configured repositories|Could not resolve all files for configuration",
+        "avoidance_hints": [
+          {
+            "kind": "retry_with_backoff",
+            "max_retries": 3,
+            "base_delay_ms": 2000
+          }
+        ],
+        "description": "Gradle dependency not found in configured repositories — retry or check repository config",
+        "source": "prebuilt",
+        "reproduction": {
+          "command": "bash -c 'echo \"Could not find io.jsonwebtoken:jjwt-api:0.12.3 in any of the configured repositories\" >&2; exit 1'",
+          "trigger_env": {},
+          "expected_stderr_match": "Could not find .+ in any of the configured repositories",
+          "fix_env": {},
+          "expected_fix_outcome": "different_error_or_success",
+          "fix_command": "bash -c 'echo \"fix applied\"; exit 0'"
+        }
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds"
+      ],
+      "authored_fixture": {
+        "authored_at": "2026-04-20T05:38:33+00:00",
+        "authored_by": "claude_code",
+        "authored_with_prompt_sha256": "15af639f933a79a717460925cf92e3b88976376d60f506f7df47dcaf5bc9205e",
+        "verification_command": "javac Main.java",
+        "expected_stderr_regex": "cannot find symbol",
+        "files": [
+          {
+            "path": "Main.java",
+            "content": "public class Main {\n    public static void main(String[] args) {\n        System.out.println(Helper.getMessage());\n    }\n}"
+          }
+        ],
+        "reference_fix_files": [
+          {
+            "path": "Helper.java",
+            "content": "public class Helper {\n    public static String getMessage() {\n        return \"Hello from Helper\";\n    }\n}"
+          }
+        ],
+        "fix_rationale": "Add the missing Helper class that Main depends on.",
+        "reviewer_record": {
+          "validated_in_sandbox_at": "2026-04-20T05:38:33+00:00",
+          "sandbox_pre_fix_exit_code": 1,
+          "sandbox_pre_fix_stderr_match": true,
+          "sandbox_post_fix_exit_code": 0,
+          "sandbox_workdir_hash_pre": "3d198e0d802f6c61056f726a1ac0e8ba2ec9848e9df3367f8cd1037078e28130",
+          "sandbox_workdir_hash_post": "7ca90f9f48399f9f84fb342e041066d11cf24a59edf0821a77ac75cb3fc70389",
+          "notes": "authored by claude_code; pre-fix fails+matches regex, post-fix passes"
+        }
+      }
+    }
+  ]
+}

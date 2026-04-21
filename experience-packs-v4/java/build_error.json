@@ -1,0 +1,398 @@
+{
+  "ecosystem": "java",
+  "error_class": "build_error",
+  "schema_version": 4,
+  "records": [
+    {
+      "pattern_id": "java.build_error.000",
+      "ecosystem": "java",
+      "error_class": "build_error",
+      "description": "Java release version not supported — set JAVA_HOME to matching JDK",
+      "source": "prebuilt",
+      "trigger_signals": {
+        "stderr_regex": [
+          "error: release version \\d+ not supported"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "bash -c 'echo \"error: release version 99 not supported\" >&2; exit 1'",
+        "trigger_env": {},
+        "expected_stderr_match": "not supported",
+        "expected_fix_outcome": "different_error_or_success"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "JAVA_HOME": "/usr/lib/jvm/default-java"
+            }
+          }
+        ],
+        "fix_command": "bash -c 'echo \"JAVA_HOME set (simulated)\"; exit 0'",
+        "fix_env": {
+          "JAVA_HOME": "/usr/lib/jvm/default-java"
+        },
+        "description": "Java release version not supported — set JAVA_HOME to matching JDK"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": [
+          {
+            "agent": "claude_code",
+            "agent_version": "unknown",
+            "date_verified": "2026-04-20T09:45:29+00:00",
+            "status": "verified_live",
+            "artifact_path": "eval/runs/20260420T170630/transcripts/claude_code__generated_java_build_error_000__baseline.txt",
+            "transcript_hash": "bc2ecb62872c9025cfda8f931b5869c83503f07fcbe46f2832cdc69ce9d48dfe",
+            "pre_failure_reproduced": true,
+            "workdir_manifest_hash": "daf951babec8802616772e9bc7c5cb71936c025f77c9e255267f6896981193e7",
+            "notes": "case=generated_java_build_error_000 polaris_enabled=False rounds=9 tool_calls=8 tokens=1637",
+            "model": "claude-haiku-4-5-20251001"
+          },
+          {
+            "agent": "claude_code",
+            "agent_version": "unknown",
+            "date_verified": "2026-04-20T09:45:29+00:00",
+            "status": "verified_live",
+            "artifact_path": "eval/runs/20260420T170630/transcripts/claude_code__generated_java_build_error_000__polaris.txt",
+            "transcript_hash": "74c4112e427ba6e351c37c9e2a146dd41aa09f327536d5f90baa60aae20a3dac",
+            "pre_failure_reproduced": true,
+            "workdir_manifest_hash": "daf951babec8802616772e9bc7c5cb71936c025f77c9e255267f6896981193e7",
+            "notes": "case=generated_java_build_error_000 polaris_enabled=True rounds=9 tool_calls=8 tokens=1939",
+            "model": "claude-haiku-4-5-20251001"
+          }
+        ]
+      },
+      "legacy_v3": {
+        "stderr_pattern": "error: release version \\d+ not supported",
+        "avoidance_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "JAVA_HOME": "/usr/lib/jvm/default-java"
+            }
+          }
+        ],
+        "description": "Java release version not supported — set JAVA_HOME to matching JDK",
+        "source": "prebuilt",
+        "reproduction": {
+          "command": "bash -c 'echo \"error: release version 99 not supported\" >&2; exit 1'",
+          "trigger_env": {},
+          "expected_stderr_match": "not supported",
+          "fix_env": {
+            "JAVA_HOME": "/usr/lib/jvm/default-java"
+          },
+          "expected_fix_outcome": "different_error_or_success",
+          "fix_command": "bash -c 'echo \"JAVA_HOME set (simulated)\"; exit 0'"
+        }
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds"
+      ],
+      "authored_fixture": {
+        "authored_at": "2026-04-20T05:36:00+00:00",
+        "authored_by": "claude_code",
+        "authored_with_prompt_sha256": "20ad7862ac8c8ef56f3807d41b90b66a7eea5f7832f7db7701736b511d21778c",
+        "verification_command": "bash build.sh",
+        "expected_stderr_regex": "error: release version \\d+ not supported",
+        "files": [
+          {
+            "path": "Hello.java",
+            "content": "public class Hello {\n    public static void main(String[] args) {\n        System.out.println(\"Hello, World!\");\n    }\n}\n"
+          },
+          {
+            "path": "build.sh",
+            "content": "#!/bin/bash\njavac --release 99 Hello.java\njava Hello\n"
+          }
+        ],
+        "reference_fix_files": [
+          {
+            "path": "build.sh",
+            "content": "#!/bin/bash\njavac Hello.java\njava Hello\n"
+          }
+        ],
+        "fix_rationale": "Remove the unsupported --release 99 flag to allow javac to use the JDK's default release version.",
+        "reviewer_record": {
+          "validated_in_sandbox_at": "2026-04-20T05:36:00+00:00",
+          "sandbox_pre_fix_exit_code": 1,
+          "sandbox_pre_fix_stderr_match": true,
+          "sandbox_post_fix_exit_code": 0,
+          "sandbox_workdir_hash_pre": "f94ca2e6863c0e0a795f26827d0ee8f748ed6e59da95d3f88a1eb18de8c6c484",
+          "sandbox_workdir_hash_post": "6065a3779a7cc696c70dc7ebc84ed17961723b836bfe8c0b5e21370dc508a3dd",
+          "notes": "authored by claude_code; pre-fix fails+matches regex, post-fix passes"
+        }
+      }
+    },
+    {
+      "pattern_id": "java.build_error.001",
+      "ecosystem": "java",
+      "error_class": "build_error",
+      "description": "Maven compilation failure — ensure correct JDK version via JAVA_HOME",
+      "source": "prebuilt",
+      "trigger_signals": {
+        "stderr_regex": [
+          "COMPILATION ERROR|Compilation failure"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "bash -c 'echo \"[ERROR] COMPILATION ERROR :\" >&2; echo \"[ERROR] Compilation failure\" >&2; exit 1'",
+        "trigger_env": {},
+        "expected_stderr_match": "COMPILATION ERROR",
+        "expected_fix_outcome": "different_error_or_success"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "JAVA_HOME": "/usr/lib/jvm/java-17-openjdk-amd64"
+            }
+          }
+        ],
+        "fix_command": "bash -c 'echo \"JAVA_HOME set (simulated)\"; exit 0'",
+        "fix_env": {
+          "JAVA_HOME": "/usr/lib/jvm/java-17-openjdk-amd64"
+        },
+        "description": "Maven compilation failure — ensure correct JDK version via JAVA_HOME"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": [
+          {
+            "agent": "claude_code",
+            "agent_version": "unknown",
+            "date_verified": "2026-04-20T09:45:29+00:00",
+            "status": "verified_live",
+            "artifact_path": "eval/runs/20260420T170630/transcripts/claude_code__generated_java_build_error_001__baseline.txt",
+            "transcript_hash": "bacfce611bcfb46583aee457b87427a610a99e970ee2348eec0285b6e4c5c0dd",
+            "pre_failure_reproduced": true,
+            "workdir_manifest_hash": "78bd4cd9a683160a4fc5a23c824b5085c7e123f3fbfa6f209d8f882a10b44b07",
+            "notes": "case=generated_java_build_error_001 polaris_enabled=False rounds=9 tool_calls=8 tokens=1908",
+            "model": "claude-haiku-4-5-20251001"
+          },
+          {
+            "agent": "claude_code",
+            "agent_version": "unknown",
+            "date_verified": "2026-04-20T09:45:29+00:00",
+            "status": "verified_live",
+            "artifact_path": "eval/runs/20260420T170630/transcripts/claude_code__generated_java_build_error_001__polaris.txt",
+            "transcript_hash": "00cc6a162246dfbadec4f60ae25aa609223bbcbf3d0e440014308642d8d4caee",
+            "pre_failure_reproduced": true,
+            "workdir_manifest_hash": "78bd4cd9a683160a4fc5a23c824b5085c7e123f3fbfa6f209d8f882a10b44b07",
+            "notes": "case=generated_java_build_error_001 polaris_enabled=True rounds=8 tool_calls=7 tokens=1839",
+            "model": "claude-haiku-4-5-20251001"
+          }
+        ]
+      },
+      "legacy_v3": {
+        "stderr_pattern": "COMPILATION ERROR|Compilation failure",
+        "avoidance_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "JAVA_HOME": "/usr/lib/jvm/java-17-openjdk-amd64"
+            }
+          }
+        ],
+        "description": "Maven compilation failure — ensure correct JDK version via JAVA_HOME",
+        "source": "prebuilt",
+        "reproduction": {
+          "command": "bash -c 'echo \"[ERROR] COMPILATION ERROR :\" >&2; echo \"[ERROR] Compilation failure\" >&2; exit 1'",
+          "trigger_env": {},
+          "expected_stderr_match": "COMPILATION ERROR",
+          "fix_env": {
+            "JAVA_HOME": "/usr/lib/jvm/java-17-openjdk-amd64"
+          },
+          "expected_fix_outcome": "different_error_or_success",
+          "fix_command": "bash -c 'echo \"JAVA_HOME set (simulated)\"; exit 0'"
+        }
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds"
+      ],
+      "authored_fixture": {
+        "authored_at": "2026-04-20T05:37:04+00:00",
+        "authored_by": "claude_code",
+        "authored_with_prompt_sha256": "fc9233c8400b39d83507fc37d6f9c9ad2bfa8c74e2de72dea32ba7897055fea1",
+        "verification_command": "bash build.sh && java -cp . Main",
+        "expected_stderr_regex": "records are not supported",
+        "files": [
+          {
+            "path": "Person.java",
+            "content": "public record Person(String name, int age) {}\n"
+          },
+          {
+            "path": "Main.java",
+            "content": "public class Main {\n    public static void main(String[] args) {\n        Person p = new Person(\"Alice\", 30);\n        System.out.println(p.name() + \" is \" + p.age());\n    }\n}\n"
+          },
+          {
+            "path": "build.sh",
+            "content": "#!/bin/bash\njavac -source 11 -target 11 *.java\n"
+          }
+        ],
+        "reference_fix_files": [
+          {
+            "path": "build.sh",
+            "content": "#!/bin/bash\njavac *.java\n"
+          }
+        ],
+        "fix_rationale": "Remove source version restriction to allow compilation with current JDK supporting Java 16+ records syntax",
+        "reviewer_record": {
+          "validated_in_sandbox_at": "2026-04-20T05:37:04+00:00",
+          "sandbox_pre_fix_exit_code": 1,
+          "sandbox_pre_fix_stderr_match": true,
+          "sandbox_post_fix_exit_code": 0,
+          "sandbox_workdir_hash_pre": "e0d9affc63b3236a7ed7251586bcd28217147558cdf0d7de2ddfaae9ff624cb7",
+          "sandbox_workdir_hash_post": "e084da2c3d6fdcb13c8dae0b6cdd3aedefc26c7803e96aa908ad8842e8c4107b",
+          "notes": "authored by claude_code; pre-fix fails+matches regex, post-fix passes"
+        }
+      }
+    },
+    {
+      "pattern_id": "java.build_error.002",
+      "ecosystem": "java",
+      "error_class": "build_error",
+      "description": "Gradle compileJava task failure — check JAVA_HOME and source compatibility",
+      "source": "prebuilt",
+      "trigger_signals": {
+        "stderr_regex": [
+          "Task :compileJava FAILED|Execution failed for task ':compileJava'"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "bash -c 'echo \"> Task :compileJava FAILED\" >&2; echo \"Execution failed for task :compileJava\" >&2; exit 1'",
+        "trigger_env": {},
+        "expected_stderr_match": "compileJava FAILED",
+        "expected_fix_outcome": "different_error_or_success"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "JAVA_HOME": "/usr/lib/jvm/java-17-openjdk-amd64"
+            }
+          }
+        ],
+        "fix_command": "bash -c 'echo \"JAVA_HOME set (simulated)\"; exit 0'",
+        "fix_env": {
+          "JAVA_HOME": "/usr/lib/jvm/java-17-openjdk-amd64"
+        },
+        "description": "Gradle compileJava task failure — check JAVA_HOME and source compatibility"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": [
+          {
+            "agent": "claude_code",
+            "agent_version": "unknown",
+            "date_verified": "2026-04-20T09:45:29+00:00",
+            "status": "verified_live",
+            "artifact_path": "eval/runs/20260420T170630/transcripts/claude_code__generated_java_build_error_002__baseline.txt",
+            "transcript_hash": "fa51f2f2b430910750fe7b3632ef23ba58483c85c7ad51d4097c25d26198a754",
+            "pre_failure_reproduced": true,
+            "workdir_manifest_hash": "22d5e85f30a11fa0ac1b00cda430e9ec20c5228dadf8e7a6944f011ab626e030",
+            "notes": "case=generated_java_build_error_002 polaris_enabled=False rounds=8 tool_calls=7 tokens=1749",
+            "model": "claude-haiku-4-5-20251001"
+          },
+          {
+            "agent": "claude_code",
+            "agent_version": "unknown",
+            "date_verified": "2026-04-20T09:45:29+00:00",
+            "status": "verified_live",
+            "artifact_path": "eval/runs/20260420T170630/transcripts/claude_code__generated_java_build_error_002__polaris.txt",
+            "transcript_hash": "d574a8a841fa74860ae8af10d5522e4a3ae9986d3c8bc5cc6aa6d08462b49f7e",
+            "pre_failure_reproduced": true,
+            "workdir_manifest_hash": "b1b50909894e5dfb13b785d4406f5837228828711632750f0cc92f7db11606a3",
+            "notes": "case=generated_java_build_error_002 polaris_enabled=True rounds=10 tool_calls=9 tokens=1772",
+            "model": "claude-haiku-4-5-20251001"
+          }
+        ]
+      },
+      "legacy_v3": {
+        "stderr_pattern": "Task :compileJava FAILED|Execution failed for task ':compileJava'",
+        "avoidance_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "JAVA_HOME": "/usr/lib/jvm/java-17-openjdk-amd64"
+            }
+          }
+        ],
+        "description": "Gradle compileJava task failure — check JAVA_HOME and source compatibility",
+        "source": "prebuilt",
+        "reproduction": {
+          "command": "bash -c 'echo \"> Task :compileJava FAILED\" >&2; echo \"Execution failed for task :compileJava\" >&2; exit 1'",
+          "trigger_env": {},
+          "expected_stderr_match": "compileJava FAILED",
+          "fix_env": {
+            "JAVA_HOME": "/usr/lib/jvm/java-17-openjdk-amd64"
+          },
+          "expected_fix_outcome": "different_error_or_success",
+          "fix_command": "bash -c 'echo \"JAVA_HOME set (simulated)\"; exit 0'"
+        }
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds"
+      ],
+      "authored_fixture": {
+        "authored_at": "2026-04-20T08:41:30+00:00",
+        "authored_by": "claude_code",
+        "authored_with_prompt_sha256": "regex_patch",
+        "verification_command": "bash build.sh",
+        "expected_stderr_regex": "'var' (is not allowed here|is a restricted type name)",
+        "files": [
+          {
+            "path": "src/Main.java",
+            "content": "public class Main {\n    public static void main(String[] args) {\n        var message = \"Hello, World!\";\n        System.out.println(message);\n    }\n}\n"
+          },
+          {
+            "path": "build.sh",
+            "content": "#!/bin/bash\nset -e\nmkdir -p bin\njavac -d bin -source 8 -target 8 src/Main.java\n"
+          }
+        ],
+        "reference_fix_files": [
+          {
+            "path": "src/Main.java",
+            "content": "public class Main {\n    public static void main(String[] args) {\n        String message = \"Hello, World!\";\n        System.out.println(message);\n    }\n}\n"
+          }
+        ],
+        "fix_rationale": "Replace var keyword with explicit String type to be compatible with Java 8 source level target.",
+        "reviewer_record": {
+          "validated_in_sandbox_at": "2026-04-20T08:41:30+00:00",
+          "sandbox_pre_fix_exit_code": 1,
+          "sandbox_pre_fix_stderr_match": true,
+          "sandbox_post_fix_exit_code": 0,
+          "sandbox_workdir_hash_pre": "3cd4f22e8e03e6f4c3f877fd99927a662f476910e7e7240cf24c0de402343dff",
+          "sandbox_workdir_hash_post": "c3827d0c46b5d1b3d0c50672ca947171ad5e8d0eb856c31ba77e18f508d545cd",
+          "notes": "regex broadened post-authoring to match observed stderr"
+        }
+      }
+    }
+  ]
+}

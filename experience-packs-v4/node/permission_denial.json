@@ -1,0 +1,227 @@
+{
+  "ecosystem": "node",
+  "error_class": "permission_denial",
+  "schema_version": 4,
+  "records": [
+    {
+      "pattern_id": "node.permission_denial.000",
+      "ecosystem": "node",
+      "error_class": "permission_denial",
+      "description": "npm cache permission error — redirect npm cache to writable directory",
+      "source": "prebuilt",
+      "trigger_signals": {
+        "stderr_regex": [
+          "EACCES: permission denied|npm ERR!.*EACCES"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "npm cache ls 2>&1 || true",
+        "trigger_env": {
+          "npm_config_cache": "/root/.npm-readonly"
+        },
+        "expected_stderr_match": "EACCES|permission denied",
+        "expected_fix_outcome": "different_error_or_success"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "npm_config_cache": "/tmp/.npm-cache"
+            }
+          }
+        ],
+        "fix_command": "bash -c 'echo \"npm_config_cache=/tmp/.npm-cache applied (simulated fix)\"; exit 0'",
+        "fix_env": {
+          "npm_config_cache": "/tmp/.npm-cache"
+        },
+        "description": "npm cache permission error — redirect npm cache to writable directory"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "legacy_v3": {
+        "stderr_pattern": "EACCES: permission denied|npm ERR!.*EACCES",
+        "avoidance_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "npm_config_cache": "/tmp/.npm-cache"
+            }
+          }
+        ],
+        "description": "npm cache permission error — redirect npm cache to writable directory",
+        "source": "prebuilt",
+        "reproduction": {
+          "command": "npm cache ls 2>&1 || true",
+          "trigger_env": {
+            "npm_config_cache": "/root/.npm-readonly"
+          },
+          "expected_stderr_match": "EACCES|permission denied",
+          "fix_env": {
+            "npm_config_cache": "/tmp/.npm-cache"
+          },
+          "expected_fix_outcome": "different_error_or_success",
+          "fix_command": "bash -c 'echo \"npm_config_cache=/tmp/.npm-cache applied (simulated fix)\"; exit 0'"
+        }
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ],
+      "authored_fixture": {
+        "authored_at": "2026-04-20T02:53:41+00:00",
+        "authored_by": "codex",
+        "authored_with_prompt_sha256": "97bd377fcc167a70fa2c7aa141fc790e67141195f8c89f26c045e3ee2d5c573f",
+        "verification_command": "npm test",
+        "expected_stderr_regex": "npm error code EACCES",
+        "files": [
+          {
+            "path": "package.json",
+            "content": "{\n  \"name\": \"npm-cache-permission-denial\",\n  \"version\": \"1.0.0\",\n  \"private\": true,\n  \"scripts\": {\n    \"test\": \"node scripts/check-cache.js\"\n  }\n}\n"
+          },
+          {
+            "path": "scripts/check-cache.js",
+            "content": "const { spawnSync } = require('node:child_process');\nconst fs = require('node:fs');\nconst path = require('node:path');\n\nconst root = path.resolve(__dirname, '..');\nconst cache = path.join(root, 'locked-npm-cache');\n\nfs.rmSync(cache, { recursive: true, force: true });\nfs.mkdirSync(cache, { recursive: true });\nfs.chmodSync(cache, 0o555);\n\nconst npm = process.platform === 'win32' ? 'npm.cmd' : 'npm';\nconst result = spawnSync(npm, ['--cache', cache, 'cache', 'verify'], {\n  cwd: root,\n  stdio: 'inherit',\n  env: {\n    ...process.env,\n    npm_config_loglevel: 'error'\n  }\n});\n\nprocess.exit(result.status ?? 1);\n"
+          }
+        ],
+        "reference_fix_files": [
+          {
+            "path": "scripts/check-cache.js",
+            "content": "const { spawnSync } = require('node:child_process');\nconst fs = require('node:fs');\nconst path = require('node:path');\n\nconst root = path.resolve(__dirname, '..');\nconst cache = path.join(root, '.npm-cache');\n\nfs.rmSync(cache, { recursive: true, force: true });\nfs.mkdirSync(cache, { recursive: true });\n\nconst npm = process.platform === 'win32' ? 'npm.cmd' : 'npm';\nconst result = spawnSync(npm, ['--cache', cache, 'cache', 'verify'], {\n  cwd: root,\n  stdio: 'inherit',\n  env: {\n    ...process.env,\n    npm_config_loglevel: 'error'\n  }\n});\n\nprocess.exit(result.status ?? 1);\n"
+          }
+        ],
+        "fix_rationale": "Redirecting npm to a project-local writable cache avoids the permission-denied cache directory.",
+        "reviewer_record": {
+          "validated_in_sandbox_at": "2026-04-20T02:53:41+00:00",
+          "sandbox_pre_fix_exit_code": 243,
+          "sandbox_pre_fix_stderr_match": true,
+          "sandbox_post_fix_exit_code": 0,
+          "sandbox_workdir_hash_pre": "e02480968682cb89d8c3ee394789e38c82f18d02d3711476002806c2ce9d571e",
+          "sandbox_workdir_hash_post": "4a11819cfe1658b4a21a99ec75bb5db6c69223d13c10b9367f98ac9eb33a305b",
+          "notes": "authored by codex; pre-fix fails+matches regex, post-fix passes"
+        }
+      }
+    },
+    {
+      "pattern_id": "node.permission_denial.001",
+      "ecosystem": "node",
+      "error_class": "permission_denial",
+      "description": "npm operation not permitted — typically cache corruption or cross-user ownership; redirect cache and prefix",
+      "source": "prebuilt",
+      "trigger_signals": {
+        "stderr_regex": [
+          "EPERM: operation not permitted|npm ERR!.*EPERM"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "mkdir -p /tmp/_polaris_repro_eperm && chmod 000 /tmp/_polaris_repro_eperm && node -e \"require('fs').writeFileSync('/tmp/_polaris_repro_eperm/test','x')\" 2>&1; chmod 755 /tmp/_polaris_repro_eperm; rm -rf /tmp/_polaris_repro_eperm || true",
+        "trigger_env": {},
+        "expected_stderr_match": "EACCES|EPERM|permission",
+        "expected_fix_outcome": "different_error_or_success"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "npm_config_cache": "/tmp/.npm-cache",
+              "npm_config_prefix": "/tmp/.npm-global"
+            }
+          }
+        ],
+        "fix_command": "bash -c 'echo \"npm_config_cache=/tmp/.npm-cache applied (simulated fix)\"; exit 0'",
+        "fix_env": {
+          "npm_config_cache": "/tmp/.npm-cache"
+        },
+        "description": "npm operation not permitted — typically cache corruption or cross-user ownership; redirect cache and prefix"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "legacy_v3": {
+        "stderr_pattern": "EPERM: operation not permitted|npm ERR!.*EPERM",
+        "avoidance_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "npm_config_cache": "/tmp/.npm-cache",
+              "npm_config_prefix": "/tmp/.npm-global"
+            }
+          }
+        ],
+        "description": "npm operation not permitted — typically cache corruption or cross-user ownership; redirect cache and prefix",
+        "source": "prebuilt",
+        "reproduction": {
+          "command": "mkdir -p /tmp/_polaris_repro_eperm && chmod 000 /tmp/_polaris_repro_eperm && node -e \"require('fs').writeFileSync('/tmp/_polaris_repro_eperm/test','x')\" 2>&1; chmod 755 /tmp/_polaris_repro_eperm; rm -rf /tmp/_polaris_repro_eperm || true",
+          "trigger_env": {},
+          "expected_stderr_match": "EACCES|EPERM|permission",
+          "fix_env": {
+            "npm_config_cache": "/tmp/.npm-cache"
+          },
+          "expected_fix_outcome": "different_error_or_success",
+          "fix_command": "bash -c 'echo \"npm_config_cache=/tmp/.npm-cache applied (simulated fix)\"; exit 0'"
+        }
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ],
+      "authored_fixture": {
+        "authored_at": "2026-04-20T10:02:50+00:00",
+        "authored_by": "codex",
+        "authored_with_prompt_sha256": "7171ccc593b6ebf3719ac6d5cbe349cd445182aa9cf2e0438a27273272a36119",
+        "verification_command": "npm test --silent",
+        "expected_stderr_regex": "EPERM: operation not permitted",
+        "files": [
+          {
+            "path": "package.json",
+            "content": "{\n  \"name\": \"npm-permission-denial-repro\",\n  \"version\": \"1.0.0\",\n  \"private\": true,\n  \"scripts\": {\n    \"test\": \"node scripts/check-npm-locations.js\"\n  }\n}\n"
+          },
+          {
+            "path": ".npmrc",
+            "content": "cache=/proc/self/mem\nprefix=/proc/self/mem\n"
+          },
+          {
+            "path": "scripts/check-npm-locations.js",
+            "content": "const fs = require(\"node:fs\");\nconst path = require(\"node:path\");\n\nconst locations = [\n  [\"cache\", process.env.npm_config_cache || process.env.NPM_CONFIG_CACHE],\n  [\"prefix\", process.env.npm_config_prefix || process.env.NPM_CONFIG_PREFIX]\n];\n\nfor (const [name, configured] of locations) {\n  if (!configured) {\n    throw new Error(`missing npm ${name} setting`);\n  }\n\n  prepareNpmLocation(name, path.resolve(configured));\n}\n\nfunction prepareNpmLocation(name, target) {\n  if (target.startsWith(\"/proc/\")) {\n    fs.chmodSync(target, 0o700);\n  }\n\n  fs.mkdirSync(target, { recursive: true });\n  fs.writeFileSync(path.join(target, `${name}.probe`), \"ok\\n\");\n}\n"
+          }
+        ],
+        "reference_fix_files": [
+          {
+            "path": ".npmrc",
+            "content": "cache=.npm-cache\nprefix=.npm-prefix\n"
+          }
+        ],
+        "fix_rationale": "Redirecting npm cache and prefix to project-owned directories avoids touching protected paths that raise EPERM.",
+        "reviewer_record": {
+          "validated_in_sandbox_at": "2026-04-20T10:02:50+00:00",
+          "sandbox_pre_fix_exit_code": 1,
+          "sandbox_pre_fix_stderr_match": true,
+          "sandbox_post_fix_exit_code": 0,
+          "sandbox_workdir_hash_pre": "da5155a00d6a48c1c080590a6e95787148e3facf17b782268ec57b76e4b033b7",
+          "sandbox_workdir_hash_post": "bff495c7d1f3ae25da879f0446b9a033e496bee4bdee12e70e1f861778a08de9",
+          "notes": "authored by codex; pre-fix fails+matches regex, post-fix passes"
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "adapters_registered": 6,
+  "bootstrap_version": 1,
+  "manifest": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/scripts/polaris_bootstrap.json",
+  "patterns_registered": 1,
+  "requires_check": {
+    "capability:local-exec": {
+      "probe": "trivial script executed",
+      "status": "pass"
+    },
+    "capability:reporting": {
+      "probe": "runtime dir is writable",
+      "status": "pass"
+    },
+    "interpreter": {
+      "path": "/usr/bin/python3",
+      "status": "pass"
+    },
+    "min_schema_version": {
+      "status": "pass",
+      "version": 5
+    }
+  },
+  "rules_registered": 1,
+  "skipped": false
+}

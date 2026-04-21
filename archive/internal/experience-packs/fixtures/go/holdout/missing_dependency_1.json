@@ -1,0 +1,1 @@
+{"stderr": "go: finding module for package google.golang.org/grpc\ngo build google.golang.org/grpc: go.sum: missing go.sum entry for module providing package google.golang.org/grpc (imported by github.com/myapp/api)\nTo add:\n\tgo get google.golang.org/grpc", "error_class": "missing_dependency", "source": "go build missing grpc dependency with go.sum mismatch"}

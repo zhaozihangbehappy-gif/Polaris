@@ -1,0 +1,87 @@
+{
+  "ecosystem": "docker",
+  "error_class": "port_conflict",
+  "schema_version": 4,
+  "records": [
+    {
+      "pattern_id": "docker.port_conflict.000",
+      "ecosystem": "docker",
+      "error_class": "port_conflict",
+      "description": "Docker port already allocated \u2014 use ephemeral port binding or offset ports",
+      "source": "prebuilt",
+      "trigger_signals": {
+        "stderr_regex": [
+          "Bind for.*failed: port is already allocated|bind: address already in use|Error starting userland proxy.*bind"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "bash -c 'echo \"Error response from daemon: driver failed programming external connectivity on endpoint web-1 (abc123): Bind for 0.0.0.0:8080 failed: port is already allocated\" >&2; exit 1'",
+        "trigger_env": {},
+        "expected_stderr_match": "port is already allocated|address already in use",
+        "expected_fix_outcome": "different_error_or_success"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "DOCKER_PORT_OFFSET": "1000"
+            }
+          },
+          {
+            "kind": "append_flags",
+            "flags": "-p 0:80"
+          }
+        ],
+        "fix_command": "bash -c 'echo \"DOCKER_PORT_OFFSET set (simulated)\"; exit 0'",
+        "fix_env": {
+          "DOCKER_PORT_OFFSET": "1000"
+        },
+        "description": "Docker port already allocated \u2014 use ephemeral port binding or offset ports"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "legacy_v3": {
+        "stderr_pattern": "Bind for.*failed: port is already allocated|bind: address already in use|Error starting userland proxy.*bind",
+        "avoidance_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "DOCKER_PORT_OFFSET": "1000"
+            }
+          },
+          {
+            "kind": "append_flags",
+            "flags": "-p 0:80"
+          }
+        ],
+        "description": "Docker port already allocated \u2014 use ephemeral port binding or offset ports",
+        "source": "prebuilt",
+        "reproduction": {
+          "command": "bash -c 'echo \"Error response from daemon: driver failed programming external connectivity on endpoint web-1 (abc123): Bind for 0.0.0.0:8080 failed: port is already allocated\" >&2; exit 1'",
+          "trigger_env": {},
+          "expected_stderr_match": "port is already allocated|address already in use",
+          "fix_env": {
+            "DOCKER_PORT_OFFSET": "1000"
+          },
+          "expected_fix_outcome": "different_error_or_success",
+          "fix_command": "bash -c 'echo \"DOCKER_PORT_OFFSET set (simulated)\"; exit 0'"
+        }
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    }
+  ]
+}

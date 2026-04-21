@@ -1,0 +1,12 @@
+{
+  "case_id": "case_002_node_enoent_lockfile",
+  "source": "pattern_reverse",
+  "reverse_from_pattern": "node.missing_dependency.000",
+  "ecosystem": "node",
+  "initial_prompt": "A Node.js monorepo at {workdir} fails `pnpm install` with ENOENT on a lockfile referencing a workspace package that was renamed. The agent must identify the stale lockfile entry (not just re-run install). Fix it.",
+  "success_criteria": {
+    "root_cause_regex": "pnpm-lock\\.yaml|workspace rename|stale lockfile",
+    "fix_command_test": "cd {workdir} && pnpm install --frozen-lockfile"
+  },
+  "max_rounds": 10
+}

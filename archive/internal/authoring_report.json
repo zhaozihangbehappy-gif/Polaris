@@ -1,0 +1,151 @@
+{
+  "generated_at": "2026-04-20T10:02:50+00:00",
+  "targets": 20,
+  "by_status": {
+    "skipped_already_authored": 17,
+    "authored_fixture_candidate": 3
+  },
+  "workers": 1,
+  "results": [
+    {
+      "pattern_id": "node.build_error.000",
+      "ecosystem": "node",
+      "shard": "experience-packs-v4/node/build_error.json",
+      "backend": "codex",
+      "status": "skipped_already_authored"
+    },
+    {
+      "pattern_id": "node.build_error.001",
+      "ecosystem": "node",
+      "shard": "experience-packs-v4/node/build_error.json",
+      "backend": "codex",
+      "status": "authored_fixture_candidate"
+    },
+    {
+      "pattern_id": "node.build_error.002",
+      "ecosystem": "node",
+      "shard": "experience-packs-v4/node/build_error.json",
+      "backend": "codex",
+      "status": "skipped_already_authored"
+    },
+    {
+      "pattern_id": "node.config_error.000",
+      "ecosystem": "node",
+      "shard": "experience-packs-v4/node/config_error.json",
+      "backend": "codex",
+      "status": "skipped_already_authored"
+    },
+    {
+      "pattern_id": "node.config_error.001",
+      "ecosystem": "node",
+      "shard": "experience-packs-v4/node/config_error.json",
+      "backend": "codex",
+      "status": "skipped_already_authored"
+    },
+    {
+      "pattern_id": "node.encoding_error.000",
+      "ecosystem": "node",
+      "shard": "experience-packs-v4/node/encoding_error.json",
+      "backend": "codex",
+      "status": "skipped_already_authored"
+    },
+    {
+      "pattern_id": "node.file_not_found.000",
+      "ecosystem": "node",
+      "shard": "experience-packs-v4/node/file_not_found.json",
+      "backend": "codex",
+      "status": "skipped_already_authored"
+    },
+    {
+      "pattern_id": "node.file_not_found.001",
+      "ecosystem": "node",
+      "shard": "experience-packs-v4/node/file_not_found.json",
+      "backend": "codex",
+      "status": "skipped_already_authored"
+    },
+    {
+      "pattern_id": "node.missing_dependency.000",
+      "ecosystem": "node",
+      "shard": "experience-packs-v4/node/missing_dependency.json",
+      "backend": "codex",
+      "status": "skipped_already_authored"
+    },
+    {
+      "pattern_id": "node.missing_dependency.001",
+      "ecosystem": "node",
+      "shard": "experience-packs-v4/node/missing_dependency.json",
+      "backend": "codex",
+      "status": "skipped_already_authored"
+    },
+    {
+      "pattern_id": "node.missing_dependency.002",
+      "ecosystem": "node",
+      "shard": "experience-packs-v4/node/missing_dependency.json",
+      "backend": "codex",
+      "status": "skipped_already_authored"
+    },
+    {
+      "pattern_id": "node.missing_dependency.003",
+      "ecosystem": "node",
+      "shard": "experience-packs-v4/node/missing_dependency.json",
+      "backend": "codex",
+      "status": "skipped_already_authored"
+    },
+    {
+      "pattern_id": "node.network_error.000",
+      "ecosystem": "node",
+      "shard": "experience-packs-v4/node/network_error.json",
+      "backend": "codex",
+      "status": "skipped_already_authored"
+    },
+    {
+      "pattern_id": "node.network_error.001",
+      "ecosystem": "node",
+      "shard": "experience-packs-v4/node/network_error.json",
+      "backend": "codex",
+      "status": "skipped_already_authored"
+    },
+    {
+      "pattern_id": "node.network_error.002",
+      "ecosystem": "node",
+      "shard": "experience-packs-v4/node/network_error.json",
+      "backend": "codex",
+      "status": "authored_fixture_candidate"
+    },
+    {
+      "pattern_id": "node.permission_denial.000",
+      "ecosystem": "node",
+      "shard": "experience-packs-v4/node/permission_denial.json",
+      "backend": "codex",
+      "status": "skipped_already_authored"
+    },
+    {
+      "pattern_id": "node.permission_denial.001",
+      "ecosystem": "node",
+      "shard": "experience-packs-v4/node/permission_denial.json",
+      "backend": "codex",
+      "status": "authored_fixture_candidate"
+    },
+    {
+      "pattern_id": "node.port_conflict.000",
+      "ecosystem": "node",
+      "shard": "experience-packs-v4/node/port_conflict.json",
+      "backend": "codex",
+      "status": "skipped_already_authored"
+    },
+    {
+      "pattern_id": "node.resource_exhaustion.000",
+      "ecosystem": "node",
+      "shard": "experience-packs-v4/node/resource_exhaustion.json",
+      "backend": "codex",
+      "status": "skipped_already_authored"
+    },
+    {
+      "pattern_id": "node.resource_exhaustion.001",
+      "ecosystem": "node",
+      "shard": "experience-packs-v4/node/resource_exhaustion.json",
+      "backend": "codex",
+      "status": "skipped_already_authored"
+    }
+  ]
+}

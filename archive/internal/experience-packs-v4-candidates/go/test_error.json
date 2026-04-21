@@ -1,0 +1,241 @@
+{
+  "ecosystem": "go",
+  "error_class": "test_error",
+  "schema_version": 4,
+  "records": [
+    {
+      "pattern_id": "candidate.go.test_error.000",
+      "ecosystem": "go",
+      "error_class": "test_error",
+      "description": "test fails only under -race",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "DATA RACE"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "go env 2>&1 | head -20",
+        "trigger_env": {},
+        "expected_stderr_match": "DATA RACE"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Go test_error: test fails only under -race"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.go.test_error.001",
+      "ecosystem": "go",
+      "error_class": "test_error",
+      "description": "TestMain conflicts with package tests",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "TestMain.*already declared"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "go env 2>&1 | head -20",
+        "trigger_env": {},
+        "expected_stderr_match": "TestMain.*already declared"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Go test_error: TestMain conflicts with package tests"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.go.test_error.002",
+      "ecosystem": "go",
+      "error_class": "test_error",
+      "description": "goroutine leak in test",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "goroutines running after Test"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "go env 2>&1 | head -20",
+        "trigger_env": {},
+        "expected_stderr_match": "goroutines running after Test"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Go test_error: goroutine leak in test"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.go.test_error.003",
+      "ecosystem": "go",
+      "error_class": "test_error",
+      "description": "testing.Short skip not respected",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "testing\\.Short"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "go env 2>&1 | head -20",
+        "trigger_env": {},
+        "expected_stderr_match": "testing\\.Short"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Go test_error: testing.Short skip not respected"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.go.test_error.004",
+      "ecosystem": "go",
+      "error_class": "test_error",
+      "description": "test binary requires network but sandboxed",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "dial tcp.*timeout"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "go env 2>&1 | head -20",
+        "trigger_env": {},
+        "expected_stderr_match": "dial tcp.*timeout"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Go test_error: test binary requires network but sandboxed"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.go.test_error.005",
+      "ecosystem": "go",
+      "error_class": "test_error",
+      "description": "parallel tests share state",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "t\\.Parallel.*shared state"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "go env 2>&1 | head -20",
+        "trigger_env": {},
+        "expected_stderr_match": "t\\.Parallel.*shared state"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Go test_error: parallel tests share state"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    }
+  ]
+}

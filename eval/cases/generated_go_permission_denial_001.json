@@ -1,0 +1,17 @@
+{
+  "case_id": "generated_go_permission_denial_001",
+  "source": "authored_fixture",
+  "reverse_from_pattern": "go.permission_denial.001",
+  "pattern_id": "go.permission_denial.001",
+  "source_pool": "official",
+  "ecosystem": "go",
+  "error_class": "permission_denial",
+  "initial_prompt": "In the project at {workdir}, this go permission_denial fails: go install cannot write to GOBIN \u2014 redirect GOBIN to writable directory. Reproduce the failure with `bash build.sh`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+  "success_criteria": {
+    "root_cause_regex": ".+",
+    "fix_command_test": "cd {workdir} && bash build.sh"
+  },
+  "max_rounds": 6,
+  "fixture_strategy": "authored_files",
+  "promotion_eligible": true
+}

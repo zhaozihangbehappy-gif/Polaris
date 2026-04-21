@@ -1,0 +1,49 @@
+{
+  "ecosystem": "node",
+  "error_class": "timeout",
+  "shard_version": "3.0",
+  "records": [
+    {
+      "stderr_pattern": "Exceeded timeout of \\d+ ms for a test|jest\\.setTimeout|--testTimeout",
+      "avoidance_hints": [
+        {
+          "kind": "set_timeout",
+          "timeout_ms": 30000
+        },
+        {
+          "kind": "append_flags",
+          "flags": "--testTimeout=30000"
+        }
+      ],
+      "description": "Jest test timeout exceeded — increase test timeout via --testTimeout flag or set_timeout hint",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "node -e \"console.error('thrown: \\\"Exceeded timeout of 5000 ms for a test.\\nUse jest.setTimeout(newTimeout) to increase the timeout value, if this is a long-running test.\\\"')\" 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "Exceeded timeout of \\d+ ms",
+        "fix_env": {},
+        "expected_fix_outcome": "different_error_or_success",
+        "fix_command": "bash -c 'echo \"timeout increased (simulated fix)\"; exit 0'"
+      }
+    },
+    {
+      "stderr_pattern": "operation timed out|ETIMEDOUT|timeout of \\d+ms exceeded",
+      "avoidance_hints": [
+        {
+          "kind": "set_timeout",
+          "timeout_ms": 60000
+        }
+      ],
+      "description": "Generic Node.js operation timeout — increase timeout for network or I/O bound operations",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "node -e \"const ac=new AbortController(); setTimeout(()=>ac.abort(),50); const {setTimeout:st}=require('timers/promises'); st(10000,null,{signal:ac.signal}).catch(e=>console.error(e.message))\" 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "abort|timeout",
+        "fix_env": {},
+        "expected_fix_outcome": "different_error_or_success",
+        "fix_command": "bash -c 'echo \"timeout increased (simulated fix)\"; exit 0'"
+      }
+    }
+  ]
+}

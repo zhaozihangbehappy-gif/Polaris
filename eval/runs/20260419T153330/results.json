@@ -1,0 +1,98 @@
+[
+  {
+    "runner_name": "mock",
+    "case_id": "case_001_python_pythonpath",
+    "polaris_enabled": false,
+    "metrics": {
+      "rounds_to_root_cause": 12,
+      "redundant_actions_count": 5,
+      "token_consumption": 7068,
+      "tool_calls": 12,
+      "ci_pass": true,
+      "human_intervention_count": 0
+    },
+    "transcript": "[MOCK transcript for case_001_python_pythonpath polaris=False seed=42]\nrounds=12 tokens=7068 tool_calls=12 ci_pass=True\n",
+    "seed": 42,
+    "transcript_hash": "693ce0b86f3c57b02d154f93a005a760730375184a862884f6224511d1146873"
+  },
+  {
+    "runner_name": "mock",
+    "case_id": "case_001_python_pythonpath",
+    "polaris_enabled": true,
+    "metrics": {
+      "rounds_to_root_cause": 10,
+      "redundant_actions_count": 0,
+      "token_consumption": 5855,
+      "tool_calls": 11,
+      "ci_pass": true,
+      "human_intervention_count": 0
+    },
+    "transcript": "[MOCK transcript for case_001_python_pythonpath polaris=True seed=42]\nrounds=10 tokens=5855 tool_calls=11 ci_pass=True\n",
+    "seed": 42,
+    "transcript_hash": "2c61bb7e75712e912675e6d539e9e9594116dbd400b7b77e8ec943497d02a286"
+  },
+  {
+    "runner_name": "mock",
+    "case_id": "case_002_node_enoent_lockfile",
+    "polaris_enabled": false,
+    "metrics": {
+      "rounds_to_root_cause": 5,
+      "redundant_actions_count": 2,
+      "token_consumption": 6039,
+      "tool_calls": 9,
+      "ci_pass": false,
+      "human_intervention_count": 0
+    },
+    "transcript": "[MOCK transcript for case_002_node_enoent_lockfile polaris=False seed=42]\nrounds=5 tokens=6039 tool_calls=9 ci_pass=False\n",
+    "seed": 42,
+    "transcript_hash": "702d19a79e9d9b1c4b37cac7b1d0815cf566ddfb5b56e21ca53970618def5311"
+  },
+  {
+    "runner_name": "mock",
+    "case_id": "case_002_node_enoent_lockfile",
+    "polaris_enabled": true,
+    "metrics": {
+      "rounds_to_root_cause": 6,
+      "redundant_actions_count": 2,
+      "token_consumption": 4156,
+      "tool_calls": 6,
+      "ci_pass": true,
+      "human_intervention_count": 0
+    },
+    "transcript": "[MOCK transcript for case_002_node_enoent_lockfile polaris=True seed=42]\nrounds=6 tokens=4156 tool_calls=6 ci_pass=True\n",
+    "seed": 42,
+    "transcript_hash": "fe4ae929639188b56ea1f2efce869278f1b01d30e1405f4e6d722dd1d9f24baa"
+  },
+  {
+    "runner_name": "mock",
+    "case_id": "case_003_docker_layer_cache",
+    "polaris_enabled": false,
+    "metrics": {
+      "rounds_to_root_cause": 10,
+      "redundant_actions_count": 6,
+      "token_consumption": 6217,
+      "tool_calls": 10,
+      "ci_pass": false,
+      "human_intervention_count": 0
+    },
+    "transcript": "[MOCK transcript for case_003_docker_layer_cache polaris=False seed=42]\nrounds=10 tokens=6217 tool_calls=10 ci_pass=False\n",
+    "seed": 42,
+    "transcript_hash": "3b2af98e95b130976005184749106531f12493b26e06184ed9dcb8903d351a65"
+  },
+  {
+    "runner_name": "mock",
+    "case_id": "case_003_docker_layer_cache",
+    "polaris_enabled": true,
+    "metrics": {
+      "rounds_to_root_cause": 5,
+      "redundant_actions_count": 1,
+      "token_consumption": 3634,
+      "tool_calls": 10,
+      "ci_pass": true,
+      "human_intervention_count": 0
+    },
+    "transcript": "[MOCK transcript for case_003_docker_layer_cache polaris=True seed=42]\nrounds=5 tokens=3634 tool_calls=10 ci_pass=True\n",
+    "seed": 42,
+    "transcript_hash": "e38a4a6032c5842cd7e6837e52ba2fbc106ab9d9ec34be07dec96b672c754001"
+  }
+]

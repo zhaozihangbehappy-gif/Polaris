@@ -1,0 +1,26 @@
+{
+  "candidate_fixes": [
+    "capture the failing command, stderr, and current step before making changes",
+    "prefer the smallest local diagnostic command that can narrow the failure"
+  ],
+  "confidence": "low",
+  "depth_reason": "first_failure",
+  "escalate": false,
+  "evidence": [
+    "command output does not match expected stdout exactly"
+  ],
+  "failure_type": "unknown",
+  "next_depth": "medium",
+  "nonrepair_stop": false,
+  "probe_budget": 2,
+  "recommended_tree": "generic_probe_tree",
+  "references": [
+    "Polaris/references/repair-actions.md",
+    "Polaris/references/stop-classifications.md"
+  ],
+  "repair_class": "generic_probe_tree",
+  "repair_depth": "shallow",
+  "retry_guidance": "retry only after collecting clearer local evidence",
+  "should_deepen": true,
+  "suggested_rule_layer": "experimental"
+}

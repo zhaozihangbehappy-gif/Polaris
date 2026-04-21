@@ -1,0 +1,15 @@
+{
+  "case_id": "generated_go_version_conflict_000",
+  "files": [
+    "go.mod",
+    "main.go"
+  ],
+  "dependencies": {},
+  "build_commands": [],
+  "expected_failure_command": "cd {workdir} && go build",
+  "expected_failure_stderr_regex": "go\\.mod requires go >= \\d|module requires Go \\d+\\.\\d+|toolchain not available|download go\\d+\\.\\d+",
+  "manifest_schema_version": 1,
+  "bash_self_contained": false,
+  "reverse_from_pattern": "go.version_conflict.000",
+  "source_pool": "official"
+}

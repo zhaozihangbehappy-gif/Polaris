@@ -1,0 +1,15 @@
+{
+  "case_id": "generated_rust_build_error_001",
+  "files": [
+    "Cargo.toml",
+    "src/lib.rs"
+  ],
+  "dependencies": {},
+  "build_commands": [],
+  "expected_failure_command": "cd {workdir} && PATH=/home/administrator/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/bin:$PATH cargo check --quiet",
+  "expected_failure_stderr_regex": "error: could not compile `incremental_reset_demo`",
+  "manifest_schema_version": 1,
+  "bash_self_contained": false,
+  "reverse_from_pattern": "rust.build_error.001",
+  "source_pool": "official"
+}

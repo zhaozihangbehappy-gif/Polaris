@@ -1,0 +1,202 @@
+{
+  "ecosystem": "python",
+  "error_class": "encoding_error",
+  "schema_version": 4,
+  "records": [
+    {
+      "pattern_id": "candidate.python.encoding_error.000",
+      "ecosystem": "python",
+      "error_class": "encoding_error",
+      "description": "UTF-8 decode error reading file",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "UnicodeDecodeError.*utf-8.*invalid start byte"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "file --mime-encoding 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "UnicodeDecodeError.*utf-8.*invalid start byte"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Fix encoding: UTF-8 decode error reading file"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.encoding_error.001",
+      "ecosystem": "python",
+      "error_class": "encoding_error",
+      "description": "GBK decode on non-Chinese host",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "UnicodeDecodeError.*gbk"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "file --mime-encoding 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "UnicodeDecodeError.*gbk"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Fix encoding: GBK decode on non-Chinese host"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.encoding_error.002",
+      "ecosystem": "python",
+      "error_class": "encoding_error",
+      "description": "BOM in JSON file",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "json\\.decoder\\.JSONDecodeError.*Expecting value"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "file --mime-encoding 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "json\\.decoder\\.JSONDecodeError.*Expecting value"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Fix encoding: BOM in JSON file"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.encoding_error.003",
+      "ecosystem": "python",
+      "error_class": "encoding_error",
+      "description": "CRLF in shell script",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "/bin/bash\\^M: bad interpreter"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "file --mime-encoding 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "/bin/bash\\^M: bad interpreter"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Fix encoding: CRLF in shell script"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.encoding_error.004",
+      "ecosystem": "python",
+      "error_class": "encoding_error",
+      "description": "mixed tabs/spaces",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "TabError.*inconsistent use of tabs and spaces"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "file --mime-encoding 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "TabError.*inconsistent use of tabs and spaces"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Fix encoding: mixed tabs/spaces"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    }
+  ]
+}

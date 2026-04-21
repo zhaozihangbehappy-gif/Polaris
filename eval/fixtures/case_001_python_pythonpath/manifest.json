@@ -1,0 +1,25 @@
+{
+  "case_id": "case_001_python_pythonpath",
+  "files": [
+    {
+      "relpath": "src/mymod.py",
+      "sha256": "0abae1e0ae728216ee44993c5a3a755f8b1c387d947fc4c4f72cab0e4a84214b",
+      "size": 6
+    },
+    {
+      "relpath": "test.py",
+      "sha256": "25c2087c3eddadeaf09b0b12932a1dd34be8ba17b45624e24074a6efe7a5bc6c",
+      "size": 29
+    }
+  ],
+  "dependencies": {
+    "python3": ">=3.10"
+  },
+  "build_commands": [
+    "rm -rf {workdir} && mkdir -p {workdir}",
+    "cp -r files/. {workdir}/"
+  ],
+  "expected_failure_command": "cd {workdir} && python3 test.py",
+  "expected_failure_stderr_regex": "ModuleNotFoundError: No module named 'mymod'",
+  "manifest_schema_version": 1
+}

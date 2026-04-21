@@ -1,0 +1,5 @@
+{
+  "stderr": "Traceback (most recent call last):\n  File \"/home/user/project/test_runner.py\", line 1, in <module>\n    import pytest\nModuleNotFoundError: No module named 'pytest'\n\nThe above exception was the direct cause of the following exception:\n\nTraceback (most recent call last):\n  File \"/home/user/project/test_runner.py\", line 4, in <module>\n    raise RuntimeError(\"Test dependencies not installed. Run: pip install -r requirements-dev.txt\")\nRuntimeError: Test dependencies not installed. Run: pip install -r requirements-dev.txt",
+  "error_class": "missing_dependency",
+  "source": "test dependency not installed"
+}

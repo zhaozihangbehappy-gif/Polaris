@@ -1,0 +1,537 @@
+{
+  "ecosystem": "node",
+  "error_class": "missing_dependency",
+  "schema_version": 4,
+  "records": [
+    {
+      "pattern_id": "node.missing_dependency.000",
+      "ecosystem": "node",
+      "error_class": "missing_dependency",
+      "description": "Node.js CJS module resolution failure \u2014 ensure NODE_PATH includes local node_modules",
+      "source": "prebuilt",
+      "trigger_signals": {
+        "stderr_regex": [
+          "Cannot find module '([^']+)'"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "mkdir -p /tmp/_polaris_repro_nodemod/_polaris_test_mod && echo 'module.exports = 42;' > /tmp/_polaris_repro_nodemod/_polaris_test_mod/index.js && node -e \"require('_polaris_test_mod')\" 2>&1 || true",
+        "trigger_env": {
+          "NODE_PATH": "/nonexistent_path_only"
+        },
+        "expected_stderr_match": "Cannot find module",
+        "expected_fix_outcome": "different_error_or_success"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "NODE_PATH": "./node_modules"
+            }
+          }
+        ],
+        "fix_command": "bash -c 'echo \"NODE_PATH=./node_modules applied (simulated fix)\"; exit 0'",
+        "fix_env": {
+          "NODE_PATH": "/tmp/_polaris_repro_nodemod"
+        },
+        "description": "Node.js CJS module resolution failure \u2014 ensure NODE_PATH includes local node_modules"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": [
+          {
+            "agent": "claude_code",
+            "agent_version": "unknown",
+            "date_verified": "2026-04-20T09:45:28+00:00",
+            "status": "verified_live",
+            "artifact_path": "eval/runs/20260420T170630/transcripts/claude_code__case_002_node_enoent_lockfile__baseline.txt",
+            "transcript_hash": "308404359fc8865b43ba3c86bcd13c4f49568e17d6d360ce443a6402eed36215",
+            "pre_failure_reproduced": true,
+            "workdir_manifest_hash": "1f201cbcc2b398d6bec7fc4e36be918796ce0329c8bbf28404818ce5d3874ca3",
+            "notes": "case=case_002_node_enoent_lockfile polaris_enabled=False rounds=10 tool_calls=9 tokens=2650",
+            "model": "claude-haiku-4-5-20251001"
+          },
+          {
+            "agent": "claude_code",
+            "agent_version": "unknown",
+            "date_verified": "2026-04-20T09:45:28+00:00",
+            "status": "verified_live",
+            "artifact_path": "eval/runs/20260420T170630/transcripts/claude_code__case_002_node_enoent_lockfile__polaris.txt",
+            "transcript_hash": "a0c52f9e46170f5b4418fc28cb40ec10ce795d44f7d77727a6f1aa076e2d102f",
+            "pre_failure_reproduced": true,
+            "workdir_manifest_hash": "a02c4c30aaf4b4b418c1db6bee8f66e03cc7d672c561efecdec3228888fb849d",
+            "notes": "case=case_002_node_enoent_lockfile polaris_enabled=True rounds=29 tool_calls=28 tokens=5620",
+            "model": "claude-haiku-4-5-20251001"
+          }
+        ],
+        "invalidated_evidence": [
+          {
+            "agent": "codex",
+            "agent_version": "unknown",
+            "date_verified": "2026-04-19T10:13:20+00:00",
+            "status": "invalidated_contaminated_fixture",
+            "artifact_path": "eval/runs/20260419T171919/transcripts/codex__case_002_node_enoent_lockfile__baseline.txt",
+            "transcript_hash": "f7d37c0bd7273a5b28c67a407dcc63cb65856fd2b4e599492d8eab48cabbf4c0",
+            "notes": "case=case_002_node_enoent_lockfile polaris_enabled=False rounds=5 tool_calls=24 tokens=269681",
+            "invalidation_reason": "Fixture not reset between runs \u2014 transcript shows agent observed already-fixed workdir state. Expected_failure_command never reproduced the bad state before the agent's 'fix', so these runs do not establish liveness. See INVALIDATED_EVIDENCE_REPORT.md.",
+            "invalidated_at": "2026-04-19T18:30:00+00:00"
+          },
+          {
+            "agent": "codex",
+            "agent_version": "unknown",
+            "date_verified": "2026-04-19T10:13:20+00:00",
+            "status": "invalidated_contaminated_fixture",
+            "artifact_path": "eval/runs/20260419T171919/transcripts/codex__case_002_node_enoent_lockfile__polaris.txt",
+            "transcript_hash": "8c3a345fd46adb469d1d4b102e74220a8d56cd119a0bb5522b14b9e44b9ff265",
+            "notes": "case=case_002_node_enoent_lockfile polaris_enabled=True rounds=3 tool_calls=23 tokens=230339",
+            "invalidation_reason": "Fixture not reset between runs \u2014 transcript shows agent observed already-fixed workdir state. Expected_failure_command never reproduced the bad state before the agent's 'fix', so these runs do not establish liveness. See INVALIDATED_EVIDENCE_REPORT.md.",
+            "invalidated_at": "2026-04-19T18:30:00+00:00"
+          },
+          {
+            "agent": "claude_code",
+            "agent_version": "unknown",
+            "date_verified": "2026-04-19T10:13:20+00:00",
+            "status": "invalidated_contaminated_fixture",
+            "artifact_path": "eval/runs/20260419T171919/transcripts/claude_code__case_002_node_enoent_lockfile__baseline.txt",
+            "transcript_hash": "122e516bdf53379c97c64d0aadbabe23b9e8eeeb369f4ea27e926da4668604bf",
+            "notes": "case=case_002_node_enoent_lockfile polaris_enabled=False rounds=1 tool_calls=8 tokens=659",
+            "invalidation_reason": "Fixture not reset between runs \u2014 transcript shows agent observed already-fixed workdir state. Expected_failure_command never reproduced the bad state before the agent's 'fix', so these runs do not establish liveness. See INVALIDATED_EVIDENCE_REPORT.md.",
+            "invalidated_at": "2026-04-19T18:30:00+00:00"
+          },
+          {
+            "agent": "claude_code",
+            "agent_version": "unknown",
+            "date_verified": "2026-04-19T10:13:20+00:00",
+            "status": "invalidated_contaminated_fixture",
+            "artifact_path": "eval/runs/20260419T171919/transcripts/claude_code__case_002_node_enoent_lockfile__polaris.txt",
+            "transcript_hash": "e99adaefb6d4e4ab60dce111df90f29cd2c9b282782fe03000d7ebb95e2d2e66",
+            "notes": "case=case_002_node_enoent_lockfile polaris_enabled=True rounds=1 tool_calls=11 tokens=925",
+            "invalidation_reason": "Fixture not reset between runs \u2014 transcript shows agent observed already-fixed workdir state. Expected_failure_command never reproduced the bad state before the agent's 'fix', so these runs do not establish liveness. See INVALIDATED_EVIDENCE_REPORT.md.",
+            "invalidated_at": "2026-04-19T18:30:00+00:00"
+          }
+        ]
+      },
+      "legacy_v3": {
+        "stderr_pattern": "Cannot find module '([^']+)'",
+        "avoidance_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "NODE_PATH": "./node_modules"
+            }
+          }
+        ],
+        "description": "Node.js CJS module resolution failure \u2014 ensure NODE_PATH includes local node_modules",
+        "source": "prebuilt",
+        "reproduction": {
+          "command": "mkdir -p /tmp/_polaris_repro_nodemod/_polaris_test_mod && echo 'module.exports = 42;' > /tmp/_polaris_repro_nodemod/_polaris_test_mod/index.js && node -e \"require('_polaris_test_mod')\" 2>&1 || true",
+          "trigger_env": {
+            "NODE_PATH": "/nonexistent_path_only"
+          },
+          "expected_stderr_match": "Cannot find module",
+          "fix_env": {
+            "NODE_PATH": "/tmp/_polaris_repro_nodemod"
+          },
+          "expected_fix_outcome": "different_error_or_success",
+          "fix_command": "bash -c 'echo \"NODE_PATH=./node_modules applied (simulated fix)\"; exit 0'"
+        }
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds"
+      ],
+      "authored_fixture": {
+        "authored_at": "2026-04-20T02:49:24+00:00",
+        "authored_by": "codex",
+        "authored_with_prompt_sha256": "850506ead2c6aa0acb7a8df565c6d1d1932243b3b668a29029d33403690bd3a3",
+        "verification_command": "npm test",
+        "expected_stderr_regex": "Cannot find module 'local-greeter'",
+        "files": [
+          {
+            "path": "package.json",
+            "content": "{\n  \"name\": \"node-missing-dependency-node-path\",\n  \"version\": \"1.0.0\",\n  \"private\": true,\n  \"scripts\": {\n    \"test\": \"node runner.js\"\n  }\n}\n"
+          },
+          {
+            "path": "runner.js",
+            "content": "'use strict';\n\nconst { createRequire } = require('module');\n\nconst sandboxRequire = createRequire('/tmp/polaris-node-missing-dependency/virtual-entry.js');\nconst greet = sandboxRequire('local-greeter');\n\nif (greet('agent') !== 'hello, agent') {\n  throw new Error('unexpected greeting');\n}\n\nconsole.log(greet('agent'));\n"
+          },
+          {
+            "path": "node_modules/local-greeter/index.js",
+            "content": "'use strict';\n\nmodule.exports = function greet(name) {\n  return `hello, ${name}`;\n};\n"
+          }
+        ],
+        "reference_fix_files": [
+          {
+            "path": "package.json",
+            "content": "{\n  \"name\": \"node-missing-dependency-node-path\",\n  \"version\": \"1.0.0\",\n  \"private\": true,\n  \"scripts\": {\n    \"test\": \"NODE_PATH=$PWD/node_modules node runner.js\"\n  }\n}\n"
+          }
+        ],
+        "fix_rationale": "The test runner creates a require context outside the project tree, so NODE_PATH must include this project's local node_modules directory for CommonJS to resolve local-greeter.",
+        "reviewer_record": {
+          "validated_in_sandbox_at": "2026-04-20T02:49:24+00:00",
+          "sandbox_pre_fix_exit_code": 1,
+          "sandbox_pre_fix_stderr_match": true,
+          "sandbox_post_fix_exit_code": 0,
+          "sandbox_workdir_hash_pre": "67dfd563116468fbbd93c6bc0480295688db5391f9b8af58a893624cac1c339c",
+          "sandbox_workdir_hash_post": "553ac9c63c433787ad2e6b77b53925062ac864f52505b881c1981345294cfd33",
+          "notes": "authored by codex; pre-fix fails+matches regex, post-fix passes"
+        }
+      }
+    },
+    {
+      "pattern_id": "node.missing_dependency.001",
+      "ecosystem": "node",
+      "error_class": "missing_dependency",
+      "description": "ESM module resolution failure \u2014 set NODE_PATH to directory containing the package",
+      "source": "prebuilt",
+      "trigger_signals": {
+        "stderr_regex": [
+          "ERR_MODULE_NOT_FOUND|Cannot find package '([^']+)'"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "node --input-type=module -e \"import x from '_polaris_nonexistent_esm'\" 2>&1 || true",
+        "trigger_env": {
+          "NODE_PATH": ""
+        },
+        "expected_stderr_match": "ERR_MODULE_NOT_FOUND",
+        "expected_fix_outcome": "different_error_or_success"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "NODE_PATH": "./node_modules"
+            }
+          }
+        ],
+        "fix_command": "bash -c 'echo \"NODE_PATH=./node_modules applied (simulated fix)\"; exit 0'",
+        "fix_env": {},
+        "description": "ESM module resolution failure \u2014 set NODE_PATH to directory containing the package"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": [
+          {
+            "agent": "claude_code",
+            "agent_version": "unknown",
+            "model": "claude-opus-4-7",
+            "date_verified": "2026-04-20T11:27:32+00:00",
+            "status": "verified_live",
+            "artifact_path": "eval/runs/20260420T192651/transcripts/claude_code__generated_node_missing_dependency_001__polaris.txt",
+            "transcript_hash": "2ad03e0d064a488fa3a9de39e7be92983ed7f2c296f85737d3f586d623e9d8ac",
+            "pre_failure_reproduced": true,
+            "workdir_manifest_hash": "005a138ad6332935722d41a64ccbe498fc72b85721a27258dcf7fbd241143107",
+            "notes": "case=generated_node_missing_dependency_001 polaris_enabled=True rounds=1 tool_calls=8 tokens=488"
+          }
+        ]
+      },
+      "legacy_v3": {
+        "stderr_pattern": "ERR_MODULE_NOT_FOUND|Cannot find package '([^']+)'",
+        "avoidance_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "NODE_PATH": "./node_modules"
+            }
+          }
+        ],
+        "description": "ESM module resolution failure \u2014 set NODE_PATH to directory containing the package",
+        "source": "prebuilt",
+        "reproduction": {
+          "command": "node --input-type=module -e \"import x from '_polaris_nonexistent_esm'\" 2>&1 || true",
+          "trigger_env": {
+            "NODE_PATH": ""
+          },
+          "expected_stderr_match": "ERR_MODULE_NOT_FOUND",
+          "fix_env": {},
+          "expected_fix_outcome": "different_error_or_success",
+          "fix_command": "bash -c 'echo \"NODE_PATH=./node_modules applied (simulated fix)\"; exit 0'"
+        }
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds"
+      ],
+      "authored_fixture": {
+        "authored_at": "2026-04-20T02:51:04+00:00",
+        "authored_by": "codex",
+        "authored_with_prompt_sha256": "8f747947c84acbcd6bb6478f043d79769550d2fada412339142bc727744f072c",
+        "verification_command": "npm test",
+        "expected_stderr_regex": "ERR_MODULE_NOT_FOUND|Cannot find package 'shelf-message'",
+        "files": [
+          {
+            "path": "package.json",
+            "content": "{\n  \"name\": \"node-missing-dependency-node-path\",\n  \"version\": \"1.0.0\",\n  \"type\": \"module\",\n  \"scripts\": {\n    \"test\": \"node --loader ./node-path-loader.mjs app.mjs\"\n  }\n}\n"
+          },
+          {
+            "path": "app.mjs",
+            "content": "import { message } from \"shelf-message\";\n\nconsole.log(message());\n"
+          },
+          {
+            "path": "node-path-loader.mjs",
+            "content": "import { access } from \"node:fs/promises\";\nimport { delimiter } from \"node:path\";\nimport { pathToFileURL } from \"node:url\";\n\nexport async function resolve(specifier, context, defaultResolve) {\n  const isBare = !specifier.startsWith(\".\") && !specifier.startsWith(\"/\") && !specifier.includes(\":\");\n\n  if (isBare && process.env.NODE_PATH) {\n    for (const root of process.env.NODE_PATH.split(delimiter).filter(Boolean)) {\n      const candidate = new URL(`${specifier}/index.mjs`, pathToFileURL(`${root}/`));\n\n      try {\n        await access(candidate);\n        return { shortCircuit: true, url: candidate.href };\n      } catch {\n        // Try the next NODE_PATH entry, then fall back to Node's resolver.\n      }\n    }\n  }\n\n  return defaultResolve(specifier, context, defaultResolve);\n}\n"
+          },
+          {
+            "path": "vendor/shelf-message/index.mjs",
+            "content": "export function message() {\n  return \"resolved from NODE_PATH\";\n}\n"
+          }
+        ],
+        "reference_fix_files": [
+          {
+            "path": "package.json",
+            "content": "{\n  \"name\": \"node-missing-dependency-node-path\",\n  \"version\": \"1.0.0\",\n  \"type\": \"module\",\n  \"scripts\": {\n    \"test\": \"NODE_PATH=./vendor node --loader ./node-path-loader.mjs app.mjs\"\n  }\n}\n"
+          }
+        ],
+        "fix_rationale": "Setting NODE_PATH to the vendored package directory lets the ESM loader resolve the bare shelf-message import.",
+        "reviewer_record": {
+          "validated_in_sandbox_at": "2026-04-20T02:51:04+00:00",
+          "sandbox_pre_fix_exit_code": 1,
+          "sandbox_pre_fix_stderr_match": true,
+          "sandbox_post_fix_exit_code": 0,
+          "sandbox_workdir_hash_pre": "005a138ad6332935722d41a64ccbe498fc72b85721a27258dcf7fbd241143107",
+          "sandbox_workdir_hash_post": "cce86818caa5022fc293f81540470093f3c4b6f876b2b3beb0ca5e841907fc9e",
+          "notes": "authored by codex; pre-fix fails+matches regex, post-fix passes"
+        }
+      }
+    },
+    {
+      "pattern_id": "node.missing_dependency.002",
+      "ecosystem": "node",
+      "error_class": "missing_dependency",
+      "description": "Module not found with require stack trace \u2014 NODE_PATH may be missing the install directory",
+      "source": "prebuilt",
+      "trigger_signals": {
+        "stderr_regex": [
+          "MODULE_NOT_FOUND.*requireStack"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "node -e \"require('/tmp/_polaris_nosuch_module_xyz')\" 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "Cannot find module",
+        "expected_fix_outcome": "different_error_or_success"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "NODE_PATH": "./node_modules"
+            }
+          }
+        ],
+        "fix_command": "bash -c 'echo \"NODE_PATH=./node_modules applied (simulated fix)\"; exit 0'",
+        "fix_env": {},
+        "description": "Module not found with require stack trace \u2014 NODE_PATH may be missing the install directory"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "legacy_v3": {
+        "stderr_pattern": "MODULE_NOT_FOUND.*requireStack",
+        "avoidance_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "NODE_PATH": "./node_modules"
+            }
+          }
+        ],
+        "description": "Module not found with require stack trace \u2014 NODE_PATH may be missing the install directory",
+        "source": "prebuilt",
+        "reproduction": {
+          "command": "node -e \"require('/tmp/_polaris_nosuch_module_xyz')\" 2>&1 || true",
+          "trigger_env": {},
+          "expected_stderr_match": "Cannot find module",
+          "fix_env": {},
+          "expected_fix_outcome": "different_error_or_success",
+          "fix_command": "bash -c 'echo \"NODE_PATH=./node_modules applied (simulated fix)\"; exit 0'"
+        }
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ],
+      "authored_fixture": {
+        "authored_at": "2026-04-20T02:49:49+00:00",
+        "authored_by": "codex",
+        "authored_with_prompt_sha256": "16663d49bb3c6ff12a4f50bfd6aab2d1607142613d9e357447e27a6a6eba1551",
+        "verification_command": "npm test --silent",
+        "expected_stderr_regex": "MODULE_NOT_FOUND[\\s\\S]*requireStack",
+        "files": [
+          {
+            "path": "package.json",
+            "content": "{\n  \"name\": \"node-missing-dependency-node-path\",\n  \"version\": \"1.0.0\",\n  \"private\": true,\n  \"scripts\": {\n    \"test\": \"node app.js\"\n  }\n}\n"
+          },
+          {
+            "path": "app.js",
+            "content": "const greet = require(\"local-greeter\");\n\nconsole.log(greet(\"Polaris\"));\n"
+          },
+          {
+            "path": "deps/local-greeter/index.js",
+            "content": "module.exports = function greet(name) {\n  return `hello, ${name}`;\n};\n"
+          }
+        ],
+        "reference_fix_files": [
+          {
+            "path": "package.json",
+            "content": "{\n  \"name\": \"node-missing-dependency-node-path\",\n  \"version\": \"1.0.0\",\n  \"private\": true,\n  \"scripts\": {\n    \"test\": \"NODE_PATH=./deps node app.js\"\n  }\n}\n"
+          }
+        ],
+        "fix_rationale": "The application imports a module stored under deps, so the test script must include that directory in NODE_PATH before starting Node.",
+        "reviewer_record": {
+          "validated_in_sandbox_at": "2026-04-20T02:49:49+00:00",
+          "sandbox_pre_fix_exit_code": 1,
+          "sandbox_pre_fix_stderr_match": true,
+          "sandbox_post_fix_exit_code": 0,
+          "sandbox_workdir_hash_pre": "49aa91e652a3df6e90d2d847d5b92bd29017cb52bbab750e93befc0c111901b4",
+          "sandbox_workdir_hash_post": "f7d898d842c3859efec900951a3f3723db89ac2dd3df6f69551bd302fa8eab3f",
+          "notes": "authored by codex; pre-fix fails+matches regex, post-fix passes"
+        }
+      }
+    },
+    {
+      "pattern_id": "node.missing_dependency.003",
+      "ecosystem": "node",
+      "error_class": "missing_dependency",
+      "description": "npm peer dependency conflict \u2014 retry with --legacy-peer-deps to bypass strict resolution",
+      "source": "prebuilt",
+      "trigger_signals": {
+        "stderr_regex": [
+          "ERESOLVE.*peer dep|Could not resolve dependency.*peer"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "bash -c 'echo \"npm ERR! code ERESOLVE\" >&2; echo \"npm ERR! ERESOLVE could not resolve dependency: peer dep conflict\" >&2; exit 1' 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "ERESOLVE|peer",
+        "expected_fix_outcome": "different_error_or_success"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "append_flags",
+            "flags": "--legacy-peer-deps"
+          }
+        ],
+        "fix_command": "bash -c 'echo \"npm WARN using --legacy-peer-deps (simulated)\"; echo \"added 3 packages in 0.5s\"; exit 0' 2>&1 || true",
+        "fix_env": {},
+        "description": "npm peer dependency conflict \u2014 retry with --legacy-peer-deps to bypass strict resolution"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": [
+          {
+            "agent": "claude_code",
+            "agent_version": "unknown",
+            "model": "claude-opus-4-7",
+            "date_verified": "2026-04-20T11:28:27+00:00",
+            "status": "verified_live",
+            "artifact_path": "eval/runs/20260420T192732/transcripts/claude_code__generated_node_missing_dependency_003__polaris.txt",
+            "transcript_hash": "9566c1ff2e5f938205d3d5505c107f6e27eaff0a83a7a73972b434889620c512",
+            "pre_failure_reproduced": true,
+            "workdir_manifest_hash": "7a5ffcf4c750cd66e2c4dfd70b00e99eeebedab6197bc44c952e6858dc0f0a19",
+            "notes": "case=generated_node_missing_dependency_003 polaris_enabled=True rounds=1 tool_calls=9 tokens=678"
+          }
+        ]
+      },
+      "legacy_v3": {
+        "stderr_pattern": "ERESOLVE.*peer dep|Could not resolve dependency.*peer",
+        "avoidance_hints": [
+          {
+            "kind": "append_flags",
+            "flags": "--legacy-peer-deps"
+          }
+        ],
+        "description": "npm peer dependency conflict \u2014 retry with --legacy-peer-deps to bypass strict resolution",
+        "source": "prebuilt",
+        "reproduction": {
+          "command": "bash -c 'echo \"npm ERR! code ERESOLVE\" >&2; echo \"npm ERR! ERESOLVE could not resolve dependency: peer dep conflict\" >&2; exit 1' 2>&1 || true",
+          "trigger_env": {},
+          "expected_stderr_match": "ERESOLVE|peer",
+          "fix_command": "bash -c 'echo \"npm WARN using --legacy-peer-deps (simulated)\"; echo \"added 3 packages in 0.5s\"; exit 0' 2>&1 || true",
+          "fix_env": {},
+          "expected_fix_outcome": "different_error_or_success"
+        }
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds"
+      ],
+      "authored_fixture": {
+        "authored_at": "2026-04-20T02:52:57+00:00",
+        "authored_by": "codex",
+        "authored_with_prompt_sha256": "1bdbc6a9f20050518c17673e2f4d77e32640a62746e8bf59896b3e6d918ee9e9",
+        "verification_command": "npm run verify",
+        "expected_stderr_regex": "ERESOLVE[\\s\\S]*peer dependency|Could not resolve dependency:[\\s\\S]*peer host-lib",
+        "files": [
+          {
+            "path": "package.json",
+            "content": "{\n  \"name\": \"peer-conflict-fixture\",\n  \"version\": \"1.0.0\",\n  \"private\": true,\n  \"scripts\": {\n    \"verify\": \"npm install --offline --package-lock=false --ignore-scripts --no-audit --no-fund\"\n  },\n  \"dependencies\": {\n    \"host-lib\": \"file:packages/host-lib\",\n    \"plugin-a\": \"file:packages/plugin-a\",\n    \"plugin-b\": \"file:packages/plugin-b\"\n  }\n}\n"
+          },
+          {
+            "path": "packages/host-lib/package.json",
+            "content": "{\n  \"name\": \"host-lib\",\n  \"version\": \"1.0.0\",\n  \"private\": true\n}\n"
+          },
+          {
+            "path": "packages/plugin-a/package.json",
+            "content": "{\n  \"name\": \"plugin-a\",\n  \"version\": \"1.0.0\",\n  \"private\": true,\n  \"peerDependencies\": {\n    \"host-lib\": \"^1.0.0\"\n  }\n}\n"
+          },
+          {
+            "path": "packages/plugin-b/package.json",
+            "content": "{\n  \"name\": \"plugin-b\",\n  \"version\": \"1.0.0\",\n  \"private\": true,\n  \"peerDependencies\": {\n    \"host-lib\": \"^2.0.0\"\n  }\n}\n"
+          }
+        ],
+        "reference_fix_files": [
+          {
+            "path": "package.json",
+            "content": "{\n  \"name\": \"peer-conflict-fixture\",\n  \"version\": \"1.0.0\",\n  \"private\": true,\n  \"scripts\": {\n    \"verify\": \"npm install --legacy-peer-deps --offline --package-lock=false --ignore-scripts --no-audit --no-fund\"\n  },\n  \"dependencies\": {\n    \"host-lib\": \"file:packages/host-lib\",\n    \"plugin-a\": \"file:packages/plugin-a\",\n    \"plugin-b\": \"file:packages/plugin-b\"\n  }\n}\n"
+          }
+        ],
+        "fix_rationale": "Adding --legacy-peer-deps makes npm bypass strict peer resolution so the local install succeeds despite plugin-b's incompatible host-lib peer range.",
+        "reviewer_record": {
+          "validated_in_sandbox_at": "2026-04-20T02:52:57+00:00",
+          "sandbox_pre_fix_exit_code": 1,
+          "sandbox_pre_fix_stderr_match": true,
+          "sandbox_post_fix_exit_code": 0,
+          "sandbox_workdir_hash_pre": "7a5ffcf4c750cd66e2c4dfd70b00e99eeebedab6197bc44c952e6858dc0f0a19",
+          "sandbox_workdir_hash_post": "1d0bfa0ac31958a61a12d4d7a8a9e9cb793a7640185ce9d6baaaf51525564155",
+          "notes": "authored by codex; pre-fix fails+matches regex, post-fix passes"
+        }
+      }
+    }
+  ]
+}

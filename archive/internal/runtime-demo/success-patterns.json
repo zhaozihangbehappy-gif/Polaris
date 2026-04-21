@@ -1,0 +1,437 @@
+{
+  "patterns": [
+    {
+      "adapter": "python-runtime-local",
+      "asset_version": 1,
+      "best_lifecycle_state": "validated",
+      "confidence": 95,
+      "created_at": "2026-03-13T09:46:26.964853+00:00",
+      "demotion_count": 0,
+      "evidence": [
+        "runtime-repair-results.json",
+        "runtime-repair-plan.json",
+        "runtime-repair-report.json"
+      ],
+      "evidence_count": 3,
+      "expires_at": null,
+      "history": [
+        {
+          "event": "auto_promoted",
+          "reason": "evidence_threshold_met",
+          "to": "validated",
+          "ts": "2026-03-13T10:03:03.797897+00:00"
+        },
+        {
+          "event": "auto_promoted",
+          "reason": "evidence_threshold_met",
+          "to": "validated",
+          "ts": "2026-03-13T10:11:00.734261+00:00"
+        },
+        {
+          "best_lifecycle_state": "validated",
+          "confidence": 82,
+          "event": "merged_validation",
+          "evidence_count": 3,
+          "reason": "rerun_capture",
+          "retained_lifecycle": "validated",
+          "ts": "2026-03-13T10:16:40.966555+00:00",
+          "validation_count": 3
+        },
+        {
+          "best_lifecycle_state": "validated",
+          "confidence": 86,
+          "event": "merged_validation",
+          "evidence_count": 3,
+          "reason": "rerun_capture",
+          "retained_lifecycle": "validated",
+          "ts": "2026-03-13T10:17:09.074967+00:00",
+          "validation_count": 4
+        },
+        {
+          "best_lifecycle_state": "validated",
+          "confidence": 90,
+          "event": "merged_validation",
+          "evidence_count": 3,
+          "reason": "rerun_capture",
+          "retained_lifecycle": "validated",
+          "ts": "2026-03-13T11:25:38.175748+00:00",
+          "validation_count": 5
+        },
+        {
+          "best_lifecycle_state": "validated",
+          "confidence": 94,
+          "event": "merged_validation",
+          "evidence_count": 3,
+          "reason": "rerun_capture",
+          "retained_lifecycle": "validated",
+          "ts": "2026-03-13T11:44:44.707716+00:00",
+          "validation_count": 6
+        },
+        {
+          "best_lifecycle_state": "validated",
+          "confidence": 95,
+          "event": "merged_validation",
+          "evidence_count": 3,
+          "reason": "rerun_capture",
+          "retained_lifecycle": "validated",
+          "ts": "2026-03-13T11:57:05.445997+00:00",
+          "validation_count": 7
+        },
+        {
+          "best_lifecycle_state": "validated",
+          "confidence": 95,
+          "event": "merged_validation",
+          "evidence_count": 3,
+          "reason": "rerun_capture",
+          "retained_lifecycle": "validated",
+          "ts": "2026-03-13T12:02:46.575560+00:00",
+          "validation_count": 8
+        }
+      ],
+      "last_validated_at": "2026-03-13T12:02:46.575559+00:00",
+      "lifecycle_state": "validated",
+      "migrated_from": "pre-step4",
+      "modes": [
+        "long"
+      ],
+      "outcome": "repair path documented without crossing safeguards",
+      "pattern_id": "missing-dependency-repair-loop",
+      "promotion_count": 2,
+      "reusable": true,
+      "selection_count": 0,
+      "sequence": [
+        "diagnose",
+        "plan-repair-tree",
+        "run-probes",
+        "record-rule",
+        "recover"
+      ],
+      "summary": "Dependency failures improve when diagnosis is followed by a bounded local environment probe tree",
+      "tags": [
+        "repair",
+        "python",
+        "orchestration"
+      ],
+      "trigger": "ModuleNotFoundError",
+      "updated_at": "2026-03-13T12:02:46.575558+00:00",
+      "validation_count": 8
+    },
+    {
+      "adapter": null,
+      "asset_version": 2,
+      "best_lifecycle_state": "validated",
+      "confidence": 87,
+      "created_at": "2026-03-13T09:46:26.123838+00:00",
+      "demotion_count": 0,
+      "evidence": [
+        "/tmp/polaris-skill/Polaris/references/repair-actions.md",
+        "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/references/repair-actions.md"
+      ],
+      "evidence_count": 2,
+      "expires_at": null,
+      "fingerprint": "bounded-local-repair",
+      "history": [
+        {
+          "best_lifecycle_state": "validated",
+          "confidence": 74,
+          "event": "merged_validation",
+          "evidence_count": 1,
+          "reason": "rerun_capture",
+          "retained_lifecycle": "validated",
+          "ts": "2026-03-13T10:16:39.770550+00:00",
+          "validation_count": 3
+        },
+        {
+          "best_lifecycle_state": "validated",
+          "confidence": 76,
+          "event": "merged_validation",
+          "evidence_count": 1,
+          "reason": "rerun_capture",
+          "retained_lifecycle": "validated",
+          "ts": "2026-03-13T10:17:07.879937+00:00",
+          "validation_count": 4
+        },
+        {
+          "best_lifecycle_state": "validated",
+          "confidence": 78,
+          "event": "merged_validation",
+          "evidence_count": 1,
+          "reason": "rerun_capture",
+          "retained_lifecycle": "validated",
+          "ts": "2026-03-13T11:25:36.882511+00:00",
+          "validation_count": 5
+        },
+        {
+          "best_lifecycle_state": "validated",
+          "confidence": 80,
+          "event": "merged_validation",
+          "evidence_count": 1,
+          "reason": "rerun_capture",
+          "retained_lifecycle": "validated",
+          "ts": "2026-03-13T11:44:43.494687+00:00",
+          "validation_count": 6
+        },
+        {
+          "best_lifecycle_state": "validated",
+          "confidence": 82,
+          "event": "merged_validation",
+          "evidence_count": 1,
+          "reason": "rerun_capture",
+          "retained_lifecycle": "validated",
+          "ts": "2026-03-13T11:57:04.254400+00:00",
+          "validation_count": 7
+        },
+        {
+          "best_lifecycle_state": "validated",
+          "confidence": 84,
+          "event": "merged_validation",
+          "evidence_count": 1,
+          "reason": "rerun_capture",
+          "retained_lifecycle": "validated",
+          "ts": "2026-03-13T12:02:45.332543+00:00",
+          "validation_count": 8
+        },
+        {
+          "best_lifecycle_state": "validated",
+          "confidence": 87,
+          "event": "merged_validation",
+          "evidence_count": 2,
+          "reason": "rerun_capture",
+          "retained_lifecycle": "validated",
+          "ts": "2026-03-15T13:23:13.076039+00:00",
+          "validation_count": 9
+        }
+      ],
+      "last_selected_at": "2026-03-13T10:10:59.772621+00:00",
+      "last_validated_at": "2026-03-15T13:23:13.076038+00:00",
+      "lifecycle_state": "validated",
+      "modes": [
+        "long"
+      ],
+      "outcome": "bounded recovery without crossing safeguards",
+      "pattern_id": "bounded-local-repair",
+      "promotion_count": 0,
+      "reusable": true,
+      "selection_count": 2,
+      "sequence": [
+        "detect",
+        "branch",
+        "probe",
+        "recover",
+        "record"
+      ],
+      "strategy_hints": {},
+      "summary": "Local repair branches should stay probe-only and feed explicit recovery references",
+      "tags": [
+        "repair",
+        "local",
+        "orchestration"
+      ],
+      "trigger": "repairable local runtime failure",
+      "updated_at": "2026-03-15T13:23:13.076036+00:00",
+      "validation_count": 9
+    },
+    {
+      "adapter": "shell-command",
+      "asset_version": 2,
+      "best_lifecycle_state": "validated",
+      "confidence": 75,
+      "created_at": "2026-03-15T13:23:14.841314+00:00",
+      "demotion_count": 0,
+      "evidence": [
+        "runtime-repair-results.json",
+        "runtime-repair-plan.json",
+        "runtime-repair-report.json"
+      ],
+      "evidence_count": 3,
+      "expires_at": null,
+      "fingerprint": "repair-pattern-b8e9cda0824c",
+      "history": [
+        {
+          "event": "captured",
+          "reason": "new_pattern",
+          "ts": "2026-03-15T13:23:14.841335+00:00"
+        },
+        {
+          "event": "auto_promoted",
+          "reason": "evidence_threshold_met",
+          "to": "validated",
+          "ts": "2026-03-15T13:23:14.841342+00:00"
+        }
+      ],
+      "last_validated_at": "2026-03-15T13:23:14.841343+00:00",
+      "lifecycle_state": "validated",
+      "modes": [
+        "short"
+      ],
+      "outcome": "path-resolution repair path documented with local filesystem evidence",
+      "pattern_id": "repair-pattern-b8e9cda0824c",
+      "promotion_count": 1,
+      "reusable": true,
+      "selection_count": 0,
+      "sequence": [
+        "diagnose",
+        "path-probes",
+        "record-evidence",
+        "recover"
+      ],
+      "strategy_hints": {
+        "execution_ordering": [
+          "diagnose",
+          "path-probes",
+          "record-evidence",
+          "recover"
+        ],
+        "fallback_choice": "sticky-adapter-first",
+        "hot_path_budget": 4,
+        "validation_strategy": "runner-contract-strict"
+      },
+      "summary": "Path failures improved after bounded working-directory and nearby-file probes captured local filesystem evidence",
+      "tags": [
+        "repair",
+        "local",
+        "path_or_missing_file",
+        "path_probe_tree",
+        "shallow",
+        "filesystem",
+        "paths",
+        "orchestration"
+      ],
+      "trigger": "path_or_missing_file",
+      "updated_at": "2026-03-15T13:23:14.841326+00:00",
+      "validation_count": 1
+    },
+    {
+      "adapter": "python-runtime-local",
+      "asset_version": 1,
+      "best_lifecycle_state": "preferred",
+      "confidence": 95,
+      "created_at": "2026-03-13T09:46:27.162438+00:00",
+      "demotion_count": 0,
+      "evidence": [
+        "/tmp/polaris-skill/Polaris/runtime-demo/execution-state.json",
+        "runtime-status.json",
+        "Polaris/runtime-events.jsonl"
+      ],
+      "evidence_count": 3,
+      "expires_at": null,
+      "history": [
+        {
+          "event": "promoted",
+          "reason": "Validated in runtime demo with explicit state, branch, and repair references",
+          "to": "preferred",
+          "ts": "2026-03-13T09:48:42.797944+00:00"
+        },
+        {
+          "event": "auto_promoted",
+          "reason": "evidence_threshold_met",
+          "to": "validated",
+          "ts": "2026-03-13T10:03:04.080021+00:00"
+        },
+        {
+          "event": "auto_promoted",
+          "reason": "evidence_threshold_met",
+          "to": "validated",
+          "ts": "2026-03-13T10:11:01.077903+00:00"
+        },
+        {
+          "best_lifecycle_state": "validated",
+          "confidence": 92,
+          "event": "merged_validation",
+          "evidence_count": 3,
+          "reason": "rerun_capture",
+          "retained_lifecycle": "validated",
+          "ts": "2026-03-13T10:16:41.310611+00:00",
+          "validation_count": 3
+        },
+        {
+          "event": "auto_promoted",
+          "reason": "evidence_threshold_met",
+          "to": "preferred",
+          "ts": "2026-03-13T10:16:41.337328+00:00"
+        },
+        {
+          "best_lifecycle_state": "preferred",
+          "confidence": 95,
+          "event": "merged_validation",
+          "evidence_count": 3,
+          "reason": "rerun_capture",
+          "retained_lifecycle": "preferred",
+          "ts": "2026-03-13T10:17:09.420766+00:00",
+          "validation_count": 4
+        },
+        {
+          "best_lifecycle_state": "preferred",
+          "confidence": 95,
+          "event": "merged_validation",
+          "evidence_count": 3,
+          "reason": "rerun_capture",
+          "retained_lifecycle": "preferred",
+          "ts": "2026-03-13T11:25:38.567091+00:00",
+          "validation_count": 5
+        },
+        {
+          "best_lifecycle_state": "preferred",
+          "confidence": 95,
+          "event": "merged_validation",
+          "evidence_count": 3,
+          "reason": "rerun_capture",
+          "retained_lifecycle": "preferred",
+          "ts": "2026-03-13T11:44:45.120578+00:00",
+          "validation_count": 6
+        },
+        {
+          "best_lifecycle_state": "preferred",
+          "confidence": 95,
+          "event": "merged_validation",
+          "evidence_count": 3,
+          "reason": "rerun_capture",
+          "retained_lifecycle": "preferred",
+          "ts": "2026-03-13T11:57:05.830424+00:00",
+          "validation_count": 7
+        },
+        {
+          "best_lifecycle_state": "preferred",
+          "confidence": 95,
+          "event": "merged_validation",
+          "evidence_count": 3,
+          "reason": "rerun_capture",
+          "retained_lifecycle": "preferred",
+          "ts": "2026-03-13T12:02:46.982749+00:00",
+          "validation_count": 8
+        }
+      ],
+      "last_selected_at": "2026-03-13T12:02:45.617606+00:00",
+      "last_validated_at": "2026-03-13T12:02:46.982748+00:00",
+      "lifecycle_state": "preferred",
+      "migrated_from": "pre-step4",
+      "modes": [
+        "long"
+      ],
+      "outcome": "resumable orchestration with reviewable state and references",
+      "pattern_id": "layered-local-orchestration",
+      "promotion_count": 5,
+      "reusable": true,
+      "selection_count": 8,
+      "sequence": [
+        "init",
+        "plan",
+        "select-rules",
+        "rank-adapters",
+        "select-patterns",
+        "execute",
+        "validate"
+      ],
+      "summary": "Layered rules plus ranked adapter selection keep runs local, resumable, and auditable",
+      "tags": [
+        "orchestration",
+        "local",
+        "success"
+      ],
+      "trigger": "long local task",
+      "updated_at": "2026-03-13T12:02:46.982746+00:00",
+      "validation_count": 8
+    }
+  ],
+  "schema_version": 1
+}

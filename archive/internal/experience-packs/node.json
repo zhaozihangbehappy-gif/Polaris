@@ -1,0 +1,36 @@
+{
+  "ecosystem": "node",
+  "pack_version": "2.0",
+  "records": [
+    {
+      "error_class": "missing_dependency",
+      "stderr_pattern": "Cannot find module '([^']+)'|MODULE_NOT_FOUND",
+      "avoidance_hints": [{"kind": "set_env", "vars": {"NODE_PATH": "./node_modules"}}],
+      "description": "Node.js module resolution failure — ensure NODE_PATH includes local node_modules"
+    },
+    {
+      "error_class": "file_not_found",
+      "stderr_pattern": "ENOENT: no such file or directory, open '([^']*package\\.json[^']*)'",
+      "avoidance_hints": [{"kind": "rewrite_cwd", "target": "."}],
+      "description": "package.json not found — cwd may be wrong; rewrite to directory containing package.json"
+    },
+    {
+      "error_class": "permission_denial",
+      "stderr_pattern": "EACCES: permission denied|npm ERR! Error: EACCES",
+      "avoidance_hints": [{"kind": "set_env", "vars": {"npm_config_cache": "/tmp/.npm-cache"}}],
+      "description": "npm cache permission error — redirect npm cache to writable directory"
+    },
+    {
+      "error_class": "resource_exhaustion",
+      "stderr_pattern": "JavaScript heap out of memory|FATAL ERROR:.*Reached heap limit",
+      "avoidance_hints": [{"kind": "set_env", "vars": {"NODE_OPTIONS": "--max-old-space-size=4096"}}],
+      "description": "Node.js V8 heap OOM — increase max old space size"
+    },
+    {
+      "error_class": "missing_dependency",
+      "stderr_pattern": "ERR_MODULE_NOT_FOUND|Cannot find package '([^']+)'",
+      "avoidance_hints": [{"kind": "set_env", "vars": {"NODE_PATH": "./node_modules", "NODE_OPTIONS": "--experimental-specifier-resolution=node"}}],
+      "description": "ESM module resolution failure — set NODE_PATH and enable node resolution"
+    }
+  ]
+}

@@ -1,0 +1,5 @@
+{
+  "stderr": "Traceback (most recent call last):\n  File \"/home/user/project/migrate.py\", line 67, in process_legacy\n    for line in open(legacy_file):\n  File \"/usr/lib/python3.10/codecs.py\", line 322, in decode\n    (result, size) = self._buffer_decode(data, self.errors, final)\nUnicodeDecodeError: 'utf-8' codec can't decode byte 0xb5 in position 348: invalid start byte",
+  "error_class": "encoding_error",
+  "source": "legacy Windows-1252 file read as UTF-8"
+}

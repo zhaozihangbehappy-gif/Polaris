@@ -1,0 +1,5 @@
+{
+  "stderr": "/home/user/project/config/boot.rb:3:in `require_relative': cannot load such file -- /home/user/project/config/application (LoadError)\n\tfrom /home/user/project/config/boot.rb:3:in `<top (required)>'",
+  "error_class": "file_not_found",
+  "source": "LoadError from require_relative for missing application.rb"
+}

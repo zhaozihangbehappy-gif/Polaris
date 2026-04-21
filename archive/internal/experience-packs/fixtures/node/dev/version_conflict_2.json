@@ -1,0 +1,5 @@
+{
+  "stderr": "npm ERR! code ERESOLVE\nnpm ERR! ERESOLVE unable to resolve dependency tree\nnpm ERR! \nnpm ERR! While resolving: my-app@1.0.0\nnpm ERR! Found: typescript@5.3.3\nnpm ERR! node_modules/typescript\nnpm ERR!   dev typescript@\"^5.3.0\" from the root project\nnpm ERR! \nnpm ERR! Could not resolve dependency:\nnpm ERR! peer typescript@\">=3.0 <5.0\" from ts-node@10.9.1\nnpm ERR! node_modules/ts-node\nnpm ERR!   dev ts-node@\"^10.9.0\" from the root project\nnpm ERR! \nnpm ERR! Fix the upstream dependency conflict, or retry\nnpm ERR! this command with --force or --legacy-peer-deps\n\nnpm ERR! A complete log of this run can be found in: /home/user/.npm/_logs/2024-04-15T11_20_33_678Z-debug-0.log",
+  "error_class": "version_conflict",
+  "source": "TypeScript peer dependency version conflict with ts-node"
+}

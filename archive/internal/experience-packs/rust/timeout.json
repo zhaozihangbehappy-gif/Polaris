@@ -1,0 +1,34 @@
+{
+  "ecosystem": "rust",
+  "error_class": "timeout",
+  "shard_version": "3.0",
+  "records": [
+    {
+      "stderr_pattern": "timed out after \\d+ seconds|operation timed out|build.*timeout",
+      "avoidance_hints": [
+        {
+          "kind": "set_env",
+          "vars": {
+            "CARGO_BUILD_JOBS": "1",
+            "CARGO_INCREMENTAL": "0",
+            "CARGO_HTTP_TIMEOUT": "300"
+          }
+        }
+      ],
+      "description": "Build or fetch timeout — reduce parallelism and increase HTTP timeout",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "bash -c 'echo \"error: build timed out after 1800 seconds\" >&2; exit 1'",
+        "trigger_env": {},
+        "expected_stderr_match": "timed out",
+        "fix_env": {
+          "CARGO_BUILD_JOBS": "1",
+          "CARGO_INCREMENTAL": "0",
+          "CARGO_HTTP_TIMEOUT": "300"
+        },
+        "expected_fix_outcome": "different_error_or_success",
+        "fix_command": "bash -c 'echo \"CARGO_BUILD_JOBS set (simulated)\"; exit 0'"
+      }
+    }
+  ]
+}

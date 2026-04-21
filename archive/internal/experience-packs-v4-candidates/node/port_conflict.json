@@ -1,0 +1,241 @@
+{
+  "ecosystem": "node",
+  "error_class": "port_conflict",
+  "schema_version": 4,
+  "records": [
+    {
+      "pattern_id": "candidate.node.port_conflict.000",
+      "ecosystem": "node",
+      "error_class": "port_conflict",
+      "description": "Next dev 3000 in use",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "Port 3000 is in use"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "ss -ltn 2>&1 || netstat -ltn 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "Port 3000 is in use"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Port: Next dev 3000 in use"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.node.port_conflict.001",
+      "ecosystem": "node",
+      "error_class": "port_conflict",
+      "description": "Vite 5173 conflict",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "Port 5173 is in use"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "ss -ltn 2>&1 || netstat -ltn 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "Port 5173 is in use"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Port: Vite 5173 conflict"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.node.port_conflict.002",
+      "ecosystem": "node",
+      "error_class": "port_conflict",
+      "description": "Storybook 6006 conflict",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "Port 6006 is already in use"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "ss -ltn 2>&1 || netstat -ltn 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "Port 6006 is already in use"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Port: Storybook 6006 conflict"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.node.port_conflict.003",
+      "ecosystem": "node",
+      "error_class": "port_conflict",
+      "description": "Express listen EADDRINUSE",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "EADDRINUSE.*listen"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "ss -ltn 2>&1 || netstat -ltn 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "EADDRINUSE.*listen"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Port: Express listen EADDRINUSE"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.node.port_conflict.004",
+      "ecosystem": "node",
+      "error_class": "port_conflict",
+      "description": "HMR websocket port taken",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "HMR.*port"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "ss -ltn 2>&1 || netstat -ltn 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "HMR.*port"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Port: HMR websocket port taken"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.node.port_conflict.005",
+      "ecosystem": "node",
+      "error_class": "port_conflict",
+      "description": "Playwright trace viewer port taken",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "playwright.*port"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "ss -ltn 2>&1 || netstat -ltn 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "playwright.*port"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Port: Playwright trace viewer port taken"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    }
+  ]
+}

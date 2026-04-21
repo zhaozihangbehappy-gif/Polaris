@@ -1,0 +1,1 @@
+{"stderr": "go: finding module for package golang.org/x/sync/errgroup\ngo: found golang.org/x/sync/errgroup in golang.org/x/sync v0.6.0\ngo.sum: missing entry for module providing package golang.org/x/sync/errgroup\ngo: updates to go.sum needed, disabled by -mod=readonly", "error_class": "missing_dependency", "source": "go build with -mod=readonly and missing go.sum entry"}

@@ -1,0 +1,161 @@
+{
+  "artifacts": {
+    "execution_contract": "{\"adapter\": \"file-transform-local\", \"applied_rule_ids\": [\"stop-on-nonrepair-denial\"], \"args\": [\"--input-file\", \"/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/runtime-phase5a-cut4-transform/runtime-transform-input.txt\", \"--output-file\", \"/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/runtime-phase5a-cut4-transform/runtime-transform-output.txt\", \"--marker\", \"POLARIS_TRANSFORM::STANDARD::file-transform-local\", \"--mode\", \"append-marker\"], \"execution_profile\": \"standard\", \"goal\": \"Demonstrate Polaris file transform flow\", \"input_file\": \"/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/runtime-phase5a-cut4-transform/runtime-transform-input.txt\", \"kind\": \"file_transform\", \"mode\": \"short\", \"output_file\": \"/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/runtime-phase5a-cut4-transform/runtime-transform-output.txt\", \"script_path\": \"/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/scripts/polaris_file_transform.py\", \"selected_pattern\": null, \"selected_pattern_sequence\": [], \"simulate_error\": null, \"validator\": {\"input_file\": \"/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/runtime-phase5a-cut4-transform/runtime-transform-input.txt\", \"kind\": \"file_transform_result\", \"marker\": \"POLARIS_TRANSFORM::STANDARD::file-transform-local\", \"mode\": \"append-marker\", \"output_file\": \"/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/runtime-phase5a-cut4-transform/runtime-transform-output.txt\", \"require_changed\": true, \"require_exact_output\": true}}",
+    "execution_kind": "file_transform",
+    "execution_result": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/runtime-phase5a-cut4-transform/runtime-transform-output.txt",
+    "executor_result": "runtime-executor-result.json",
+    "learning_summary": "{\"failed_patterns\": [], \"failed_rules\": [], \"merged_patterns\": [], \"merged_rules\": [], \"processed_items\": 1, \"promoted_patterns\": [\"standard-local-success-marker-success-b344f453cc7e\"], \"promoted_rules\": [], \"queued_items\": 1, \"retained_items\": 0, \"rule_candidates\": 0, \"success_markers\": 1}",
+    "selected_adapter": "file-transform-local",
+    "validation_result": "runtime-validation-result.json"
+  },
+  "current_step": "Completed",
+  "event_budget": "standard",
+  "execution_profile": "standard",
+  "goal": "Demonstrate Polaris file transform flow",
+  "learning_backlog": [],
+  "mode": "short",
+  "next_action": "Review outputs",
+  "phase": "completed",
+  "plan": [
+    {
+      "index": 1,
+      "phase": "planning",
+      "status": "completed",
+      "step": "Clarify scope and choose a safe local path"
+    },
+    {
+      "index": 2,
+      "phase": "ready",
+      "status": "completed",
+      "step": "Select the primary adapter and fallback"
+    },
+    {
+      "index": 3,
+      "phase": "executing",
+      "status": "completed",
+      "step": "Run the next local step"
+    },
+    {
+      "index": 4,
+      "phase": "validating",
+      "status": "completed",
+      "step": "Verify outcomes and inspect failures"
+    }
+  ],
+  "progress_pct": 100,
+  "references": [
+    {
+      "kind": "patterns",
+      "label": "success pattern store",
+      "ts": "2026-03-14T07:25:09.832562+00:00",
+      "value": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/runtime-phase5a-cut4-transform/success-patterns.json"
+    },
+    {
+      "kind": "adapters",
+      "label": "adapter registry",
+      "ts": "2026-03-14T07:25:09.862093+00:00",
+      "value": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/runtime-phase5a-cut4-transform/adapters.json"
+    }
+  ],
+  "repair_depth": "shallow",
+  "rule_context": {
+    "active_layers": [
+      "hard",
+      "soft",
+      "experimental"
+    ],
+    "applied_rules": [
+      {
+        "action": "Stop and reduce scope instead of retrying the blocked path",
+        "layer": "hard",
+        "priority": 100,
+        "rule_id": "stop-on-nonrepair-denial",
+        "scope": "all Polaris runs",
+        "tags": [
+          "stop",
+          "runtime",
+          "local"
+        ],
+        "trigger": "an explicit non-repair denial appears"
+      }
+    ]
+  },
+  "run_id": "polaris-orchestrated-run",
+  "runtime": {
+    "completed_at": "2026-03-14T07:25:11.128727+00:00",
+    "durable_status_surfaces": {
+      "live_status": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/runtime-phase5a-cut4-transform/runtime-live-status.json"
+    },
+    "last_heartbeat_at": "2026-03-14T07:25:11.276526+00:00",
+    "last_heartbeat_summary": "run completed",
+    "lifecycle_stage": "completed",
+    "started_at": "2026-03-14T07:25:09.772511+00:00"
+  },
+  "schema_version": 5,
+  "state_density": "minimal",
+  "state_machine": {
+    "active_branch": null,
+    "allowed_transitions": {
+      "blocked": [
+        "planning",
+        "ready",
+        "executing",
+        "completed"
+      ],
+      "completed": [],
+      "executing": [
+        "validating",
+        "repairing",
+        "blocked"
+      ],
+      "intake": [
+        "planning",
+        "blocked"
+      ],
+      "planning": [
+        "ready",
+        "executing",
+        "blocked"
+      ],
+      "ready": [
+        "executing",
+        "blocked"
+      ],
+      "repairing": [
+        "ready",
+        "executing",
+        "blocked"
+      ],
+      "validating": [
+        "completed",
+        "repairing",
+        "blocked"
+      ]
+    },
+    "blocked": {
+      "is_blocked": false,
+      "reason": null,
+      "references": []
+    },
+    "history": [
+      {
+        "branch_id": "execution-main",
+        "from": "executing",
+        "summary": "Execution outputs ready for validation",
+        "to": "validating",
+        "ts": "2026-03-14T07:25:10.770294+00:00"
+      },
+      {
+        "branch_id": "execution-main",
+        "from": "validating",
+        "summary": "Run finished cleanly",
+        "to": "completed",
+        "ts": "2026-03-14T07:25:11.128723+00:00"
+      }
+    ],
+    "node": "completed"
+  },
+  "status": "completed",
+  "summary_outcome": "Run finished cleanly",
+  "updated_at": "2026-03-14T07:25:11.276529+00:00"
+}

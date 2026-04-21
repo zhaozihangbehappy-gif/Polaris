@@ -1,0 +1,25 @@
+{
+  "rules": [
+    {
+      "action": "Stop and reduce scope instead of retrying the blocked path",
+      "created_at": "2026-03-14T03:51:19.978084+00:00",
+      "evidence": "explicit runtime stop classification",
+      "evidence_count": 1,
+      "fingerprint": "stop-on-nonrepair-denial",
+      "last_validated_at": "2026-03-14T03:51:19.978071+00:00",
+      "layer": "hard",
+      "priority": 100,
+      "rule_id": "stop-on-nonrepair-denial",
+      "scope": "all Polaris runs",
+      "tags": [
+        "safety",
+        "boundary",
+        "local"
+      ],
+      "trigger": "an explicit non-repair denial appears",
+      "validation": "explicit runtime stop classification",
+      "validation_count": 1
+    }
+  ],
+  "schema_version": 3
+}

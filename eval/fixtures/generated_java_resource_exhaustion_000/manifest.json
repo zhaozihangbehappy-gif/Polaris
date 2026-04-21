@@ -1,0 +1,14 @@
+{
+  "case_id": "generated_java_resource_exhaustion_000",
+  "files": [
+    "MemoryExhaustion.java"
+  ],
+  "dependencies": {},
+  "build_commands": [],
+  "expected_failure_command": "cd {workdir} && javac MemoryExhaustion.java && JAVA_OPTS=\"-Xmx64m\" java MemoryExhaustion",
+  "expected_failure_stderr_regex": "java\\.lang\\.OutOfMemoryError: Java heap space",
+  "manifest_schema_version": 1,
+  "bash_self_contained": false,
+  "reverse_from_pattern": "java.resource_exhaustion.000",
+  "source_pool": "official"
+}

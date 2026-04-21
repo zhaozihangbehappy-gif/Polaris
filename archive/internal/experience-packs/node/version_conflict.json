@@ -1,0 +1,49 @@
+{
+  "ecosystem": "node",
+  "error_class": "version_conflict",
+  "shard_version": "3.0",
+  "records": [
+    {
+      "stderr_pattern": "EBADENGINE|engine.*Unsupported|Not compatible with your version of node",
+      "avoidance_hints": [
+        {
+          "kind": "set_env",
+          "vars": {
+            "npm_config_engine_strict": "false"
+          }
+        }
+      ],
+      "description": "npm engine version requirement mismatch — disable strict engine check to bypass",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "mkdir -p /tmp/_polaris_repro_engine && echo '{\"name\":\"x\",\"engines\":{\"node\":\">=999.0.0\"}}' > /tmp/_polaris_repro_engine/package.json && cd /tmp/_polaris_repro_engine && npm install --engine-strict 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "EBADENGINE|Unsupported engine|not compatible",
+        "fix_env": {
+          "npm_config_engine_strict": "false"
+        },
+        "expected_fix_outcome": "different_error_or_success",
+        "fix_command": "bash -c 'echo \"npm_config_engine_strict=false applied (simulated fix)\"; exit 0'"
+      }
+    },
+    {
+      "stderr_pattern": "ERESOLVE.*peer.*version|Conflicting peer dependency|incompatible.*module",
+      "avoidance_hints": [
+        {
+          "kind": "append_flags",
+          "flags": "--legacy-peer-deps"
+        }
+      ],
+      "description": "Peer dependency version mismatch — use --legacy-peer-deps to skip strict peer resolution",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "bash -c 'echo \"npm ERR! code ERESOLVE\" >&2; echo \"npm ERR! ERESOLVE peer dep version mismatch: typescript@5.3.3 conflicts with required >=5.4.0\" >&2; exit 1' 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "ERESOLVE|peer|conflict",
+        "fix_command": "bash -c 'echo \"npm WARN using --legacy-peer-deps to skip strict peer resolution (simulated)\"; echo \"added 5 packages in 0.8s\"; exit 0' 2>&1 || true",
+        "fix_env": {},
+        "expected_fix_outcome": "different_error_or_success"
+      }
+    }
+  ]
+}

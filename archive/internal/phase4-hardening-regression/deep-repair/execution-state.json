@@ -1,0 +1,342 @@
+{
+  "artifacts": {
+    "learning_summary": "{\"failed_patterns\": [], \"failed_rules\": [], \"merged_patterns\": [], \"merged_rules\": [], \"processed_items\": 3, \"promoted_patterns\": [\"repair-pattern-3d8a1c1fe2ad\", \"layered-local-orchestration\"], \"promoted_rules\": [\"repair-rule-d51b976714fa\"], \"queued_items\": 3, \"retained_items\": 0, \"rule_candidates\": 1, \"success_markers\": 2}",
+    "repair_plan": "runtime-repair-plan.json",
+    "repair_report": "runtime-repair-report.json",
+    "repair_results": "runtime-repair-results.json",
+    "selected_adapter": "python-runtime-local",
+    "selected_pattern": "bounded-local-repair"
+  },
+  "attempts": [
+    {
+      "branch_id": "execution-main",
+      "evidence": [
+        "ModuleNotFoundError: No module named pywinauto"
+      ],
+      "status": "failed",
+      "step": "simulated_failure",
+      "summary": "ModuleNotFoundError: No module named pywinauto",
+      "ts": "2026-03-14T03:03:23.429437+00:00"
+    },
+    {
+      "branch_id": "repair-local",
+      "evidence": [
+        "runtime-repair-results.json"
+      ],
+      "status": "passed",
+      "step": "repair_guidance_recorded",
+      "summary": "Repair guidance captured and rule stored",
+      "ts": "2026-03-14T03:03:23.977944+00:00"
+    }
+  ],
+  "checkpoints": [],
+  "current_step": "Completed",
+  "event_budget": "deep",
+  "execution_profile": "deep",
+  "goal": "Demonstrate Polaris local orchestration flow",
+  "learning_backlog": [],
+  "lessons": [],
+  "mode": "long",
+  "next_action": "Review outputs",
+  "phase": "completed",
+  "plan": [
+    {
+      "index": 1,
+      "phase": "planning",
+      "rule_layers": [
+        "hard"
+      ],
+      "status": "completed",
+      "step": "Clarify task scope",
+      "step_id": "planning-1",
+      "success_signal": "scope accepted",
+      "updated_at": "2026-03-14T03:03:23.144711+00:00"
+    },
+    {
+      "index": 2,
+      "phase": "ready",
+      "rule_layers": [
+        "hard",
+        "soft"
+      ],
+      "status": "completed",
+      "step": "Choose safe local adapter and rules",
+      "step_id": "ready-2",
+      "success_signal": "execution path chosen",
+      "updated_at": "2026-03-14T03:03:23.262945+00:00"
+    },
+    {
+      "index": 3,
+      "phase": "executing",
+      "rule_layers": [
+        "hard",
+        "soft"
+      ],
+      "status": "completed",
+      "step": "Execute the next local step",
+      "step_id": "executing-3",
+      "success_signal": "step completed",
+      "updated_at": "2026-03-14T03:03:24.107158+00:00"
+    },
+    {
+      "index": 4,
+      "phase": "validating",
+      "rule_layers": [
+        "hard",
+        "soft",
+        "experimental"
+      ],
+      "status": "completed",
+      "step": "Verify outcomes and inspect failures",
+      "step_id": "validating-4",
+      "success_signal": "evidence captured",
+      "updated_at": "2026-03-14T03:03:24.338517+00:00"
+    },
+    {
+      "index": 5,
+      "phase": "completed",
+      "rule_layers": [
+        "soft",
+        "experimental"
+      ],
+      "status": "completed",
+      "step": "Record reusable lessons and next actions",
+      "step_id": "completed-5",
+      "success_signal": "state ready to resume",
+      "updated_at": "2026-03-14T03:03:24.466310+00:00"
+    }
+  ],
+  "progress_pct": 100,
+  "references": [
+    {
+      "kind": "rules",
+      "label": "layered rules store",
+      "ts": "2026-03-14T03:03:22.735780+00:00",
+      "value": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/phase4-hardening-regression/deep-repair/rules.json"
+    },
+    {
+      "kind": "patterns",
+      "label": "success pattern store",
+      "ts": "2026-03-14T03:03:22.767183+00:00",
+      "value": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/phase4-hardening-regression/deep-repair/success-patterns.json"
+    },
+    {
+      "kind": "adapters",
+      "label": "adapter registry",
+      "ts": "2026-03-14T03:03:22.797490+00:00",
+      "value": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/phase4-hardening-regression/deep-repair/adapters.json"
+    }
+  ],
+  "repair_depth": "deep",
+  "rule_context": {
+    "active_layers": [
+      "hard",
+      "soft",
+      "experimental"
+    ],
+    "applied_rules": []
+  },
+  "run_id": "polaris-orchestrated-run",
+  "runtime": {
+    "completed_at": "2026-03-14T03:03:24.495479+00:00",
+    "durable_status_surfaces": {
+      "live_status": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/runtime-live-status.json"
+    },
+    "last_heartbeat_at": "2026-03-14T03:03:24.733741+00:00",
+    "last_heartbeat_summary": "run completed",
+    "lifecycle_stage": "completed",
+    "started_at": "2026-03-14T03:03:22.706546+00:00"
+  },
+  "schema_version": 5,
+  "state_density": "full",
+  "state_machine": {
+    "active_branch": null,
+    "allowed_transitions": {
+      "blocked": [
+        "planning",
+        "ready",
+        "executing",
+        "completed"
+      ],
+      "completed": [],
+      "executing": [
+        "validating",
+        "repairing",
+        "blocked"
+      ],
+      "intake": [
+        "planning",
+        "blocked"
+      ],
+      "planning": [
+        "ready",
+        "executing",
+        "blocked"
+      ],
+      "ready": [
+        "executing",
+        "blocked"
+      ],
+      "repairing": [
+        "ready",
+        "executing",
+        "blocked"
+      ],
+      "validating": [
+        "completed",
+        "repairing",
+        "blocked"
+      ]
+    },
+    "blocked": {
+      "is_blocked": false,
+      "reason": null,
+      "references": []
+    },
+    "branches": [
+      {
+        "branch_id": "repair-local",
+        "closed_at": "2026-03-14T03:03:23.945530+00:00",
+        "kind": "repair",
+        "label": "Local repair branch",
+        "opened_at": "2026-03-14T03:03:23.717465+00:00",
+        "origin_node": "executing",
+        "references": [
+          "runtime-repair-report.json",
+          "runtime-repair-plan.json",
+          "runtime-repair-results.json",
+          "runtime-repair-results.json",
+          "runtime-repair-report.json"
+        ],
+        "status": "recovered",
+        "summary": "Execution failure triggered repair branch"
+      },
+      {
+        "branch_id": "execution-main",
+        "kind": "primary",
+        "label": "Primary execution path",
+        "opened_at": "2026-03-14T03:03:24.008185+00:00",
+        "origin_node": "ready",
+        "references": [
+          "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/phase4-hardening-regression/deep-repair/execution-state.json"
+        ],
+        "status": "active",
+        "summary": "Execution resumed after repair branch"
+      }
+    ],
+    "history": [
+      {
+        "branch_id": "execution-main",
+        "from": "ready",
+        "summary": "Execution branch started",
+        "to": "executing",
+        "ts": "2026-03-14T03:03:23.291840+00:00"
+      },
+      {
+        "branch_id": "repair-local",
+        "from": "executing",
+        "summary": "Execution failure triggered repair branch",
+        "to": "repairing",
+        "ts": "2026-03-14T03:03:23.746737+00:00"
+      },
+      {
+        "branch_id": "repair-local",
+        "from": "repairing",
+        "summary": "Repair branch completed and run is ready to continue",
+        "to": "ready",
+        "ts": "2026-03-14T03:03:23.945536+00:00"
+      },
+      {
+        "branch_id": "execution-main",
+        "from": "ready",
+        "summary": "Execution resumed after repair branch",
+        "to": "executing",
+        "ts": "2026-03-14T03:03:24.038353+00:00"
+      },
+      {
+        "branch_id": "execution-main",
+        "from": "executing",
+        "summary": "Execution outputs ready for validation",
+        "to": "validating",
+        "ts": "2026-03-14T03:03:24.137441+00:00"
+      },
+      {
+        "branch_id": "execution-main",
+        "from": "validating",
+        "summary": "Run finished cleanly",
+        "to": "completed",
+        "ts": "2026-03-14T03:03:24.495474+00:00"
+      }
+    ],
+    "history_summary": [
+      {
+        "by_branch": {
+          "none": 1
+        },
+        "by_node": {
+          "planning": 1
+        },
+        "compacted_at": "2026-03-14T03:03:24.137447+00:00",
+        "entry_count": 1,
+        "first_summary": "Run initialized and routed to the deep profile",
+        "from_ts": "2026-03-14T03:03:22.826116+00:00",
+        "last_summary": "Run initialized and routed to the deep profile",
+        "to_ts": "2026-03-14T03:03:22.826116+00:00"
+      },
+      {
+        "by_branch": {
+          "none": 1
+        },
+        "by_node": {
+          "ready": 1
+        },
+        "compacted_at": "2026-03-14T03:03:24.495484+00:00",
+        "entry_count": 1,
+        "first_summary": "Plan and adapter routing completed",
+        "from_ts": "2026-03-14T03:03:23.173864+00:00",
+        "last_summary": "Plan and adapter routing completed",
+        "to_ts": "2026-03-14T03:03:23.173864+00:00"
+      }
+    ],
+    "node": "completed",
+    "recovery": [
+      {
+        "branch_id": "repair-local",
+        "references": [
+          "runtime-repair-results.json",
+          "runtime-repair-report.json"
+        ],
+        "summary": "Repair branch completed and run is ready to continue",
+        "to": "ready",
+        "ts": "2026-03-14T03:03:23.945533+00:00"
+      }
+    ]
+  },
+  "status": "completed",
+  "success_patterns": [
+    {
+      "captured_at": "2026-03-14T03:03:23.916057+00:00",
+      "confidence": 78,
+      "evidence": [
+        "runtime-repair-results.json",
+        "runtime-repair-plan.json"
+      ],
+      "pattern_id": "repair-pattern-3d8a1c1fe2ad",
+      "reusable": true,
+      "summary": "Repair branch queued deferred local recovery learning"
+    },
+    {
+      "captured_at": "2026-03-14T03:03:24.308829+00:00",
+      "confidence": 90,
+      "evidence": [
+        "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/phase4-hardening-regression/deep-repair/execution-state.json",
+        "runtime-status.json"
+      ],
+      "pattern_id": "layered-local-orchestration",
+      "reusable": true,
+      "summary": "Full run queued a reusable orchestration pattern for deferred consolidation"
+    }
+  ],
+  "summary_outcome": "Run finished cleanly",
+  "updated_at": "2026-03-14T03:03:24.733744+00:00"
+}

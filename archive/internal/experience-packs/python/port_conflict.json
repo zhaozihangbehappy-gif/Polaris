@@ -1,0 +1,21 @@
+{
+  "ecosystem": "python",
+  "error_class": "port_conflict",
+  "shard_version": "3.0",
+  "records": [
+    {
+      "stderr_pattern": "OSError: \\[Errno 98\\] Address already in use|Address already in use",
+      "avoidance_hints": [{"kind": "set_env", "vars": {"PORT": "0"}}],
+      "description": "Port already in use — set PORT=0 to auto-select a free port, or change the port number",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "python3 -c \"import socket; s1=socket.socket(); s1.bind(('127.0.0.1',18765)); s1.listen(1); s2=socket.socket(); s2.bind(('127.0.0.1',18765))\" 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "Address already in use|Errno 98",
+        "fix_command": "python3 -c \"import socket; s=socket.socket(); s.bind(('127.0.0.1',0)); print('ok, port:', s.getsockname()[1]); s.close()\" 2>&1 || true",
+        "fix_env": {"PORT": "0"},
+        "expected_fix_outcome": "different_error_or_success"
+      }
+    }
+  ]
+}

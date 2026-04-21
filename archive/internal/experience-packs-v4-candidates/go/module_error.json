@@ -1,0 +1,397 @@
+{
+  "ecosystem": "go",
+  "error_class": "module_error",
+  "schema_version": 4,
+  "records": [
+    {
+      "pattern_id": "candidate.go.module_error.000",
+      "ecosystem": "go",
+      "error_class": "module_error",
+      "description": "go mod tidy removes needed test dep",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "go\\.mod.*no required module provides package"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "go env 2>&1 | head -20",
+        "trigger_env": {},
+        "expected_stderr_match": "go\\.mod.*no required module provides package"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Go module_error: go mod tidy removes needed test dep"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.go.module_error.001",
+      "ecosystem": "go",
+      "error_class": "module_error",
+      "description": "sum mismatch after manual go.sum edit",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "SECURITY ERROR.*go\\.sum"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "go env 2>&1 | head -20",
+        "trigger_env": {},
+        "expected_stderr_match": "SECURITY ERROR.*go\\.sum"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Go module_error: sum mismatch after manual go.sum edit"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.go.module_error.002",
+      "ecosystem": "go",
+      "error_class": "module_error",
+      "description": "pseudo-version from commit not allowed",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "invalid pseudo-version"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "go env 2>&1 | head -20",
+        "trigger_env": {},
+        "expected_stderr_match": "invalid pseudo-version"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Go module_error: pseudo-version from commit not allowed"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.go.module_error.003",
+      "ecosystem": "go",
+      "error_class": "module_error",
+      "description": "module path capitalisation conflict",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "module declares its path as.*but was required"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "go env 2>&1 | head -20",
+        "trigger_env": {},
+        "expected_stderr_match": "module declares its path as.*but was required"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Go module_error: module path capitalisation conflict"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.go.module_error.004",
+      "ecosystem": "go",
+      "error_class": "module_error",
+      "description": "replace with relative path breaks ci",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "replace.*local path"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "go env 2>&1 | head -20",
+        "trigger_env": {},
+        "expected_stderr_match": "replace.*local path"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Go module_error: replace with relative path breaks ci"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.go.module_error.005",
+      "ecosystem": "go",
+      "error_class": "module_error",
+      "description": "main module contains vendor dir",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "vendor.*inconsistent"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "go env 2>&1 | head -20",
+        "trigger_env": {},
+        "expected_stderr_match": "vendor.*inconsistent"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Go module_error: main module contains vendor dir"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.go.module_error.006",
+      "ecosystem": "go",
+      "error_class": "module_error",
+      "description": "go.mod parse error bad directive",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "go\\.mod.*syntax error"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "go env 2>&1 | head -20",
+        "trigger_env": {},
+        "expected_stderr_match": "go\\.mod.*syntax error"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Go module_error: go.mod parse error bad directive"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.go.module_error.007",
+      "ecosystem": "go",
+      "error_class": "module_error",
+      "description": "minimum go version unmet",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "go: module requires Go \\d"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "go env 2>&1 | head -20",
+        "trigger_env": {},
+        "expected_stderr_match": "go: module requires Go \\d"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Go module_error: minimum go version unmet"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.go.module_error.008",
+      "ecosystem": "go",
+      "error_class": "module_error",
+      "description": "unknown directive toolchain",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "unknown directive: toolchain"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "go env 2>&1 | head -20",
+        "trigger_env": {},
+        "expected_stderr_match": "unknown directive: toolchain"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Go module_error: unknown directive toolchain"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.go.module_error.009",
+      "ecosystem": "go",
+      "error_class": "module_error",
+      "description": "GOPROXY 410 gone permanent",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "410 Gone"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "go env 2>&1 | head -20",
+        "trigger_env": {},
+        "expected_stderr_match": "410 Gone"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Go module_error: GOPROXY 410 gone permanent"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    }
+  ]
+}

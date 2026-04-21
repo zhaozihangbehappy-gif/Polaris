@@ -1,0 +1,5 @@
+{
+  "stderr": "node:events:496\n      throw er; // Unhandled 'error' event\n      ^\n\nError: listen EADDRINUSE: address already in use :::3000\n    at Server.setupListenHandle [as _listen2] (node:net:1872:16)\n    at listenInCluster (node:net:1920:12)\n    at Server.listen (node:net:2008:7)\n    at Function.listen (/home/user/project/node_modules/express/lib/application.js:635:24)\n    at Object.<anonymous> (/home/user/project/src/index.js:15:5)\n    at Module._compile (node:internal/modules/cjs/loader:1256:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1310:10)\n    at Module.load (node:internal/modules/cjs/loader:1119:32)\n    at Module._load (node:internal/modules/cjs/loader:960:12)\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:86:12)\nEmitted 'error' event on Server instance at:\n    at emitErrorNT (node:net:1899:8)\n    at process.processTicksAndRejections (node:internal/process/task_queues:82:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '::',\n  port: 3000\n}",
+  "error_class": "port_conflict",
+  "source": "Express server port already in use"
+}

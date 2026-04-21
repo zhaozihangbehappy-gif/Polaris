@@ -1,0 +1,319 @@
+{
+  "ecosystem": "docker",
+  "error_class": "image_not_found",
+  "schema_version": 4,
+  "records": [
+    {
+      "pattern_id": "candidate.docker.image_not_found.000",
+      "ecosystem": "docker",
+      "error_class": "image_not_found",
+      "description": "pull access denied private registry",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "pull access denied.*repository does not exist"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "docker info 2>&1 | head -5",
+        "trigger_env": {},
+        "expected_stderr_match": "pull access denied.*repository does not exist"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Docker image_not_found: pull access denied private registry"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.docker.image_not_found.001",
+      "ecosystem": "docker",
+      "error_class": "image_not_found",
+      "description": "image not found in local cache for --pull=never",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "Error response from daemon.*No such image"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "docker info 2>&1 | head -5",
+        "trigger_env": {},
+        "expected_stderr_match": "Error response from daemon.*No such image"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Docker image_not_found: image not found in local cache for --pull=never"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.docker.image_not_found.002",
+      "ecosystem": "docker",
+      "error_class": "image_not_found",
+      "description": "Docker Hub rate limit toomanyrequests",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "toomanyrequests"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "docker info 2>&1 | head -5",
+        "trigger_env": {},
+        "expected_stderr_match": "toomanyrequests"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Docker image_not_found: Docker Hub rate limit toomanyrequests"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.docker.image_not_found.003",
+      "ecosystem": "docker",
+      "error_class": "image_not_found",
+      "description": "tag mutable vs digest immutable",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "no such manifest.*digest"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "docker info 2>&1 | head -5",
+        "trigger_env": {},
+        "expected_stderr_match": "no such manifest.*digest"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Docker image_not_found: tag mutable vs digest immutable"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.docker.image_not_found.004",
+      "ecosystem": "docker",
+      "error_class": "image_not_found",
+      "description": "platform linux/arm64 unavailable",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "no matching manifest for linux/arm64"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "docker info 2>&1 | head -5",
+        "trigger_env": {},
+        "expected_stderr_match": "no matching manifest for linux/arm64"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Docker image_not_found: platform linux/arm64 unavailable"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.docker.image_not_found.005",
+      "ecosystem": "docker",
+      "error_class": "image_not_found",
+      "description": "registry auth token expired",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "unauthorized.*authentication"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "docker info 2>&1 | head -5",
+        "trigger_env": {},
+        "expected_stderr_match": "unauthorized.*authentication"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Docker image_not_found: registry auth token expired"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.docker.image_not_found.006",
+      "ecosystem": "docker",
+      "error_class": "image_not_found",
+      "description": "insecure registry not configured",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "http: server gave HTTP response to HTTPS"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "docker info 2>&1 | head -5",
+        "trigger_env": {},
+        "expected_stderr_match": "http: server gave HTTP response to HTTPS"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Docker image_not_found: insecure registry not configured"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.docker.image_not_found.007",
+      "ecosystem": "docker",
+      "error_class": "image_not_found",
+      "description": "registry mirror misconfigured",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "registry mirror.*failed"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "docker info 2>&1 | head -5",
+        "trigger_env": {},
+        "expected_stderr_match": "registry mirror.*failed"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Docker image_not_found: registry mirror misconfigured"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    }
+  ]
+}

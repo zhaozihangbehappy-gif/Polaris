@@ -1,0 +1,91 @@
+[pre_failure_command]
+cd /tmp/_polaris_runs/20260420T170630/claude_code/generated_node_port_conflict_000/baseline && node conflict.js
+[pre_failure_output]
+
+node:events:497
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: listen EADDRINUSE: address already in use 127.0.0.1:3000
+    at Server.setupListenHandle [as _listen2] (node:net:1940:16)
+    at listenInCluster (node:net:1997:12)
+    at node:net:2206:7
+    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)
+Emitted 'error' event on Server instance at:
+    at emitErrorNT (node:net:1976:8)
+    at process.processTicksAndRejections (node:internal/process/task_queues:89:21) {
+  code: 'EADDRINUSE',
+  errno: -98,
+  syscall: 'listen',
+  address: '127.0.0.1',
+  port: 3000
+}
+
+Node.js v22.22.1
+
+[pre_failure_reproduced]
+true
+[agent_transcript]
+[claude exit=1 rate_limited=False num_turns=1]
+---
+{"type":"system","subtype":"init","cwd":"/tmp/_polaris_runs/20260420T170630/claude_code/generated_node_port_conflict_000/baseline","session_id":"58a713f5-477f-4e67-918b-e620b66dfde6","tools":["Task","AskUserQuestion","Bash","CronCreate","CronDelete","CronList","Edit","EnterPlanMode","EnterWorktree","ExitPlanMode","ExitWorktree","Glob","Grep","Monitor","NotebookEdit","PushNotification","Read","RemoteTrigger","ScheduleWakeup","Skill","TaskOutput","TaskStop","TodoWrite","ToolSearch","WebFetch","WebSearch","Write"],"mcp_servers":[],"model":"claude-haiku-4-5-20251001","permissionMode":"bypassPermissions","slash_commands":["update-config","debug","simplify","batch","fewer-permission-prompts","loop","schedule","claude-api","compact","context","cost","heapdump","init","review","security-review","extra-usage","insights","team-onboarding"],"apiKeySource":"none","claude_code_version":"2.1.114","output_style":"default","agents":["Explore","general-purpose","Plan","statusline-setup"],"skills":["update-config","debug","simplify","batch","fewer-permission-prompts","loop","schedule","claude-api"],"plugins":[],"uuid":"030bd47c-bf2a-4760-8051-6cb247472f3f","memory_paths":{"auto":"/home/administrator/.claude/projects/-tmp--polaris-runs-20260420T170630-claude-code-generated-node-port-conflict-000-baseline/memory/"},"fast_mode_state":"off"}
+{"type":"rate_limit_event","rate_limit_info":{"status":"rejected","resetsAt":1776690000,"rateLimitType":"five_hour","overageStatus":"rejected","overageDisabledReason":"org_level_disabled","isUsingOverage":false},"uuid":"971b7ab5-878a-4b48-a477-0df62e1c752a","session_id":"58a713f5-477f-4e67-918b-e620b66dfde6"}
+{"type":"assistant","message":{"id":"7bd0d006-c57b-45bd-bd66-7a7f62e95cce","container":null,"model":"<synthetic>","role":"assistant","stop_reason":"stop_sequence","stop_sequence":"","type":"message","usage":{"input_tokens":0,"output_tokens":0,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"server_tool_use":{"web_search_requests":0,"web_fetch_requests":0},"service_tier":null,"cache_creation":{"ephemeral_1h_input_tokens":0,"ephemeral_5m_input_tokens":0},"inference_geo":null,"iterations":null,"speed":null},"content":[{"type":"text","text":"You've hit your limit · resets 9pm (Asia/Shanghai)"}],"context_management":null},"parent_tool_use_id":null,"session_id":"58a713f5-477f-4e67-918b-e620b66dfde6","uuid":"df3016fa-8299-490f-a00e-bc70d6b34bd7","error":"rate_limit"}
+{"type":"result","subtype":"success","is_error":true,"api_error_status":429,"duration_ms":1320,"duration_api_ms":0,"num_turns":1,"result":"You've hit your limit · resets 9pm (Asia/Shanghai)","stop_reason":"stop_sequence","session_id":"58a713f5-477f-4e67-918b-e620b66dfde6","total_cost_usd":0,"usage":{"input_tokens":0,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"output_tokens":0,"server_tool_use":{"web_search_requests":0,"web_fetch_requests":0},"service_tier":"standard","cache_creation":{"ephemeral_1h_input_tokens":0,"ephemeral_5m_input_tokens":0},"inference_geo":"","iterations":[],"speed":"standard"},"modelUsage":{},"permission_denials":[],"terminal_reason":"completed","fast_mode_state":"off","uuid":"21168381-7411-4ca0-8e32-5a440550c7a1"}
+
+---
+[stderr]
+
+---
+[fix_command_test output]
+
+node:events:497
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: listen EADDRINUSE: address already in use 127.0.0.1:3000
+    at Server.setupListenHandle [as _listen2] (node:net:1940:16)
+    at listenInCluster (node:net:1997:12)
+    at node:net:2206:7
+    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)
+Emitted 'error' event on Server instance at:
+    at emitErrorNT (node:net:1976:8)
+    at process.processTicksAndRejections (node:internal/process/task_queues:89:21) {
+  code: 'EADDRINUSE',
+  errno: -98,
+  syscall: 'listen',
+  address: '127.0.0.1',
+  port: 3000
+}
+
+Node.js v22.22.1
+
+[post_fix_command]
+cd /tmp/_polaris_runs/20260420T170630/claude_code/generated_node_port_conflict_000/baseline && node conflict.js
+[post_fix_output]
+
+node:events:497
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: listen EADDRINUSE: address already in use 127.0.0.1:3000
+    at Server.setupListenHandle [as _listen2] (node:net:1940:16)
+    at listenInCluster (node:net:1997:12)
+    at node:net:2206:7
+    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)
+Emitted 'error' event on Server instance at:
+    at emitErrorNT (node:net:1976:8)
+    at process.processTicksAndRejections (node:internal/process/task_queues:89:21) {
+  code: 'EADDRINUSE',
+  errno: -98,
+  syscall: 'listen',
+  address: '127.0.0.1',
+  port: 3000
+}
+
+Node.js v22.22.1
+
+[post_fix_ci_pass]
+False
+[contamination_hits]
+[]

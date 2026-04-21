@@ -1,0 +1,85 @@
+[pre_failure_command]
+cd /tmp/_polaris_runs/20260420T170630/claude_code/generated_node_missing_dependency_003/polaris && npm run verify
+[pre_failure_output]
+
+> peer-conflict-fixture@1.0.0 verify
+> npm install --offline --package-lock=false --ignore-scripts --no-audit --no-fund
+
+
+npm warn ERESOLVE overriding peer dependency
+npm warn While resolving: plugin-b@1.0.0
+npm warn Found: host-lib@undefined
+npm warn node_modules/host-lib
+npm warn   host-lib@"file:packages/host-lib" from the root project
+npm warn
+npm warn Could not resolve dependency:
+npm warn peer host-lib@"^2.0.0" from plugin-b@1.0.0
+npm warn packages/plugin-b
+npm warn   plugin-b@1.0.0
+npm warn   node_modules/plugin-b
+npm error code ENOTCACHED
+npm error request to https://registry.npmjs.org/host-lib failed: cache mode is 'only-if-cached' but no cached response is available.
+npm error A complete log of this run can be found in: /home/administrator/.npm/_logs/2026-04-20T09_38_31_524Z-debug-0.log
+
+[pre_failure_reproduced]
+true
+[agent_transcript]
+[claude exit=1 rate_limited=False num_turns=1]
+---
+{"type":"system","subtype":"init","cwd":"/tmp/_polaris_runs/20260420T170630/claude_code/generated_node_missing_dependency_003/polaris","session_id":"9e19425f-10a5-489b-89e4-46e1562425c2","tools":["Task","AskUserQuestion","Bash","CronCreate","CronDelete","CronList","Edit","EnterPlanMode","EnterWorktree","ExitPlanMode","ExitWorktree","Glob","Grep","Monitor","NotebookEdit","PushNotification","Read","RemoteTrigger","ScheduleWakeup","Skill","TaskOutput","TaskStop","TodoWrite","ToolSearch","WebFetch","WebSearch","Write","mcp__polaris__polaris_lookup"],"mcp_servers":[{"name":"polaris","status":"connected"}],"model":"claude-haiku-4-5-20251001","permissionMode":"bypassPermissions","slash_commands":["update-config","debug","simplify","batch","fewer-permission-prompts","loop","schedule","claude-api","compact","context","cost","heapdump","init","review","security-review","extra-usage","insights","team-onboarding"],"apiKeySource":"none","claude_code_version":"2.1.114","output_style":"default","agents":["Explore","general-purpose","Plan","statusline-setup"],"skills":["update-config","debug","simplify","batch","fewer-permission-prompts","loop","schedule","claude-api"],"plugins":[],"uuid":"1c3ccdcf-4b1b-4805-b80a-cb5230b6c0ef","memory_paths":{"auto":"/home/administrator/.claude/projects/-tmp--polaris-runs-20260420T170630-claude-code-generated-node-missing-dependency-003-polaris/memory/"},"fast_mode_state":"off"}
+{"type":"rate_limit_event","rate_limit_info":{"status":"rejected","resetsAt":1776690000,"rateLimitType":"five_hour","overageStatus":"rejected","overageDisabledReason":"org_level_disabled","isUsingOverage":false},"uuid":"f1de5cc2-9968-4d1d-8b7b-e128cfa7df23","session_id":"9e19425f-10a5-489b-89e4-46e1562425c2"}
+{"type":"assistant","message":{"id":"58092eee-5f85-49c3-9125-6060181a54ef","container":null,"model":"<synthetic>","role":"assistant","stop_reason":"stop_sequence","stop_sequence":"","type":"message","usage":{"input_tokens":0,"output_tokens":0,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"server_tool_use":{"web_search_requests":0,"web_fetch_requests":0},"service_tier":null,"cache_creation":{"ephemeral_1h_input_tokens":0,"ephemeral_5m_input_tokens":0},"inference_geo":null,"iterations":null,"speed":null},"content":[{"type":"text","text":"You've hit your limit · resets 9pm (Asia/Shanghai)"}],"context_management":null},"parent_tool_use_id":null,"session_id":"9e19425f-10a5-489b-89e4-46e1562425c2","uuid":"dc8d5a55-f1a5-434b-b9c5-b6c324526029","error":"rate_limit"}
+{"type":"result","subtype":"success","is_error":true,"api_error_status":429,"duration_ms":862,"duration_api_ms":0,"num_turns":1,"result":"You've hit your limit · resets 9pm (Asia/Shanghai)","stop_reason":"stop_sequence","session_id":"9e19425f-10a5-489b-89e4-46e1562425c2","total_cost_usd":0,"usage":{"input_tokens":0,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"output_tokens":0,"server_tool_use":{"web_search_requests":0,"web_fetch_requests":0},"service_tier":"standard","cache_creation":{"ephemeral_1h_input_tokens":0,"ephemeral_5m_input_tokens":0},"inference_geo":"","iterations":[],"speed":"standard"},"modelUsage":{},"permission_denials":[],"terminal_reason":"completed","fast_mode_state":"off","uuid":"b6c2ca91-3ec0-4394-bfe8-09850d7ea425"}
+
+---
+[stderr]
+
+---
+[fix_command_test output]
+
+> peer-conflict-fixture@1.0.0 verify
+> npm install --offline --package-lock=false --ignore-scripts --no-audit --no-fund
+
+
+npm warn ERESOLVE overriding peer dependency
+npm warn While resolving: plugin-b@1.0.0
+npm warn Found: host-lib@undefined
+npm warn node_modules/host-lib
+npm warn   host-lib@"file:packages/host-lib" from the root project
+npm warn
+npm warn Could not resolve dependency:
+npm warn peer host-lib@"^2.0.0" from plugin-b@1.0.0
+npm warn packages/plugin-b
+npm warn   plugin-b@1.0.0
+npm warn   node_modules/plugin-b
+npm error code ENOTCACHED
+npm error request to https://registry.npmjs.org/host-lib failed: cache mode is 'only-if-cached' but no cached response is available.
+npm error A complete log of this run can be found in: /home/administrator/.npm/_logs/2026-04-20T09_38_36_911Z-debug-0.log
+
+[post_fix_command]
+cd /tmp/_polaris_runs/20260420T170630/claude_code/generated_node_missing_dependency_003/polaris && npm run verify
+[post_fix_output]
+
+> peer-conflict-fixture@1.0.0 verify
+> npm install --offline --package-lock=false --ignore-scripts --no-audit --no-fund
+
+
+npm warn ERESOLVE overriding peer dependency
+npm warn While resolving: plugin-b@1.0.0
+npm warn Found: host-lib@undefined
+npm warn node_modules/host-lib
+npm warn   host-lib@"file:packages/host-lib" from the root project
+npm warn
+npm warn Could not resolve dependency:
+npm warn peer host-lib@"^2.0.0" from plugin-b@1.0.0
+npm warn packages/plugin-b
+npm warn   plugin-b@1.0.0
+npm warn   node_modules/plugin-b
+npm error code ENOTCACHED
+npm error request to https://registry.npmjs.org/host-lib failed: cache mode is 'only-if-cached' but no cached response is available.
+npm error A complete log of this run can be found in: /home/administrator/.npm/_logs/2026-04-20T09_38_37_395Z-debug-0.log
+
+[post_fix_ci_pass]
+False
+[contamination_hits]
+[]

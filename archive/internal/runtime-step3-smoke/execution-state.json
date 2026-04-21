@@ -1,0 +1,173 @@
+{
+  "artifacts": {
+    "baseline_execution_contract": "{\"adapter\": \"shell-local\", \"applied_rule_ids\": [\"stop-on-nonrepair-denial\"], \"command\": \"python3 /home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/scripts/polaris_task_runner.py --goal 'Demonstrate Polaris local orchestration flow' --state /home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/runtime-step3-smoke/execution-state.json --output /home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/runtime-step3-smoke/runtime-execution-result.json --mode short --execution-profile standard --adapter shell-local --applied-rules-json '[{\\\"action\\\": \\\"Stop and reduce scope instead of retrying the blocked path\\\", \\\"layer\\\": \\\"hard\\\", \\\"priority\\\": 100, \\\"rule_id\\\": \\\"stop-on-nonrepair-denial\\\", \\\"scope\\\": \\\"all Polaris runs\\\", \\\"tags\\\": [\\\"stop\\\", \\\"runtime\\\", \\\"local\\\"], \\\"trigger\\\": \\\"an explicit non-repair denial appears\\\"}]' --selected-pattern-json '{}' --execution-contract-json '{\\\"kind\\\": \\\"runner\\\", \\\"pattern\\\": null, \\\"rule_count\\\": 1, \\\"strategy\\\": {\\\"execution_ordering\\\": [\\\"execute\\\", \\\"validate\\\"], \\\"fallback_choice\\\": \\\"selected-adapter-only\\\", \\\"retry_policy\\\": \\\"respect-hard-stop-rules\\\", \\\"strategy_trace\\\": {\\\"execution_kind\\\": \\\"runner\\\", \\\"execution_profile\\\": \\\"standard\\\", \\\"experimental_rules\\\": [], \\\"hard_rules\\\": [\\\"stop-on-nonrepair-denial\\\"], \\\"selected_pattern\\\": null, \\\"slot_permissions\\\": {\\\"experimental\\\": [\\\"fallback_choice\\\", \\\"validation_strategy\\\"], \\\"hard\\\": [\\\"retry_policy\\\"], \\\"pattern\\\": [\\\"execution_ordering\\\", \\\"fallback_choice\\\", \\\"validation_strategy\\\"], \\\"soft\\\": [\\\"execution_ordering\\\", \\\"fallback_choice\\\", \\\"retry_policy\\\", \\\"validation_strategy\\\"]}, \\\"slot_resolution\\\": {\\\"execution_ordering\\\": {\\\"candidates\\\": [], \\\"default\\\": [\\\"execute\\\", \\\"validate\\\"], \\\"ignored\\\": [], \\\"winner\\\": null}, \\\"fallback_choice\\\": {\\\"candidates\\\": [], \\\"default\\\": \\\"selected-adapter-only\\\", \\\"ignored\\\": [], \\\"winner\\\": null}, \\\"retry_policy\\\": {\\\"candidates\\\": [{\\\"confidence\\\": 0, \\\"layer\\\": \\\"hard\\\", \\\"priority\\\": 100, \\\"reason\\\": \\\"rule:stop-on-nonrepair-denial\\\", \\\"source_id\\\": \\\"stop-on-nonrepair-denial\\\", \\\"value\\\": \\\"respect-hard-stop-rules\\\"}], \\\"default\\\": \\\"bounded-repair\\\", \\\"ignored\\\": [], \\\"winner\\\": {\\\"layer\\\": \\\"hard\\\", \\\"reason\\\": \\\"rule:stop-on-nonrepair-denial\\\", \\\"source_id\\\": \\\"stop-on-nonrepair-denial\\\", \\\"value\\\": \\\"respect-hard-stop-rules\\\"}}, \\\"validation_strategy\\\": {\\\"candidates\\\": [], \\\"default\\\": \\\"runner-contract-match\\\", \\\"ignored\\\": [], \\\"winner\\\": null}}, \\\"soft_rules\\\": []}, \\\"validation_strategy\\\": \\\"runner-contract-match\\\"}, \\\"validator\\\": {\\\"baseline_stage_count\\\": 2, \\\"budget_profile\\\": \\\"standard\\\", \\\"expected_adapter\\\": \\\"shell-local\\\", \\\"expected_execution_ordering\\\": [], \\\"expected_goal\\\": \\\"Demonstrate Polaris local orchestration flow\\\", \\\"expected_pattern\\\": null, \\\"expected_rule_ids\\\": [\\\"stop-on-nonrepair-denial\\\"], \\\"expected_stage_order\\\": [], \\\"expected_status\\\": \\\"ok\\\", \\\"expected_strategy\\\": null, \\\"hot_path_budget_source\\\": \\\"baseline\\\", \\\"kind\\\": \\\"runner_result_contract\\\", \\\"max_learning_hot_path_ops\\\": 1, \\\"max_repair_probe_steps\\\": 4, \\\"max_retry_actions\\\": 0, \\\"max_selection_inputs\\\": 4, \\\"max_stage_count\\\": 2, \\\"max_stage_growth\\\": 0, \\\"max_state_writes\\\": 32, \\\"observed_selection_inputs\\\": 1, \\\"output_file\\\": \\\"/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/runtime-step3-smoke/runtime-execution-result.json\\\", \\\"required_fields\\\": [\\\"status\\\", \\\"adapter\\\", \\\"goal\\\", \\\"result\\\"]}}'\", \"execution_profile\": \"standard\", \"goal\": \"Demonstrate Polaris local orchestration flow\", \"kind\": \"command\", \"mode\": \"short\", \"output_file\": \"/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/runtime-step3-smoke/runtime-execution-result.json\", \"selected_pattern\": null, \"selected_pattern_sequence\": [], \"simulate_error\": null, \"strategy\": {\"execution_ordering\": [\"execute\", \"validate\"], \"fallback_choice\": \"selected-adapter-only\", \"retry_policy\": \"respect-hard-stop-rules\", \"strategy_trace\": {\"execution_kind\": \"runner\", \"execution_profile\": \"standard\", \"experimental_rules\": [], \"hard_rules\": [\"stop-on-nonrepair-denial\"], \"selected_pattern\": null, \"slot_permissions\": {\"experimental\": [\"fallback_choice\", \"validation_strategy\"], \"hard\": [\"retry_policy\"], \"pattern\": [\"execution_ordering\", \"fallback_choice\", \"validation_strategy\"], \"soft\": [\"execution_ordering\", \"fallback_choice\", \"retry_policy\", \"validation_strategy\"]}, \"slot_resolution\": {\"execution_ordering\": {\"candidates\": [], \"default\": [\"execute\", \"validate\"], \"ignored\": [], \"winner\": null}, \"fallback_choice\": {\"candidates\": [], \"default\": \"selected-adapter-only\", \"ignored\": [], \"winner\": null}, \"retry_policy\": {\"candidates\": [{\"confidence\": 0, \"layer\": \"hard\", \"priority\": 100, \"reason\": \"rule:stop-on-nonrepair-denial\", \"source_id\": \"stop-on-nonrepair-denial\", \"value\": \"respect-hard-stop-rules\"}], \"default\": \"bounded-repair\", \"ignored\": [], \"winner\": {\"layer\": \"hard\", \"reason\": \"rule:stop-on-nonrepair-denial\", \"source_id\": \"stop-on-nonrepair-denial\", \"value\": \"respect-hard-stop-rules\"}}, \"validation_strategy\": {\"candidates\": [], \"default\": \"runner-contract-match\", \"ignored\": [], \"winner\": null}}, \"soft_rules\": []}, \"validation_strategy\": \"runner-contract-match\"}, \"validator\": {\"baseline_stage_count\": 2, \"budget_profile\": \"standard\", \"expected_adapter\": \"shell-local\", \"expected_execution_ordering\": [], \"expected_goal\": \"Demonstrate Polaris local orchestration flow\", \"expected_pattern\": null, \"expected_rule_ids\": [\"stop-on-nonrepair-denial\"], \"expected_stage_order\": [], \"expected_status\": \"ok\", \"expected_strategy\": null, \"hot_path_budget_source\": \"baseline\", \"kind\": \"runner_result_contract\", \"max_learning_hot_path_ops\": 1, \"max_repair_probe_steps\": 4, \"max_retry_actions\": 0, \"max_selection_inputs\": 4, \"max_stage_count\": 2, \"max_stage_growth\": 0, \"max_state_writes\": 32, \"observed_selection_inputs\": 1, \"output_file\": \"/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/runtime-step3-smoke/runtime-execution-result.json\", \"required_fields\": [\"status\", \"adapter\", \"goal\", \"result\"]}}",
+    "baseline_validator": "{\"baseline_stage_count\": 2, \"budget_profile\": \"standard\", \"expected_adapter\": \"shell-local\", \"expected_execution_ordering\": [], \"expected_goal\": \"Demonstrate Polaris local orchestration flow\", \"expected_pattern\": null, \"expected_rule_ids\": [\"stop-on-nonrepair-denial\"], \"expected_stage_order\": [], \"expected_status\": \"ok\", \"expected_strategy\": null, \"hot_path_budget_source\": \"baseline\", \"kind\": \"runner_result_contract\", \"max_learning_hot_path_ops\": 1, \"max_repair_probe_steps\": 4, \"max_retry_actions\": 0, \"max_selection_inputs\": 4, \"max_stage_count\": 2, \"max_stage_growth\": 0, \"max_state_writes\": 32, \"observed_selection_inputs\": 1, \"output_file\": \"/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/runtime-step3-smoke/runtime-execution-result.json\", \"required_fields\": [\"status\", \"adapter\", \"goal\", \"result\"]}",
+    "efficiency_metrics": "{\"adapter_selection_cost\": 0, \"budget_profile\": \"standard\", \"cold_path_cost\": 0, \"expected_benefit\": \"bounded local execution\", \"family_transfer_applied\": false, \"hot_path_budget_source\": \"baseline\", \"learning_hot_path_ops\": 1, \"max_learning_hot_path_ops\": 1, \"max_repair_probe_steps\": 4, \"max_retry_actions\": 0, \"max_selection_inputs\": 4, \"max_stage_count\": 2, \"max_state_writes\": 32, \"repair_probe_steps\": 0, \"retry_actions\": 0, \"selection_inputs\": 1, \"stage_count\": 2, \"state_write_count\": 46, \"validator_directness_rank\": 1}",
+    "execution_contract": "{\"adapter\": \"shell-local\", \"applied_rule_ids\": [\"stop-on-nonrepair-denial\"], \"command\": \"python3 /home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/scripts/polaris_task_runner.py --goal 'Demonstrate Polaris local orchestration flow' --state /home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/runtime-step3-smoke/execution-state.json --output /home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/runtime-step3-smoke/runtime-execution-result.json --mode short --execution-profile standard --adapter shell-local --applied-rules-json '[{\\\"action\\\": \\\"Stop and reduce scope instead of retrying the blocked path\\\", \\\"layer\\\": \\\"hard\\\", \\\"priority\\\": 100, \\\"rule_id\\\": \\\"stop-on-nonrepair-denial\\\", \\\"scope\\\": \\\"all Polaris runs\\\", \\\"tags\\\": [\\\"stop\\\", \\\"runtime\\\", \\\"local\\\"], \\\"trigger\\\": \\\"an explicit non-repair denial appears\\\"}]' --selected-pattern-json '{}' --execution-contract-json '{\\\"kind\\\": \\\"runner\\\", \\\"pattern\\\": null, \\\"rule_count\\\": 1, \\\"strategy\\\": {\\\"execution_ordering\\\": [\\\"execute\\\", \\\"validate\\\"], \\\"fallback_choice\\\": \\\"selected-adapter-only\\\", \\\"retry_policy\\\": \\\"respect-hard-stop-rules\\\", \\\"strategy_trace\\\": {\\\"execution_kind\\\": \\\"runner\\\", \\\"execution_profile\\\": \\\"standard\\\", \\\"experimental_rules\\\": [], \\\"hard_rules\\\": [\\\"stop-on-nonrepair-denial\\\"], \\\"selected_pattern\\\": null, \\\"slot_permissions\\\": {\\\"experimental\\\": [\\\"fallback_choice\\\", \\\"validation_strategy\\\"], \\\"hard\\\": [\\\"retry_policy\\\"], \\\"pattern\\\": [\\\"execution_ordering\\\", \\\"fallback_choice\\\", \\\"validation_strategy\\\"], \\\"soft\\\": [\\\"execution_ordering\\\", \\\"fallback_choice\\\", \\\"retry_policy\\\", \\\"validation_strategy\\\"]}, \\\"slot_resolution\\\": {\\\"execution_ordering\\\": {\\\"candidates\\\": [], \\\"default\\\": [\\\"execute\\\", \\\"validate\\\"], \\\"ignored\\\": [], \\\"winner\\\": null}, \\\"fallback_choice\\\": {\\\"candidates\\\": [], \\\"default\\\": \\\"selected-adapter-only\\\", \\\"ignored\\\": [], \\\"winner\\\": null}, \\\"retry_policy\\\": {\\\"candidates\\\": [{\\\"confidence\\\": 0, \\\"layer\\\": \\\"hard\\\", \\\"priority\\\": 100, \\\"reason\\\": \\\"rule:stop-on-nonrepair-denial\\\", \\\"source_id\\\": \\\"stop-on-nonrepair-denial\\\", \\\"value\\\": \\\"respect-hard-stop-rules\\\"}], \\\"default\\\": \\\"bounded-repair\\\", \\\"ignored\\\": [], \\\"winner\\\": {\\\"layer\\\": \\\"hard\\\", \\\"reason\\\": \\\"rule:stop-on-nonrepair-denial\\\", \\\"source_id\\\": \\\"stop-on-nonrepair-denial\\\", \\\"value\\\": \\\"respect-hard-stop-rules\\\"}}, \\\"validation_strategy\\\": {\\\"candidates\\\": [], \\\"default\\\": \\\"runner-contract-match\\\", \\\"ignored\\\": [], \\\"winner\\\": null}}, \\\"soft_rules\\\": []}, \\\"validation_strategy\\\": \\\"runner-contract-match\\\"}, \\\"validator\\\": {\\\"baseline_stage_count\\\": 2, \\\"budget_profile\\\": \\\"standard\\\", \\\"expected_adapter\\\": \\\"shell-local\\\", \\\"expected_execution_ordering\\\": [], \\\"expected_goal\\\": \\\"Demonstrate Polaris local orchestration flow\\\", \\\"expected_pattern\\\": null, \\\"expected_rule_ids\\\": [\\\"stop-on-nonrepair-denial\\\"], \\\"expected_stage_order\\\": [], \\\"expected_status\\\": \\\"ok\\\", \\\"expected_strategy\\\": null, \\\"hot_path_budget_source\\\": \\\"baseline\\\", \\\"kind\\\": \\\"runner_result_contract\\\", \\\"max_learning_hot_path_ops\\\": 1, \\\"max_repair_probe_steps\\\": 4, \\\"max_retry_actions\\\": 0, \\\"max_selection_inputs\\\": 4, \\\"max_stage_count\\\": 2, \\\"max_stage_growth\\\": 0, \\\"max_state_writes\\\": 32, \\\"observed_selection_inputs\\\": 1, \\\"output_file\\\": \\\"/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/runtime-step3-smoke/runtime-execution-result.json\\\", \\\"required_fields\\\": [\\\"status\\\", \\\"adapter\\\", \\\"goal\\\", \\\"result\\\"]}}'\", \"execution_profile\": \"standard\", \"goal\": \"Demonstrate Polaris local orchestration flow\", \"kind\": \"command\", \"mode\": \"short\", \"output_file\": \"/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/runtime-step3-smoke/runtime-execution-result.json\", \"selected_pattern\": null, \"selected_pattern_sequence\": [], \"simulate_error\": null, \"strategy\": {\"execution_ordering\": [\"execute\", \"validate\"], \"fallback_choice\": \"selected-adapter-only\", \"retry_policy\": \"respect-hard-stop-rules\", \"strategy_trace\": {\"execution_kind\": \"runner\", \"execution_profile\": \"standard\", \"experimental_rules\": [], \"hard_rules\": [\"stop-on-nonrepair-denial\"], \"selected_pattern\": null, \"slot_permissions\": {\"experimental\": [\"fallback_choice\", \"validation_strategy\"], \"hard\": [\"retry_policy\"], \"pattern\": [\"execution_ordering\", \"fallback_choice\", \"validation_strategy\"], \"soft\": [\"execution_ordering\", \"fallback_choice\", \"retry_policy\", \"validation_strategy\"]}, \"slot_resolution\": {\"execution_ordering\": {\"candidates\": [], \"default\": [\"execute\", \"validate\"], \"ignored\": [], \"winner\": null}, \"fallback_choice\": {\"candidates\": [], \"default\": \"selected-adapter-only\", \"ignored\": [], \"winner\": null}, \"retry_policy\": {\"candidates\": [{\"confidence\": 0, \"layer\": \"hard\", \"priority\": 100, \"reason\": \"rule:stop-on-nonrepair-denial\", \"source_id\": \"stop-on-nonrepair-denial\", \"value\": \"respect-hard-stop-rules\"}], \"default\": \"bounded-repair\", \"ignored\": [], \"winner\": {\"layer\": \"hard\", \"reason\": \"rule:stop-on-nonrepair-denial\", \"source_id\": \"stop-on-nonrepair-denial\", \"value\": \"respect-hard-stop-rules\"}}, \"validation_strategy\": {\"candidates\": [], \"default\": \"runner-contract-match\", \"ignored\": [], \"winner\": null}}, \"soft_rules\": []}, \"validation_strategy\": \"runner-contract-match\"}, \"validator\": {\"baseline_stage_count\": 2, \"budget_profile\": \"standard\", \"expected_adapter\": \"shell-local\", \"expected_execution_ordering\": [], \"expected_goal\": \"Demonstrate Polaris local orchestration flow\", \"expected_pattern\": null, \"expected_rule_ids\": [\"stop-on-nonrepair-denial\"], \"expected_stage_order\": [], \"expected_status\": \"ok\", \"expected_strategy\": null, \"hot_path_budget_source\": \"baseline\", \"kind\": \"runner_result_contract\", \"max_learning_hot_path_ops\": 1, \"max_repair_probe_steps\": 4, \"max_retry_actions\": 0, \"max_selection_inputs\": 4, \"max_stage_count\": 2, \"max_stage_growth\": 0, \"max_state_writes\": 32, \"observed_selection_inputs\": 1, \"output_file\": \"/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/runtime-step3-smoke/runtime-execution-result.json\", \"required_fields\": [\"status\", \"adapter\", \"goal\", \"result\"]}}",
+    "execution_contract_diff": "{}",
+    "execution_kind": "runner",
+    "execution_result": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/runtime-step3-smoke/runtime-execution-result.json",
+    "executor_result": "runtime-executor-result.json",
+    "family_transfer_applied": "false",
+    "learning_summary": "{\"failed_patterns\": [], \"failed_rules\": [], \"merged_patterns\": [], \"merged_rules\": [], \"processed_items\": 1, \"promoted_patterns\": [\"standard-local-success-marker-success-5328e8b69290\"], \"promoted_rules\": [], \"queued_items\": 1, \"retained_items\": 0, \"rule_candidates\": 0, \"success_markers\": 1}",
+    "selected_adapter": "shell-local",
+    "transfer_contract_diff": "{}",
+    "transfer_key": "standard:short:shell-local:auto",
+    "validation_result": "runtime-validation-result.json",
+    "validator_diff": "{}"
+  },
+  "current_step": "Completed",
+  "event_budget": "standard",
+  "execution_profile": "standard",
+  "goal": "Demonstrate Polaris local orchestration flow",
+  "learning_backlog": [],
+  "mode": "short",
+  "next_action": "Review outputs",
+  "phase": "completed",
+  "plan": [
+    {
+      "index": 1,
+      "phase": "planning",
+      "status": "completed",
+      "step": "Clarify scope and choose a safe local path"
+    },
+    {
+      "index": 2,
+      "phase": "ready",
+      "status": "completed",
+      "step": "Select the primary adapter and fallback"
+    },
+    {
+      "index": 3,
+      "phase": "executing",
+      "status": "completed",
+      "step": "Run the next local step"
+    },
+    {
+      "index": 4,
+      "phase": "validating",
+      "status": "completed",
+      "step": "Verify outcomes and inspect failures"
+    }
+  ],
+  "progress_pct": 100,
+  "references": [
+    {
+      "kind": "patterns",
+      "label": "success pattern store",
+      "ts": "2026-03-14T11:23:52.367986+00:00",
+      "value": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/runtime-step3-smoke/success-patterns.json"
+    },
+    {
+      "kind": "adapters",
+      "label": "adapter registry",
+      "ts": "2026-03-14T11:23:52.397869+00:00",
+      "value": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/runtime-step3-smoke/adapters.json"
+    }
+  ],
+  "repair_depth": "shallow",
+  "rule_context": {
+    "active_layers": [
+      "hard",
+      "soft",
+      "experimental"
+    ],
+    "applied_rules": [
+      {
+        "action": "Stop and reduce scope instead of retrying the blocked path",
+        "layer": "hard",
+        "priority": 100,
+        "rule_id": "stop-on-nonrepair-denial",
+        "scope": "all Polaris runs",
+        "tags": [
+          "stop",
+          "runtime",
+          "local"
+        ],
+        "trigger": "an explicit non-repair denial appears"
+      }
+    ]
+  },
+  "run_id": "polaris-orchestrated-run",
+  "runtime": {
+    "completed_at": "2026-03-14T11:23:53.971286+00:00",
+    "durable_status_surfaces": {
+      "live_status": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/runtime-step3-smoke/runtime-live-status.json"
+    },
+    "last_heartbeat_at": "2026-03-14T11:23:54.125587+00:00",
+    "last_heartbeat_summary": "run completed",
+    "lifecycle_stage": "completed",
+    "metrics": {
+      "learning_hot_path_ops": 1,
+      "state_write_count": 47
+    },
+    "started_at": "2026-03-14T11:23:52.306249+00:00"
+  },
+  "schema_version": 5,
+  "state_density": "minimal",
+  "state_machine": {
+    "active_branch": null,
+    "allowed_transitions": {
+      "blocked": [
+        "planning",
+        "ready",
+        "executing",
+        "completed"
+      ],
+      "completed": [],
+      "executing": [
+        "validating",
+        "repairing",
+        "blocked"
+      ],
+      "intake": [
+        "planning",
+        "blocked"
+      ],
+      "planning": [
+        "ready",
+        "executing",
+        "blocked"
+      ],
+      "ready": [
+        "executing",
+        "blocked"
+      ],
+      "repairing": [
+        "ready",
+        "executing",
+        "blocked"
+      ],
+      "validating": [
+        "completed",
+        "repairing",
+        "blocked"
+      ]
+    },
+    "blocked": {
+      "is_blocked": false,
+      "reason": null,
+      "references": []
+    },
+    "history": [
+      {
+        "branch_id": "execution-main",
+        "from": "executing",
+        "summary": "Execution outputs ready for validation",
+        "to": "validating",
+        "ts": "2026-03-14T11:23:53.602122+00:00"
+      },
+      {
+        "branch_id": "execution-main",
+        "from": "validating",
+        "summary": "Run finished cleanly",
+        "to": "completed",
+        "ts": "2026-03-14T11:23:53.971283+00:00"
+      }
+    ],
+    "node": "completed"
+  },
+  "status": "completed",
+  "summary_outcome": "Run finished cleanly",
+  "updated_at": "2026-03-14T11:23:54.158564+00:00"
+}

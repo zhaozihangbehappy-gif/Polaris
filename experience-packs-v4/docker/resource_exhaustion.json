@@ -1,0 +1,159 @@
+{
+  "ecosystem": "docker",
+  "error_class": "resource_exhaustion",
+  "schema_version": 4,
+  "records": [
+    {
+      "pattern_id": "docker.resource_exhaustion.000",
+      "ecosystem": "docker",
+      "error_class": "resource_exhaustion",
+      "description": "Docker disk space exhausted \u2014 enable BuildKit for better caching and layer dedup",
+      "source": "prebuilt",
+      "trigger_signals": {
+        "stderr_regex": [
+          "no space left on device|Error.*No space left"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "bash -c 'echo \"failed to register layer: write /usr/lib/libfoo.so: no space left on device\" >&2; exit 1'",
+        "trigger_env": {},
+        "expected_stderr_match": "no space left on device",
+        "expected_fix_outcome": "different_error_or_success"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "DOCKER_BUILDKIT": "1"
+            }
+          }
+        ],
+        "fix_command": "bash -c 'echo \"DOCKER_BUILDKIT set (simulated)\"; exit 0'",
+        "fix_env": {
+          "DOCKER_BUILDKIT": "1"
+        },
+        "description": "Docker disk space exhausted \u2014 enable BuildKit for better caching and layer dedup"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "legacy_v3": {
+        "stderr_pattern": "no space left on device|Error.*No space left",
+        "avoidance_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "DOCKER_BUILDKIT": "1"
+            }
+          }
+        ],
+        "description": "Docker disk space exhausted \u2014 enable BuildKit for better caching and layer dedup",
+        "source": "prebuilt",
+        "reproduction": {
+          "command": "bash -c 'echo \"failed to register layer: write /usr/lib/libfoo.so: no space left on device\" >&2; exit 1'",
+          "trigger_env": {},
+          "expected_stderr_match": "no space left on device",
+          "fix_env": {
+            "DOCKER_BUILDKIT": "1"
+          },
+          "expected_fix_outcome": "different_error_or_success",
+          "fix_command": "bash -c 'echo \"DOCKER_BUILDKIT set (simulated)\"; exit 0'"
+        }
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "docker.resource_exhaustion.001",
+      "ecosystem": "docker",
+      "error_class": "resource_exhaustion",
+      "description": "Docker container OOM or cgroup memory conflict \u2014 adjust memory limits",
+      "source": "prebuilt",
+      "trigger_signals": {
+        "stderr_regex": [
+          "OCI runtime.*memory\\.limit_in_bytes|OCI runtime.*device or resource busy|Cannot allocate memory"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "bash -c 'echo \"OCI runtime create failed: setting cgroup config: failed to write to memory.limit_in_bytes: device or resource busy\" >&2; exit 1'",
+        "trigger_env": {},
+        "expected_stderr_match": "memory\\.limit_in_bytes|Cannot allocate memory",
+        "expected_fix_outcome": "different_error_or_success"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "DOCKER_MEMORY_LIMIT": "4g"
+            }
+          },
+          {
+            "kind": "append_flags",
+            "flags": "--memory=4g --memory-swap=8g"
+          }
+        ],
+        "fix_command": "bash -c 'echo \"DOCKER_MEMORY_LIMIT set (simulated)\"; exit 0'",
+        "fix_env": {
+          "DOCKER_MEMORY_LIMIT": "4g"
+        },
+        "description": "Docker container OOM or cgroup memory conflict \u2014 adjust memory limits"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "legacy_v3": {
+        "stderr_pattern": "OCI runtime.*memory\\.limit_in_bytes|OCI runtime.*device or resource busy|Cannot allocate memory",
+        "avoidance_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "DOCKER_MEMORY_LIMIT": "4g"
+            }
+          },
+          {
+            "kind": "append_flags",
+            "flags": "--memory=4g --memory-swap=8g"
+          }
+        ],
+        "description": "Docker container OOM or cgroup memory conflict \u2014 adjust memory limits",
+        "source": "prebuilt",
+        "reproduction": {
+          "command": "bash -c 'echo \"OCI runtime create failed: setting cgroup config: failed to write to memory.limit_in_bytes: device or resource busy\" >&2; exit 1'",
+          "trigger_env": {},
+          "expected_stderr_match": "memory\\.limit_in_bytes|Cannot allocate memory",
+          "fix_env": {
+            "DOCKER_MEMORY_LIMIT": "4g"
+          },
+          "expected_fix_outcome": "different_error_or_success",
+          "fix_command": "bash -c 'echo \"DOCKER_MEMORY_LIMIT set (simulated)\"; exit 0'"
+        }
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    }
+  ]
+}

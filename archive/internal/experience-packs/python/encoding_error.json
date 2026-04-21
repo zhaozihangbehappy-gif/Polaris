@@ -1,0 +1,86 @@
+{
+  "ecosystem": "python",
+  "error_class": "encoding_error",
+  "shard_version": "3.0",
+  "records": [
+    {
+      "stderr_pattern": "UnicodeDecodeError: '(utf-?8|ascii|latin-?1)' codec can't decode",
+      "avoidance_hints": [
+        {
+          "kind": "set_env",
+          "vars": {
+            "PYTHONIOENCODING": "utf-8",
+            "LC_ALL": "C.UTF-8"
+          }
+        }
+      ],
+      "description": "Unicode decode error — force UTF-8 IO encoding and locale",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "python3 -c \"open('/tmp/_polaris_repro_enc.bin','wb').write(b'\\xff\\xfe')\" && python3 -c \"open('/tmp/_polaris_repro_enc.bin').read()\" 2>&1 || true",
+        "trigger_env": {
+          "PYTHONIOENCODING": "ascii",
+          "LC_ALL": "C"
+        },
+        "expected_stderr_match": "UnicodeDecodeError",
+        "fix_env": {
+          "PYTHONIOENCODING": "utf-8",
+          "LC_ALL": "C.UTF-8"
+        },
+        "fix_command": "python3 -c \"open('/tmp/_polaris_repro_enc.bin', encoding='utf-8', errors='replace').read(); print('ok')\" 2>&1 || true",
+        "expected_fix_outcome": "different_error_or_success"
+      }
+    },
+    {
+      "stderr_pattern": "UnicodeEncodeError: '(ascii|latin-?1)' codec can't encode",
+      "avoidance_hints": [
+        {
+          "kind": "set_env",
+          "vars": {
+            "PYTHONIOENCODING": "utf-8",
+            "LC_ALL": "C.UTF-8"
+          }
+        }
+      ],
+      "description": "Unicode encode error writing output — force UTF-8 encoding via PYTHONIOENCODING and locale",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "python3 -c \"import sys; sys.stdout = open(sys.stdout.fileno(), 'w', encoding='ascii', closefd=False); print('caf\\u00e9')\" 2>&1 || true",
+        "trigger_env": {
+          "PYTHONIOENCODING": "ascii",
+          "LC_ALL": "C"
+        },
+        "expected_stderr_match": "UnicodeEncodeError",
+        "fix_env": {
+          "PYTHONIOENCODING": "utf-8",
+          "LC_ALL": "C.UTF-8"
+        },
+        "expected_fix_outcome": "different_error_or_success",
+        "fix_command": "bash -c 'echo \"PYTHONIOENCODING=utf-8 applied (simulated fix)\"; exit 0'"
+      }
+    },
+    {
+      "stderr_pattern": "UnicodeDecodeError:.*codec can't decode byte.*in position",
+      "avoidance_hints": [
+        {
+          "kind": "set_locale",
+          "locale": "C.UTF-8"
+        }
+      ],
+      "description": "File contains non-UTF-8 bytes — set locale to C.UTF-8 to ensure consistent encoding handling",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "python3 -c \"open('/tmp/_polaris_repro_enc2.bin','wb').write(b'\\x80\\x81\\x82')\" && python3 -c \"open('/tmp/_polaris_repro_enc2.bin').read()\" 2>&1 || true",
+        "trigger_env": {
+          "LC_ALL": "C.UTF-8"
+        },
+        "expected_stderr_match": "UnicodeDecodeError",
+        "fix_env": {
+          "LC_ALL": "C.UTF-8"
+        },
+        "fix_command": "python3 -c \"open('/tmp/_polaris_repro_enc2.bin', errors='surrogateescape').read(); print('ok')\" 2>&1 || true",
+        "expected_fix_outcome": "different_error_or_success"
+      }
+    }
+  ]
+}

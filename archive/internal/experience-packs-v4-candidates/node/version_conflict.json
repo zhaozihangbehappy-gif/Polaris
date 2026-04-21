@@ -1,0 +1,535 @@
+{
+  "ecosystem": "node",
+  "error_class": "version_conflict",
+  "schema_version": 4,
+  "records": [
+    {
+      "pattern_id": "candidate.node.version_conflict.000",
+      "ecosystem": "node",
+      "error_class": "version_conflict",
+      "description": "react vs react-dom: react 18 vs react-dom 17",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "react.*peer.*react-dom",
+          "ERESOLVE.*react.*react-dom"
+        ],
+        "file_markers": [],
+        "package_managers": [
+          "npm",
+          "pnpm",
+          "yarn"
+        ],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "npm ls 2>&1 | head -30",
+        "trigger_env": {},
+        "expected_stderr_match": "react.*peer.*react-dom"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Align versions: react 18 vs react-dom 17"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.node.version_conflict.001",
+      "ecosystem": "node",
+      "error_class": "version_conflict",
+      "description": "typescript vs @types/node: ts 5.x vs @types/node<20",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "typescript.*peer.*@types/node",
+          "ERESOLVE.*typescript.*@types/node"
+        ],
+        "file_markers": [],
+        "package_managers": [
+          "npm",
+          "pnpm",
+          "yarn"
+        ],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "npm ls 2>&1 | head -30",
+        "trigger_env": {},
+        "expected_stderr_match": "typescript.*peer.*@types/node"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Align versions: ts 5.x vs @types/node<20"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.node.version_conflict.002",
+      "ecosystem": "node",
+      "error_class": "version_conflict",
+      "description": "webpack vs webpack-cli: webpack 5 vs webpack-cli 3",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "webpack.*peer.*webpack-cli",
+          "ERESOLVE.*webpack.*webpack-cli"
+        ],
+        "file_markers": [],
+        "package_managers": [
+          "npm",
+          "pnpm",
+          "yarn"
+        ],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "npm ls 2>&1 | head -30",
+        "trigger_env": {},
+        "expected_stderr_match": "webpack.*peer.*webpack-cli"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Align versions: webpack 5 vs webpack-cli 3"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.node.version_conflict.003",
+      "ecosystem": "node",
+      "error_class": "version_conflict",
+      "description": "eslint vs typescript-eslint: eslint 9 vs typescript-eslint 6",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "eslint.*peer.*typescript-eslint",
+          "ERESOLVE.*eslint.*typescript-eslint"
+        ],
+        "file_markers": [],
+        "package_managers": [
+          "npm",
+          "pnpm",
+          "yarn"
+        ],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "npm ls 2>&1 | head -30",
+        "trigger_env": {},
+        "expected_stderr_match": "eslint.*peer.*typescript-eslint"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Align versions: eslint 9 vs typescript-eslint 6"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.node.version_conflict.004",
+      "ecosystem": "node",
+      "error_class": "version_conflict",
+      "description": "next vs react: next 14 requires react 18",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "next.*peer.*react",
+          "ERESOLVE.*next.*react"
+        ],
+        "file_markers": [],
+        "package_managers": [
+          "npm",
+          "pnpm",
+          "yarn"
+        ],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "npm ls 2>&1 | head -30",
+        "trigger_env": {},
+        "expected_stderr_match": "next.*peer.*react"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Align versions: next 14 requires react 18"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.node.version_conflict.005",
+      "ecosystem": "node",
+      "error_class": "version_conflict",
+      "description": "vitest vs vite: vitest 1.x vs vite 4",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "vitest.*peer.*vite",
+          "ERESOLVE.*vitest.*vite"
+        ],
+        "file_markers": [],
+        "package_managers": [
+          "npm",
+          "pnpm",
+          "yarn"
+        ],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "npm ls 2>&1 | head -30",
+        "trigger_env": {},
+        "expected_stderr_match": "vitest.*peer.*vite"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Align versions: vitest 1.x vs vite 4"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.node.version_conflict.006",
+      "ecosystem": "node",
+      "error_class": "version_conflict",
+      "description": "vue vs @vue/compiler-sfc: vue 3 vs compiler-sfc 2",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "vue.*peer.*@vue/compiler-sfc",
+          "ERESOLVE.*vue.*@vue/compiler-sfc"
+        ],
+        "file_markers": [],
+        "package_managers": [
+          "npm",
+          "pnpm",
+          "yarn"
+        ],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "npm ls 2>&1 | head -30",
+        "trigger_env": {},
+        "expected_stderr_match": "vue.*peer.*@vue/compiler-sfc"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Align versions: vue 3 vs compiler-sfc 2"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.node.version_conflict.007",
+      "ecosystem": "node",
+      "error_class": "version_conflict",
+      "description": "jest vs ts-jest: jest 29 vs ts-jest 27",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "jest.*peer.*ts-jest",
+          "ERESOLVE.*jest.*ts-jest"
+        ],
+        "file_markers": [],
+        "package_managers": [
+          "npm",
+          "pnpm",
+          "yarn"
+        ],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "npm ls 2>&1 | head -30",
+        "trigger_env": {},
+        "expected_stderr_match": "jest.*peer.*ts-jest"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Align versions: jest 29 vs ts-jest 27"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.node.version_conflict.008",
+      "ecosystem": "node",
+      "error_class": "version_conflict",
+      "description": "storybook vs @storybook/react: sb 7 vs @sb/react 6",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "storybook.*peer.*@storybook/react",
+          "ERESOLVE.*storybook.*@storybook/react"
+        ],
+        "file_markers": [],
+        "package_managers": [
+          "npm",
+          "pnpm",
+          "yarn"
+        ],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "npm ls 2>&1 | head -30",
+        "trigger_env": {},
+        "expected_stderr_match": "storybook.*peer.*@storybook/react"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Align versions: sb 7 vs @sb/react 6"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.node.version_conflict.009",
+      "ecosystem": "node",
+      "error_class": "version_conflict",
+      "description": "prisma vs @prisma/client: prisma 5 vs client 4",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "prisma.*peer.*@prisma/client",
+          "ERESOLVE.*prisma.*@prisma/client"
+        ],
+        "file_markers": [],
+        "package_managers": [
+          "npm",
+          "pnpm",
+          "yarn"
+        ],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "npm ls 2>&1 | head -30",
+        "trigger_env": {},
+        "expected_stderr_match": "prisma.*peer.*@prisma/client"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Align versions: prisma 5 vs client 4"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.node.version_conflict.010",
+      "ecosystem": "node",
+      "error_class": "version_conflict",
+      "description": "commander vs various: commander 12 vs consumers",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "commander.*peer.*various",
+          "ERESOLVE.*commander.*various"
+        ],
+        "file_markers": [],
+        "package_managers": [
+          "npm",
+          "pnpm",
+          "yarn"
+        ],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "npm ls 2>&1 | head -30",
+        "trigger_env": {},
+        "expected_stderr_match": "commander.*peer.*various"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Align versions: commander 12 vs consumers"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.node.version_conflict.011",
+      "ecosystem": "node",
+      "error_class": "version_conflict",
+      "description": "chalk vs various: chalk v5 ESM-only",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "chalk.*peer.*various",
+          "ERESOLVE.*chalk.*various"
+        ],
+        "file_markers": [],
+        "package_managers": [
+          "npm",
+          "pnpm",
+          "yarn"
+        ],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "npm ls 2>&1 | head -30",
+        "trigger_env": {},
+        "expected_stderr_match": "chalk.*peer.*various"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Align versions: chalk v5 ESM-only"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    }
+  ]
+}

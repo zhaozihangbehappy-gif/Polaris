@@ -1,0 +1,14 @@
+{
+  "case_id": "generated_node_port_conflict_000",
+  "files": [
+    "conflict.js"
+  ],
+  "dependencies": {},
+  "build_commands": [],
+  "expected_failure_command": "cd {workdir} && node conflict.js",
+  "expected_failure_stderr_regex": "EADDRINUSE.*address already in use.*:(\\d+)",
+  "manifest_schema_version": 1,
+  "bash_self_contained": false,
+  "reverse_from_pattern": "node.port_conflict.000",
+  "source_pool": "official"
+}

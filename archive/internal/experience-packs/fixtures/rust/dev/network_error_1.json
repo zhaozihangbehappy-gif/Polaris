@@ -1,0 +1,5 @@
+{
+  "stderr": "    Updating crates.io index\nwarning: spurious network error (3 tries remaining): [28] Timeout was reached; the maximum time allowed for the transfer operation was reached\nwarning: spurious network error (2 tries remaining): [28] Timeout was reached; the maximum time allowed for the transfer operation was reached\nerror: failed to get `serde` as a dependency of package `myproject v0.1.0`\n\nCaused by:\n  failed to fetch `https://github.com/rust-lang/crates.io-index`\n\nCaused by:\n  network failure seems to have happened\n  if a proxy or similar is necessary `net.git-fetch-with-cli` may help here",
+  "error_class": "network_error",
+  "source": "cargo build behind corporate proxy with crates.io registry timeout"
+}

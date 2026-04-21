@@ -1,0 +1,5 @@
+{
+  "stderr": "/home/user/project/app.rb:1:in `require': cannot load such file -- nokogiri (LoadError)\n\tfrom /home/user/project/app.rb:1:in `<main>'",
+  "error_class": "missing_dependency",
+  "source": "LoadError from require of missing gem"
+}

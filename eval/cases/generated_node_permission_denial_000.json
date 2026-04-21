@@ -1,0 +1,17 @@
+{
+  "case_id": "generated_node_permission_denial_000",
+  "source": "authored_fixture",
+  "reverse_from_pattern": "node.permission_denial.000",
+  "pattern_id": "node.permission_denial.000",
+  "source_pool": "official",
+  "ecosystem": "node",
+  "error_class": "permission_denial",
+  "initial_prompt": "In the project at {workdir}, this node permission_denial fails: npm cache permission error \u2014 redirect npm cache to writable directory. Reproduce the failure with `npm test`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+  "success_criteria": {
+    "root_cause_regex": ".+",
+    "fix_command_test": "cd {workdir} && npm test"
+  },
+  "max_rounds": 6,
+  "fixture_strategy": "authored_files",
+  "promotion_eligible": true
+}

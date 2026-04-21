@@ -1,0 +1,275 @@
+{
+  "artifacts": {
+    "execution_contract": "{\"adapter\": \"file-transform-local\", \"applied_rule_ids\": [\"stop-on-nonrepair-denial\"], \"args\": [\"--input-file\", \"/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/runtime-deep-file-transform-check/runtime-transform-input.txt\", \"--output-file\", \"/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/runtime-deep-file-transform-check/runtime-transform-output.txt\", \"--marker\", \"POLARIS_TRANSFORM::DEEP::file-transform-local\", \"--mode\", \"append-marker\"], \"execution_profile\": \"deep\", \"goal\": \"Demonstrate Polaris deep file transform flow\", \"input_file\": \"/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/runtime-deep-file-transform-check/runtime-transform-input.txt\", \"kind\": \"file_transform\", \"mode\": \"long\", \"output_file\": \"/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/runtime-deep-file-transform-check/runtime-transform-output.txt\", \"script_path\": \"/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/scripts/polaris_file_transform.py\", \"selected_pattern\": \"bounded-local-repair\", \"selected_pattern_sequence\": [\"detect\", \"branch\", \"probe\", \"recover\", \"record\"], \"simulate_error\": null, \"validator\": {\"input_file\": \"/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/runtime-deep-file-transform-check/runtime-transform-input.txt\", \"kind\": \"file_transform_result\", \"marker\": \"POLARIS_TRANSFORM::DEEP::file-transform-local\", \"mode\": \"append-marker\", \"output_file\": \"/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/runtime-deep-file-transform-check/runtime-transform-output.txt\", \"require_changed\": true, \"require_exact_output\": true}}",
+    "execution_family_trace": "{\"reason\": \"explicit-request\", \"requested_kind\": \"file_transform\"}",
+    "execution_kind": "file_transform",
+    "execution_result": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/runtime-deep-file-transform-check/runtime-transform-output.txt",
+    "executor_result": "runtime-executor-result.json",
+    "learning_summary": "{\"failed_patterns\": [], \"failed_rules\": [], \"merged_patterns\": [], \"merged_rules\": [], \"processed_items\": 1, \"promoted_patterns\": [\"layered-local-orchestration\"], \"promoted_rules\": [], \"queued_items\": 1, \"retained_items\": 0, \"rule_candidates\": 0, \"success_markers\": 1}",
+    "selected_adapter": "file-transform-local",
+    "selected_pattern": "bounded-local-repair",
+    "validation_result": "runtime-validation-result.json"
+  },
+  "attempts": [
+    {
+      "branch_id": "execution-main",
+      "evidence": [
+        "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/runtime-deep-file-transform-check/runtime-transform-output.txt"
+      ],
+      "status": "passed",
+      "step": "execute_adapter_contract",
+      "summary": "Adapter contract executed successfully",
+      "ts": "2026-03-14T08:38:05.629958+00:00"
+    }
+  ],
+  "checkpoints": [],
+  "current_step": "Completed",
+  "event_budget": "deep",
+  "execution_profile": "deep",
+  "goal": "Demonstrate Polaris deep file transform flow",
+  "learning_backlog": [],
+  "lessons": [],
+  "mode": "long",
+  "next_action": "Review outputs",
+  "phase": "completed",
+  "plan": [
+    {
+      "index": 1,
+      "phase": "planning",
+      "rule_layers": [
+        "hard"
+      ],
+      "status": "completed",
+      "step": "Clarify task scope",
+      "step_id": "planning-1",
+      "success_signal": "scope accepted",
+      "updated_at": "2026-03-14T08:38:05.046051+00:00"
+    },
+    {
+      "index": 2,
+      "phase": "ready",
+      "rule_layers": [
+        "hard",
+        "soft"
+      ],
+      "status": "completed",
+      "step": "Choose safe local adapter and rules",
+      "step_id": "ready-2",
+      "success_signal": "execution path chosen",
+      "updated_at": "2026-03-14T08:38:05.167561+00:00"
+    },
+    {
+      "index": 3,
+      "phase": "executing",
+      "rule_layers": [
+        "hard",
+        "soft"
+      ],
+      "status": "completed",
+      "step": "Execute the next local step",
+      "step_id": "executing-3",
+      "success_signal": "step completed",
+      "updated_at": "2026-03-14T08:38:05.660598+00:00"
+    },
+    {
+      "index": 4,
+      "phase": "validating",
+      "rule_layers": [
+        "hard",
+        "soft",
+        "experimental"
+      ],
+      "status": "completed",
+      "step": "Verify outcomes and inspect failures",
+      "step_id": "validating-4",
+      "success_signal": "evidence captured",
+      "updated_at": "2026-03-14T08:38:05.897025+00:00"
+    },
+    {
+      "index": 5,
+      "phase": "completed",
+      "rule_layers": [
+        "soft",
+        "experimental"
+      ],
+      "status": "completed",
+      "step": "Record reusable lessons and next actions",
+      "step_id": "completed-5",
+      "success_signal": "state ready to resume",
+      "updated_at": "2026-03-14T08:38:06.026916+00:00"
+    }
+  ],
+  "progress_pct": 100,
+  "references": [
+    {
+      "kind": "rules",
+      "label": "layered rules store",
+      "ts": "2026-03-14T08:38:04.598149+00:00",
+      "value": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/runtime-deep-file-transform-check/rules.json"
+    },
+    {
+      "kind": "patterns",
+      "label": "success pattern store",
+      "ts": "2026-03-14T08:38:04.627184+00:00",
+      "value": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/runtime-deep-file-transform-check/success-patterns.json"
+    },
+    {
+      "kind": "adapters",
+      "label": "adapter registry",
+      "ts": "2026-03-14T08:38:04.657303+00:00",
+      "value": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/runtime-deep-file-transform-check/adapters.json"
+    }
+  ],
+  "repair_depth": "deep",
+  "rule_context": {
+    "active_layers": [
+      "hard",
+      "soft",
+      "experimental"
+    ],
+    "applied_rules": [
+      {
+        "action": "Stop and reduce scope instead of retrying the blocked path",
+        "layer": "hard",
+        "priority": 100,
+        "rule_id": "stop-on-nonrepair-denial",
+        "scope": "all Polaris runs",
+        "tags": [
+          "stop",
+          "runtime",
+          "local"
+        ],
+        "trigger": "an explicit non-repair denial appears"
+      }
+    ]
+  },
+  "run_id": "polaris-orchestrated-run",
+  "runtime": {
+    "completed_at": "2026-03-14T08:38:06.056244+00:00",
+    "durable_status_surfaces": {
+      "live_status": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/runtime-deep-file-transform-check/runtime-live-status.json"
+    },
+    "last_heartbeat_at": "2026-03-14T08:38:06.238097+00:00",
+    "last_heartbeat_summary": "run completed",
+    "lifecycle_stage": "completed",
+    "started_at": "2026-03-14T08:38:04.567283+00:00"
+  },
+  "schema_version": 5,
+  "state_density": "full",
+  "state_machine": {
+    "active_branch": null,
+    "allowed_transitions": {
+      "blocked": [
+        "planning",
+        "ready",
+        "executing",
+        "completed"
+      ],
+      "completed": [],
+      "executing": [
+        "validating",
+        "repairing",
+        "blocked"
+      ],
+      "intake": [
+        "planning",
+        "blocked"
+      ],
+      "planning": [
+        "ready",
+        "executing",
+        "blocked"
+      ],
+      "ready": [
+        "executing",
+        "blocked"
+      ],
+      "repairing": [
+        "ready",
+        "executing",
+        "blocked"
+      ],
+      "validating": [
+        "completed",
+        "repairing",
+        "blocked"
+      ]
+    },
+    "blocked": {
+      "is_blocked": false,
+      "reason": null,
+      "references": []
+    },
+    "branches": [
+      {
+        "branch_id": "execution-main",
+        "kind": "primary",
+        "label": "Primary execution path",
+        "opened_at": "2026-03-14T08:38:05.138033+00:00",
+        "origin_node": "ready",
+        "references": [
+          "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/runtime-deep-file-transform-check/adapters.json",
+          "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/runtime-deep-file-transform-check/rules.json"
+        ],
+        "status": "active",
+        "summary": "Main local execution branch opened"
+      }
+    ],
+    "history": [
+      {
+        "branch_id": null,
+        "from": "intake",
+        "summary": "Run initialized and routed to the deep profile",
+        "to": "planning",
+        "ts": "2026-03-14T08:38:04.687922+00:00"
+      },
+      {
+        "branch_id": null,
+        "from": "planning",
+        "summary": "Plan and adapter routing completed",
+        "to": "ready",
+        "ts": "2026-03-14T08:38:05.077281+00:00"
+      },
+      {
+        "branch_id": "execution-main",
+        "from": "ready",
+        "summary": "Execution branch started",
+        "to": "executing",
+        "ts": "2026-03-14T08:38:05.197910+00:00"
+      },
+      {
+        "branch_id": "execution-main",
+        "from": "executing",
+        "summary": "Execution outputs ready for validation",
+        "to": "validating",
+        "ts": "2026-03-14T08:38:05.690778+00:00"
+      },
+      {
+        "branch_id": "execution-main",
+        "from": "validating",
+        "summary": "Run finished cleanly",
+        "to": "completed",
+        "ts": "2026-03-14T08:38:06.056240+00:00"
+      }
+    ],
+    "history_summary": [],
+    "node": "completed",
+    "recovery": []
+  },
+  "status": "completed",
+  "success_patterns": [
+    {
+      "captured_at": "2026-03-14T08:38:05.865417+00:00",
+      "confidence": 90,
+      "evidence": [
+        "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/runtime-deep-file-transform-check/execution-state.json",
+        "runtime-status.json"
+      ],
+      "pattern_id": "layered-local-orchestration",
+      "reusable": true,
+      "summary": "Full run queued a reusable orchestration pattern for deferred consolidation"
+    }
+  ],
+  "summary_outcome": "Run finished cleanly",
+  "updated_at": "2026-03-14T08:38:06.238100+00:00"
+}

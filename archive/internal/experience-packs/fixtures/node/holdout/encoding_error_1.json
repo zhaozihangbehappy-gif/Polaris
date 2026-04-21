@@ -1,0 +1,5 @@
+{
+  "stderr": "node:internal/modules/cjs/loader:1281\n  return content.charCodeAt(0) === 0xFEFF\n         ^\n\nSyntaxError: Invalid or unexpected token\n    at wrapSafe (node:internal/modules/cjs/loader:1281:20)\n    at Module._compile (node:internal/modules/cjs/loader:1321:27)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1416:10)\n    at Module.load (node:internal/modules/cjs/loader:1208:32)\n    at Module._load (node:internal/modules/cjs/loader:1024:12)\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:174:12)\n    at node:internal/main/run_main_module:28:49\n\nNode.js v20.11.0",
+  "error_class": "encoding_error",
+  "source": "BOM or invalid encoding at start of JS source file"
+}

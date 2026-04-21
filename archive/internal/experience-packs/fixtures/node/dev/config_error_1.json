@@ -1,0 +1,5 @@
+{
+  "stderr": "npm ERR! code EJSONPARSE\nnpm ERR! path /home/user/project/package.json\nnpm ERR! JSON.parse Unexpected token } in JSON at position 245\nnpm ERR! JSON.parse Failed to parse JSON data.\nnpm ERR! JSON.parse Note: package.json must be actual JSON, not just JavaScript.\nnpm ERR! \nnpm ERR! Tell the package author to fix their package.json file. JSON.parse\n\nnpm ERR! A complete log of this run can be found in: /home/user/.npm/_logs/2024-06-01T08_30_22_111Z-debug-0.log",
+  "error_class": "config_error",
+  "source": "Malformed package.json with trailing comma"
+}

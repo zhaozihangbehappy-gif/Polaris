@@ -1,0 +1,13 @@
+{
+  "case_id": "real_001_pnpm_version_drift",
+  "source": "real_issue",
+  "ecosystem": "node",
+  "initial_prompt": "At {workdir} is a minimal Node project with a package.json and a\npnpm-lock.yaml that was written by a newer pnpm. Running\n`pnpm install --frozen-lockfile` fails with ERR_PNPM_OUTDATED_LOCKFILE\nbecause the pnpm binary on PATH is a different major version than the one\nthat produced the lockfile. Diagnose the version-drift root cause and\napply the correct pin so CI and local agree on one pnpm version \u2014 do not\nregenerate the lockfile, and do not turn off --frozen-lockfile.",
+  "success_criteria": {
+    "root_cause_regex": "packageManager|corepack|action-setup|pnpm.*version|version mismatch",
+    "fix_command_test": "cd {workdir} && pnpm install --frozen-lockfile"
+  },
+  "max_rounds": 12,
+  "real_issue_url": "https://github.com/pnpm/pnpm/issues/6526",
+  "pain_category": "ci_only"
+}

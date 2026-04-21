@@ -1,0 +1,397 @@
+{
+  "ecosystem": "rust",
+  "error_class": "cargo_error",
+  "schema_version": 4,
+  "records": [
+    {
+      "pattern_id": "candidate.rust.cargo_error.000",
+      "ecosystem": "rust",
+      "error_class": "cargo_error",
+      "description": "cargo fetch network timeout",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "failed to fetch.*https://crates\\.io"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "cargo --version 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "failed to fetch.*https://crates\\.io"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Rust cargo_error: cargo fetch network timeout"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.rust.cargo_error.001",
+      "ecosystem": "rust",
+      "error_class": "cargo_error",
+      "description": "registry sparse index not supported",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "sparse.*protocol.*not enabled"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "cargo --version 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "sparse.*protocol.*not enabled"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Rust cargo_error: registry sparse index not supported"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.rust.cargo_error.002",
+      "ecosystem": "rust",
+      "error_class": "cargo_error",
+      "description": "cargo home readonly in CI",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "cargo.*cannot create.*permission denied"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "cargo --version 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "cargo.*cannot create.*permission denied"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Rust cargo_error: cargo home readonly in CI"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.rust.cargo_error.003",
+      "ecosystem": "rust",
+      "error_class": "cargo_error",
+      "description": "workspace member missing Cargo.toml",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "workspace member.*not found"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "cargo --version 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "workspace member.*not found"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Rust cargo_error: workspace member missing Cargo.toml"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.rust.cargo_error.004",
+      "ecosystem": "rust",
+      "error_class": "cargo_error",
+      "description": "path dep outside workspace root",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "workspace.*path.*outside"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "cargo --version 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "workspace.*path.*outside"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Rust cargo_error: path dep outside workspace root"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.rust.cargo_error.005",
+      "ecosystem": "rust",
+      "error_class": "cargo_error",
+      "description": "cargo publish dry-run registry auth",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "cargo publish.*401"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "cargo --version 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "cargo publish.*401"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Rust cargo_error: cargo publish dry-run registry auth"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.rust.cargo_error.006",
+      "ecosystem": "rust",
+      "error_class": "cargo_error",
+      "description": "vendored deps not used due to config",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "vendor.*not used"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "cargo --version 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "vendor.*not used"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Rust cargo_error: vendored deps not used due to config"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.rust.cargo_error.007",
+      "ecosystem": "rust",
+      "error_class": "cargo_error",
+      "description": "git dep branch moved",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "git.*branch .* not found"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "cargo --version 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "git.*branch .* not found"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Rust cargo_error: git dep branch moved"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.rust.cargo_error.008",
+      "ecosystem": "rust",
+      "error_class": "cargo_error",
+      "description": "git dep tag deleted upstream",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "tag .* not found"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "cargo --version 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "tag .* not found"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Rust cargo_error: git dep tag deleted upstream"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.rust.cargo_error.009",
+      "ecosystem": "rust",
+      "error_class": "cargo_error",
+      "description": "cargo-config.toml syntax",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "could not parse.*config"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "cargo --version 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "could not parse.*config"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Rust cargo_error: cargo-config.toml syntax"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,475 @@
+{
+  "ecosystem": "python",
+  "error_class": "build_error",
+  "schema_version": 4,
+  "records": [
+    {
+      "pattern_id": "candidate.python.build_error.000",
+      "ecosystem": "python",
+      "error_class": "build_error",
+      "description": "Missing Python.h C header",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "fatal error: Python\\.h: No such file"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "python3 -m pip install --no-binary :all: dummy-pkg 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "fatal error: Python\\.h: No such file"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Install system build deps; root cause: Missing Python.h C header"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.build_error.001",
+      "ecosystem": "python",
+      "error_class": "build_error",
+      "description": "gcc not found for C extension",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "error: command 'gcc' failed"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "python3 -m pip install --no-binary :all: dummy-pkg 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "error: command 'gcc' failed"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Install system build deps; root cause: gcc not found for C extension"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.build_error.002",
+      "ecosystem": "python",
+      "error_class": "build_error",
+      "description": "clang not found on macOS build",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "unable to execute 'clang'"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "python3 -m pip install --no-binary :all: dummy-pkg 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "unable to execute 'clang'"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Install system build deps; root cause: clang not found on macOS build"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.build_error.003",
+      "ecosystem": "python",
+      "error_class": "build_error",
+      "description": "Rust toolchain missing for maturin",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "Cargo, the Rust package manager, is not installed"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "python3 -m pip install --no-binary :all: dummy-pkg 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "Cargo, the Rust package manager, is not installed"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Install system build deps; root cause: Rust toolchain missing for maturin"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.build_error.004",
+      "ecosystem": "python",
+      "error_class": "build_error",
+      "description": "Cython missing at setup time",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "Cython\\.Build.*ModuleNotFoundError"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "python3 -m pip install --no-binary :all: dummy-pkg 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "Cython\\.Build.*ModuleNotFoundError"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Install system build deps; root cause: Cython missing at setup time"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.build_error.005",
+      "ecosystem": "python",
+      "error_class": "build_error",
+      "description": "Missing OpenSSL headers",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "openssl/ssl\\.h.*No such file"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "python3 -m pip install --no-binary :all: dummy-pkg 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "openssl/ssl\\.h.*No such file"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Install system build deps; root cause: Missing OpenSSL headers"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.build_error.006",
+      "ecosystem": "python",
+      "error_class": "build_error",
+      "description": "Missing libffi headers",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "ffi\\.h.*No such file"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "python3 -m pip install --no-binary :all: dummy-pkg 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "ffi\\.h.*No such file"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Install system build deps; root cause: Missing libffi headers"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.build_error.007",
+      "ecosystem": "python",
+      "error_class": "build_error",
+      "description": "Missing libxml2 headers",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "libxml/xmlversion\\.h.*No such file"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "python3 -m pip install --no-binary :all: dummy-pkg 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "libxml/xmlversion\\.h.*No such file"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Install system build deps; root cause: Missing libxml2 headers"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.build_error.008",
+      "ecosystem": "python",
+      "error_class": "build_error",
+      "description": "Missing libpq dev for psycopg2",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "pg_config executable not found"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "python3 -m pip install --no-binary :all: dummy-pkg 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "pg_config executable not found"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Install system build deps; root cause: Missing libpq dev for psycopg2"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.build_error.009",
+      "ecosystem": "python",
+      "error_class": "build_error",
+      "description": "Missing HDF5 headers for h5py",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "Could not find HDF5 installation"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "python3 -m pip install --no-binary :all: dummy-pkg 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "Could not find HDF5 installation"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Install system build deps; root cause: Missing HDF5 headers for h5py"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.build_error.010",
+      "ecosystem": "python",
+      "error_class": "build_error",
+      "description": "Missing mysqlclient dev headers",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "mysql_config: not found"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "python3 -m pip install --no-binary :all: dummy-pkg 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "mysql_config: not found"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Install system build deps; root cause: Missing mysqlclient dev headers"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.build_error.011",
+      "ecosystem": "python",
+      "error_class": "build_error",
+      "description": "setuptools.build_meta import failure",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "ModuleNotFoundError: No module named 'setuptools\\.build_meta'"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "python3 -m pip install --no-binary :all: dummy-pkg 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "ModuleNotFoundError: No module named 'setuptools\\.build_meta'"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Install system build deps; root cause: setuptools.build_meta import failure"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    }
+  ]
+}

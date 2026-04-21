@@ -1,0 +1,16 @@
+{
+  "case_id": "generated_python_missing_dependency_000",
+  "files": [
+    "src/greeter.py",
+    "tests/test_greeter.py",
+    "run_tests.py"
+  ],
+  "dependencies": {},
+  "build_commands": [],
+  "expected_failure_command": "cd {workdir} && python3 run_tests.py",
+  "expected_failure_stderr_regex": "ModuleNotFoundError: No module named 'greeter'",
+  "manifest_schema_version": 1,
+  "bash_self_contained": false,
+  "reverse_from_pattern": "python.missing_dependency.000",
+  "source_pool": "official"
+}

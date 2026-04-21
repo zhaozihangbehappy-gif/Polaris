@@ -1,0 +1,5 @@
+{
+  "stderr": "Fetching gem metadata from https://rubygems.org/...........\nRetrying fetcher due to error (4/4): Bundler::HTTPError Could not fetch specs from https://rubygems.org/\nGemspec error: Errno::ENETUNREACH: Network is unreachable - connect(2) for \"rubygems.org\" port 443",
+  "error_class": "network_error",
+  "source": "Network unreachable during bundle install"
+}

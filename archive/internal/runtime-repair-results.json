@@ -1,0 +1,37 @@
+{
+  "executed_at": "2026-03-14T03:51:48.277704+00:00",
+  "failure_type": "permission_denial",
+  "results": [
+    {
+      "action": {
+        "command": "pwd",
+        "kind": "shell",
+        "label": "Capture working directory",
+        "node_id": "pwd",
+        "reversible": true
+      },
+      "outcome": {
+        "command": "pwd",
+        "returncode": 0,
+        "stderr": "",
+        "stdout": "/home/administrator/.openclaw/workspace/projects/polaris-skill\n"
+      }
+    },
+    {
+      "action": {
+        "command": "ls -la",
+        "kind": "shell",
+        "label": "List current directory",
+        "node_id": "ls-root",
+        "reversible": true
+      },
+      "outcome": {
+        "command": "ls -la",
+        "returncode": 0,
+        "stderr": "",
+        "stdout": "total 24\ndrwxrwxr-x  4 administrator administrator 4096 Mar 13 20:07 .\ndrwxrwxr-x  4 administrator administrator 4096 Mar 13 20:07 ..\ndrwxrwxr-x 28 administrator administrator 4096 Mar 14 11:51 Polaris\n-rw-rw-r--  1 administrator administrator 5184 Mar 14 11:06 README.md\ndrwxrwxr-x  2 administrator administrator 4096 Mar 13 16:33 specs\n"
+      }
+    }
+  ],
+  "safe_to_execute": true
+}

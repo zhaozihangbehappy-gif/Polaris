@@ -1,0 +1,17 @@
+{
+  "case_id": "generated_java_missing_dependency_004",
+  "source": "authored_fixture",
+  "reverse_from_pattern": "java.missing_dependency.004",
+  "pattern_id": "java.missing_dependency.004",
+  "source_pool": "official",
+  "ecosystem": "java",
+  "error_class": "missing_dependency",
+  "initial_prompt": "In the project at {workdir}, this java missing_dependency fails: Gradle dependency not found in configured repositories \u2014 retry or check repository config. Reproduce the failure with `javac Main.java`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+  "success_criteria": {
+    "root_cause_regex": ".+",
+    "fix_command_test": "cd {workdir} && javac Main.java"
+  },
+  "max_rounds": 6,
+  "fixture_strategy": "authored_files",
+  "promotion_eligible": true
+}

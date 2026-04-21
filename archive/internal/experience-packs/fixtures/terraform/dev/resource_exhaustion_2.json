@@ -1,0 +1,1 @@
+{"stderr": "Error: Plugin did not respond\n\nThe plugin encountered an error, and failed to respond to the\nplugin6.(*GRPCProvider).ReadResource call. The plugin logs may contain more details.\n\nAdditional Context:\nresource_count: 4500\nruntime error: out of memory\n", "error_class": "resource_exhaustion", "source": "terraform-aws-provider-5.40"}

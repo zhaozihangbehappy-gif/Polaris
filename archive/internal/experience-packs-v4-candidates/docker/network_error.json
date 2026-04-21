@@ -1,0 +1,397 @@
+{
+  "ecosystem": "docker",
+  "error_class": "network_error",
+  "schema_version": 4,
+  "records": [
+    {
+      "pattern_id": "candidate.docker.network_error.000",
+      "ecosystem": "docker",
+      "error_class": "network_error",
+      "description": "container cannot reach host via 127.0.0.1",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "connect.*127\\.0\\.0\\.1.*refused"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "docker info 2>&1 | head -5",
+        "trigger_env": {},
+        "expected_stderr_match": "connect.*127\\.0\\.0\\.1.*refused"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Docker network_error: container cannot reach host via 127.0.0.1"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.docker.network_error.001",
+      "ecosystem": "docker",
+      "error_class": "network_error",
+      "description": "DNS unresolvable inside container",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "Temporary failure in name resolution"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "docker info 2>&1 | head -5",
+        "trigger_env": {},
+        "expected_stderr_match": "Temporary failure in name resolution"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Docker network_error: DNS unresolvable inside container"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.docker.network_error.002",
+      "ecosystem": "docker",
+      "error_class": "network_error",
+      "description": "iptables missing in minimal OS",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "iptables.*command not found"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "docker info 2>&1 | head -5",
+        "trigger_env": {},
+        "expected_stderr_match": "iptables.*command not found"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Docker network_error: iptables missing in minimal OS"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.docker.network_error.003",
+      "ecosystem": "docker",
+      "error_class": "network_error",
+      "description": "network name conflict",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "network.*has active endpoints"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "docker info 2>&1 | head -5",
+        "trigger_env": {},
+        "expected_stderr_match": "network.*has active endpoints"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Docker network_error: network name conflict"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.docker.network_error.004",
+      "ecosystem": "docker",
+      "error_class": "network_error",
+      "description": "bridge network MTU mismatch",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "MTU.*mismatch"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "docker info 2>&1 | head -5",
+        "trigger_env": {},
+        "expected_stderr_match": "MTU.*mismatch"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Docker network_error: bridge network MTU mismatch"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.docker.network_error.005",
+      "ecosystem": "docker",
+      "error_class": "network_error",
+      "description": "overlay network swarm not active",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "This node is not a swarm manager"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "docker info 2>&1 | head -5",
+        "trigger_env": {},
+        "expected_stderr_match": "This node is not a swarm manager"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Docker network_error: overlay network swarm not active"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.docker.network_error.006",
+      "ecosystem": "docker",
+      "error_class": "network_error",
+      "description": "host.docker.internal linux fallback",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "host\\.docker\\.internal.*not found"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "docker info 2>&1 | head -5",
+        "trigger_env": {},
+        "expected_stderr_match": "host\\.docker\\.internal.*not found"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Docker network_error: host.docker.internal linux fallback"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.docker.network_error.007",
+      "ecosystem": "docker",
+      "error_class": "network_error",
+      "description": "port mapping conflict with existing",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "port is already allocated"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "docker info 2>&1 | head -5",
+        "trigger_env": {},
+        "expected_stderr_match": "port is already allocated"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Docker network_error: port mapping conflict with existing"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.docker.network_error.008",
+      "ecosystem": "docker",
+      "error_class": "network_error",
+      "description": "dockerd socket permission denied",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "permission denied.*docker\\.sock"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "docker info 2>&1 | head -5",
+        "trigger_env": {},
+        "expected_stderr_match": "permission denied.*docker\\.sock"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Docker network_error: dockerd socket permission denied"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.docker.network_error.009",
+      "ecosystem": "docker",
+      "error_class": "network_error",
+      "description": "container network removed while attached",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "error while removing network.*endpoints"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "docker info 2>&1 | head -5",
+        "trigger_env": {},
+        "expected_stderr_match": "error while removing network.*endpoints"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Docker network_error: container network removed while attached"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    }
+  ]
+}

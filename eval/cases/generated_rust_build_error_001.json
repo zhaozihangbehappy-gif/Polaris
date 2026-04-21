@@ -1,0 +1,17 @@
+{
+  "case_id": "generated_rust_build_error_001",
+  "source": "authored_fixture",
+  "reverse_from_pattern": "rust.build_error.001",
+  "pattern_id": "rust.build_error.001",
+  "source_pool": "official",
+  "ecosystem": "rust",
+  "error_class": "build_error",
+  "initial_prompt": "In the project at {workdir}, this rust build_error fails: Cargo compilation failure \u2014 reset incremental builds. Reproduce the failure with `PATH=/home/administrator/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/bin:$PATH cargo check --quiet`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+  "success_criteria": {
+    "root_cause_regex": ".+",
+    "fix_command_test": "cd {workdir} && PATH=/home/administrator/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/bin:$PATH cargo check --quiet"
+  },
+  "max_rounds": 6,
+  "fixture_strategy": "authored_files",
+  "promotion_eligible": true
+}

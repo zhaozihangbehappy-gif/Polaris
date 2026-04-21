@@ -1,0 +1,37 @@
+{
+  "case_001_python_pythonpath": {
+    "status": "ok",
+    "files": 2,
+    "total_bytes": 35
+  },
+  "case_002_node_enoent_lockfile": {
+    "status": "ok",
+    "files": 4,
+    "total_bytes": 527
+  },
+  "case_003_docker_layer_cache": {
+    "status": "ok",
+    "files": 3,
+    "total_bytes": 256
+  },
+  "case_004_python_syntax": {
+    "status": "ok",
+    "files": 1,
+    "total_bytes": 68
+  },
+  "case_005_python_file_path": {
+    "status": "ok",
+    "files": 2,
+    "total_bytes": 101
+  },
+  "case_006_node_fs_enoent": {
+    "status": "ok",
+    "files": 1,
+    "total_bytes": 99
+  },
+  "real_001_pnpm_version_drift": {
+    "status": "ok",
+    "files": 4,
+    "total_bytes": 6977414
+  }
+}

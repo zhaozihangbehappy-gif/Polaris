@@ -1,0 +1,15 @@
+{
+  "case_id": "generated_node_build_error_002",
+  "files": [
+    "package.json",
+    "build.js"
+  ],
+  "dependencies": {},
+  "build_commands": [],
+  "expected_failure_command": "cd {workdir} && env -u CC -u CXX npm test",
+  "expected_failure_stderr_regex": "xcode-select.*install|command line tools",
+  "manifest_schema_version": 1,
+  "bash_self_contained": false,
+  "reverse_from_pattern": "node.build_error.002",
+  "source_pool": "official"
+}

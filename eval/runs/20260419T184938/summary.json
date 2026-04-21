@@ -1,0 +1,74 @@
+{
+  "runners": [
+    "mock"
+  ],
+  "seed": 7,
+  "cases_total": 4,
+  "runs_attempted": 8,
+  "runs_completed": 8,
+  "runs_blocked": {
+    "blocked_no_fixture": 0,
+    "blocked_precondition_failed": 0,
+    "blocked_precondition_timeout": 0,
+    "blocked_contaminated_run": 0,
+    "blocked_no_expected_failure": 0
+  },
+  "deltas": [
+    {
+      "runner": "mock",
+      "case_id": "case_001_python_pythonpath",
+      "summary": {
+        "ci_pass_improved": false,
+        "rounds_pct_reduction": 58.333333333333336,
+        "token_delta": 1289,
+        "tool_calls_delta": -9,
+        "passes_hard_gate": true
+      }
+    },
+    {
+      "runner": "mock",
+      "case_id": "case_004_python_syntax",
+      "summary": {
+        "ci_pass_improved": false,
+        "rounds_pct_reduction": 0.0,
+        "token_delta": 1118,
+        "tool_calls_delta": 2,
+        "passes_hard_gate": false
+      }
+    },
+    {
+      "runner": "mock",
+      "case_id": "case_005_python_file_path",
+      "summary": {
+        "ci_pass_improved": false,
+        "rounds_pct_reduction": 91.66666666666666,
+        "token_delta": -1234,
+        "tool_calls_delta": -7,
+        "passes_hard_gate": true
+      }
+    },
+    {
+      "runner": "mock",
+      "case_id": "case_006_node_fs_enoent",
+      "summary": {
+        "ci_pass_improved": false,
+        "rounds_pct_reduction": 33.33333333333333,
+        "token_delta": -1849,
+        "tool_calls_delta": -10,
+        "passes_hard_gate": true
+      }
+    }
+  ],
+  "hard_gate_passing_pairs": 3,
+  "hard_gate_total_pairs": 4,
+  "launch_verdict": {
+    "status": "blocked_mock_only",
+    "reasons": [
+      "only MockRunner executed; mock metrics are fabricated and cannot support any external claim"
+    ],
+    "pair_pass_rate": null,
+    "real_case_share": null
+  },
+  "narrative_compliance": "Per NARRATIVE.md \u00a74: token-only gains do NOT count. A runner/case pair passes only if CI pass improves OR rounds_to_root_cause drops >= 30%.",
+  "hermetic_contract": "Every (runner, case, variant) executes in a fresh workdir under /tmp/_polaris_runs/<run_id>/... The fixture's expected_failure_command runs before the agent; if its stderr does not match expected_failure_stderr_regex, the run is blocked and the agent is NOT invoked. Evidence-eligible runs must also have no contamination phrases in the transcript."
+}

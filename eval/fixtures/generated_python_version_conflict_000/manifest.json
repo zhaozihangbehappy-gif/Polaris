@@ -1,0 +1,16 @@
+{
+  "case_id": "generated_python_version_conflict_000",
+  "files": [
+    "pyproject.toml",
+    "tests/__init__.py",
+    "tests/test_python_requirement.py"
+  ],
+  "dependencies": {},
+  "build_commands": [],
+  "expected_failure_command": "cd {workdir} && PYTHONDONTWRITEBYTECODE=1 python3 -m unittest -q tests.test_python_requirement",
+  "expected_failure_stderr_regex": "requires a different Python version.*not in '>=3\\.13'",
+  "manifest_schema_version": 1,
+  "bash_self_contained": false,
+  "reverse_from_pattern": "python.version_conflict.000",
+  "source_pool": "official"
+}

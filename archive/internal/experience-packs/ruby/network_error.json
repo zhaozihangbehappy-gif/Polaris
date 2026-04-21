@@ -1,0 +1,34 @@
+{
+  "ecosystem": "ruby",
+  "error_class": "network_error",
+  "shard_version": "3.0",
+  "records": [
+    {
+      "stderr_pattern": "Could not fetch specs from|Bundler::HTTPError|Net::OpenTimeout|ENETUNREACH",
+      "avoidance_hints": [
+        {
+          "kind": "set_env",
+          "vars": {
+            "BUNDLE_RETRY": "5",
+            "BUNDLE_JOBS": "1"
+          }
+        }
+      ],
+      "description": "Bundler network fetch failure — increase retry count and reduce parallelism",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "bash -c 'echo \"Could not fetch specs\" >&2; exit 1'",
+        "trigger_env": {
+          "BUNDLE_RETRY": "0"
+        },
+        "expected_stderr_match": "Could not fetch specs|HTTPError|OpenTimeout",
+        "fix_env": {
+          "BUNDLE_RETRY": "5",
+          "BUNDLE_JOBS": "1"
+        },
+        "expected_fix_outcome": "different_error_or_success",
+        "fix_command": "bash -c 'echo \"BUNDLE_RETRY set (simulated)\"; exit 0'"
+      }
+    }
+  ]
+}

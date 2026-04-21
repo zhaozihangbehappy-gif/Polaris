@@ -1,0 +1,5 @@
+{
+  "stderr": "Error: listen EADDRINUSE: address already in use 0.0.0.0:8080\n    at Server.setupListenHandle [as _listen2] (node:net:1872:16)\n    at listenInCluster (node:net:1920:12)\n    at doListen (node:net:2069:7)\n    at process.processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 8080\n}\n\nNode.js v20.11.0",
+  "error_class": "port_conflict",
+  "source": "Dev server port 8080 already bound"
+}

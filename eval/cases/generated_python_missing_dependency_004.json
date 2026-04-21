@@ -1,0 +1,17 @@
+{
+  "case_id": "generated_python_missing_dependency_004",
+  "source": "authored_fixture",
+  "reverse_from_pattern": "python.missing_dependency.004",
+  "pattern_id": "python.missing_dependency.004",
+  "source_pool": "official",
+  "ecosystem": "python",
+  "error_class": "missing_dependency",
+  "initial_prompt": "In the project at {workdir}, this python missing_dependency fails: Package directory missing __init__.py or not on path \u2014 extend PYTHONPATH to include common source roots. Reproduce the failure with `python3 -m unittest discover -s tests -t tests`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+  "success_criteria": {
+    "root_cause_regex": ".+",
+    "fix_command_test": "cd {workdir} && python3 -m unittest discover -s tests -t tests"
+  },
+  "max_rounds": 6,
+  "fixture_strategy": "authored_files",
+  "promotion_eligible": true
+}

@@ -1,0 +1,17 @@
+{
+  "case_id": "generated_node_build_error_002",
+  "source": "authored_fixture",
+  "reverse_from_pattern": "node.build_error.002",
+  "pattern_id": "node.build_error.002",
+  "source_pool": "official",
+  "ecosystem": "node",
+  "error_class": "build_error",
+  "initial_prompt": "In the project at {workdir}, this node build_error fails: Missing C/C++ compiler for native addon build \u2014 set CC/CXX env vars to available compiler. Reproduce the failure with `env -u CC -u CXX npm test`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+  "success_criteria": {
+    "root_cause_regex": ".+",
+    "fix_command_test": "cd {workdir} && env -u CC -u CXX npm test"
+  },
+  "max_rounds": 6,
+  "fixture_strategy": "authored_files",
+  "promotion_eligible": true
+}

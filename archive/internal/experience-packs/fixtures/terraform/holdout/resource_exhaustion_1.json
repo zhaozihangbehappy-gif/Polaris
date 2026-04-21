@@ -1,0 +1,1 @@
+{"stderr": "Error: Error running plan: 1 error occurred:\n\n* resource_count_exceeded: plan includes 1501 resources, which exceeds the configured maximum of 1500.\nConsider splitting this configuration into multiple workspaces.\n", "error_class": "resource_exhaustion", "source": "terraform-cloud-1.7.0"}

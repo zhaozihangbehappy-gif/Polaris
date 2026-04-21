@@ -1,0 +1,68 @@
+{
+  "runners": [
+    "codex",
+    "claude_code"
+  ],
+  "seed": 20260419,
+  "cases_total": 2,
+  "runs_attempted": 8,
+  "runs_completed": 8,
+  "deltas": [
+    {
+      "runner": "codex",
+      "case_id": "case_001_python_pythonpath",
+      "summary": {
+        "ci_pass_improved": false,
+        "rounds_pct_reduction": 0.0,
+        "token_delta": 15265,
+        "tool_calls_delta": 1,
+        "passes_hard_gate": false
+      }
+    },
+    {
+      "runner": "codex",
+      "case_id": "case_002_node_enoent_lockfile",
+      "summary": {
+        "ci_pass_improved": false,
+        "rounds_pct_reduction": 55.55555555555556,
+        "token_delta": -87856,
+        "tool_calls_delta": -9,
+        "passes_hard_gate": true
+      }
+    },
+    {
+      "runner": "claude_code",
+      "case_id": "case_001_python_pythonpath",
+      "summary": {
+        "ci_pass_improved": false,
+        "rounds_pct_reduction": 0.0,
+        "token_delta": -98,
+        "tool_calls_delta": 0,
+        "passes_hard_gate": false
+      }
+    },
+    {
+      "runner": "claude_code",
+      "case_id": "case_002_node_enoent_lockfile",
+      "summary": {
+        "ci_pass_improved": false,
+        "rounds_pct_reduction": 0.0,
+        "token_delta": -44,
+        "tool_calls_delta": 0,
+        "passes_hard_gate": false
+      }
+    }
+  ],
+  "hard_gate_passing_pairs": 1,
+  "hard_gate_total_pairs": 4,
+  "launch_verdict": {
+    "status": "fail",
+    "reasons": [
+      "real_issue case share 0% < v0 minimum 30%",
+      "hard-gate pair pass rate 25% < launch minimum 50%"
+    ],
+    "pair_pass_rate": 0.25,
+    "real_case_share": 0.0
+  },
+  "narrative_compliance": "Per NARRATIVE.md \u00a74: token-only gains do NOT count. A runner/case pair passes only if CI pass improves OR rounds_to_root_cause drops >= 30%."
+}

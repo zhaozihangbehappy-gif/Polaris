@@ -1,0 +1,5 @@
+{
+  "stderr": "ERROR: Version in \"./docker-compose.yml\" is unsupported. You might be seeing this error because you're using the wrong Compose file version. Either specify a supported version (e.g \"2.2\" or \"3.3\") and place your service definitions under the `services` key, or omit the `version` key and place your service definitions at the root level.",
+  "error_class": "version_conflict",
+  "source": "docker compose with obsolete version key in docker-compose.yml"
+}

@@ -1,0 +1,17 @@
+{
+  "case_id": "generated_python_version_conflict_000",
+  "source": "authored_fixture",
+  "reverse_from_pattern": "python.version_conflict.000",
+  "pattern_id": "python.version_conflict.000",
+  "source_pool": "official",
+  "ecosystem": "python",
+  "error_class": "version_conflict",
+  "initial_prompt": "In the project at {workdir}, this python version_conflict fails: Package requires a newer Python version \u2014 cannot fix via env; report the constraint to the user. Reproduce the failure with `PYTHONDONTWRITEBYTECODE=1 python3 -m unittest -q tests.test_python_requirement`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+  "success_criteria": {
+    "root_cause_regex": ".+",
+    "fix_command_test": "cd {workdir} && PYTHONDONTWRITEBYTECODE=1 python3 -m unittest -q tests.test_python_requirement"
+  },
+  "max_rounds": 6,
+  "fixture_strategy": "authored_files",
+  "promotion_eligible": true
+}

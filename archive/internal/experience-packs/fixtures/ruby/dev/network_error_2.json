@@ -1,0 +1,5 @@
+{
+  "stderr": "Fetching source index from https://private-gems.example.com/\nRetrying fetcher due to error (2/4): Bundler::HTTPError Could not fetch specs from https://private-gems.example.com/\nBundler::HTTPError: Could not reach host private-gems.example.com. Check your network connection and try again.",
+  "error_class": "network_error",
+  "source": "Bundler cannot reach private gem source"
+}

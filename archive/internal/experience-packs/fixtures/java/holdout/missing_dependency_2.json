@@ -1,0 +1,5 @@
+{
+  "stderr": "FAILURE: Build failed with an exception.\n\n* What went wrong:\nExecution failed for task ':app:compileJava'.\n> Could not resolve all files for configuration ':app:compileClasspath'.\n   > Could not find io.jsonwebtoken:jjwt-api:0.12.3.\n     Searched in the following locations:\n       - https://repo.maven.apache.org/maven2/io/jsonwebtoken/jjwt-api/0.12.3/jjwt-api-0.12.3.pom\n     Required by:\n         project :app",
+  "error_class": "missing_dependency",
+  "source": "jjwt dependency version not available in configured repositories"
+}

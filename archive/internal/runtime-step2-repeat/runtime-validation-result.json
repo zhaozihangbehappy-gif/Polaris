@@ -1,0 +1,45 @@
+{
+  "output_file": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/runtime-step2-repeat/runtime-execution-result.json",
+  "payload": {
+    "adapter": "shell-local",
+    "applied_rule_ids": [
+      "stop-on-nonrepair-denial",
+      "repair-rule-1c6e7cc8a952"
+    ],
+    "applied_rule_layers": [
+      "hard",
+      "soft"
+    ],
+    "executed_ordering": [],
+    "execution_contract": {
+      "pattern": "repair-pattern-807fd04b957e",
+      "rule_count": 2
+    },
+    "execution_profile": "standard",
+    "goal": "Demonstrate Polaris local orchestration flow",
+    "mode": "short",
+    "notes": [
+      "task executed through adapter contract",
+      "selected rules and pattern were supplied to the runner"
+    ],
+    "result": {
+      "summary": "Executed local task for goal: Demonstrate Polaris local orchestration flow",
+      "used_pattern_guidance": true,
+      "used_rule_guidance": true
+    },
+    "selected_pattern": "repair-pattern-807fd04b957e",
+    "selected_pattern_sequence": [
+      "diagnose",
+      "generic-probes",
+      "record-evidence",
+      "recover"
+    ],
+    "state": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/runtime-step2-repeat/execution-state.json",
+    "status": "ok",
+    "strategy": {},
+    "ts": "2026-03-14T09:35:33.571980+00:00"
+  },
+  "reason": "runner output strategy does not match contract strategy",
+  "status": "failed",
+  "validator_kind": "runner_result_contract"
+}

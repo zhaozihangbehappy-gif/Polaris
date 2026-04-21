@@ -1,0 +1,5 @@
+{
+  "stderr": "Traceback (most recent call last):\n  File \"/home/user/project/process.py\", line 34, in load_dataset\n    data = json.load(f)\n  File \"/usr/lib/python3.10/json/__init__.py\", line 293, in load\n    return loads(fp.read(),\nMemoryError",
+  "error_class": "resource_exhaustion",
+  "source": "loading very large JSON file into memory"
+}

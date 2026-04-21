@@ -1,0 +1,1 @@
+{"stderr": "go: go.mod requires go >= 1.22 (running go 1.21.5)\nnote: module requires Go 1.22", "error_class": "version_conflict", "source": "go build when go.mod minimum version exceeds installed Go version"}

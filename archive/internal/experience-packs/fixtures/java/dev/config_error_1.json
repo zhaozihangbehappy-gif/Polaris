@@ -1,0 +1,5 @@
+{
+  "stderr": "The JAVA_HOME environment variable is not defined correctly,\nthis environment variable is needed to run this program.\nNB: JAVA_HOME should point to a JDK not a JRE.",
+  "error_class": "config_error",
+  "source": "JAVA_HOME not set when running maven"
+}

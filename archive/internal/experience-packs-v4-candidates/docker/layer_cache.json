@@ -1,0 +1,319 @@
+{
+  "ecosystem": "docker",
+  "error_class": "layer_cache",
+  "schema_version": 4,
+  "records": [
+    {
+      "pattern_id": "candidate.docker.layer_cache.000",
+      "ecosystem": "docker",
+      "error_class": "layer_cache",
+      "description": "cache bust by package version regex",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "failed to compute cache key"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "docker info 2>&1 | head -5",
+        "trigger_env": {},
+        "expected_stderr_match": "failed to compute cache key"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Docker layer_cache: cache bust by package version regex"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.docker.layer_cache.001",
+      "ecosystem": "docker",
+      "error_class": "layer_cache",
+      "description": "COPY . invalidates on VCS metadata",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "COPY.*cache.*miss"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "docker info 2>&1 | head -5",
+        "trigger_env": {},
+        "expected_stderr_match": "COPY.*cache.*miss"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Docker layer_cache: COPY . invalidates on VCS metadata"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.docker.layer_cache.002",
+      "ecosystem": "docker",
+      "error_class": "layer_cache",
+      "description": "timestamp-based cache bust",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "mtime.*cache"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "docker info 2>&1 | head -5",
+        "trigger_env": {},
+        "expected_stderr_match": "mtime.*cache"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Docker layer_cache: timestamp-based cache bust"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.docker.layer_cache.003",
+      "ecosystem": "docker",
+      "error_class": "layer_cache",
+      "description": ".gitignore not .dockerignore confusion",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          ".dockerignore.*not found"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "docker info 2>&1 | head -5",
+        "trigger_env": {},
+        "expected_stderr_match": ".dockerignore.*not found"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Docker layer_cache: .gitignore not .dockerignore confusion"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.docker.layer_cache.004",
+      "ecosystem": "docker",
+      "error_class": "layer_cache",
+      "description": "buildx cache-to inline failure",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "cache-to.*inline.*failed"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "docker info 2>&1 | head -5",
+        "trigger_env": {},
+        "expected_stderr_match": "cache-to.*inline.*failed"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Docker layer_cache: buildx cache-to inline failure"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.docker.layer_cache.005",
+      "ecosystem": "docker",
+      "error_class": "layer_cache",
+      "description": "registry cache-from missing creds",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "cache-from.*unauthorized"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "docker info 2>&1 | head -5",
+        "trigger_env": {},
+        "expected_stderr_match": "cache-from.*unauthorized"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Docker layer_cache: registry cache-from missing creds"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.docker.layer_cache.006",
+      "ecosystem": "docker",
+      "error_class": "layer_cache",
+      "description": "buildkit gc cleared mid-build",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "buildkit.*gc.*cleared"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "docker info 2>&1 | head -5",
+        "trigger_env": {},
+        "expected_stderr_match": "buildkit.*gc.*cleared"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Docker layer_cache: buildkit gc cleared mid-build"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.docker.layer_cache.007",
+      "ecosystem": "docker",
+      "error_class": "layer_cache",
+      "description": "stage rename breaks --from",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "no stage named"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "docker info 2>&1 | head -5",
+        "trigger_env": {},
+        "expected_stderr_match": "no stage named"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Docker layer_cache: stage rename breaks --from"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    }
+  ]
+}

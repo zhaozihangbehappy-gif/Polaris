@@ -1,0 +1,40 @@
+{
+  "adapter": "shell-local",
+  "applied_rule_ids": [
+    "stop-on-nonrepair-denial"
+  ],
+  "applied_rule_layers": [
+    "hard"
+  ],
+  "executed_ordering": [],
+  "execution_contract": {
+    "pattern": "standard-local-success-marker-success-5328e8b69290",
+    "rule_count": 1
+  },
+  "execution_profile": "standard",
+  "goal": "Demonstrate Polaris local orchestration flow",
+  "mode": "short",
+  "notes": [
+    "task executed through adapter contract",
+    "selected rules and pattern were supplied to the runner"
+  ],
+  "result": {
+    "stage_count": 0,
+    "summary": "Executed local task for goal: Demonstrate Polaris local orchestration flow",
+    "used_pattern_guidance": true,
+    "used_rule_guidance": true
+  },
+  "selected_pattern": "standard-local-success-marker-success-5328e8b69290",
+  "selected_pattern_sequence": [
+    "init",
+    "plan",
+    "select-adapter",
+    "execute",
+    "validate"
+  ],
+  "stage_results": [],
+  "state": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/runtime-step2-repeat2/execution-state.json",
+  "status": "ok",
+  "strategy": {},
+  "ts": "2026-03-14T09:38:21.688138+00:00"
+}

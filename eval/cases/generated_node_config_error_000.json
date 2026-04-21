@@ -1,0 +1,17 @@
+{
+  "case_id": "generated_node_config_error_000",
+  "source": "authored_fixture",
+  "reverse_from_pattern": "node.config_error.000",
+  "pattern_id": "node.config_error.000",
+  "source_pool": "official",
+  "ecosystem": "node",
+  "error_class": "config_error",
+  "initial_prompt": "In the project at {workdir}, this node config_error fails: Invalid JSON in package.json \u2014 fix syntax errors (trailing commas, missing quotes); rewrite cwd to valid project root. Reproduce the failure with `node verify-package.js`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+  "success_criteria": {
+    "root_cause_regex": ".+",
+    "fix_command_test": "cd {workdir} && node verify-package.js"
+  },
+  "max_rounds": 6,
+  "fixture_strategy": "authored_files",
+  "promotion_eligible": true
+}

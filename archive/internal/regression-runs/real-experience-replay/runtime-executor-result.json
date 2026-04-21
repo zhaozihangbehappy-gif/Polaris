@@ -1,0 +1,10 @@
+{
+  "adapter": "shell-command",
+  "contract_kind": "shell_command",
+  "output_file": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/real-experience-replay/runtime-execution-result.json",
+  "rendered_command": "echo replay-test",
+  "returncode": 0,
+  "status": "ok",
+  "stderr": "",
+  "stdout": "{\"adapter\": \"shell-command\", \"output\": \"/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/real-experience-replay/runtime-execution-result.json\", \"status\": \"ok\"}"
+}

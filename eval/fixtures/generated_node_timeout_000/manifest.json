@@ -1,0 +1,15 @@
+{
+  "case_id": "generated_node_timeout_000",
+  "files": [
+    "package.json",
+    "test.js"
+  ],
+  "dependencies": {},
+  "build_commands": [],
+  "expected_failure_command": "cd {workdir} && npm test",
+  "expected_failure_stderr_regex": "Exceeded timeout of \\d+ ms for a test|jest\\.setTimeout|--testTimeout",
+  "manifest_schema_version": 1,
+  "bash_self_contained": false,
+  "reverse_from_pattern": "node.timeout.000",
+  "source_pool": "official"
+}

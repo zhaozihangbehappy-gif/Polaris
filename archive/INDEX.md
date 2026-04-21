@@ -1,0 +1,103 @@
+# Archive Index
+
+One line per file, filled in after migration.
+
+Format:
+- `path/to/file.md` : one-sentence what it is : YYYY-MM-DD
+
+Not listed here = not in the archive.
+
+- `INDEX.md` : archive inventory file : 2026-04-21
+- `RECEIPTS.md` : short frozen receipts page for historical work : 2026-04-21
+- `internal/ARCHITECTURE_CONTRACTS.md` : historical architecture contracts report : 2026-04-21
+- `internal/AUTHORING_REPORT.md` : historical authoring snapshot report : 2026-04-21
+- `internal/CANDIDATE_EXPANSION_REPORT.md` : historical candidate expansion report : 2026-04-21
+- `internal/CASE_GENERATION_REPORT.md` : historical case generation report : 2026-04-21
+- `internal/CLAUDE_OPUS_HANDOFF_2026-03-18.md` : historical handoff note : 2026-04-21
+- `internal/FINAL_POLARIS_V4_AUDIT.md` : historical final audit snapshot : 2026-04-21
+- `internal/GATE1_REPORT.md` : historical gate 1 report : 2026-04-21
+- `internal/GATE2_V0_REPORT.md` : historical gate 2 v0 report : 2026-04-21
+- `internal/INVALIDATED_EVIDENCE_REPORT.md` : historical invalidated evidence report : 2026-04-21
+- `internal/NARRATIVE.md` : historical narrative document : 2026-04-21
+- `internal/PLATFORM3_PLAN.md` : historical platform 3 plan : 2026-04-21
+- `internal/POLARIS_V4_TRUTH_TABLE.md` : historical v4 truth table snapshot : 2026-04-21
+- `internal/REAL_AGENT_VERIFICATION_BLOCKERS.md` : historical real-agent blocker list : 2026-04-21
+- `internal/RELEASE_PLAN.md` : historical release plan : 2026-04-21
+- `internal/SCALE_BENCH_REPORT.md` : historical scale benchmark report : 2026-04-21
+- `internal/THREEWAY_DISCUSSION_2026-03-18.md` : historical discussion transcript : 2026-04-21
+- `internal/TOOLING_BLOCKERS_REPORT.md` : historical tooling blockers report : 2026-04-21
+- `internal/V1_INTEGRATION_CHECKLIST.md` : historical integration checklist : 2026-04-21
+- `internal/VERIFIED_PROMOTION_REPORT.md` : historical verified promotion report : 2026-04-21
+- `internal/authoring_logs` : archived authoring log directory : 2026-04-21
+- `internal/authoring_report.json` : historical authoring report json snapshot : 2026-04-21
+- `internal/candidate-report-v4.json` : historical candidate report json snapshot : 2026-04-21
+- `internal/case-generation-report-v4.json` : historical case generation json snapshot : 2026-04-21
+- `internal/experience-packs` : archived pre-v4 experience pack directory : 2026-04-21
+- `internal/experience-packs-v4-candidates` : archived v4 candidate pack directory : 2026-04-21
+- `internal/migration-report-v4.json` : historical migration report json snapshot : 2026-04-21
+- `internal/migration-sample-v4.json` : historical migration sample json snapshot : 2026-04-21
+- `internal/phase4-final-regression` : archived phase4 final regression directory : 2026-04-21
+- `internal/phase4-final-regression-v2` : archived phase4 final regression v2 directory : 2026-04-21
+- `internal/phase4-hardening-regression` : archived phase4 hardening regression directory : 2026-04-21
+- `internal/promotion-report-v4.json` : historical promotion report json snapshot : 2026-04-21
+- `internal/regression-runs` : archived regression run directory : 2026-04-21
+- `internal/runtime-boundary-approval` : archived runtime boundary approval directory : 2026-04-21
+- `internal/runtime-boundary-permission` : archived runtime boundary permission directory : 2026-04-21
+- `internal/runtime-budget-deep` : archived runtime budget deep directory : 2026-04-21
+- `internal/runtime-budget-micro` : archived runtime budget micro directory : 2026-04-21
+- `internal/runtime-budget-standard` : archived runtime budget standard directory : 2026-04-21
+- `internal/runtime-command-output-audit` : archived runtime command output audit directory : 2026-04-21
+- `internal/runtime-command-output-failure-check` : archived runtime command output failure-check directory : 2026-04-21
+- `internal/runtime-command-output-success-check` : archived runtime command output success-check directory : 2026-04-21
+- `internal/runtime-deep-file-transform-check` : archived runtime deep file-transform-check directory : 2026-04-21
+- `internal/runtime-deep-repair` : archived runtime deep repair directory : 2026-04-21
+- `internal/runtime-demo` : archived runtime demo directory : 2026-04-21
+- `internal/runtime-demo-deep-phase3` : archived runtime demo deep phase3 directory : 2026-04-21
+- `internal/runtime-demo-deep-phase4` : archived runtime demo deep phase4 directory : 2026-04-21
+- `internal/runtime-demo-deep-phase4-repair` : archived runtime demo deep phase4 repair directory : 2026-04-21
+- `internal/runtime-demo-micro` : archived runtime demo micro directory : 2026-04-21
+- `internal/runtime-demo-micro-phase3` : archived runtime demo micro phase3 directory : 2026-04-21
+- `internal/runtime-demo-micro-phase4` : archived runtime demo micro phase4 directory : 2026-04-21
+- `internal/runtime-demo-standard` : archived runtime demo standard directory : 2026-04-21
+- `internal/runtime-demo-standard-phase3` : archived runtime demo standard phase3 directory : 2026-04-21
+- `internal/runtime-demo-standard-phase4` : archived runtime demo standard phase4 directory : 2026-04-21
+- `internal/runtime-demo-standard-phase4-repair` : archived runtime demo standard phase4 repair directory : 2026-04-21
+- `internal/runtime-demo-standard-phase4-repair-clean` : archived runtime demo standard phase4 repair clean directory : 2026-04-21
+- `internal/runtime-events.jsonl` : archived runtime event log : 2026-04-21
+- `internal/runtime-exec-deep` : archived runtime exec deep directory : 2026-04-21
+- `internal/runtime-exec-micro` : archived runtime exec micro directory : 2026-04-21
+- `internal/runtime-exec-standard` : archived runtime exec standard directory : 2026-04-21
+- `internal/runtime-execution-result.json` : archived runtime execution result json snapshot : 2026-04-21
+- `internal/runtime-live-status.json` : archived runtime live status json snapshot : 2026-04-21
+- `internal/runtime-permission-stop-check` : archived runtime permission stop-check directory : 2026-04-21
+- `internal/runtime-phase5a-cut1-standard` : archived runtime phase5a cut1 standard directory : 2026-04-21
+- `internal/runtime-phase5a-cut3-audit` : archived runtime phase5a cut3 audit directory : 2026-04-21
+- `internal/runtime-phase5a-cut4-transform` : archived runtime phase5a cut4 transform directory : 2026-04-21
+- `internal/runtime-repair-plan.json` : archived runtime repair plan json snapshot : 2026-04-21
+- `internal/runtime-repair-report.json` : archived runtime repair report json snapshot : 2026-04-21
+- `internal/runtime-repair-results.json` : archived runtime repair results json snapshot : 2026-04-21
+- `internal/runtime-review-standard-success` : archived runtime review standard success directory : 2026-04-21
+- `internal/runtime-standard-repair` : archived runtime standard repair directory : 2026-04-21
+- `internal/runtime-status.json` : archived runtime status json snapshot : 2026-04-21
+- `internal/runtime-step2-diff-check` : archived runtime step2 diff-check directory : 2026-04-21
+- `internal/runtime-step2-final-check` : archived runtime step2 final-check directory : 2026-04-21
+- `internal/runtime-step2-repair-repeat` : archived runtime step2 repair-repeat directory : 2026-04-21
+- `internal/runtime-step2-repeat` : archived runtime step2 repeat directory : 2026-04-21
+- `internal/runtime-step2-repeat2` : archived runtime step2 repeat2 directory : 2026-04-21
+- `internal/runtime-step2-repeat3` : archived runtime step2 repeat3 directory : 2026-04-21
+- `internal/runtime-step2-strategy-shell` : archived runtime step2 strategy-shell directory : 2026-04-21
+- `internal/runtime-step3-deep-repeat` : archived runtime step3 deep-repeat directory : 2026-04-21
+- `internal/runtime-step3-smoke` : archived runtime step3 smoke directory : 2026-04-21
+- `internal/runtime-step3-std-repeat` : archived runtime step3 std-repeat directory : 2026-04-21
+- `internal/runtime-step3-transfer-source` : archived runtime step3 transfer-source directory : 2026-04-21
+- `internal/runtime-step3-transfer-target` : archived runtime step3 transfer-target directory : 2026-04-21
+- `internal/runtime-stop-rename-check` : archived runtime stop-rename-check directory : 2026-04-21
+- `internal/scale-bench-report-v4.json` : historical scale benchmark json snapshot : 2026-04-21
+- `internal/step1-command-output-fail-detail.txt` : archived step1 failure detail text output : 2026-04-21
+- `internal/step1-command-output-fail-token.txt` : archived step1 failure token text output : 2026-04-21
+- `internal/step1-exit-code.txt` : archived step1 exit-code text output : 2026-04-21
+- `internal/step1-first-fail-case.txt` : archived step1 first-fail-case text output : 2026-04-21
+- `internal/step1-first-failure-line.txt` : archived step1 first-failure-line text output : 2026-04-21
+- `internal/step1-first-failure.txt` : archived step1 first-failure text output : 2026-04-21
+- `internal/step1-status.txt` : archived step1 status text output : 2026-04-21
+- `internal/validator-report-v4.json` : historical validator report json snapshot : 2026-04-21

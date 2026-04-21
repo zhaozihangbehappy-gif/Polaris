@@ -1,0 +1,141 @@
+{
+  "artifacts": {
+    "selected_adapter": "python-local"
+  },
+  "current_step": "Completed",
+  "event_budget": "standard",
+  "execution_profile": "standard",
+  "goal": "Demonstrate Polaris local orchestration flow",
+  "learning_backlog": [],
+  "mode": "short",
+  "next_action": "Review outputs",
+  "phase": "completed",
+  "plan": [
+    {
+      "index": 1,
+      "phase": "planning",
+      "status": "completed",
+      "step": "Clarify scope and choose a safe local path"
+    },
+    {
+      "index": 2,
+      "phase": "ready",
+      "status": "completed",
+      "step": "Select the primary adapter and fallback"
+    },
+    {
+      "index": 3,
+      "phase": "executing",
+      "status": "completed",
+      "step": "Run the next local step"
+    },
+    {
+      "index": 4,
+      "phase": "validating",
+      "status": "completed",
+      "step": "Verify outcomes and inspect failures"
+    }
+  ],
+  "progress_pct": 100,
+  "references": [
+    {
+      "kind": "patterns",
+      "label": "success pattern store",
+      "ts": "2026-03-14T02:35:36.888720+00:00",
+      "value": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/runtime-demo-standard-phase4/success-patterns.json"
+    },
+    {
+      "kind": "adapters",
+      "label": "adapter registry",
+      "ts": "2026-03-14T02:35:36.915901+00:00",
+      "value": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/runtime-demo-standard-phase4/adapters.json"
+    }
+  ],
+  "repair_depth": "shallow",
+  "rule_context": {
+    "active_layers": [
+      "hard",
+      "soft",
+      "experimental"
+    ],
+    "applied_rules": []
+  },
+  "run_id": "polaris-orchestrated-run",
+  "runtime": {
+    "completed_at": "2026-03-14T02:35:37.788955+00:00",
+    "durable_status_surfaces": {
+      "live_status": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/runtime-live-status.json"
+    },
+    "last_heartbeat_at": "2026-03-14T02:35:37.897672+00:00",
+    "last_heartbeat_summary": "run completed",
+    "lifecycle_stage": "completed",
+    "started_at": "2026-03-14T02:35:36.830701+00:00"
+  },
+  "schema_version": 5,
+  "state_density": "minimal",
+  "state_machine": {
+    "active_branch": null,
+    "allowed_transitions": {
+      "blocked": [
+        "planning",
+        "ready",
+        "executing",
+        "completed"
+      ],
+      "completed": [],
+      "executing": [
+        "validating",
+        "repairing",
+        "blocked"
+      ],
+      "intake": [
+        "planning",
+        "blocked"
+      ],
+      "planning": [
+        "ready",
+        "executing",
+        "blocked"
+      ],
+      "ready": [
+        "executing",
+        "blocked"
+      ],
+      "repairing": [
+        "ready",
+        "executing",
+        "blocked"
+      ],
+      "validating": [
+        "completed",
+        "repairing",
+        "blocked"
+      ]
+    },
+    "blocked": {
+      "is_blocked": false,
+      "reason": null,
+      "references": []
+    },
+    "history": [
+      {
+        "branch_id": "execution-main",
+        "from": "executing",
+        "summary": "Execution outputs ready for validation",
+        "to": "validating",
+        "ts": "2026-03-14T02:35:37.467366+00:00"
+      },
+      {
+        "branch_id": "execution-main",
+        "from": "validating",
+        "summary": "Run finished cleanly",
+        "to": "completed",
+        "ts": "2026-03-14T02:35:37.788952+00:00"
+      }
+    ],
+    "node": "completed"
+  },
+  "status": "completed",
+  "summary_outcome": "Run finished cleanly",
+  "updated_at": "2026-03-14T02:35:37.897675+00:00"
+}

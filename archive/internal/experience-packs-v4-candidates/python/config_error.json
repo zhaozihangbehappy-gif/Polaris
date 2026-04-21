@@ -1,0 +1,397 @@
+{
+  "ecosystem": "python",
+  "error_class": "config_error",
+  "schema_version": 4,
+  "records": [
+    {
+      "pattern_id": "candidate.python.config_error.000",
+      "ecosystem": "python",
+      "error_class": "config_error",
+      "description": "pytest.ini conflicts with pyproject",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "pytest\\.ini.*pyproject\\.toml.*both found"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "pytest --collect-only 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "pytest\\.ini.*pyproject\\.toml.*both found"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Resolve config conflict: pytest.ini conflicts with pyproject"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.config_error.001",
+      "ecosystem": "python",
+      "error_class": "config_error",
+      "description": "conftest.py rootdir mismatch",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "rootdir.*does not contain the tests"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "pytest --collect-only 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "rootdir.*does not contain the tests"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Resolve config conflict: conftest.py rootdir mismatch"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.config_error.002",
+      "ecosystem": "python",
+      "error_class": "config_error",
+      "description": "tox env python interpreter missing",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "ERROR: InterpreterNotFound: python\\d"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "pytest --collect-only 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "ERROR: InterpreterNotFound: python\\d"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Resolve config conflict: tox env python interpreter missing"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.config_error.003",
+      "ecosystem": "python",
+      "error_class": "config_error",
+      "description": "pyproject build backend misspelled",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "Cannot import build backend"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "pytest --collect-only 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "Cannot import build backend"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Resolve config conflict: pyproject build backend misspelled"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.config_error.004",
+      "ecosystem": "python",
+      "error_class": "config_error",
+      "description": "setup.cfg trailing comma invalid",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "setup\\.cfg.*parsing error"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "pytest --collect-only 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "setup\\.cfg.*parsing error"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Resolve config conflict: setup.cfg trailing comma invalid"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.config_error.005",
+      "ecosystem": "python",
+      "error_class": "config_error",
+      "description": "mypy config section missing",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "mypy: error: Section \\[mypy\\] not found"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "pytest --collect-only 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "mypy: error: Section \\[mypy\\] not found"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Resolve config conflict: mypy config section missing"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.config_error.006",
+      "ecosystem": "python",
+      "error_class": "config_error",
+      "description": "ruff config TOML key unknown",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "ruff.*Unknown config key"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "pytest --collect-only 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "ruff.*Unknown config key"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Resolve config conflict: ruff config TOML key unknown"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.config_error.007",
+      "ecosystem": "python",
+      "error_class": "config_error",
+      "description": "black config incompatible",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "black.*Invalid option"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "pytest --collect-only 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "black.*Invalid option"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Resolve config conflict: black config incompatible"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.config_error.008",
+      "ecosystem": "python",
+      "error_class": "config_error",
+      "description": "isort profile vs black mismatch",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "isort.*mismatch"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "pytest --collect-only 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "isort.*mismatch"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Resolve config conflict: isort profile vs black mismatch"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.config_error.009",
+      "ecosystem": "python",
+      "error_class": "config_error",
+      "description": "Pipfile lock outdated vs Pipfile",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "Pipfile\\.lock .* out of date"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "pytest --collect-only 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "Pipfile\\.lock .* out of date"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Resolve config conflict: Pipfile lock outdated vs Pipfile"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    }
+  ]
+}

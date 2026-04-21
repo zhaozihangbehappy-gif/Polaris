@@ -1,0 +1,327 @@
+{
+  "seed": 20260419,
+  "queries_per_pool": 1000,
+  "pools_by_mode": {
+    "full": [
+      {
+        "pool_size": 167,
+        "mode": "full",
+        "queries_executed": 1000,
+        "match_latency_p50_ms": 0.0038,
+        "match_latency_p95_ms": 0.0098,
+        "match_latency_p99_ms": 0.0137,
+        "match_latency_mean_ms": 0.0046,
+        "match_latency_max_ms": 0.0617,
+        "injection_tokens_est_p95": 91,
+        "injection_tokens_est_max": 193,
+        "payload_patterns_count_mean": 0.342,
+        "over_budget_count": 0,
+        "token_multiplier_vs_baseline": 1.0,
+        "raw_latency_multiplier_vs_baseline": 1.0,
+        "latency_multiplier_vs_baseline": 1.0
+      },
+      {
+        "pool_size": 300,
+        "mode": "full",
+        "queries_executed": 1000,
+        "match_latency_p50_ms": 0.0044,
+        "match_latency_p95_ms": 0.0129,
+        "match_latency_p99_ms": 0.0209,
+        "match_latency_mean_ms": 0.0057,
+        "match_latency_max_ms": 0.118,
+        "injection_tokens_est_p95": 97,
+        "injection_tokens_est_max": 193,
+        "payload_patterns_count_mean": 0.492,
+        "over_budget_count": 0,
+        "token_multiplier_vs_baseline": 1.066,
+        "raw_latency_multiplier_vs_baseline": 1.316,
+        "latency_multiplier_vs_baseline": 1.0
+      },
+      {
+        "pool_size": 500,
+        "mode": "full",
+        "queries_executed": 1000,
+        "match_latency_p50_ms": 0.0057,
+        "match_latency_p95_ms": 0.0185,
+        "match_latency_p99_ms": 0.0248,
+        "match_latency_mean_ms": 0.0078,
+        "match_latency_max_ms": 0.2002,
+        "injection_tokens_est_p95": 127,
+        "injection_tokens_est_max": 234,
+        "payload_patterns_count_mean": 0.79,
+        "over_budget_count": 0,
+        "token_multiplier_vs_baseline": 1.396,
+        "raw_latency_multiplier_vs_baseline": 1.888,
+        "latency_multiplier_vs_baseline": 1.0
+      },
+      {
+        "pool_size": 697,
+        "mode": "full",
+        "queries_executed": 1000,
+        "match_latency_p50_ms": 0.0089,
+        "match_latency_p95_ms": 0.0219,
+        "match_latency_p99_ms": 0.0377,
+        "match_latency_mean_ms": 0.0106,
+        "match_latency_max_ms": 0.2818,
+        "injection_tokens_est_p95": 142,
+        "injection_tokens_est_max": 234,
+        "payload_patterns_count_mean": 1.107,
+        "over_budget_count": 0,
+        "token_multiplier_vs_baseline": 1.56,
+        "raw_latency_multiplier_vs_baseline": 2.235,
+        "latency_multiplier_vs_baseline": 1.0
+      },
+      {
+        "pool_size": 1000,
+        "mode": "full",
+        "queries_executed": 1000,
+        "match_latency_p50_ms": 0.0103,
+        "match_latency_p95_ms": 0.0275,
+        "match_latency_p99_ms": 0.0387,
+        "match_latency_mean_ms": 0.0123,
+        "match_latency_max_ms": 0.1424,
+        "injection_tokens_est_p95": 210,
+        "injection_tokens_est_max": 291,
+        "payload_patterns_count_mean": 1.527,
+        "over_budget_count": 0,
+        "token_multiplier_vs_baseline": 2.308,
+        "raw_latency_multiplier_vs_baseline": 2.806,
+        "latency_multiplier_vs_baseline": 1.0
+      },
+      {
+        "pool_size": 1500,
+        "mode": "full",
+        "queries_executed": 1000,
+        "match_latency_p50_ms": 0.0143,
+        "match_latency_p95_ms": 0.0386,
+        "match_latency_p99_ms": 0.0568,
+        "match_latency_mean_ms": 0.0172,
+        "match_latency_max_ms": 0.1664,
+        "injection_tokens_est_p95": 226,
+        "injection_tokens_est_max": 293,
+        "payload_patterns_count_mean": 2.029,
+        "over_budget_count": 6,
+        "token_multiplier_vs_baseline": 2.484,
+        "raw_latency_multiplier_vs_baseline": 3.939,
+        "latency_multiplier_vs_baseline": 1.0
+      }
+    ],
+    "constant_budget": [
+      {
+        "pool_size": 167,
+        "mode": "constant_budget",
+        "queries_executed": 1000,
+        "match_latency_p50_ms": 0.0037,
+        "match_latency_p95_ms": 0.0094,
+        "match_latency_p99_ms": 0.0222,
+        "match_latency_mean_ms": 0.0045,
+        "match_latency_max_ms": 0.1048,
+        "injection_tokens_est_p95": 87,
+        "injection_tokens_est_max": 100,
+        "payload_patterns_count_mean": 0.333,
+        "over_budget_count": 5,
+        "token_multiplier_vs_baseline": 1.0,
+        "raw_latency_multiplier_vs_baseline": 1.0,
+        "latency_multiplier_vs_baseline": 1.0
+      },
+      {
+        "pool_size": 300,
+        "mode": "constant_budget",
+        "queries_executed": 1000,
+        "match_latency_p50_ms": 0.0042,
+        "match_latency_p95_ms": 0.0109,
+        "match_latency_p99_ms": 0.0178,
+        "match_latency_mean_ms": 0.005,
+        "match_latency_max_ms": 0.0751,
+        "injection_tokens_est_p95": 87,
+        "injection_tokens_est_max": 100,
+        "payload_patterns_count_mean": 0.456,
+        "over_budget_count": 4,
+        "token_multiplier_vs_baseline": 1.0,
+        "raw_latency_multiplier_vs_baseline": 1.16,
+        "latency_multiplier_vs_baseline": 1.0
+      },
+      {
+        "pool_size": 500,
+        "mode": "constant_budget",
+        "queries_executed": 1000,
+        "match_latency_p50_ms": 0.0051,
+        "match_latency_p95_ms": 0.0145,
+        "match_latency_p99_ms": 0.0235,
+        "match_latency_mean_ms": 0.0064,
+        "match_latency_max_ms": 0.1144,
+        "injection_tokens_est_p95": 83,
+        "injection_tokens_est_max": 100,
+        "payload_patterns_count_mean": 0.667,
+        "over_budget_count": 4,
+        "token_multiplier_vs_baseline": 0.954,
+        "raw_latency_multiplier_vs_baseline": 1.543,
+        "latency_multiplier_vs_baseline": 1.0
+      },
+      {
+        "pool_size": 697,
+        "mode": "constant_budget",
+        "queries_executed": 1000,
+        "match_latency_p50_ms": 0.0065,
+        "match_latency_p95_ms": 0.0161,
+        "match_latency_p99_ms": 0.023,
+        "match_latency_mean_ms": 0.0074,
+        "match_latency_max_ms": 0.0761,
+        "injection_tokens_est_p95": 81,
+        "injection_tokens_est_max": 100,
+        "payload_patterns_count_mean": 0.883,
+        "over_budget_count": 3,
+        "token_multiplier_vs_baseline": 0.931,
+        "raw_latency_multiplier_vs_baseline": 1.713,
+        "latency_multiplier_vs_baseline": 1.0
+      },
+      {
+        "pool_size": 1000,
+        "mode": "constant_budget",
+        "queries_executed": 1000,
+        "match_latency_p50_ms": 0.0076,
+        "match_latency_p95_ms": 0.0221,
+        "match_latency_p99_ms": 0.0367,
+        "match_latency_mean_ms": 0.0096,
+        "match_latency_max_ms": 0.1312,
+        "injection_tokens_est_p95": 81,
+        "injection_tokens_est_max": 100,
+        "payload_patterns_count_mean": 0.877,
+        "over_budget_count": 4,
+        "token_multiplier_vs_baseline": 0.931,
+        "raw_latency_multiplier_vs_baseline": 2.351,
+        "latency_multiplier_vs_baseline": 1.0
+      },
+      {
+        "pool_size": 1500,
+        "mode": "constant_budget",
+        "queries_executed": 1000,
+        "match_latency_p50_ms": 0.0096,
+        "match_latency_p95_ms": 0.0261,
+        "match_latency_p99_ms": 0.0447,
+        "match_latency_mean_ms": 0.0114,
+        "match_latency_max_ms": 0.0727,
+        "injection_tokens_est_p95": 87,
+        "injection_tokens_est_max": 98,
+        "payload_patterns_count_mean": 0.875,
+        "over_budget_count": 6,
+        "token_multiplier_vs_baseline": 1.0,
+        "raw_latency_multiplier_vs_baseline": 2.777,
+        "latency_multiplier_vs_baseline": 1.0
+      }
+    ]
+  },
+  "gates_by_mode": {
+    "full": {
+      "per_pool": [
+        {
+          "pool_size": 167,
+          "p95_within_cap": true,
+          "tokens_within_cap": true,
+          "token_multiplier_within_cap": true,
+          "latency_multiplier_within_cap": true
+        },
+        {
+          "pool_size": 300,
+          "p95_within_cap": true,
+          "tokens_within_cap": true,
+          "token_multiplier_within_cap": true,
+          "latency_multiplier_within_cap": true
+        },
+        {
+          "pool_size": 500,
+          "p95_within_cap": true,
+          "tokens_within_cap": true,
+          "token_multiplier_within_cap": false,
+          "latency_multiplier_within_cap": true
+        },
+        {
+          "pool_size": 697,
+          "p95_within_cap": true,
+          "tokens_within_cap": true,
+          "token_multiplier_within_cap": false,
+          "latency_multiplier_within_cap": true
+        },
+        {
+          "pool_size": 1000,
+          "p95_within_cap": true,
+          "tokens_within_cap": true,
+          "token_multiplier_within_cap": false,
+          "latency_multiplier_within_cap": true
+        },
+        {
+          "pool_size": 1500,
+          "p95_within_cap": true,
+          "tokens_within_cap": true,
+          "token_multiplier_within_cap": false,
+          "latency_multiplier_within_cap": true
+        }
+      ],
+      "overall_pass": false,
+      "caps": {
+        "p95_ms": 10.0,
+        "injection_tokens": 300,
+        "token_multiplier": 1.2,
+        "latency_multiplier": 1.2,
+        "latency_multiplier_floor_ms": 0.1
+      }
+    },
+    "constant_budget": {
+      "per_pool": [
+        {
+          "pool_size": 167,
+          "p95_within_cap": true,
+          "tokens_within_cap": true,
+          "token_multiplier_within_cap": true,
+          "latency_multiplier_within_cap": true
+        },
+        {
+          "pool_size": 300,
+          "p95_within_cap": true,
+          "tokens_within_cap": true,
+          "token_multiplier_within_cap": true,
+          "latency_multiplier_within_cap": true
+        },
+        {
+          "pool_size": 500,
+          "p95_within_cap": true,
+          "tokens_within_cap": true,
+          "token_multiplier_within_cap": true,
+          "latency_multiplier_within_cap": true
+        },
+        {
+          "pool_size": 697,
+          "p95_within_cap": true,
+          "tokens_within_cap": true,
+          "token_multiplier_within_cap": true,
+          "latency_multiplier_within_cap": true
+        },
+        {
+          "pool_size": 1000,
+          "p95_within_cap": true,
+          "tokens_within_cap": true,
+          "token_multiplier_within_cap": true,
+          "latency_multiplier_within_cap": true
+        },
+        {
+          "pool_size": 1500,
+          "p95_within_cap": true,
+          "tokens_within_cap": true,
+          "token_multiplier_within_cap": true,
+          "latency_multiplier_within_cap": true
+        }
+      ],
+      "overall_pass": true,
+      "caps": {
+        "p95_ms": 10.0,
+        "injection_tokens": 100,
+        "token_multiplier": 1.2,
+        "latency_multiplier": 1.2,
+        "latency_multiplier_floor_ms": 0.1
+      }
+    }
+  },
+  "runtime_default_mode": "constant_budget",
+  "quality_tradeoff": "constant_budget returns at most one top pattern and trims payloads to 100 estimated tokens. This protects latency/token multipliers but may omit secondary matching patterns.",
+  "latency_multiplier_note": "raw_latency_multiplier_vs_baseline is retained for audit, but gate uses latency_multiplier_vs_baseline with a 0.1ms floor. Sub-0.1ms Python microbenchmarks are below operationally meaningful latency and otherwise turn tiny absolute deltas into misleading ratios."
+}

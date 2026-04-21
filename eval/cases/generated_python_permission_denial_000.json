@@ -1,0 +1,17 @@
+{
+  "case_id": "generated_python_permission_denial_000",
+  "source": "authored_fixture",
+  "reverse_from_pattern": "python.permission_denial.000",
+  "pattern_id": "python.permission_denial.000",
+  "source_pool": "official",
+  "ecosystem": "python",
+  "error_class": "permission_denial",
+  "initial_prompt": "In the project at {workdir}, this python permission_denial fails: Write permission denied \u2014 rewrite cwd to writable directory. Reproduce the failure with `python3 -m unittest`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+  "success_criteria": {
+    "root_cause_regex": ".+",
+    "fix_command_test": "cd {workdir} && python3 -m unittest"
+  },
+  "max_rounds": 6,
+  "fixture_strategy": "authored_files",
+  "promotion_eligible": true
+}

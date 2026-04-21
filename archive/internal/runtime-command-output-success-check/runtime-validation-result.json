@@ -1,0 +1,9 @@
+{
+  "payload": {
+    "actual_stdout": "POLARIS_COMMAND_OUTPUT::STANDARD::shell-local",
+    "artifact_output_file": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/runtime-command-output-success-check/runtime-command-output.txt",
+    "expected_stdout": "POLARIS_COMMAND_OUTPUT::STANDARD::shell-local"
+  },
+  "status": "ok",
+  "validator_kind": "command_output_result"
+}

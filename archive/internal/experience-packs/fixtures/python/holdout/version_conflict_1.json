@@ -1,0 +1,5 @@
+{
+  "stderr": "ERROR: pip's dependency resolver does not currently support all features of backtracking.\n\nERROR: Cannot install requests==2.31.0 and urllib3==1.25.0 because these package versions have conflicting dependencies.\n\nThe conflict is caused by:\n    requests 2.31.0 depends on urllib3<3,>=1.21.1\n    The user requested urllib3==1.25.0\n\nTo fix this you could try to:\n1. loosen the range of package versions you've specified\n2. remove package versions to allow pip to attempt to solve the dependency conflict\n\nERROR: ResolutionImpossible: for help visit https://pip.pypa.io/en/latest/topics/dependency-resolution/",
+  "error_class": "version_conflict",
+  "source": "pip dependency resolver conflict between requests and urllib3"
+}

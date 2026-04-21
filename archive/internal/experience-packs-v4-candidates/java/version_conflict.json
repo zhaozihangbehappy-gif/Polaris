@@ -1,0 +1,241 @@
+{
+  "ecosystem": "java",
+  "error_class": "version_conflict",
+  "schema_version": 4,
+  "records": [
+    {
+      "pattern_id": "candidate.java.version_conflict.000",
+      "ecosystem": "java",
+      "error_class": "version_conflict",
+      "description": "JDK 21 runs code built for 23",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "Unsupported class file major version 67"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "java --version 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "Unsupported class file major version 67"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Java version_conflict: JDK 21 runs code built for 23"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.java.version_conflict.001",
+      "ecosystem": "java",
+      "error_class": "version_conflict",
+      "description": "maven surefire JVM fork version",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "surefire.*JVM.*incompatible"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "java --version 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "surefire.*JVM.*incompatible"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Java version_conflict: maven surefire JVM fork version"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.java.version_conflict.002",
+      "ecosystem": "java",
+      "error_class": "version_conflict",
+      "description": "gradle wrapper Java too new for gradle",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "Minimum supported Gradle version"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "java --version 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "Minimum supported Gradle version"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Java version_conflict: gradle wrapper Java too new for gradle"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.java.version_conflict.003",
+      "ecosystem": "java",
+      "error_class": "version_conflict",
+      "description": "jackson version split across deps",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "Jackson version .* incompatible"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "java --version 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "Jackson version .* incompatible"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Java version_conflict: jackson version split across deps"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.java.version_conflict.004",
+      "ecosystem": "java",
+      "error_class": "version_conflict",
+      "description": "slf4j binding version mismatch",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "SLF4J.*Class path contains multiple"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "java --version 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "SLF4J.*Class path contains multiple"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Java version_conflict: slf4j binding version mismatch"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.java.version_conflict.005",
+      "ecosystem": "java",
+      "error_class": "version_conflict",
+      "description": "spring-boot starter version mix",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "spring-boot.*version mismatch"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "java --version 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "spring-boot.*version mismatch"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Java version_conflict: spring-boot starter version mix"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "case_id": "generated_java_build_error_002",
+  "files": [
+    "src/Main.java",
+    "build.sh"
+  ],
+  "dependencies": {},
+  "build_commands": [],
+  "expected_failure_command": "cd {workdir} && bash build.sh",
+  "expected_failure_stderr_regex": "'var' (is not allowed here|is a restricted type name)",
+  "manifest_schema_version": 1,
+  "bash_self_contained": false,
+  "reverse_from_pattern": "java.build_error.002",
+  "source_pool": "official"
+}

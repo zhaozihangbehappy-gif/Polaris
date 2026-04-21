@@ -1,0 +1,26 @@
+{
+  "records": [
+    {
+      "asset_version": 2,
+      "avoidance_hints": [
+        {
+          "kind": "set_env",
+          "vars": {
+            "POLARIS_HINT_CHECK_PATH": "true"
+          }
+        }
+      ],
+      "command": "cat /nonexistent/path/that/does/not/exist/polaris-test-file.txt",
+      "error_class": "path_or_missing_file",
+      "recorded_at": "2026-03-15T13:36:30.448968+00:00",
+      "repair_classification": "path_probe_tree",
+      "stderr_summary": "cat: /nonexistent/path/that/does/not/exist/polaris-test-file.txt: No such file or directory",
+      "task_fingerprint": {
+        "matching_key": "60beecb582965df2",
+        "normalized_descriptor": "cat /nonexistent/path/that/does/not/exist/polaris-test-file.txt",
+        "raw_descriptor": "cat /nonexistent/path/that/does/not/exist/polaris-test-file.txt"
+      }
+    }
+  ],
+  "schema_version": 1
+}

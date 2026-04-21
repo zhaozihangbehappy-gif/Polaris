@@ -1,0 +1,14 @@
+{
+  "case_id": "generated_node_config_error_001",
+  "files": [
+    "check-tsconfig.js"
+  ],
+  "dependencies": {},
+  "build_commands": [],
+  "expected_failure_command": "cd {workdir} && node check-tsconfig.js",
+  "expected_failure_stderr_regex": "Cannot read file.*tsconfig",
+  "manifest_schema_version": 1,
+  "bash_self_contained": false,
+  "reverse_from_pattern": "node.config_error.001",
+  "source_pool": "official"
+}

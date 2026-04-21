@@ -1,0 +1,17 @@
+{
+  "case_id": "generated_python_build_error_002",
+  "source": "authored_fixture",
+  "reverse_from_pattern": "python.build_error.002",
+  "pattern_id": "python.build_error.002",
+  "source_pool": "official",
+  "ecosystem": "python",
+  "error_class": "build_error",
+  "initial_prompt": "In the project at {workdir}, this python build_error fails: Wheel build failed \u2014 likely missing system build dependencies; report to user. Reproduce the failure with `rm -r build dist native_broken.egg-info 2>/dev/null; python3 -m pip wheel . --no-build-isolation -w dist`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+  "success_criteria": {
+    "root_cause_regex": ".+",
+    "fix_command_test": "cd {workdir} && rm -r build dist native_broken.egg-info 2>/dev/null; python3 -m pip wheel . --no-build-isolation -w dist"
+  },
+  "max_rounds": 6,
+  "fixture_strategy": "authored_files",
+  "promotion_eligible": true
+}

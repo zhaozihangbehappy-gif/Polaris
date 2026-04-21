@@ -1,0 +1,46 @@
+[pre_failure_command]
+cd /tmp/_polaris_runs/20260420T170630/claude_code/generated_node_timeout_000/baseline && npm test
+[pre_failure_output]
+
+> test
+> node test.js --testTimeout=20
+
+
+Exceeded timeout of 20 ms for a test. Use jest.setTimeout(newTimeout) or run with --testTimeout=<ms>.
+
+[pre_failure_reproduced]
+true
+[agent_transcript]
+[claude exit=1 rate_limited=False num_turns=1]
+---
+{"type":"system","subtype":"init","cwd":"/tmp/_polaris_runs/20260420T170630/claude_code/generated_node_timeout_000/baseline","session_id":"ada7ae1f-797c-44bd-b13d-f4be95b65db9","tools":["Task","AskUserQuestion","Bash","CronCreate","CronDelete","CronList","Edit","EnterPlanMode","EnterWorktree","ExitPlanMode","ExitWorktree","Glob","Grep","Monitor","NotebookEdit","PushNotification","Read","RemoteTrigger","ScheduleWakeup","Skill","TaskOutput","TaskStop","TodoWrite","ToolSearch","WebFetch","WebSearch","Write"],"mcp_servers":[],"model":"claude-haiku-4-5-20251001","permissionMode":"bypassPermissions","slash_commands":["update-config","debug","simplify","batch","fewer-permission-prompts","loop","schedule","claude-api","compact","context","cost","heapdump","init","review","security-review","extra-usage","insights","team-onboarding"],"apiKeySource":"none","claude_code_version":"2.1.114","output_style":"default","agents":["Explore","general-purpose","Plan","statusline-setup"],"skills":["update-config","debug","simplify","batch","fewer-permission-prompts","loop","schedule","claude-api"],"plugins":[],"uuid":"66a11e40-1105-4ffa-9462-d0b180afb705","memory_paths":{"auto":"/home/administrator/.claude/projects/-tmp--polaris-runs-20260420T170630-claude-code-generated-node-timeout-000-baseline/memory/"},"fast_mode_state":"off"}
+{"type":"rate_limit_event","rate_limit_info":{"status":"rejected","resetsAt":1776690000,"rateLimitType":"five_hour","overageStatus":"rejected","overageDisabledReason":"org_level_disabled","isUsingOverage":false},"uuid":"1a922e05-2443-40a1-8c2d-fab0b6f734ff","session_id":"ada7ae1f-797c-44bd-b13d-f4be95b65db9"}
+{"type":"assistant","message":{"id":"a77541f8-4630-4be5-ae63-1b2814d38d3a","container":null,"model":"<synthetic>","role":"assistant","stop_reason":"stop_sequence","stop_sequence":"","type":"message","usage":{"input_tokens":0,"output_tokens":0,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"server_tool_use":{"web_search_requests":0,"web_fetch_requests":0},"service_tier":null,"cache_creation":{"ephemeral_1h_input_tokens":0,"ephemeral_5m_input_tokens":0},"inference_geo":null,"iterations":null,"speed":null},"content":[{"type":"text","text":"You've hit your limit · resets 9pm (Asia/Shanghai)"}],"context_management":null},"parent_tool_use_id":null,"session_id":"ada7ae1f-797c-44bd-b13d-f4be95b65db9","uuid":"2d399585-fe22-4797-b8ef-2838820af307","error":"rate_limit"}
+{"type":"result","subtype":"success","is_error":true,"api_error_status":429,"duration_ms":915,"duration_api_ms":0,"num_turns":1,"result":"You've hit your limit · resets 9pm (Asia/Shanghai)","stop_reason":"stop_sequence","session_id":"ada7ae1f-797c-44bd-b13d-f4be95b65db9","total_cost_usd":0,"usage":{"input_tokens":0,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"output_tokens":0,"server_tool_use":{"web_search_requests":0,"web_fetch_requests":0},"service_tier":"standard","cache_creation":{"ephemeral_1h_input_tokens":0,"ephemeral_5m_input_tokens":0},"inference_geo":"","iterations":[],"speed":"standard"},"modelUsage":{},"permission_denials":[],"terminal_reason":"completed","fast_mode_state":"off","uuid":"5efb0491-1c1c-4acd-b98a-d6e8f7bf4e6b"}
+
+---
+[stderr]
+
+---
+[fix_command_test output]
+
+> test
+> node test.js --testTimeout=20
+
+
+Exceeded timeout of 20 ms for a test. Use jest.setTimeout(newTimeout) or run with --testTimeout=<ms>.
+
+[post_fix_command]
+cd /tmp/_polaris_runs/20260420T170630/claude_code/generated_node_timeout_000/baseline && npm test
+[post_fix_output]
+
+> test
+> node test.js --testTimeout=20
+
+
+Exceeded timeout of 20 ms for a test. Use jest.setTimeout(newTimeout) or run with --testTimeout=<ms>.
+
+[post_fix_ci_pass]
+False
+[contamination_hits]
+[]

@@ -1,0 +1,5 @@
+{
+  "stderr": "------\n > [stage-1 3/5] RUN npm ci --production:\n#8 12.45 npm ERR! code ENOENT\n#8 12.45 npm ERR! syscall open\n#8 12.45 npm ERR! path /app/package.json\n#8 12.45 npm ERR! errno -2\n#8 12.46 npm ERR! enoent ENOENT: no such file or directory, open '/app/package.json'\n------\nexecutor failed running [/bin/sh -c npm ci --production]: exit code: 1",
+  "error_class": "build_error",
+  "source": "docker build multi-stage missing WORKDIR or COPY before RUN npm"
+}

@@ -1,0 +1,11 @@
+{
+  "output_file": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/runtime-deep-file-transform-check/runtime-transform-output.txt",
+  "payload": {
+    "exact_output_verified": true,
+    "input_file": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/runtime-deep-file-transform-check/runtime-transform-input.txt",
+    "mode": "append-marker",
+    "output_file": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/runtime-deep-file-transform-check/runtime-transform-output.txt"
+  },
+  "status": "ok",
+  "validator_kind": "file_transform_result"
+}

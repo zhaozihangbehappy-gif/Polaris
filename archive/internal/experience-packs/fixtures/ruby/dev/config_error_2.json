@@ -1,0 +1,5 @@
+{
+  "stderr": "rbenv: version `3.3.0' is not installed (set by /home/user/project/.ruby-version)\nThe ruby version specified in .ruby-version (3.3.0) is not available. Install it with:\n  rbenv install 3.3.0",
+  "error_class": "config_error",
+  "source": "invalid .ruby-version pointing to uninstalled Ruby"
+}

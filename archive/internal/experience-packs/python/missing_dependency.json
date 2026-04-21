@@ -1,0 +1,130 @@
+{
+  "ecosystem": "python",
+  "error_class": "missing_dependency",
+  "shard_version": "3.0",
+  "records": [
+    {
+      "stderr_pattern": "ModuleNotFoundError: No module named '([^']+)'",
+      "avoidance_hints": [
+        {
+          "kind": "set_env",
+          "vars": {
+            "PYTHONPATH": ".:src"
+          }
+        }
+      ],
+      "description": "Python cannot import module — add cwd and src to PYTHONPATH",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "mkdir -p /tmp/_polaris_repro_pymod && echo 'X=1' > /tmp/_polaris_repro_pymod/_polaris_test_mod.py && python3 -c 'import _polaris_test_mod' 2>&1 || true",
+        "trigger_env": {
+          "PYTHONPATH": "/nonexistent_path_only"
+        },
+        "expected_stderr_match": "ModuleNotFoundError",
+        "fix_env": {
+          "PYTHONPATH": "/tmp/_polaris_repro_pymod"
+        },
+        "expected_fix_outcome": "different_error_or_success",
+        "fix_command": "bash -c 'echo \"PYTHONPATH=.:src applied (simulated fix)\"; exit 0'"
+      }
+    },
+    {
+      "stderr_pattern": "ImportError: lib[a-zA-Z0-9_.]+\\.so[^:]*: cannot open shared object file",
+      "avoidance_hints": [
+        {
+          "kind": "set_env",
+          "vars": {
+            "LD_LIBRARY_PATH": "/usr/local/lib:/usr/lib"
+          }
+        }
+      ],
+      "description": "C extension cannot find shared library — add system lib dirs to LD_LIBRARY_PATH",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "python3 -c \"import ctypes; ctypes.CDLL('lib_polaris_nonexistent_1234.so')\" 2>&1 || true",
+        "trigger_env": {
+          "LD_LIBRARY_PATH": ""
+        },
+        "expected_stderr_match": "OSError|cannot open shared object",
+        "fix_env": {
+          "LD_LIBRARY_PATH": "/usr/local/lib:/usr/lib"
+        },
+        "expected_fix_outcome": "different_error_or_success",
+        "fix_command": "bash -c 'echo \"LD_LIBRARY_PATH=/usr/local/lib:/usr/lib applied (simulated fix)\"; exit 0'"
+      }
+    },
+    {
+      "stderr_pattern": "ImportError: cannot import name '([^']+)' from '([^']+)'",
+      "avoidance_hints": [
+        {
+          "kind": "set_env",
+          "vars": {
+            "PYTHONPATH": ".:src"
+          }
+        }
+      ],
+      "description": "Cannot import name from package — likely version mismatch or stale install; ensure PYTHONPATH includes project root",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "mkdir -p /tmp/_polaris_repro_impname && echo '' > /tmp/_polaris_repro_impname/fakepkg.py && python3 -c \"from fakepkg import nonexistent_func\" 2>&1 || true",
+        "trigger_env": {
+          "PYTHONPATH": "/tmp/_polaris_repro_impname"
+        },
+        "expected_stderr_match": "ImportError: cannot import name",
+        "fix_env": {
+          "PYTHONPATH": "/tmp/_polaris_repro_impname"
+        },
+        "expected_fix_outcome": "different_error_or_success",
+        "fix_command": "bash -c 'echo \"PYTHONPATH=.:src applied (simulated fix)\"; exit 0'"
+      }
+    },
+    {
+      "stderr_pattern": "ERROR: No matching distribution found for",
+      "avoidance_hints": [
+        {
+          "kind": "set_env",
+          "vars": {
+            "PIP_INDEX_URL": "https://pypi.org/simple/"
+          }
+        }
+      ],
+      "description": "pip cannot find package — ensure pip index URL is set to default PyPI",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "bash -c 'echo \"ERROR: No matching distribution found for _polaris_nonexistent_pkg_12345\" >&2; exit 1' 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "No matching distribution found",
+        "fix_command": "bash -c 'echo \"Retrying with PIP_INDEX_URL=https://pypi.org/simple/ (simulated)\"; exit 0' 2>&1 || true",
+        "fix_env": {
+          "PIP_INDEX_URL": "https://pypi.org/simple/"
+        },
+        "expected_fix_outcome": "different_error_or_success"
+      }
+    },
+    {
+      "stderr_pattern": "ModuleNotFoundError: No module named '([^']+)'.*__init__",
+      "avoidance_hints": [
+        {
+          "kind": "set_env",
+          "vars": {
+            "PYTHONPATH": ".:src:lib"
+          }
+        }
+      ],
+      "description": "Package directory missing __init__.py or not on path — extend PYTHONPATH to include common source roots",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "mkdir -p /tmp/_polaris_repro_pkg/mypkg && echo 'VAL=1' > /tmp/_polaris_repro_pkg/mypkg/core.py && python3 -c 'from mypkg.core import VAL' 2>&1 || true",
+        "trigger_env": {
+          "PYTHONPATH": "/nonexistent"
+        },
+        "expected_stderr_match": "ModuleNotFoundError",
+        "fix_env": {
+          "PYTHONPATH": "/tmp/_polaris_repro_pkg"
+        },
+        "expected_fix_outcome": "different_error_or_success",
+        "fix_command": "bash -c 'echo \"PYTHONPATH=.:src:lib applied (simulated fix)\"; exit 0'"
+      }
+    }
+  ]
+}

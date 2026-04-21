@@ -1,0 +1,5 @@
+{
+  "stderr": "Unable to find image 'node:19-alpine' locally\ndocker: Error response from daemon: manifest for node:19-alpine not found: manifest unknown: manifest unknown.\nSee 'docker run --help'.",
+  "error_class": "image_not_found",
+  "source": "docker run with non-existent tag for node image"
+}

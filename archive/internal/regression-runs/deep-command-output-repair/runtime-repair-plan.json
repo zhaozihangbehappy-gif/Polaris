@@ -1,0 +1,53 @@
+{
+  "action_tree": {
+    "children": [
+      {
+        "command": "pwd",
+        "kind": "shell",
+        "label": "Capture working directory",
+        "node_id": "pwd",
+        "reversible": true
+      },
+      {
+        "command": "ls -la",
+        "kind": "shell",
+        "label": "List current directory",
+        "node_id": "ls-root",
+        "reversible": true
+      },
+      {
+        "command": "python3 --version || true",
+        "kind": "shell",
+        "label": "Capture interpreter version",
+        "node_id": "python-version",
+        "reversible": true
+      },
+      {
+        "command": "git status --short || true",
+        "kind": "shell",
+        "label": "Inspect local repo status",
+        "node_id": "git-status",
+        "reversible": true
+      }
+    ],
+    "kind": "decision",
+    "label": "Collect minimal local evidence",
+    "node_id": "generic-root"
+  },
+  "created_at": "2026-03-15T13:35:50.930784+00:00",
+  "error": "POLARIS_COMMAND_OUTPUT::DEEP::shell-local",
+  "execution_order": [
+    "pwd",
+    "ls-root",
+    "python-version",
+    "git-status"
+  ],
+  "failure_type": "unknown",
+  "nonrepair_stop": false,
+  "notes": "retry only after collecting clearer local evidence",
+  "policy": "local-only reversible probes or explicit stop",
+  "probe_budget": 4,
+  "recommended_tree": "generic_probe_tree",
+  "repair_depth": "deep",
+  "safe_to_execute": true
+}

@@ -1,0 +1,161 @@
+{
+  "ecosystem": "terraform",
+  "error_class": "network_error",
+  "schema_version": 4,
+  "records": [
+    {
+      "pattern_id": "terraform.network_error.000",
+      "ecosystem": "terraform",
+      "error_class": "network_error",
+      "description": "Terraform registry DNS resolution failure \u2014 use local plugin dir or check network connectivity",
+      "source": "prebuilt",
+      "trigger_signals": {
+        "stderr_regex": [
+          "registry.terraform.io.*Temporary failure in name resolution|dial tcp.*lookup.*registry"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "bash -c 'echo \"Error: Failed to query available provider packages: registry.terraform.io: Temporary failure in name resolution\" >&2; exit 1'",
+        "trigger_env": {},
+        "expected_stderr_match": "registry.terraform.io.*failure|dial tcp",
+        "expected_fix_outcome": "different_error_or_success"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "TF_CLI_ARGS_init": "-plugin-dir=/usr/share/terraform/plugins"
+            }
+          },
+          {
+            "kind": "run_shell",
+            "command": "nslookup registry.terraform.io 2>&1 || true"
+          }
+        ],
+        "fix_command": "bash -c 'echo \"TF_CLI_ARGS_init set (simulated)\"; exit 0'",
+        "fix_env": {
+          "TF_CLI_ARGS_init": "-plugin-dir=/usr/share/terraform/plugins"
+        },
+        "description": "Terraform registry DNS resolution failure \u2014 use local plugin dir or check network connectivity"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "legacy_v3": {
+        "stderr_pattern": "registry.terraform.io.*Temporary failure in name resolution|dial tcp.*lookup.*registry",
+        "avoidance_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "TF_CLI_ARGS_init": "-plugin-dir=/usr/share/terraform/plugins"
+            }
+          },
+          {
+            "kind": "run_shell",
+            "command": "nslookup registry.terraform.io 2>&1 || true"
+          }
+        ],
+        "description": "Terraform registry DNS resolution failure \u2014 use local plugin dir or check network connectivity",
+        "source": "prebuilt",
+        "reproduction": {
+          "command": "bash -c 'echo \"Error: Failed to query available provider packages: registry.terraform.io: Temporary failure in name resolution\" >&2; exit 1'",
+          "trigger_env": {},
+          "expected_stderr_match": "registry.terraform.io.*failure|dial tcp",
+          "fix_env": {
+            "TF_CLI_ARGS_init": "-plugin-dir=/usr/share/terraform/plugins"
+          },
+          "expected_fix_outcome": "different_error_or_success",
+          "fix_command": "bash -c 'echo \"TF_CLI_ARGS_init set (simulated)\"; exit 0'"
+        }
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "terraform.network_error.001",
+      "ecosystem": "terraform",
+      "error_class": "network_error",
+      "description": "Provider download timeout \u2014 use plugin cache or check proxy settings",
+      "source": "prebuilt",
+      "trigger_signals": {
+        "stderr_regex": [
+          "context deadline exceeded|Client.Timeout exceeded|connection reset by peer"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "bash -c 'echo \"deadline exceeded\" >&2; exit 1'",
+        "trigger_env": {},
+        "expected_stderr_match": "deadline exceeded|Timeout|connection reset",
+        "expected_fix_outcome": "different_error_or_success"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "TF_PLUGIN_CACHE_DIR": "/tmp/.terraform.d/plugin-cache",
+              "HTTPS_PROXY": ""
+            }
+          }
+        ],
+        "fix_command": "bash -c 'echo \"TF_PLUGIN_CACHE_DIR set (simulated)\"; exit 0'",
+        "fix_env": {
+          "TF_PLUGIN_CACHE_DIR": "/tmp/.terraform.d/plugin-cache"
+        },
+        "description": "Provider download timeout \u2014 use plugin cache or check proxy settings"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "legacy_v3": {
+        "stderr_pattern": "context deadline exceeded|Client.Timeout exceeded|connection reset by peer",
+        "avoidance_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "TF_PLUGIN_CACHE_DIR": "/tmp/.terraform.d/plugin-cache",
+              "HTTPS_PROXY": ""
+            }
+          }
+        ],
+        "description": "Provider download timeout \u2014 use plugin cache or check proxy settings",
+        "source": "prebuilt",
+        "reproduction": {
+          "command": "bash -c 'echo \"deadline exceeded\" >&2; exit 1'",
+          "trigger_env": {},
+          "expected_stderr_match": "deadline exceeded|Timeout|connection reset",
+          "fix_env": {
+            "TF_PLUGIN_CACHE_DIR": "/tmp/.terraform.d/plugin-cache"
+          },
+          "expected_fix_outcome": "different_error_or_success",
+          "fix_command": "bash -c 'echo \"TF_PLUGIN_CACHE_DIR set (simulated)\"; exit 0'"
+        }
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    }
+  ]
+}

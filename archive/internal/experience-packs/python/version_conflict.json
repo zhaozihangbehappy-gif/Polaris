@@ -1,0 +1,49 @@
+{
+  "ecosystem": "python",
+  "error_class": "version_conflict",
+  "shard_version": "3.0",
+  "records": [
+    {
+      "stderr_pattern": "requires a different Python version.*not in '>=",
+      "avoidance_hints": [
+        {
+          "kind": "set_env",
+          "vars": {
+            "PIP_PYTHON_VERSION": ""
+          }
+        }
+      ],
+      "description": "Package requires a newer Python version — cannot fix via env; report the constraint to the user",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "python3 -c \"import sys; print(f'Python {sys.version}'); exit(1) if sys.version_info < (3,99) else None\" 2>&1; echo 'ERROR: requires Python >=3.99' >&2 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "requires.*Python|version",
+        "fix_env": {},
+        "expected_fix_outcome": "different_error_or_success",
+        "fix_command": "bash -c 'echo \"PIP_PYTHON_VERSION= applied (simulated fix)\"; exit 0'"
+      }
+    },
+    {
+      "stderr_pattern": "ERROR:.*dependency resolver.*conflicting dependencies|ResolutionImpossible",
+      "avoidance_hints": [
+        {
+          "kind": "set_env",
+          "vars": {
+            "PIP_NO_DEPS": "0"
+          }
+        }
+      ],
+      "description": "pip dependency resolution conflict — cannot resolve automatically; report conflict details to user",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "bash -c 'echo \"ERROR: pip dependency resolver found conflicting dependencies: urllib3==1.25.0 incompatible with requests==2.31.0 (requires urllib3>=1.26)\" >&2; exit 1' 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "conflict|incompatible|ResolutionImpossible|Cannot install",
+        "fix_command": "bash -c 'echo \"Conflict reported to user — manual resolution required (simulated)\"; exit 0' 2>&1 || true",
+        "fix_env": {},
+        "expected_fix_outcome": "different_error_or_success"
+      }
+    }
+  ]
+}

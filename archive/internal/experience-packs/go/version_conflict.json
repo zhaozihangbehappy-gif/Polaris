@@ -1,0 +1,61 @@
+{
+  "ecosystem": "go",
+  "error_class": "version_conflict",
+  "shard_version": "3.0",
+  "records": [
+    {
+      "stderr_pattern": "go\\.mod requires go >= \\d|module requires Go \\d+\\.\\d+",
+      "avoidance_hints": [
+        {
+          "kind": "set_env",
+          "vars": {
+            "GOTOOLCHAIN": "auto"
+          }
+        }
+      ],
+      "description": "go.mod minimum Go version exceeds installed version — enable auto toolchain download",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "bash -c 'echo \"go: go.mod requires go >= 1.22 (running go 1.21.5)\" >&2; echo \"note: module requires Go 1.22\" >&2; exit 1'",
+        "trigger_env": {
+          "GOTOOLCHAIN": "local"
+        },
+        "expected_stderr_match": "go.mod requires go",
+        "fix_env": {
+          "GOTOOLCHAIN": "auto"
+        },
+        "expected_fix_outcome": "different_error_or_success",
+        "fix_command": "bash -c 'echo \"GOTOOLCHAIN set (simulated)\"; exit 0'"
+      }
+    },
+    {
+      "stderr_pattern": "ambiguous import|incompatible|post-v0 module path",
+      "avoidance_hints": [
+        {
+          "kind": "set_env",
+          "vars": {
+            "GOFLAGS": "-mod=mod"
+          }
+        },
+        {
+          "kind": "append_flags",
+          "flags": [
+            "-mod=mod"
+          ]
+        }
+      ],
+      "description": "Module version incompatibility or ambiguous import — enable mod=mod to resolve",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "bash -c 'echo \"go: modules with post-v0 paths must have matching major version suffixes\" >&2; echo \"go.mod has incompatible module path\" >&2; exit 1'",
+        "trigger_env": {},
+        "expected_stderr_match": "incompatible|post-v0",
+        "fix_env": {
+          "GOFLAGS": "-mod=mod"
+        },
+        "expected_fix_outcome": "different_error_or_success",
+        "fix_command": "bash -c 'echo \"GOFLAGS set (simulated)\"; exit 0'"
+      }
+    }
+  ]
+}

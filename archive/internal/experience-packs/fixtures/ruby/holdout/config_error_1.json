@@ -1,0 +1,5 @@
+{
+  "stderr": "Bundler::GemfileError: There was an error parsing `Gemfile`: undefined method `rubby' for Bundler::Dsl. Did you mean: ruby?\n# from /home/user/project/Gemfile:3\n# ---\n# rubby '3.2.2'\n# ---",
+  "error_class": "config_error",
+  "source": "Gemfile DSL typo — rubby instead of ruby"
+}

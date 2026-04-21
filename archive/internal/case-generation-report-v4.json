@@ -1,0 +1,145 @@
+{
+  "official_schema_valid_count": 167,
+  "candidate_schema_valid_count": 530,
+  "total_schema_valid_pool": 697,
+  "runnable_case_count": 81,
+  "blocked_no_fixture_count": 616,
+  "per_pool_runnable": {
+    "official": 81,
+    "candidate": 0
+  },
+  "per_pool_blocked": {
+    "official": 86,
+    "candidate": 530
+  },
+  "per_ecosystem_runnable": {
+    "go": 12,
+    "java": 18,
+    "node": 20,
+    "python": 27,
+    "rust": 4
+  },
+  "per_ecosystem_blocked": {
+    "docker": 121,
+    "go": 66,
+    "java": 53,
+    "node": 125,
+    "python": 121,
+    "ruby": 30,
+    "rust": 66,
+    "terraform": 34
+  },
+  "blocked_reasons": {
+    "missing_verification_command": 0,
+    "missing_expected_stderr": 0,
+    "missing_fix_command": 530,
+    "missing_authored_fixture": 616
+  },
+  "existing_authored_fixtures": [
+    "case_001_python_pythonpath",
+    "case_002_node_enoent_lockfile",
+    "case_003_docker_layer_cache",
+    "case_004_python_syntax",
+    "case_005_python_file_path",
+    "case_006_node_fs_enoent"
+  ],
+  "blocked_samples": [
+    {
+      "pattern_id": "docker.auth_error.000",
+      "source_pool": "official",
+      "authored_fixture_valid": false,
+      "has_command": true,
+      "has_stderr_regex": true,
+      "has_fix_command": true
+    },
+    {
+      "pattern_id": "docker.auth_error.001",
+      "source_pool": "official",
+      "authored_fixture_valid": false,
+      "has_command": true,
+      "has_stderr_regex": true,
+      "has_fix_command": true
+    },
+    {
+      "pattern_id": "docker.build_error.000",
+      "source_pool": "official",
+      "authored_fixture_valid": false,
+      "has_command": true,
+      "has_stderr_regex": true,
+      "has_fix_command": true
+    },
+    {
+      "pattern_id": "docker.build_error.001",
+      "source_pool": "official",
+      "authored_fixture_valid": false,
+      "has_command": true,
+      "has_stderr_regex": true,
+      "has_fix_command": true
+    },
+    {
+      "pattern_id": "docker.build_error.002",
+      "source_pool": "official",
+      "authored_fixture_valid": false,
+      "has_command": true,
+      "has_stderr_regex": true,
+      "has_fix_command": true
+    },
+    {
+      "pattern_id": "docker.config_error.000",
+      "source_pool": "official",
+      "authored_fixture_valid": false,
+      "has_command": true,
+      "has_stderr_regex": true,
+      "has_fix_command": true
+    },
+    {
+      "pattern_id": "docker.config_error.001",
+      "source_pool": "official",
+      "authored_fixture_valid": false,
+      "has_command": true,
+      "has_stderr_regex": true,
+      "has_fix_command": true
+    },
+    {
+      "pattern_id": "docker.config_error.002",
+      "source_pool": "official",
+      "authored_fixture_valid": false,
+      "has_command": true,
+      "has_stderr_regex": true,
+      "has_fix_command": true
+    },
+    {
+      "pattern_id": "docker.image_not_found.000",
+      "source_pool": "official",
+      "authored_fixture_valid": false,
+      "has_command": true,
+      "has_stderr_regex": true,
+      "has_fix_command": true
+    },
+    {
+      "pattern_id": "docker.image_not_found.001",
+      "source_pool": "official",
+      "authored_fixture_valid": false,
+      "has_command": true,
+      "has_stderr_regex": true,
+      "has_fix_command": true
+    },
+    {
+      "pattern_id": "docker.network_error.000",
+      "source_pool": "official",
+      "authored_fixture_valid": false,
+      "has_command": true,
+      "has_stderr_regex": true,
+      "has_fix_command": true
+    },
+    {
+      "pattern_id": "docker.network_error.001",
+      "source_pool": "official",
+      "authored_fixture_valid": false,
+      "has_command": true,
+      "has_stderr_regex": true,
+      "has_fix_command": true
+    }
+  ],
+  "note": "Runnable cases use the pattern's own shortest_verification.command (pre-failure check) and fix_path.fix_command (post-fix check). A pattern is auto-runnable iff both are present. Candidate pool records currently have NO fix_command, so they are all blocked; the v4 candidate harvester generated them from trigger signals only. Promoting candidates requires authoring a fix_command per record \u2014 by hand or by running a real-agent pass that infers one."
+}

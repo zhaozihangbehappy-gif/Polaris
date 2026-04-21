@@ -1,0 +1,1 @@
+{"stderr": "go: module github.com/lib/pq: Get \"https://proxy.golang.org/github.com/lib/pq/@v/list\": proxyconnect tcp: dial tcp 10.0.0.1:3128: i/o timeout\ngo build github.com/myapp/server: cannot find module providing package github.com/lib/pq", "error_class": "missing_dependency", "source": "go build behind corporate proxy with module download failure"}

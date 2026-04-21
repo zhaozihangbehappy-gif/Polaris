@@ -1,0 +1,202 @@
+{
+  "ecosystem": "rust",
+  "error_class": "macro_error",
+  "schema_version": 4,
+  "records": [
+    {
+      "pattern_id": "candidate.rust.macro_error.000",
+      "ecosystem": "rust",
+      "error_class": "macro_error",
+      "description": "proc-macro panic in derive",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "proc macro panicked"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "cargo --version 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "proc macro panicked"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Rust macro_error: proc-macro panic in derive"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.rust.macro_error.001",
+      "ecosystem": "rust",
+      "error_class": "macro_error",
+      "description": "declarative macro recursion limit",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "recursion limit reached.*macro"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "cargo --version 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "recursion limit reached.*macro"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Rust macro_error: declarative macro recursion limit"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.rust.macro_error.002",
+      "ecosystem": "rust",
+      "error_class": "macro_error",
+      "description": "macro_rules hygiene violation",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "hygiene.*violation"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "cargo --version 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "hygiene.*violation"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Rust macro_error: macro_rules hygiene violation"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.rust.macro_error.003",
+      "ecosystem": "rust",
+      "error_class": "macro_error",
+      "description": "#[cfg(feature)] mis-spelled",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "unexpected cfg condition"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "cargo --version 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "unexpected cfg condition"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Rust macro_error: #[cfg(feature)] mis-spelled"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.rust.macro_error.004",
+      "ecosystem": "rust",
+      "error_class": "macro_error",
+      "description": "attribute macro not found",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "cannot find attribute.*in this scope"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "cargo --version 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "cannot find attribute.*in this scope"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Rust macro_error: attribute macro not found"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    }
+  ]
+}

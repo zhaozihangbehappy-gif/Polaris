@@ -1,0 +1,202 @@
+{
+  "ecosystem": "python",
+  "error_class": "syntax_error",
+  "schema_version": 4,
+  "records": [
+    {
+      "pattern_id": "candidate.python.syntax_error.000",
+      "ecosystem": "python",
+      "error_class": "syntax_error",
+      "description": "f-string nested quotes pre-3.12",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "SyntaxError.*f-string"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "python3 -c 'import sys; print(sys.version)' 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "SyntaxError.*f-string"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Upgrade Python or rewrite syntax: f-string nested quotes pre-3.12"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.syntax_error.001",
+      "ecosystem": "python",
+      "error_class": "syntax_error",
+      "description": "walrus operator in Python<3.8",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "SyntaxError.*:="
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "python3 -c 'import sys; print(sys.version)' 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "SyntaxError.*:="
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Upgrade Python or rewrite syntax: walrus operator in Python<3.8"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.syntax_error.002",
+      "ecosystem": "python",
+      "error_class": "syntax_error",
+      "description": "match statement in Python<3.10",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "SyntaxError.*match"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "python3 -c 'import sys; print(sys.version)' 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "SyntaxError.*match"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Upgrade Python or rewrite syntax: match statement in Python<3.10"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.syntax_error.003",
+      "ecosystem": "python",
+      "error_class": "syntax_error",
+      "description": "async generator in old Python",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "SyntaxError.*yield inside async function"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "python3 -c 'import sys; print(sys.version)' 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "SyntaxError.*yield inside async function"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Upgrade Python or rewrite syntax: async generator in old Python"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.syntax_error.004",
+      "ecosystem": "python",
+      "error_class": "syntax_error",
+      "description": "positional-only params pre-3.8",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "SyntaxError.*positional-only"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "python3 -c 'import sys; print(sys.version)' 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "SyntaxError.*positional-only"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Upgrade Python or rewrite syntax: positional-only params pre-3.8"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    }
+  ]
+}

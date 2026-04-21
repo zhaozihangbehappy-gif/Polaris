@@ -1,0 +1,5 @@
+{
+  "stderr": "error checking context: 'no permission to read from '/home/user/project/node_modules/bcrypt/build/Release/bcrypt_lib.node''.\nerror: failed to solve: error from sender: error checking context: no permission to read from '/home/user/project/node_modules/bcrypt/build/Release/bcrypt_lib.node'",
+  "error_class": "build_error",
+  "source": "docker build with build context containing unreadable files from node_modules"
+}

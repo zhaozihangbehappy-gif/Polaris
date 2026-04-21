@@ -1,0 +1,205 @@
+{
+  "ecosystem": "python",
+  "error_class": "config_error",
+  "schema_version": 4,
+  "records": [
+    {
+      "pattern_id": "python.config_error.000",
+      "ecosystem": "python",
+      "error_class": "config_error",
+      "description": "Config file has missing section or parsing error — ensure config file exists with required sections",
+      "source": "prebuilt",
+      "trigger_signals": {
+        "stderr_regex": [
+          "configparser\\.(NoSectionError|MissingSectionHeaderError|ParsingError)"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "echo 'no_section_key = val' > /tmp/_polaris_repro_cfg.ini && python3 -c \"import configparser; c=configparser.ConfigParser(); c.read('/tmp/_polaris_repro_cfg.ini'); c.get('database','host')\" 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "NoSectionError|No section",
+        "expected_fix_outcome": "different_error_or_success"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "create_dir",
+            "path": "."
+          }
+        ],
+        "fix_command": "printf '[database]\\nhost = localhost\\n' > /tmp/_polaris_repro_cfg.ini && python3 -c \"import configparser; c=configparser.ConfigParser(); c.read('/tmp/_polaris_repro_cfg.ini'); print(c.get('database','host'))\" 2>&1 || true",
+        "fix_env": {},
+        "description": "Config file has missing section or parsing error — ensure config file exists with required sections"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "legacy_v3": {
+        "stderr_pattern": "configparser\\.(NoSectionError|MissingSectionHeaderError|ParsingError)",
+        "avoidance_hints": [
+          {
+            "kind": "create_dir",
+            "path": "."
+          }
+        ],
+        "description": "Config file has missing section or parsing error — ensure config file exists with required sections",
+        "source": "prebuilt",
+        "reproduction": {
+          "command": "echo 'no_section_key = val' > /tmp/_polaris_repro_cfg.ini && python3 -c \"import configparser; c=configparser.ConfigParser(); c.read('/tmp/_polaris_repro_cfg.ini'); c.get('database','host')\" 2>&1 || true",
+          "trigger_env": {},
+          "expected_stderr_match": "NoSectionError|No section",
+          "fix_command": "printf '[database]\\nhost = localhost\\n' > /tmp/_polaris_repro_cfg.ini && python3 -c \"import configparser; c=configparser.ConfigParser(); c.read('/tmp/_polaris_repro_cfg.ini'); print(c.get('database','host'))\" 2>&1 || true",
+          "fix_env": {},
+          "expected_fix_outcome": "different_error_or_success"
+        }
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ],
+      "authored_fixture": {
+        "authored_at": "2026-04-20T02:57:01+00:00",
+        "authored_by": "codex",
+        "authored_with_prompt_sha256": "6ef89157c85472b7e29552ad88e324a0bf0d230df4b5c6877554cba55d8e8843",
+        "verification_command": "python3 app.py",
+        "expected_stderr_regex": "configparser\\.(NoSectionError|MissingSectionHeaderError|ParsingError)",
+        "files": [
+          {
+            "path": "app.py",
+            "content": "import configparser\n\n\ndef main():\n    config = configparser.ConfigParser()\n    config.read(\"settings.ini\")\n    port = config.getint(\"server\", \"port\")\n    print(f\"server port: {port}\")\n\n\nif __name__ == \"__main__\":\n    main()\n"
+          },
+          {
+            "path": "settings.ini",
+            "content": "[logging]\nlevel = INFO\n"
+          }
+        ],
+        "reference_fix_files": [
+          {
+            "path": "settings.ini",
+            "content": "[server]\nport = 8080\n\n[logging]\nlevel = INFO\n"
+          }
+        ],
+        "fix_rationale": "Add the required server section and port option so configparser can load the application configuration.",
+        "reviewer_record": {
+          "validated_in_sandbox_at": "2026-04-20T02:57:01+00:00",
+          "sandbox_pre_fix_exit_code": 1,
+          "sandbox_pre_fix_stderr_match": true,
+          "sandbox_post_fix_exit_code": 0,
+          "sandbox_workdir_hash_pre": "86b409f0e803fc9c33b9934d650d670258d6893ff895a03d22fb5bebd319dba9",
+          "sandbox_workdir_hash_post": "9ebb7f4dcce6fa9df43ff788d7f62258ccea7b620bd7d00ba1a90be9766615f7",
+          "notes": "authored by codex; pre-fix fails+matches regex, post-fix passes"
+        }
+      }
+    },
+    {
+      "pattern_id": "python.config_error.001",
+      "ecosystem": "python",
+      "error_class": "config_error",
+      "description": "TOML config file has invalid syntax — check file for syntax errors",
+      "source": "prebuilt",
+      "trigger_signals": {
+        "stderr_regex": [
+          "toml\\.TOMLDecodeError|tomllib\\._parser\\.TOMLDecodeError|Invalid value"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "echo 'key = [invalid' > /tmp/_polaris_repro_cfg.toml && python3 -c \"import tomllib; tomllib.loads(open('/tmp/_polaris_repro_cfg.toml').read())\" 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "TOMLDecodeError|Invalid value|unexpected character",
+        "expected_fix_outcome": "different_error_or_success"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "create_dir",
+            "path": "."
+          }
+        ],
+        "fix_command": "echo 'key = \"valid\"' > /tmp/_polaris_repro_cfg.toml && python3 -c \"import tomllib; d=tomllib.loads(open('/tmp/_polaris_repro_cfg.toml').read()); print(d)\" 2>&1 || true",
+        "fix_env": {},
+        "description": "TOML config file has invalid syntax — check file for syntax errors"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "legacy_v3": {
+        "stderr_pattern": "toml\\.TOMLDecodeError|tomllib\\._parser\\.TOMLDecodeError|Invalid value",
+        "avoidance_hints": [
+          {
+            "kind": "create_dir",
+            "path": "."
+          }
+        ],
+        "description": "TOML config file has invalid syntax — check file for syntax errors",
+        "source": "prebuilt",
+        "reproduction": {
+          "command": "echo 'key = [invalid' > /tmp/_polaris_repro_cfg.toml && python3 -c \"import tomllib; tomllib.loads(open('/tmp/_polaris_repro_cfg.toml').read())\" 2>&1 || true",
+          "trigger_env": {},
+          "expected_stderr_match": "TOMLDecodeError|Invalid value|unexpected character",
+          "fix_command": "echo 'key = \"valid\"' > /tmp/_polaris_repro_cfg.toml && python3 -c \"import tomllib; d=tomllib.loads(open('/tmp/_polaris_repro_cfg.toml').read()); print(d)\" 2>&1 || true",
+          "fix_env": {},
+          "expected_fix_outcome": "different_error_or_success"
+        }
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ],
+      "authored_fixture": {
+        "authored_at": "2026-04-20T02:58:20+00:00",
+        "authored_by": "codex",
+        "authored_with_prompt_sha256": "c66cca0d3ac82059f03bf8281a0c1376b07b6e1db671e669f1d6ae3351fd86b3",
+        "verification_command": "python3 -m unittest",
+        "expected_stderr_regex": "tomllib\\._parser\\.TOMLDecodeError|Invalid value",
+        "files": [
+          {
+            "path": "config_loader.py",
+            "content": "from pathlib import Path\nimport tomllib\n\n\ndef load_service_config(path: str | Path = \"app_config.toml\") -> dict[str, object]:\n    with Path(path).open(\"rb\") as file:\n        return tomllib.load(file)\n"
+          },
+          {
+            "path": "app_config.toml",
+            "content": "[service]\nname = \"tiny-api\"\nport = 8080\nenabled = true\ntimeout_seconds =\n"
+          },
+          {
+            "path": "test_config.py",
+            "content": "import unittest\n\nfrom config_loader import load_service_config\n\n\nclass ConfigTest(unittest.TestCase):\n    def test_service_config_loads(self):\n        config = load_service_config()\n        self.assertEqual(config[\"service\"][\"name\"], \"tiny-api\")\n        self.assertEqual(config[\"service\"][\"port\"], 8080)\n"
+          }
+        ],
+        "reference_fix_files": [
+          {
+            "path": "app_config.toml",
+            "content": "[service]\nname = \"tiny-api\"\nport = 8080\nenabled = true\ntimeout_seconds = 5\n"
+          }
+        ],
+        "fix_rationale": "The TOML value for timeout_seconds must be completed so tomllib can parse the configuration.",
+        "reviewer_record": {
+          "validated_in_sandbox_at": "2026-04-20T02:58:20+00:00",
+          "sandbox_pre_fix_exit_code": 1,
+          "sandbox_pre_fix_stderr_match": true,
+          "sandbox_post_fix_exit_code": 0,
+          "sandbox_workdir_hash_pre": "2559aaed86485f6389583459f39786ab0693172c94c1c2d3dc40a2a07bfea29b",
+          "sandbox_workdir_hash_post": "ebf1ce77c3a9d661e028199dcbf9d9b79120a4a63ef1fa856eeba7cd8a05cf8c",
+          "notes": "authored by codex; pre-fix fails+matches regex, post-fix passes"
+        }
+      }
+    }
+  ]
+}

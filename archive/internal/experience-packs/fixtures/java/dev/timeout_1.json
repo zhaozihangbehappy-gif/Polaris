@@ -1,0 +1,5 @@
+{
+  "stderr": "[ERROR] Failed to execute goal org.apache.maven.plugins:maven-surefire-plugin:3.2.3:test (default-test) on project myapp: There was a timeout or other error in the fork\n[ERROR] org.apache.maven.surefire.booter.SurefireBooterForkException: The forked VM terminated without properly saying goodbye. VM crash or System.exit called?\n[ERROR] Command was /bin/sh -c cd /home/user/project && /usr/lib/jvm/java-17-openjdk-amd64/bin/java -Xmx512m -jar /home/user/project/target/surefire/surefirebooter.jar /home/user/project/target/surefire 2025-01-15T10-30-00 surefire12345 surefire-api\n[ERROR] Process Exit Code: 137",
+  "error_class": "timeout",
+  "source": "maven surefire test fork killed by OOM killer or timeout"
+}

@@ -1,0 +1,16 @@
+{
+  "case_id": "generated_python_missing_dependency_002",
+  "files": [
+    "widgetlib/__init__.py",
+    "renderer.py",
+    "test_renderer.py"
+  ],
+  "dependencies": {},
+  "build_commands": [],
+  "expected_failure_command": "cd {workdir} && python3 -m unittest test_renderer",
+  "expected_failure_stderr_regex": "ImportError: cannot import name 'parse_widget' from 'widgetlib'",
+  "manifest_schema_version": 1,
+  "bash_self_contained": false,
+  "reverse_from_pattern": "python.missing_dependency.002",
+  "source_pool": "official"
+}

@@ -1,0 +1,40 @@
+{
+  "case_id": "real_001_pnpm_version_drift",
+  "files": [
+    {
+      "relpath": "package.json",
+      "sha256": "0a4318d4a8edc5710544e027f560d83205a829bcaddd4583189247be9288571c",
+      "size": 122
+    },
+    {
+      "relpath": "pnpm-lock.yaml",
+      "sha256": "62bdd774d71c87cb9db88d200f26b6ea06fcb44433900dc7e4e3c8d53db66d68",
+      "size": 1316
+    },
+    {
+      "relpath": "vendor/pnpm-7.33.7.tgz",
+      "sha256": "d1581d46ed10f54ff0cbdd94a2373b1f070202b0fbff29f27c2ce01460427043",
+      "size": 3139995
+    },
+    {
+      "relpath": "vendor/pnpm-9.15.4.tgz",
+      "sha256": "9bee59c7313a216722c079c1e22160dea7f88df4e0c3450b1d7b01b882336c6a",
+      "size": 3835981
+    }
+  ],
+  "dependencies": {
+    "node": ">=18.0",
+    "tar": ">=1.30",
+    "platform": "linux-x64"
+  },
+  "build_commands": [
+    "rm -rf {workdir} && mkdir -p {workdir}",
+    "cp -r files/. {workdir}/",
+    "mkdir -p {workdir}/node_modules/pnpm {workdir}/node_modules/.bin",
+    "tar -xzf {workdir}/vendor/pnpm-7.33.7.tgz -C {workdir}/node_modules/pnpm --strip-components=1",
+    "ln -sf ../pnpm/bin/pnpm.cjs {workdir}/node_modules/.bin/pnpm"
+  ],
+  "expected_failure_command": "cd {workdir} && ./node_modules/.bin/pnpm install --frozen-lockfile",
+  "expected_failure_stderr_regex": "ERR_PNPM_OUTDATED_LOCKFILE|ERR_PNPM_LOCKFILE_BREAKING_CHANGE|lockfile.*(is not up to date|breaking change|unsupported)",
+  "manifest_schema_version": 1
+}

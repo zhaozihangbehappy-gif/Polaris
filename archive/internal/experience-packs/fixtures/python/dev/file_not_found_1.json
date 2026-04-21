@@ -1,0 +1,5 @@
+{
+  "stderr": "Traceback (most recent call last):\n  File \"/home/user/project/run.py\", line 9, in <module>\n    with open('config/settings.yaml', 'r') as f:\nFileNotFoundError: [Errno 2] No such file or directory: 'config/settings.yaml'",
+  "error_class": "file_not_found",
+  "source": "relative config file path, wrong cwd"
+}

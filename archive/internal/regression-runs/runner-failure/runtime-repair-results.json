@@ -1,0 +1,37 @@
+{
+  "executed_at": "2026-03-15T13:35:31.933440+00:00",
+  "failure_type": "missing_dependency",
+  "results": [
+    {
+      "action": {
+        "command": "python3 --version",
+        "kind": "shell",
+        "label": "Capture interpreter version",
+        "node_id": "python-version",
+        "reversible": true
+      },
+      "outcome": {
+        "command": "python3 --version",
+        "returncode": 0,
+        "stderr": "",
+        "stdout": "Python 3.12.3\n"
+      }
+    },
+    {
+      "action": {
+        "command": "python3 -c 'import sys; print(sys.executable)'",
+        "kind": "shell",
+        "label": "Capture interpreter path",
+        "node_id": "python-exec",
+        "reversible": true
+      },
+      "outcome": {
+        "command": "python3 -c 'import sys; print(sys.executable)'",
+        "returncode": 0,
+        "stderr": "",
+        "stdout": "/usr/bin/python3\n"
+      }
+    }
+  ],
+  "safe_to_execute": true
+}

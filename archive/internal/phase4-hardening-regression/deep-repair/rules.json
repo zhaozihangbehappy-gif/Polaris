@@ -1,0 +1,57 @@
+{
+  "rules": [
+    {
+      "action": "Stop and reduce scope instead of retrying the blocked path",
+      "created_at": "2026-03-14T03:03:22.618837+00:00",
+      "evidence": "explicit runtime stop classification",
+      "evidence_count": 1,
+      "fingerprint": "stop-on-nonrepair-denial",
+      "last_validated_at": "2026-03-14T03:03:22.618826+00:00",
+      "layer": "hard",
+      "priority": 100,
+      "rule_id": "stop-on-nonrepair-denial",
+      "scope": "all Polaris runs",
+      "tags": [
+        "safety",
+        "boundary",
+        "local"
+      ],
+      "trigger": "an explicit non-repair denial appears",
+      "validation": "explicit runtime stop classification",
+      "validation_count": 1
+    },
+    {
+      "action": "Verify interpreter, pip visibility, and dependency availability before retrying the same local runtime path",
+      "created_at": "2026-03-14T03:03:24.522977+00:00",
+      "evidence": "runtime-repair-results.json,runtime-repair-plan.json,runtime-repair-report.json",
+      "evidence_count": 3,
+      "fingerprint": "repair-rule-d51b976714fa",
+      "history": [
+        {
+          "event": "auto_promoted",
+          "reason": "evidence_threshold_met",
+          "to": "soft",
+          "ts": "2026-03-14T03:03:24.522981+00:00"
+        }
+      ],
+      "last_validated_at": "2026-03-14T03:03:24.522966+00:00",
+      "layer": "soft",
+      "priority": 70,
+      "rule_id": "repair-rule-d51b976714fa",
+      "scope": "repair-python-env",
+      "tags": [
+        "repair",
+        "local",
+        "missing_dependency",
+        "env_probe_tree",
+        "deep",
+        "python",
+        "dependency"
+      ],
+      "trigger": "missing_dependency",
+      "validation": "repair action tree probes completed locally",
+      "validation_count": 1
+    }
+  ],
+  "schema_version": 3
+}

@@ -1,0 +1,303 @@
+{
+  "ecosystem": "rust",
+  "error_class": "missing_dependency",
+  "schema_version": 4,
+  "records": [
+    {
+      "pattern_id": "rust.missing_dependency.000",
+      "ecosystem": "rust",
+      "error_class": "missing_dependency",
+      "description": "Rust unresolved import \u2014 clear incremental build state",
+      "source": "prebuilt",
+      "trigger_signals": {
+        "stderr_regex": [
+          "error\\[E0432\\]: unresolved import"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "bash -c 'echo \"error[E0432]: unresolved import\" >&2; exit 1'",
+        "trigger_env": {},
+        "expected_stderr_match": "E0432",
+        "expected_fix_outcome": "different_error_or_success"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "CARGO_INCREMENTAL": "0"
+            }
+          }
+        ],
+        "fix_command": "bash -c 'echo \"CARGO_INCREMENTAL set (simulated)\"; exit 0'",
+        "fix_env": {
+          "CARGO_INCREMENTAL": "0"
+        },
+        "description": "Rust unresolved import \u2014 clear incremental build state"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "legacy_v3": {
+        "stderr_pattern": "error\\[E0432\\]: unresolved import",
+        "avoidance_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "CARGO_INCREMENTAL": "0"
+            }
+          }
+        ],
+        "description": "Rust unresolved import \u2014 clear incremental build state",
+        "source": "prebuilt",
+        "reproduction": {
+          "command": "bash -c 'echo \"error[E0432]: unresolved import\" >&2; exit 1'",
+          "trigger_env": {},
+          "expected_stderr_match": "E0432",
+          "fix_env": {
+            "CARGO_INCREMENTAL": "0"
+          },
+          "expected_fix_outcome": "different_error_or_success",
+          "fix_command": "bash -c 'echo \"CARGO_INCREMENTAL set (simulated)\"; exit 0'"
+        }
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "rust.missing_dependency.001",
+      "ecosystem": "rust",
+      "error_class": "missing_dependency",
+      "description": "Cargo source fetch failure \u2014 use CLI git for fetch",
+      "source": "prebuilt",
+      "trigger_signals": {
+        "stderr_regex": [
+          "error: failed to load source for dependency"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "bash -c 'echo \"error: failed to load source for dependency\" >&2; exit 1'",
+        "trigger_env": {},
+        "expected_stderr_match": "failed to load source",
+        "expected_fix_outcome": "different_error_or_success"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "CARGO_NET_GIT_FETCH_WITH_CLI": "true"
+            }
+          }
+        ],
+        "fix_command": "bash -c 'echo \"CARGO_NET_GIT_FETCH_WITH_CLI set (simulated)\"; exit 0'",
+        "fix_env": {
+          "CARGO_NET_GIT_FETCH_WITH_CLI": "true"
+        },
+        "description": "Cargo source fetch failure \u2014 use CLI git for fetch"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "legacy_v3": {
+        "stderr_pattern": "error: failed to load source for dependency",
+        "avoidance_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "CARGO_NET_GIT_FETCH_WITH_CLI": "true"
+            }
+          }
+        ],
+        "description": "Cargo source fetch failure \u2014 use CLI git for fetch",
+        "source": "prebuilt",
+        "reproduction": {
+          "command": "bash -c 'echo \"error: failed to load source for dependency\" >&2; exit 1'",
+          "trigger_env": {},
+          "expected_stderr_match": "failed to load source",
+          "fix_env": {
+            "CARGO_NET_GIT_FETCH_WITH_CLI": "true"
+          },
+          "expected_fix_outcome": "different_error_or_success",
+          "fix_command": "bash -c 'echo \"CARGO_NET_GIT_FETCH_WITH_CLI set (simulated)\"; exit 0'"
+        }
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "rust.missing_dependency.002",
+      "ecosystem": "rust",
+      "error_class": "missing_dependency",
+      "description": "Missing crate \u2014 reset RUSTFLAGS and incremental state",
+      "source": "prebuilt",
+      "trigger_signals": {
+        "stderr_regex": [
+          "can't find crate for"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "bash -c \"echo 'error[E0463]: can'\\''t find crate for tokio' >&2; exit 1\"",
+        "trigger_env": {},
+        "expected_stderr_match": "can't find crate",
+        "expected_fix_outcome": "different_error_or_success"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "RUSTFLAGS": "",
+              "CARGO_INCREMENTAL": "0"
+            }
+          }
+        ],
+        "fix_command": "bash -c 'echo \"RUSTFLAGS set (simulated)\"; exit 0'",
+        "fix_env": {
+          "RUSTFLAGS": "",
+          "CARGO_INCREMENTAL": "0"
+        },
+        "description": "Missing crate \u2014 reset RUSTFLAGS and incremental state"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "legacy_v3": {
+        "stderr_pattern": "can't find crate for",
+        "avoidance_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "RUSTFLAGS": "",
+              "CARGO_INCREMENTAL": "0"
+            }
+          }
+        ],
+        "description": "Missing crate \u2014 reset RUSTFLAGS and incremental state",
+        "source": "prebuilt",
+        "reproduction": {
+          "command": "bash -c \"echo 'error[E0463]: can'\\''t find crate for tokio' >&2; exit 1\"",
+          "trigger_env": {},
+          "expected_stderr_match": "can't find crate",
+          "fix_env": {
+            "RUSTFLAGS": "",
+            "CARGO_INCREMENTAL": "0"
+          },
+          "expected_fix_outcome": "different_error_or_success",
+          "fix_command": "bash -c 'echo \"RUSTFLAGS set (simulated)\"; exit 0'"
+        }
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "rust.missing_dependency.003",
+      "ecosystem": "rust",
+      "error_class": "missing_dependency",
+      "description": "Crate not found in registry \u2014 retry with sparse protocol",
+      "source": "prebuilt",
+      "trigger_signals": {
+        "stderr_regex": [
+          "no matching package named .* found"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "bash -c 'echo \"error: no matching package named foo-bar found\" >&2; exit 1'",
+        "trigger_env": {},
+        "expected_stderr_match": "no matching package named",
+        "expected_fix_outcome": "different_error_or_success"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "CARGO_NET_RETRY": "5",
+              "CARGO_REGISTRIES_CRATES_IO_PROTOCOL": "sparse"
+            }
+          }
+        ],
+        "fix_command": "bash -c 'echo \"CARGO_NET_RETRY set (simulated)\"; exit 0'",
+        "fix_env": {
+          "CARGO_NET_RETRY": "5",
+          "CARGO_REGISTRIES_CRATES_IO_PROTOCOL": "sparse"
+        },
+        "description": "Crate not found in registry \u2014 retry with sparse protocol"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "legacy_v3": {
+        "stderr_pattern": "no matching package named .* found",
+        "avoidance_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "CARGO_NET_RETRY": "5",
+              "CARGO_REGISTRIES_CRATES_IO_PROTOCOL": "sparse"
+            }
+          }
+        ],
+        "description": "Crate not found in registry \u2014 retry with sparse protocol",
+        "source": "prebuilt",
+        "reproduction": {
+          "command": "bash -c 'echo \"error: no matching package named foo-bar found\" >&2; exit 1'",
+          "trigger_env": {},
+          "expected_stderr_match": "no matching package named",
+          "fix_env": {
+            "CARGO_NET_RETRY": "5",
+            "CARGO_REGISTRIES_CRATES_IO_PROTOCOL": "sparse"
+          },
+          "expected_fix_outcome": "different_error_or_success",
+          "fix_command": "bash -c 'echo \"CARGO_NET_RETRY set (simulated)\"; exit 0'"
+        }
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    }
+  ]
+}

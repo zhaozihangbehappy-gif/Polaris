@@ -1,0 +1,241 @@
+{
+  "ecosystem": "rust",
+  "error_class": "version_conflict",
+  "schema_version": 4,
+  "records": [
+    {
+      "pattern_id": "candidate.rust.version_conflict.000",
+      "ecosystem": "rust",
+      "error_class": "version_conflict",
+      "description": "rustc version too old for edition 2024",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "edition.*requires"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "cargo --version 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "edition.*requires"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Rust version_conflict: rustc version too old for edition 2024"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.rust.version_conflict.001",
+      "ecosystem": "rust",
+      "error_class": "version_conflict",
+      "description": "MSRV bumped by dep",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "package requires rustc >="
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "cargo --version 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "package requires rustc >="
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Rust version_conflict: MSRV bumped by dep"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.rust.version_conflict.002",
+      "ecosystem": "rust",
+      "error_class": "version_conflict",
+      "description": "cargo-lock version 4 incompat",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "Cargo\\.lock.*version is not supported"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "cargo --version 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "Cargo\\.lock.*version is not supported"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Rust version_conflict: cargo-lock version 4 incompat"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.rust.version_conflict.003",
+      "ecosystem": "rust",
+      "error_class": "version_conflict",
+      "description": "toolchain channel nightly required",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "requires.*nightly"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "cargo --version 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "requires.*nightly"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Rust version_conflict: toolchain channel nightly required"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.rust.version_conflict.004",
+      "ecosystem": "rust",
+      "error_class": "version_conflict",
+      "description": "multiple versions of same crate",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "multiple.*versions.*of crate"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "cargo --version 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "multiple.*versions.*of crate"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Rust version_conflict: multiple versions of same crate"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.rust.version_conflict.005",
+      "ecosystem": "rust",
+      "error_class": "version_conflict",
+      "description": "feature flag 'default' conflict",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "features.*conflict"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "cargo --version 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "features.*conflict"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Rust version_conflict: feature flag 'default' conflict"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    }
+  ]
+}

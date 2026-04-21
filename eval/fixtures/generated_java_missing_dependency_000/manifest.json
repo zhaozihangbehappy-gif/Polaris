@@ -1,0 +1,16 @@
+{
+  "case_id": "generated_java_missing_dependency_000",
+  "files": [
+    "src/Main.java",
+    "src/Helper.java",
+    "build.sh"
+  ],
+  "dependencies": {},
+  "build_commands": [],
+  "expected_failure_command": "cd {workdir} && bash build.sh",
+  "expected_failure_stderr_regex": "java\\.lang\\.ClassNotFoundException: Helper",
+  "manifest_schema_version": 1,
+  "bash_self_contained": false,
+  "reverse_from_pattern": "java.missing_dependency.000",
+  "source_pool": "official"
+}

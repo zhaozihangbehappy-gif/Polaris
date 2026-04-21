@@ -1,0 +1,168 @@
+{
+  "artifacts": {
+    "execution_contract": "{\"adapter\": \"shell-local\", \"applied_rule_ids\": [\"stop-on-nonrepair-denial\"], \"command\": \"python3 /home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/scripts/polaris_emit_text.py --text POLARIS_COMMAND_OUTPUT::STANDARD::shell-local && exit 1\", \"execution_profile\": \"standard\", \"goal\": \"Demonstrate Polaris command output failure flow\", \"kind\": \"command_output\", \"mode\": \"short\", \"output_file\": \"/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/runtime-command-output-failure-check/runtime-command-output.txt\", \"selected_pattern\": null, \"selected_pattern_sequence\": [], \"simulate_error\": \"forced command output failure\", \"validator\": {\"expected_stdout\": \"POLARIS_COMMAND_OUTPUT::STANDARD::shell-local\", \"kind\": \"command_output_result\"}}",
+    "execution_kind": "command_output",
+    "execution_result": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/runtime-command-output-failure-check/runtime-command-output.txt",
+    "executor_result": "runtime-executor-result.json",
+    "learning_summary": "{\"failed_patterns\": [], \"failed_rules\": [], \"merged_patterns\": [\"repair-pattern-807fd04b957e\"], \"merged_rules\": [], \"processed_items\": 2, \"promoted_patterns\": [], \"promoted_rules\": [\"repair-rule-1c6e7cc8a952\"], \"queued_items\": 2, \"retained_items\": 0, \"rule_candidates\": 1, \"success_markers\": 1}",
+    "repair_plan": "runtime-repair-plan.json",
+    "repair_report": "runtime-repair-report.json",
+    "repair_results": "runtime-repair-results.json",
+    "selected_adapter": "shell-local",
+    "validation_result": "runtime-validation-result.json"
+  },
+  "current_step": "Blocked after bounded repair",
+  "event_budget": "standard",
+  "execution_profile": "standard",
+  "goal": "Demonstrate Polaris command output failure flow",
+  "learning_backlog": [],
+  "mode": "short",
+  "next_action": "Retry or escalate to medium if the same failure repeats",
+  "phase": "blocked",
+  "plan": [
+    {
+      "index": 1,
+      "phase": "planning",
+      "status": "completed",
+      "step": "Clarify scope and choose a safe local path"
+    },
+    {
+      "index": 2,
+      "phase": "ready",
+      "status": "completed",
+      "step": "Select the primary adapter and fallback"
+    },
+    {
+      "index": 3,
+      "phase": "executing",
+      "status": "in_progress",
+      "step": "Run the next local step"
+    },
+    {
+      "index": 4,
+      "phase": "validating",
+      "status": "pending",
+      "step": "Verify outcomes and inspect failures"
+    }
+  ],
+  "progress_pct": 60,
+  "references": [
+    {
+      "kind": "patterns",
+      "label": "success pattern store",
+      "ts": "2026-03-14T08:12:10.416411+00:00",
+      "value": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/runtime-command-output-failure-check/success-patterns.json"
+    },
+    {
+      "kind": "adapters",
+      "label": "adapter registry",
+      "ts": "2026-03-14T08:12:10.446048+00:00",
+      "value": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/runtime-command-output-failure-check/adapters.json"
+    }
+  ],
+  "repair_depth": "shallow",
+  "rule_context": {
+    "active_layers": [
+      "hard",
+      "soft",
+      "experimental"
+    ],
+    "applied_rules": [
+      {
+        "action": "Stop and reduce scope instead of retrying the blocked path",
+        "layer": "hard",
+        "priority": 100,
+        "rule_id": "stop-on-nonrepair-denial",
+        "scope": "all Polaris runs",
+        "tags": [
+          "stop",
+          "runtime",
+          "local"
+        ],
+        "trigger": "an explicit non-repair denial appears"
+      }
+    ]
+  },
+  "run_id": "polaris-orchestrated-run",
+  "runtime": {
+    "completed_at": null,
+    "durable_status_surfaces": {
+      "live_status": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/runtime-command-output-failure-check/runtime-live-status.json"
+    },
+    "last_heartbeat_at": "2026-03-14T08:12:11.835720+00:00",
+    "last_heartbeat_summary": "deferred repair learning consolidated: 2/2 item(s); retained=0; pattern promotions=0; rule promotions=1",
+    "lifecycle_stage": "blocked",
+    "started_at": "2026-03-14T08:12:10.356583+00:00"
+  },
+  "schema_version": 5,
+  "state_density": "minimal",
+  "state_machine": {
+    "active_branch": "execution-main",
+    "allowed_transitions": {
+      "blocked": [
+        "planning",
+        "ready",
+        "executing",
+        "completed"
+      ],
+      "completed": [],
+      "executing": [
+        "validating",
+        "repairing",
+        "blocked"
+      ],
+      "intake": [
+        "planning",
+        "blocked"
+      ],
+      "planning": [
+        "ready",
+        "executing",
+        "blocked"
+      ],
+      "ready": [
+        "executing",
+        "blocked"
+      ],
+      "repairing": [
+        "ready",
+        "executing",
+        "blocked"
+      ],
+      "validating": [
+        "completed",
+        "repairing",
+        "blocked"
+      ]
+    },
+    "blocked": {
+      "is_blocked": true,
+      "reason": "Standard profile stopped after shallow repair; escalate to medium only if failure repeats",
+      "references": [
+        "runtime-repair-report.json",
+        "runtime-repair-plan.json",
+        "runtime-repair-results.json"
+      ]
+    },
+    "history": [
+      {
+        "branch_id": "execution-main",
+        "from": "executing",
+        "summary": "Standard profile opened a shallow repair pass",
+        "to": "repairing",
+        "ts": "2026-03-14T08:12:11.601584+00:00"
+      },
+      {
+        "branch_id": "execution-main",
+        "from": "repairing",
+        "summary": "Standard profile stopped after shallow repair; escalate to medium only if failure repeats",
+        "to": "blocked",
+        "ts": "2026-03-14T08:12:11.657910+00:00"
+      }
+    ],
+    "node": "blocked"
+  },
+  "status": "blocked",
+  "summary_outcome": "Standard profile stopped after shallow repair; escalate to medium only if failure repeats",
+  "updated_at": "2026-03-14T08:12:11.835723+00:00"
+}

@@ -1,0 +1,16 @@
+{
+  "case_id": "generated_python_version_conflict_001",
+  "files": [
+    "requirements.txt",
+    "shared_v1/setup.py",
+    "shared_v2/setup.py"
+  ],
+  "dependencies": {},
+  "build_commands": [],
+  "expected_failure_command": "cd {workdir} && python3 -m pip install --dry-run --user --no-index --no-build-isolation --no-cache-dir --break-system-packages -r requirements.txt",
+  "expected_failure_stderr_regex": "ResolutionImpossible",
+  "manifest_schema_version": 1,
+  "bash_self_contained": false,
+  "reverse_from_pattern": "python.version_conflict.001",
+  "source_pool": "official"
+}

@@ -1,0 +1,5 @@
+{
+  "stderr": "Error response from daemon: Get \"https://registry-1.docker.io/v2/library/node/manifests/18-alpine\": dial tcp: lookup registry-1.docker.io on 127.0.0.53:53: server misbehaving",
+  "error_class": "network_error",
+  "source": "docker pull with broken DNS resolution in container"
+}

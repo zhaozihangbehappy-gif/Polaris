@@ -1,0 +1,5 @@
+{
+  "stderr": "Error response from daemon: driver failed programming external connectivity on endpoint postgres-1 (deadbeef1234): Bind for 0.0.0.0:5432 failed: port is already allocated",
+  "error_class": "port_conflict",
+  "source": "docker compose up when host PostgreSQL already running on 5432"
+}

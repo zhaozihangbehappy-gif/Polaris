@@ -1,0 +1,5 @@
+{
+  "stderr": "[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.11.0:compile (default-compile) on project myapp: Fatal error compiling\n[ERROR] error: release version 21 not supported\n[ERROR] -> [Help 1]\n[ERROR] \n[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.",
+  "error_class": "version_conflict",
+  "source": "pom.xml targets Java 21 but JAVA_HOME points to JDK 11"
+}

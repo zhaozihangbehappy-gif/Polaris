@@ -1,0 +1,94 @@
+{
+  "active_branch": "execution-main",
+  "blocked_reason": "ModuleNotFoundError: No module named pywinauto",
+  "completed_at": null,
+  "current_step": "Execution failed after repair",
+  "durable_status_surfaces": {
+    "live_status": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/deep-resumed-failure/runtime-live-status.json"
+  },
+  "event_budget": "deep",
+  "event_log": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/deep-resumed-failure/runtime-events.jsonl",
+  "execution_profile": "deep",
+  "goal": "Demonstrate Polaris resumed failure flow",
+  "history_summary": [
+    {
+      "by_branch": {
+        "none": 1
+      },
+      "by_node": {
+        "planning": 1
+      },
+      "compacted_at": "2026-03-15T13:36:21.699891+00:00",
+      "entry_count": 1,
+      "first_summary": "Run initialized and routed to the deep profile",
+      "from_ts": "2026-03-15T13:36:19.527386+00:00",
+      "last_summary": "Run initialized and routed to the deep profile",
+      "to_ts": "2026-03-15T13:36:19.527386+00:00"
+    }
+  ],
+  "last_event": {
+    "active_branch": "repair-local",
+    "active_rule_layers": [
+      "hard",
+      "soft",
+      "experimental"
+    ],
+    "blocked_reason": null,
+    "completed_at": null,
+    "current_step": "Execute the next local step",
+    "event_budget": "deep",
+    "execution_profile": "deep",
+    "last_heartbeat_at": "2026-03-15T13:36:21.078637+00:00",
+    "lifecycle_stage": "repairing",
+    "next_action": "Verify outcomes and inspect failures",
+    "phase": "repairing",
+    "progress_pct": 0,
+    "references": [
+      {
+        "kind": "rules",
+        "label": "layered rules store",
+        "ts": "2026-03-15T13:36:19.438641+00:00",
+        "value": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/deep-resumed-failure/rules.json"
+      },
+      {
+        "kind": "patterns",
+        "label": "success pattern store",
+        "ts": "2026-03-15T13:36:19.469308+00:00",
+        "value": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/deep-resumed-failure/success-patterns.json"
+      },
+      {
+        "kind": "adapters",
+        "label": "adapter registry",
+        "ts": "2026-03-15T13:36:19.498424+00:00",
+        "value": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/deep-resumed-failure/adapters.json"
+      }
+    ],
+    "run_id": "polaris-orchestrated-run",
+    "selected_adapter": "python-runtime-local",
+    "selected_pattern": "bounded-local-repair",
+    "started_at": "2026-03-15T13:36:19.409671+00:00",
+    "state_density": "full",
+    "state_node": "repairing",
+    "status": "in_progress",
+    "summary": "Failure classified and routed through the deep local repair tree",
+    "summary_outcome": null,
+    "ts": "2026-03-15T13:36:21.104143+00:00"
+  },
+  "last_heartbeat_at": "2026-03-15T13:36:21.699857+00:00",
+  "lifecycle_stage": "blocked",
+  "mode": "long",
+  "next_action": "Inspect repaired environment and retry with fresh evidence",
+  "phase": "blocked",
+  "progress_pct": 70,
+  "run_id": "polaris-orchestrated-run",
+  "selected_adapter": "python-runtime-local",
+  "selected_pattern": "bounded-local-repair",
+  "started_at": "2026-03-15T13:36:19.409671+00:00",
+  "state_density": "full",
+  "state_node": "blocked",
+  "state_path": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/deep-resumed-failure/execution-state.json",
+  "status": "blocked",
+  "summary_outcome": "ModuleNotFoundError: No module named pywinauto",
+  "surface_kind": "blocked",
+  "updated_at": "2026-03-15T13:36:21.765546+00:00"
+}

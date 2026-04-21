@@ -1,0 +1,967 @@
+{
+  "ecosystem": "python",
+  "error_class": "missing_dependency",
+  "schema_version": 4,
+  "records": [
+    {
+      "pattern_id": "candidate.python.missing_dependency.000",
+      "ecosystem": "python",
+      "error_class": "missing_dependency",
+      "description": "ModuleNotFoundError for 'numpy' — install via pip",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "ModuleNotFoundError: No module named 'numpy'",
+          "ImportError.*No module named numpy"
+        ],
+        "file_markers": [],
+        "package_managers": [
+          "pip"
+        ],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "python3 -c \"import numpy\" 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "ModuleNotFoundError: No module named 'numpy'"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "install_package",
+            "manager": "pip",
+            "name": "numpy"
+          }
+        ],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "pip install numpy (check pyproject/requirements for version pin)"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.missing_dependency.001",
+      "ecosystem": "python",
+      "error_class": "missing_dependency",
+      "description": "ModuleNotFoundError for 'pandas' — install via pip",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "ModuleNotFoundError: No module named 'pandas'",
+          "ImportError.*No module named pandas"
+        ],
+        "file_markers": [],
+        "package_managers": [
+          "pip"
+        ],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "python3 -c \"import pandas\" 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "ModuleNotFoundError: No module named 'pandas'"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "install_package",
+            "manager": "pip",
+            "name": "pandas"
+          }
+        ],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "pip install pandas (check pyproject/requirements for version pin)"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.missing_dependency.002",
+      "ecosystem": "python",
+      "error_class": "missing_dependency",
+      "description": "ModuleNotFoundError for 'scipy' — install via pip",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "ModuleNotFoundError: No module named 'scipy'",
+          "ImportError.*No module named scipy"
+        ],
+        "file_markers": [],
+        "package_managers": [
+          "pip"
+        ],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "python3 -c \"import scipy\" 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "ModuleNotFoundError: No module named 'scipy'"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "install_package",
+            "manager": "pip",
+            "name": "scipy"
+          }
+        ],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "pip install scipy (check pyproject/requirements for version pin)"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.missing_dependency.003",
+      "ecosystem": "python",
+      "error_class": "missing_dependency",
+      "description": "ModuleNotFoundError for 'torch' — install via pip",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "ModuleNotFoundError: No module named 'torch'",
+          "ImportError.*No module named torch"
+        ],
+        "file_markers": [],
+        "package_managers": [
+          "pip"
+        ],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "python3 -c \"import torch\" 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "ModuleNotFoundError: No module named 'torch'"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "install_package",
+            "manager": "pip",
+            "name": "torch"
+          }
+        ],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "pip install torch (check pyproject/requirements for version pin)"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.missing_dependency.004",
+      "ecosystem": "python",
+      "error_class": "missing_dependency",
+      "description": "ModuleNotFoundError for 'tensorflow' — install via pip",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "ModuleNotFoundError: No module named 'tensorflow'",
+          "ImportError.*No module named tensorflow"
+        ],
+        "file_markers": [],
+        "package_managers": [
+          "pip"
+        ],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "python3 -c \"import tensorflow\" 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "ModuleNotFoundError: No module named 'tensorflow'"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "install_package",
+            "manager": "pip",
+            "name": "tensorflow"
+          }
+        ],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "pip install tensorflow (check pyproject/requirements for version pin)"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.missing_dependency.005",
+      "ecosystem": "python",
+      "error_class": "missing_dependency",
+      "description": "ModuleNotFoundError for 'requests' — install via pip",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "ModuleNotFoundError: No module named 'requests'",
+          "ImportError.*No module named requests"
+        ],
+        "file_markers": [],
+        "package_managers": [
+          "pip"
+        ],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "python3 -c \"import requests\" 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "ModuleNotFoundError: No module named 'requests'"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "install_package",
+            "manager": "pip",
+            "name": "requests"
+          }
+        ],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "pip install requests (check pyproject/requirements for version pin)"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.missing_dependency.006",
+      "ecosystem": "python",
+      "error_class": "missing_dependency",
+      "description": "ModuleNotFoundError for 'fastapi' — install via pip",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "ModuleNotFoundError: No module named 'fastapi'",
+          "ImportError.*No module named fastapi"
+        ],
+        "file_markers": [],
+        "package_managers": [
+          "pip"
+        ],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "python3 -c \"import fastapi\" 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "ModuleNotFoundError: No module named 'fastapi'"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "install_package",
+            "manager": "pip",
+            "name": "fastapi"
+          }
+        ],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "pip install fastapi (check pyproject/requirements for version pin)"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.missing_dependency.007",
+      "ecosystem": "python",
+      "error_class": "missing_dependency",
+      "description": "ModuleNotFoundError for 'flask' — install via pip",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "ModuleNotFoundError: No module named 'flask'",
+          "ImportError.*No module named flask"
+        ],
+        "file_markers": [],
+        "package_managers": [
+          "pip"
+        ],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "python3 -c \"import flask\" 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "ModuleNotFoundError: No module named 'flask'"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "install_package",
+            "manager": "pip",
+            "name": "flask"
+          }
+        ],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "pip install flask (check pyproject/requirements for version pin)"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.missing_dependency.008",
+      "ecosystem": "python",
+      "error_class": "missing_dependency",
+      "description": "ModuleNotFoundError for 'django' — install via pip",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "ModuleNotFoundError: No module named 'django'",
+          "ImportError.*No module named django"
+        ],
+        "file_markers": [],
+        "package_managers": [
+          "pip"
+        ],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "python3 -c \"import django\" 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "ModuleNotFoundError: No module named 'django'"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "install_package",
+            "manager": "pip",
+            "name": "django"
+          }
+        ],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "pip install django (check pyproject/requirements for version pin)"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.missing_dependency.009",
+      "ecosystem": "python",
+      "error_class": "missing_dependency",
+      "description": "ModuleNotFoundError for 'pyyaml' — install via pip",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "ModuleNotFoundError: No module named 'pyyaml'",
+          "ImportError.*No module named pyyaml"
+        ],
+        "file_markers": [],
+        "package_managers": [
+          "pip"
+        ],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "python3 -c \"import pyyaml\" 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "ModuleNotFoundError: No module named 'pyyaml'"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "install_package",
+            "manager": "pip",
+            "name": "pyyaml"
+          }
+        ],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "pip install pyyaml (check pyproject/requirements for version pin)"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.missing_dependency.010",
+      "ecosystem": "python",
+      "error_class": "missing_dependency",
+      "description": "ModuleNotFoundError for 'cryptography' — install via pip",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "ModuleNotFoundError: No module named 'cryptography'",
+          "ImportError.*No module named cryptography"
+        ],
+        "file_markers": [],
+        "package_managers": [
+          "pip"
+        ],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "python3 -c \"import cryptography\" 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "ModuleNotFoundError: No module named 'cryptography'"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "install_package",
+            "manager": "pip",
+            "name": "cryptography"
+          }
+        ],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "pip install cryptography (check pyproject/requirements for version pin)"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.missing_dependency.011",
+      "ecosystem": "python",
+      "error_class": "missing_dependency",
+      "description": "ModuleNotFoundError for 'pillow' — install via pip",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "ModuleNotFoundError: No module named 'pillow'",
+          "ImportError.*No module named pillow"
+        ],
+        "file_markers": [],
+        "package_managers": [
+          "pip"
+        ],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "python3 -c \"import pillow\" 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "ModuleNotFoundError: No module named 'pillow'"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "install_package",
+            "manager": "pip",
+            "name": "pillow"
+          }
+        ],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "pip install pillow (check pyproject/requirements for version pin)"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.missing_dependency.012",
+      "ecosystem": "python",
+      "error_class": "missing_dependency",
+      "description": "ModuleNotFoundError for 'lxml' — install via pip",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "ModuleNotFoundError: No module named 'lxml'",
+          "ImportError.*No module named lxml"
+        ],
+        "file_markers": [],
+        "package_managers": [
+          "pip"
+        ],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "python3 -c \"import lxml\" 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "ModuleNotFoundError: No module named 'lxml'"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "install_package",
+            "manager": "pip",
+            "name": "lxml"
+          }
+        ],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "pip install lxml (check pyproject/requirements for version pin)"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.missing_dependency.013",
+      "ecosystem": "python",
+      "error_class": "missing_dependency",
+      "description": "ModuleNotFoundError for 'sqlalchemy' — install via pip",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "ModuleNotFoundError: No module named 'sqlalchemy'",
+          "ImportError.*No module named sqlalchemy"
+        ],
+        "file_markers": [],
+        "package_managers": [
+          "pip"
+        ],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "python3 -c \"import sqlalchemy\" 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "ModuleNotFoundError: No module named 'sqlalchemy'"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "install_package",
+            "manager": "pip",
+            "name": "sqlalchemy"
+          }
+        ],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "pip install sqlalchemy (check pyproject/requirements for version pin)"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.missing_dependency.014",
+      "ecosystem": "python",
+      "error_class": "missing_dependency",
+      "description": "ModuleNotFoundError for 'pytest' — install via pip",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "ModuleNotFoundError: No module named 'pytest'",
+          "ImportError.*No module named pytest"
+        ],
+        "file_markers": [],
+        "package_managers": [
+          "pip"
+        ],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "python3 -c \"import pytest\" 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "ModuleNotFoundError: No module named 'pytest'"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "install_package",
+            "manager": "pip",
+            "name": "pytest"
+          }
+        ],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "pip install pytest (check pyproject/requirements for version pin)"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.missing_dependency.015",
+      "ecosystem": "python",
+      "error_class": "missing_dependency",
+      "description": "ModuleNotFoundError for 'httpx' — install via pip",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "ModuleNotFoundError: No module named 'httpx'",
+          "ImportError.*No module named httpx"
+        ],
+        "file_markers": [],
+        "package_managers": [
+          "pip"
+        ],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "python3 -c \"import httpx\" 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "ModuleNotFoundError: No module named 'httpx'"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "install_package",
+            "manager": "pip",
+            "name": "httpx"
+          }
+        ],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "pip install httpx (check pyproject/requirements for version pin)"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.missing_dependency.016",
+      "ecosystem": "python",
+      "error_class": "missing_dependency",
+      "description": "ModuleNotFoundError for 'aiohttp' — install via pip",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "ModuleNotFoundError: No module named 'aiohttp'",
+          "ImportError.*No module named aiohttp"
+        ],
+        "file_markers": [],
+        "package_managers": [
+          "pip"
+        ],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "python3 -c \"import aiohttp\" 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "ModuleNotFoundError: No module named 'aiohttp'"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "install_package",
+            "manager": "pip",
+            "name": "aiohttp"
+          }
+        ],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "pip install aiohttp (check pyproject/requirements for version pin)"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.missing_dependency.017",
+      "ecosystem": "python",
+      "error_class": "missing_dependency",
+      "description": "ModuleNotFoundError for 'boto3' — install via pip",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "ModuleNotFoundError: No module named 'boto3'",
+          "ImportError.*No module named boto3"
+        ],
+        "file_markers": [],
+        "package_managers": [
+          "pip"
+        ],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "python3 -c \"import boto3\" 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "ModuleNotFoundError: No module named 'boto3'"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "install_package",
+            "manager": "pip",
+            "name": "boto3"
+          }
+        ],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "pip install boto3 (check pyproject/requirements for version pin)"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.missing_dependency.018",
+      "ecosystem": "python",
+      "error_class": "missing_dependency",
+      "description": "ModuleNotFoundError for 'redis' — install via pip",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "ModuleNotFoundError: No module named 'redis'",
+          "ImportError.*No module named redis"
+        ],
+        "file_markers": [],
+        "package_managers": [
+          "pip"
+        ],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "python3 -c \"import redis\" 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "ModuleNotFoundError: No module named 'redis'"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "install_package",
+            "manager": "pip",
+            "name": "redis"
+          }
+        ],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "pip install redis (check pyproject/requirements for version pin)"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.missing_dependency.019",
+      "ecosystem": "python",
+      "error_class": "missing_dependency",
+      "description": "ModuleNotFoundError for 'psycopg2' — install via pip",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "ModuleNotFoundError: No module named 'psycopg2'",
+          "ImportError.*No module named psycopg2"
+        ],
+        "file_markers": [],
+        "package_managers": [
+          "pip"
+        ],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "python3 -c \"import psycopg2\" 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "ModuleNotFoundError: No module named 'psycopg2'"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "install_package",
+            "manager": "pip",
+            "name": "psycopg2"
+          }
+        ],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "pip install psycopg2 (check pyproject/requirements for version pin)"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+interface:
+  display_name: "Polaris"
+  short_description: "Layered local orchestration and repair"
+  default_prompt: "Use $polaris to run a local-first task with layered rules, explicit state transitions, bounded repair guidance, adapter selection, and auditable success-pattern capture."
+
+policy:
+  allow_implicit_invocation: true

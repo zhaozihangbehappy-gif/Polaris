@@ -1,0 +1,47 @@
+{
+  "runners": [
+    "mock"
+  ],
+  "seed": 42,
+  "cases_total": 3,
+  "runs_attempted": 6,
+  "runs_completed": 6,
+  "deltas": [
+    {
+      "runner": "mock",
+      "case_id": "case_001_python_pythonpath",
+      "summary": {
+        "ci_pass_improved": false,
+        "rounds_pct_reduction": 16.666666666666664,
+        "token_delta": -1213,
+        "tool_calls_delta": -1,
+        "passes_hard_gate": false
+      }
+    },
+    {
+      "runner": "mock",
+      "case_id": "case_002_node_enoent_lockfile",
+      "summary": {
+        "ci_pass_improved": true,
+        "rounds_pct_reduction": -20.0,
+        "token_delta": -1883,
+        "tool_calls_delta": -3,
+        "passes_hard_gate": true
+      }
+    },
+    {
+      "runner": "mock",
+      "case_id": "case_003_docker_layer_cache",
+      "summary": {
+        "ci_pass_improved": true,
+        "rounds_pct_reduction": 50.0,
+        "token_delta": -2583,
+        "tool_calls_delta": 0,
+        "passes_hard_gate": true
+      }
+    }
+  ],
+  "hard_gate_passing_pairs": 2,
+  "hard_gate_total_pairs": 3,
+  "narrative_compliance": "Per NARRATIVE.md \u00a74: token-only gains do NOT count. A runner/case pair passes only if CI pass improves OR rounds_to_root_cause drops >= 30%."
+}

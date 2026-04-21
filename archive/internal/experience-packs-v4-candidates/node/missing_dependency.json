@@ -1,0 +1,1040 @@
+{
+  "ecosystem": "node",
+  "error_class": "missing_dependency",
+  "schema_version": 4,
+  "records": [
+    {
+      "pattern_id": "candidate.node.missing_dependency.000",
+      "ecosystem": "node",
+      "error_class": "missing_dependency",
+      "description": "Cannot find module 'react' — install via npm/pnpm/yarn",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "Cannot find module 'react'",
+          "Error: Cannot find package 'react'"
+        ],
+        "file_markers": [],
+        "package_managers": [
+          "npm",
+          "pnpm",
+          "yarn"
+        ],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "node -e \"require('react')\" 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "Cannot find module 'react'"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "install_package",
+            "manager": "npm",
+            "name": "react"
+          }
+        ],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "npm/pnpm/yarn install react"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ],
+      "authored_fixture": {
+        "authored_at": "2026-04-20T10:20:46+00:00",
+        "authored_by": "codex",
+        "authored_with_prompt_sha256": "8b62d7d1097b103d5526af83b12960c55b2f1b4cd2320a04cdba7e8901efc60d",
+        "verification_command": "node index.js",
+        "expected_stderr_regex": "Cannot find module 'react'",
+        "files": [
+          {
+            "path": "package.json",
+            "content": "{\n  \"name\": \"missing-react-dependency-repro\",\n  \"version\": \"1.0.0\",\n  \"private\": true,\n  \"type\": \"commonjs\",\n  \"scripts\": {\n    \"test\": \"node index.js\"\n  }\n}\n"
+          },
+          {
+            "path": "index.js",
+            "content": "const react = require(\"react\");\n\nconst element = react.createElement(\"main\", null, \"ready\");\n\nif (element.type !== \"main\") {\n  throw new Error(\"unexpected element type\");\n}\n\nconsole.log(\"react dependency loaded\");\n"
+          }
+        ],
+        "reference_fix_files": [
+          {
+            "path": "node_modules/react/index.js",
+            "content": "exports.createElement = function createElement(type, props, ...children) {\n  return { type, props: props || {}, children };\n};\n"
+          }
+        ],
+        "fix_rationale": "Providing a resolvable react module satisfies the existing require call so the script can create the element and exit successfully.",
+        "reviewer_record": {
+          "validated_in_sandbox_at": "2026-04-20T10:20:46+00:00",
+          "sandbox_pre_fix_exit_code": 1,
+          "sandbox_pre_fix_stderr_match": true,
+          "sandbox_post_fix_exit_code": 0,
+          "sandbox_workdir_hash_pre": "e37faea9141b9619d57c75aa422f8c071f2e516e37b9c2608672bb4282734b9f",
+          "sandbox_workdir_hash_post": "e4a71868e4872fb4fa17d9367f15b5fa29eda68ff07fe20b3a4fea78760b95c7",
+          "notes": "authored by codex; pre-fix fails+matches regex, post-fix passes"
+        }
+      }
+    },
+    {
+      "pattern_id": "candidate.node.missing_dependency.001",
+      "ecosystem": "node",
+      "error_class": "missing_dependency",
+      "description": "Cannot find module 'vue' — install via npm/pnpm/yarn",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "Cannot find module 'vue'",
+          "Error: Cannot find package 'vue'"
+        ],
+        "file_markers": [],
+        "package_managers": [
+          "npm",
+          "pnpm",
+          "yarn"
+        ],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "node -e \"require('vue')\" 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "Cannot find module 'vue'"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "install_package",
+            "manager": "npm",
+            "name": "vue"
+          }
+        ],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "npm/pnpm/yarn install vue"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.node.missing_dependency.002",
+      "ecosystem": "node",
+      "error_class": "missing_dependency",
+      "description": "Cannot find module 'next' — install via npm/pnpm/yarn",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "Cannot find module 'next'",
+          "Error: Cannot find package 'next'"
+        ],
+        "file_markers": [],
+        "package_managers": [
+          "npm",
+          "pnpm",
+          "yarn"
+        ],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "node -e \"require('next')\" 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "Cannot find module 'next'"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "install_package",
+            "manager": "npm",
+            "name": "next"
+          }
+        ],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "npm/pnpm/yarn install next"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.node.missing_dependency.003",
+      "ecosystem": "node",
+      "error_class": "missing_dependency",
+      "description": "Cannot find module 'webpack' — install via npm/pnpm/yarn",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "Cannot find module 'webpack'",
+          "Error: Cannot find package 'webpack'"
+        ],
+        "file_markers": [],
+        "package_managers": [
+          "npm",
+          "pnpm",
+          "yarn"
+        ],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "node -e \"require('webpack')\" 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "Cannot find module 'webpack'"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "install_package",
+            "manager": "npm",
+            "name": "webpack"
+          }
+        ],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "npm/pnpm/yarn install webpack"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.node.missing_dependency.004",
+      "ecosystem": "node",
+      "error_class": "missing_dependency",
+      "description": "Cannot find module 'typescript' — install via npm/pnpm/yarn",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "Cannot find module 'typescript'",
+          "Error: Cannot find package 'typescript'"
+        ],
+        "file_markers": [],
+        "package_managers": [
+          "npm",
+          "pnpm",
+          "yarn"
+        ],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "node -e \"require('typescript')\" 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "Cannot find module 'typescript'"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "install_package",
+            "manager": "npm",
+            "name": "typescript"
+          }
+        ],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "npm/pnpm/yarn install typescript"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.node.missing_dependency.005",
+      "ecosystem": "node",
+      "error_class": "missing_dependency",
+      "description": "Cannot find module 'eslint' — install via npm/pnpm/yarn",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "Cannot find module 'eslint'",
+          "Error: Cannot find package 'eslint'"
+        ],
+        "file_markers": [],
+        "package_managers": [
+          "npm",
+          "pnpm",
+          "yarn"
+        ],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "node -e \"require('eslint')\" 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "Cannot find module 'eslint'"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "install_package",
+            "manager": "npm",
+            "name": "eslint"
+          }
+        ],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "npm/pnpm/yarn install eslint"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.node.missing_dependency.006",
+      "ecosystem": "node",
+      "error_class": "missing_dependency",
+      "description": "Cannot find module 'prettier' — install via npm/pnpm/yarn",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "Cannot find module 'prettier'",
+          "Error: Cannot find package 'prettier'"
+        ],
+        "file_markers": [],
+        "package_managers": [
+          "npm",
+          "pnpm",
+          "yarn"
+        ],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "node -e \"require('prettier')\" 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "Cannot find module 'prettier'"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "install_package",
+            "manager": "npm",
+            "name": "prettier"
+          }
+        ],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "npm/pnpm/yarn install prettier"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.node.missing_dependency.007",
+      "ecosystem": "node",
+      "error_class": "missing_dependency",
+      "description": "Cannot find module 'axios' — install via npm/pnpm/yarn",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "Cannot find module 'axios'",
+          "Error: Cannot find package 'axios'"
+        ],
+        "file_markers": [],
+        "package_managers": [
+          "npm",
+          "pnpm",
+          "yarn"
+        ],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "node -e \"require('axios')\" 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "Cannot find module 'axios'"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "install_package",
+            "manager": "npm",
+            "name": "axios"
+          }
+        ],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "npm/pnpm/yarn install axios"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.node.missing_dependency.008",
+      "ecosystem": "node",
+      "error_class": "missing_dependency",
+      "description": "Cannot find module 'lodash' — install via npm/pnpm/yarn",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "Cannot find module 'lodash'",
+          "Error: Cannot find package 'lodash'"
+        ],
+        "file_markers": [],
+        "package_managers": [
+          "npm",
+          "pnpm",
+          "yarn"
+        ],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "node -e \"require('lodash')\" 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "Cannot find module 'lodash'"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "install_package",
+            "manager": "npm",
+            "name": "lodash"
+          }
+        ],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "npm/pnpm/yarn install lodash"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.node.missing_dependency.009",
+      "ecosystem": "node",
+      "error_class": "missing_dependency",
+      "description": "Cannot find module 'express' — install via npm/pnpm/yarn",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "Cannot find module 'express'",
+          "Error: Cannot find package 'express'"
+        ],
+        "file_markers": [],
+        "package_managers": [
+          "npm",
+          "pnpm",
+          "yarn"
+        ],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "node -e \"require('express')\" 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "Cannot find module 'express'"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "install_package",
+            "manager": "npm",
+            "name": "express"
+          }
+        ],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "npm/pnpm/yarn install express"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.node.missing_dependency.010",
+      "ecosystem": "node",
+      "error_class": "missing_dependency",
+      "description": "Cannot find module 'jest' — install via npm/pnpm/yarn",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "Cannot find module 'jest'",
+          "Error: Cannot find package 'jest'"
+        ],
+        "file_markers": [],
+        "package_managers": [
+          "npm",
+          "pnpm",
+          "yarn"
+        ],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "node -e \"require('jest')\" 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "Cannot find module 'jest'"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "install_package",
+            "manager": "npm",
+            "name": "jest"
+          }
+        ],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "npm/pnpm/yarn install jest"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.node.missing_dependency.011",
+      "ecosystem": "node",
+      "error_class": "missing_dependency",
+      "description": "Cannot find module 'vitest' — install via npm/pnpm/yarn",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "Cannot find module 'vitest'",
+          "Error: Cannot find package 'vitest'"
+        ],
+        "file_markers": [],
+        "package_managers": [
+          "npm",
+          "pnpm",
+          "yarn"
+        ],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "node -e \"require('vitest')\" 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "Cannot find module 'vitest'"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "install_package",
+            "manager": "npm",
+            "name": "vitest"
+          }
+        ],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "npm/pnpm/yarn install vitest"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.node.missing_dependency.012",
+      "ecosystem": "node",
+      "error_class": "missing_dependency",
+      "description": "Cannot find module 'tsx' — install via npm/pnpm/yarn",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "Cannot find module 'tsx'",
+          "Error: Cannot find package 'tsx'"
+        ],
+        "file_markers": [],
+        "package_managers": [
+          "npm",
+          "pnpm",
+          "yarn"
+        ],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "node -e \"require('tsx')\" 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "Cannot find module 'tsx'"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "install_package",
+            "manager": "npm",
+            "name": "tsx"
+          }
+        ],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "npm/pnpm/yarn install tsx"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.node.missing_dependency.013",
+      "ecosystem": "node",
+      "error_class": "missing_dependency",
+      "description": "Cannot find module 'rollup' — install via npm/pnpm/yarn",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "Cannot find module 'rollup'",
+          "Error: Cannot find package 'rollup'"
+        ],
+        "file_markers": [],
+        "package_managers": [
+          "npm",
+          "pnpm",
+          "yarn"
+        ],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "node -e \"require('rollup')\" 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "Cannot find module 'rollup'"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "install_package",
+            "manager": "npm",
+            "name": "rollup"
+          }
+        ],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "npm/pnpm/yarn install rollup"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.node.missing_dependency.014",
+      "ecosystem": "node",
+      "error_class": "missing_dependency",
+      "description": "Cannot find module 'esbuild' — install via npm/pnpm/yarn",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "Cannot find module 'esbuild'",
+          "Error: Cannot find package 'esbuild'"
+        ],
+        "file_markers": [],
+        "package_managers": [
+          "npm",
+          "pnpm",
+          "yarn"
+        ],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "node -e \"require('esbuild')\" 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "Cannot find module 'esbuild'"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "install_package",
+            "manager": "npm",
+            "name": "esbuild"
+          }
+        ],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "npm/pnpm/yarn install esbuild"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.node.missing_dependency.015",
+      "ecosystem": "node",
+      "error_class": "missing_dependency",
+      "description": "Cannot find module 'turbo' — install via npm/pnpm/yarn",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "Cannot find module 'turbo'",
+          "Error: Cannot find package 'turbo'"
+        ],
+        "file_markers": [],
+        "package_managers": [
+          "npm",
+          "pnpm",
+          "yarn"
+        ],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "node -e \"require('turbo')\" 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "Cannot find module 'turbo'"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "install_package",
+            "manager": "npm",
+            "name": "turbo"
+          }
+        ],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "npm/pnpm/yarn install turbo"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.node.missing_dependency.016",
+      "ecosystem": "node",
+      "error_class": "missing_dependency",
+      "description": "Cannot find module 'nx' — install via npm/pnpm/yarn",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "Cannot find module 'nx'",
+          "Error: Cannot find package 'nx'"
+        ],
+        "file_markers": [],
+        "package_managers": [
+          "npm",
+          "pnpm",
+          "yarn"
+        ],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "node -e \"require('nx')\" 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "Cannot find module 'nx'"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "install_package",
+            "manager": "npm",
+            "name": "nx"
+          }
+        ],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "npm/pnpm/yarn install nx"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.node.missing_dependency.017",
+      "ecosystem": "node",
+      "error_class": "missing_dependency",
+      "description": "Cannot find module 'storybook' — install via npm/pnpm/yarn",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "Cannot find module 'storybook'",
+          "Error: Cannot find package 'storybook'"
+        ],
+        "file_markers": [],
+        "package_managers": [
+          "npm",
+          "pnpm",
+          "yarn"
+        ],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "node -e \"require('storybook')\" 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "Cannot find module 'storybook'"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "install_package",
+            "manager": "npm",
+            "name": "storybook"
+          }
+        ],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "npm/pnpm/yarn install storybook"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.node.missing_dependency.018",
+      "ecosystem": "node",
+      "error_class": "missing_dependency",
+      "description": "Cannot find module 'playwright' — install via npm/pnpm/yarn",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "Cannot find module 'playwright'",
+          "Error: Cannot find package 'playwright'"
+        ],
+        "file_markers": [],
+        "package_managers": [
+          "npm",
+          "pnpm",
+          "yarn"
+        ],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "node -e \"require('playwright')\" 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "Cannot find module 'playwright'"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "install_package",
+            "manager": "npm",
+            "name": "playwright"
+          }
+        ],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "npm/pnpm/yarn install playwright"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.node.missing_dependency.019",
+      "ecosystem": "node",
+      "error_class": "missing_dependency",
+      "description": "Cannot find module 'cypress' — install via npm/pnpm/yarn",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "Cannot find module 'cypress'",
+          "Error: Cannot find package 'cypress'"
+        ],
+        "file_markers": [],
+        "package_managers": [
+          "npm",
+          "pnpm",
+          "yarn"
+        ],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "node -e \"require('cypress')\" 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "Cannot find module 'cypress'"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "install_package",
+            "manager": "npm",
+            "name": "cypress"
+          }
+        ],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "npm/pnpm/yarn install cypress"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    }
+  ]
+}

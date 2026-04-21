@@ -1,0 +1,8 @@
+{
+  "name": "polaris-case02-root",
+  "private": true,
+  "workspaces": ["packages/*"],
+  "dependencies": {
+    "@polaris-case02/renamed-pkg": "workspace:*"
+  }
+}

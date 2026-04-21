@@ -1,0 +1,5 @@
+{
+  "stderr": "Traceback (most recent call last):\n  File \"/home/user/project/ml_pipeline.py\", line 2, in <module>\n    import numpy\n  File \"/home/user/.local/lib/python3.10/site-packages/numpy/__init__.py\", line 24, in <module>\n    from numpy.__config__ import show as show_config\nImportError: libopenblas.so.0: cannot open shared object file: No such file or directory",
+  "error_class": "missing_dependency",
+  "source": "C extension shared library missing"
+}

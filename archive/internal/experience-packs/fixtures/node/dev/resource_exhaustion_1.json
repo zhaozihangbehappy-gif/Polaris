@@ -1,0 +1,5 @@
+{
+  "stderr": "\n<--- Last few GCs --->\n\n[12345:0x5641a30]   120456 ms: Scavenge 2046.3 (2047.9) -> 2045.8 (2063.9) MB, 12.3 / 0.0 ms  (average mu = 0.150, current mu = 0.090) allocation failure;\n[12345:0x5641a30]   120789 ms: Mark-sweep 2046.8 (2063.9) -> 2046.1 (2064.4) MB, 456.7 / 0.0 ms  (average mu = 0.095, current mu = 0.040) allocation failure; scavenge might not succeed\n\n\n<--- JS stacktrace --->\n\nFATAL ERROR: Reached heap limit Allocation failed - JavaScript heap out of memory\n 1: 0xb7a940 node::Abort() [node]\n 2: 0xa8e5a3 node::FatalError(char const*, char const*) [node]\n 3: 0xd53f5e v8::Utils::ReportOOMFailure(v8::internal::Isolate*, char const*, bool) [node]\n 4: 0xd543a7 v8::internal::V8::FatalProcessOutOfMemory(v8::internal::Isolate*, char const*, bool) [node]\n 5: 0xf2e435  [node]\n 6: 0xf3e79d v8::internal::Heap::CollectGarbage(v8::internal::AllocationSpace, v8::internal::GarbageCollectionReason, v8::GCCallbackFlags) [node]\nAborted (core dumped)",
+  "error_class": "resource_exhaustion",
+  "source": "V8 heap OOM during large build process"
+}

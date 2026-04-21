@@ -1,0 +1,5 @@
+{
+  "stderr": "Bundler could not find compatible versions for gem \"bundler\":\n  In Gemfile.lock:\n    bundler (= 2.4.10)\n\n  Current Bundler version:\n    bundler (2.5.3)\nThis Gemfile requires a different version of Bundler.\nPerhaps you need to update Bundler by running `gem install bundler`?",
+  "error_class": "version_conflict",
+  "source": "Bundler version mismatch with Gemfile.lock"
+}

@@ -1,0 +1,5 @@
+{
+  "stderr": "Error response from daemon: Get \"https://gcr.io/v2/my-project/my-image/manifests/latest\": context deadline exceeded (Client.Timeout exceeded while awaiting headers)",
+  "error_class": "timeout",
+  "source": "docker pull from GCR timing out on slow VPN connection"
+}

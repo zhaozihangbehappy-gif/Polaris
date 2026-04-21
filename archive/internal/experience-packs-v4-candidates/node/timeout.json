@@ -1,0 +1,241 @@
+{
+  "ecosystem": "node",
+  "error_class": "timeout",
+  "schema_version": 4,
+  "records": [
+    {
+      "pattern_id": "candidate.node.timeout.000",
+      "ecosystem": "node",
+      "error_class": "timeout",
+      "description": "jest test timeout 5s default",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "Exceeded timeout of \\d+ ms"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "true",
+        "trigger_env": {},
+        "expected_stderr_match": "Exceeded timeout of \\d+ ms"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Timeout: jest test timeout 5s default"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.node.timeout.001",
+      "ecosystem": "node",
+      "error_class": "timeout",
+      "description": "playwright test timeout",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "Timeout of \\d+ms exceeded"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "true",
+        "trigger_env": {},
+        "expected_stderr_match": "Timeout of \\d+ms exceeded"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Timeout: playwright test timeout"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.node.timeout.002",
+      "ecosystem": "node",
+      "error_class": "timeout",
+      "description": "vitest hook timeout",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "Hook timed out"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "true",
+        "trigger_env": {},
+        "expected_stderr_match": "Hook timed out"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Timeout: vitest hook timeout"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.node.timeout.003",
+      "ecosystem": "node",
+      "error_class": "timeout",
+      "description": "cypress command timeout",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "Timed out retrying"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "true",
+        "trigger_env": {},
+        "expected_stderr_match": "Timed out retrying"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Timeout: cypress command timeout"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.node.timeout.004",
+      "ecosystem": "node",
+      "error_class": "timeout",
+      "description": "next build static export timeout",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "next.*timeout.*static export"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "true",
+        "trigger_env": {},
+        "expected_stderr_match": "next.*timeout.*static export"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Timeout: next build static export timeout"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.node.timeout.005",
+      "ecosystem": "node",
+      "error_class": "timeout",
+      "description": "esbuild watch stuck",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "esbuild.*watch.*not responding"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "true",
+        "trigger_env": {},
+        "expected_stderr_match": "esbuild.*watch.*not responding"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Timeout: esbuild watch stuck"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    }
+  ]
+}

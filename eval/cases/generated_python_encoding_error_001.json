@@ -1,0 +1,17 @@
+{
+  "case_id": "generated_python_encoding_error_001",
+  "source": "authored_fixture",
+  "reverse_from_pattern": "python.encoding_error.001",
+  "pattern_id": "python.encoding_error.001",
+  "source_pool": "official",
+  "ecosystem": "python",
+  "error_class": "encoding_error",
+  "initial_prompt": "In the project at {workdir}, this python encoding_error fails: Unicode encode error writing output \u2014 force UTF-8 encoding via PYTHONIOENCODING and locale. Reproduce the failure with `python3 -m unittest -q`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+  "success_criteria": {
+    "root_cause_regex": ".+",
+    "fix_command_test": "cd {workdir} && python3 -m unittest -q"
+  },
+  "max_rounds": 6,
+  "fixture_strategy": "authored_files",
+  "promotion_eligible": true
+}

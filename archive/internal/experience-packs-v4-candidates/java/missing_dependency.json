@@ -1,0 +1,437 @@
+{
+  "ecosystem": "java",
+  "error_class": "missing_dependency",
+  "schema_version": 4,
+  "records": [
+    {
+      "pattern_id": "candidate.java.missing_dependency.000",
+      "ecosystem": "java",
+      "error_class": "missing_dependency",
+      "description": "Java dep 'org.springframework:spring-core' not resolved by Maven/Gradle",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "Could not find artifact org.springframework:spring-core",
+          "Failed to resolve: org.springframework:spring-core"
+        ],
+        "file_markers": [],
+        "package_managers": [
+          "maven",
+          "gradle"
+        ],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "mvn -q dependency:list 2>&1 | head -20 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "Could not find artifact org.springframework:spring-core"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Add org.springframework:spring-core to pom.xml / build.gradle"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.java.missing_dependency.001",
+      "ecosystem": "java",
+      "error_class": "missing_dependency",
+      "description": "Java dep 'com.fasterxml.jackson.core:jackson-databind' not resolved by Maven/Gradle",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "Could not find artifact com.fasterxml.jackson.core:jackson-databind",
+          "Failed to resolve: com.fasterxml.jackson.core:jackson-databind"
+        ],
+        "file_markers": [],
+        "package_managers": [
+          "maven",
+          "gradle"
+        ],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "mvn -q dependency:list 2>&1 | head -20 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "Could not find artifact com.fasterxml.jackson.core:jackson-databind"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Add com.fasterxml.jackson.core:jackson-databind to pom.xml / build.gradle"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.java.missing_dependency.002",
+      "ecosystem": "java",
+      "error_class": "missing_dependency",
+      "description": "Java dep 'org.slf4j:slf4j-api' not resolved by Maven/Gradle",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "Could not find artifact org.slf4j:slf4j-api",
+          "Failed to resolve: org.slf4j:slf4j-api"
+        ],
+        "file_markers": [],
+        "package_managers": [
+          "maven",
+          "gradle"
+        ],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "mvn -q dependency:list 2>&1 | head -20 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "Could not find artifact org.slf4j:slf4j-api"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Add org.slf4j:slf4j-api to pom.xml / build.gradle"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.java.missing_dependency.003",
+      "ecosystem": "java",
+      "error_class": "missing_dependency",
+      "description": "Java dep 'org.apache.commons:commons-lang3' not resolved by Maven/Gradle",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "Could not find artifact org.apache.commons:commons-lang3",
+          "Failed to resolve: org.apache.commons:commons-lang3"
+        ],
+        "file_markers": [],
+        "package_managers": [
+          "maven",
+          "gradle"
+        ],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "mvn -q dependency:list 2>&1 | head -20 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "Could not find artifact org.apache.commons:commons-lang3"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Add org.apache.commons:commons-lang3 to pom.xml / build.gradle"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.java.missing_dependency.004",
+      "ecosystem": "java",
+      "error_class": "missing_dependency",
+      "description": "Java dep 'com.google.guava:guava' not resolved by Maven/Gradle",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "Could not find artifact com.google.guava:guava",
+          "Failed to resolve: com.google.guava:guava"
+        ],
+        "file_markers": [],
+        "package_managers": [
+          "maven",
+          "gradle"
+        ],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "mvn -q dependency:list 2>&1 | head -20 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "Could not find artifact com.google.guava:guava"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Add com.google.guava:guava to pom.xml / build.gradle"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.java.missing_dependency.005",
+      "ecosystem": "java",
+      "error_class": "missing_dependency",
+      "description": "Java dep 'junit:junit' not resolved by Maven/Gradle",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "Could not find artifact junit:junit",
+          "Failed to resolve: junit:junit"
+        ],
+        "file_markers": [],
+        "package_managers": [
+          "maven",
+          "gradle"
+        ],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "mvn -q dependency:list 2>&1 | head -20 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "Could not find artifact junit:junit"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Add junit:junit to pom.xml / build.gradle"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.java.missing_dependency.006",
+      "ecosystem": "java",
+      "error_class": "missing_dependency",
+      "description": "Java dep 'org.mockito:mockito-core' not resolved by Maven/Gradle",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "Could not find artifact org.mockito:mockito-core",
+          "Failed to resolve: org.mockito:mockito-core"
+        ],
+        "file_markers": [],
+        "package_managers": [
+          "maven",
+          "gradle"
+        ],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "mvn -q dependency:list 2>&1 | head -20 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "Could not find artifact org.mockito:mockito-core"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Add org.mockito:mockito-core to pom.xml / build.gradle"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.java.missing_dependency.007",
+      "ecosystem": "java",
+      "error_class": "missing_dependency",
+      "description": "Java dep 'org.projectlombok:lombok' not resolved by Maven/Gradle",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "Could not find artifact org.projectlombok:lombok",
+          "Failed to resolve: org.projectlombok:lombok"
+        ],
+        "file_markers": [],
+        "package_managers": [
+          "maven",
+          "gradle"
+        ],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "mvn -q dependency:list 2>&1 | head -20 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "Could not find artifact org.projectlombok:lombok"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Add org.projectlombok:lombok to pom.xml / build.gradle"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.java.missing_dependency.008",
+      "ecosystem": "java",
+      "error_class": "missing_dependency",
+      "description": "Java dep 'io.netty:netty-all' not resolved by Maven/Gradle",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "Could not find artifact io.netty:netty-all",
+          "Failed to resolve: io.netty:netty-all"
+        ],
+        "file_markers": [],
+        "package_managers": [
+          "maven",
+          "gradle"
+        ],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "mvn -q dependency:list 2>&1 | head -20 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "Could not find artifact io.netty:netty-all"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Add io.netty:netty-all to pom.xml / build.gradle"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.java.missing_dependency.009",
+      "ecosystem": "java",
+      "error_class": "missing_dependency",
+      "description": "Java dep 'org.postgresql:postgresql' not resolved by Maven/Gradle",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "Could not find artifact org.postgresql:postgresql",
+          "Failed to resolve: org.postgresql:postgresql"
+        ],
+        "file_markers": [],
+        "package_managers": [
+          "maven",
+          "gradle"
+        ],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "mvn -q dependency:list 2>&1 | head -20 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "Could not find artifact org.postgresql:postgresql"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Add org.postgresql:postgresql to pom.xml / build.gradle"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    }
+  ]
+}

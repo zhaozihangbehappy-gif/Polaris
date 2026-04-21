@@ -1,0 +1,16 @@
+{
+  "case_id": "generated_go_missing_dependency_001",
+  "files": [
+    "go.mod",
+    "main.go",
+    "go.sum"
+  ],
+  "dependencies": {},
+  "build_commands": [],
+  "expected_failure_command": "cd {workdir} && go build ./",
+  "expected_failure_stderr_regex": "missing go\\.sum entry for module|go\\.sum: checksum mismatch",
+  "manifest_schema_version": 1,
+  "bash_self_contained": false,
+  "reverse_from_pattern": "go.missing_dependency.001",
+  "source_pool": "official"
+}

@@ -1,0 +1,8 @@
+{
+  "pattern_id": "node.resource_exhaustion.002",
+  "source_pool": "official",
+  "blocked_reason": "blocked_no_auto_fixture",
+  "has_verification_command": true,
+  "has_stderr_regex": true,
+  "has_fix_command": true
+}

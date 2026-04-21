@@ -1,0 +1,24 @@
+[pre_failure_command]
+cd /tmp/_polaris_runs/20260420T190303/claude_code/generated_java_version_conflict_001/polaris && bash build.sh
+[pre_failure_output]
+
+warning: source release 11 requires target release 11
+Error: Could not find or load main class HelloWorld
+Caused by: java.lang.ClassNotFoundException: HelloWorld
+
+[pre_failure_reproduced]
+true
+[agent_transcript]
+[claude timeout] Command '['claude', '-p', 'In the project at /tmp/_polaris_runs/20260420T190303/claude_code/generated_java_version_conflict_001/polaris, this java version_conflict fails: Source/target version mismatch — set JAVA_HOME to JDK matching project target version. Reproduce the failure with `bash build.sh`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.', '--output-format', 'stream-json', '--verbose', '--strict-mcp-config', '--mcp-config', '/tmp/polaris_mcp_8zr_g_5k.json', '--add-dir', '/tmp/_polaris_runs/20260420T190303/claude_code/generated_java_version_conflict_001/polaris', '--dangerously-skip-permissions', '--model', 'claude-haiku-4-5-20251001', '--max-budget-usd', '2']' timed out after 540 seconds
+[post_fix_command]
+cd /tmp/_polaris_runs/20260420T190303/claude_code/generated_java_version_conflict_001/polaris && bash build.sh
+[post_fix_output]
+
+warning: source release 11 requires target release 11
+Error: Could not find or load main class HelloWorld
+Caused by: java.lang.ClassNotFoundException: HelloWorld
+
+[post_fix_ci_pass]
+False
+[contamination_hits]
+[]

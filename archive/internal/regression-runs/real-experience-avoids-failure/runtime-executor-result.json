@@ -1,0 +1,10 @@
+{
+  "adapter": "shell-command",
+  "contract_kind": "shell_command",
+  "output_file": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/real-experience-avoids-failure/runtime-execution-result.json",
+  "rendered_command": "cat /nonexistent/polaris-avoid-test-file.txt",
+  "returncode": 1,
+  "status": "failed",
+  "stderr": "cat: /nonexistent/polaris-avoid-test-file.txt: No such file or directory",
+  "stdout": "{\"adapter\": \"shell-command\", \"output\": \"/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/real-experience-avoids-failure/runtime-execution-result.json\", \"status\": \"failed\"}"
+}

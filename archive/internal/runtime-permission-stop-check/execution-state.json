@@ -1,0 +1,167 @@
+{
+  "artifacts": {
+    "execution_contract": "{\"adapter\": \"python-local\", \"applied_rule_ids\": [\"stop-on-nonrepair-denial\"], \"args\": [\"--goal\", \"Demonstrate Polaris local orchestration flow\", \"--state\", \"/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/runtime-permission-stop-check/execution-state.json\", \"--output\", \"/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/runtime-permission-stop-check/runtime-execution-result.json\", \"--mode\", \"short\", \"--execution-profile\", \"standard\", \"--adapter\", \"python-local\", \"--applied-rules-json\", \"[{\\\"action\\\": \\\"Stop and reduce scope instead of retrying the blocked path\\\", \\\"layer\\\": \\\"hard\\\", \\\"priority\\\": 100, \\\"rule_id\\\": \\\"stop-on-nonrepair-denial\\\", \\\"scope\\\": \\\"all Polaris runs\\\", \\\"tags\\\": [\\\"stop\\\", \\\"runtime\\\", \\\"local\\\"], \\\"trigger\\\": \\\"an explicit non-repair denial appears\\\"}]\", \"--selected-pattern-json\", \"{}\", \"--execution-contract-json\", \"{\\\"pattern\\\": null, \\\"rule_count\\\": 1}\", \"--simulate-error\", \"Permission denied while writing file\"], \"execution_profile\": \"standard\", \"goal\": \"Demonstrate Polaris local orchestration flow\", \"kind\": \"script\", \"mode\": \"short\", \"output_file\": \"/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/runtime-permission-stop-check/runtime-execution-result.json\", \"script_path\": \"/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/scripts/polaris_task_runner.py\", \"selected_pattern\": null, \"selected_pattern_sequence\": [], \"simulate_error\": \"Permission denied while writing file\", \"validator\": {\"expected_adapter\": \"python-local\", \"expected_goal\": \"Demonstrate Polaris local orchestration flow\", \"expected_pattern\": null, \"expected_rule_ids\": [\"stop-on-nonrepair-denial\"], \"expected_status\": \"ok\", \"kind\": \"runner_result_contract\", \"output_file\": \"/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/runtime-permission-stop-check/runtime-execution-result.json\", \"required_fields\": [\"status\", \"adapter\", \"goal\", \"result\"]}}",
+    "execution_kind": "runner",
+    "execution_result": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/runtime-permission-stop-check/runtime-execution-result.json",
+    "executor_result": "runtime-executor-result.json",
+    "repair_plan": "runtime-repair-plan.json",
+    "repair_report": "runtime-repair-report.json",
+    "repair_results": "runtime-repair-results.json",
+    "selected_adapter": "python-local",
+    "validation_result": "runtime-validation-result.json"
+  },
+  "current_step": "Blocked after bounded repair",
+  "event_budget": "standard",
+  "execution_profile": "standard",
+  "goal": "Demonstrate Polaris local orchestration flow",
+  "learning_backlog": [],
+  "mode": "short",
+  "next_action": "Stop and reduce scope instead of retrying the blocked path",
+  "phase": "blocked",
+  "plan": [
+    {
+      "index": 1,
+      "phase": "planning",
+      "status": "completed",
+      "step": "Clarify scope and choose a safe local path"
+    },
+    {
+      "index": 2,
+      "phase": "ready",
+      "status": "completed",
+      "step": "Select the primary adapter and fallback"
+    },
+    {
+      "index": 3,
+      "phase": "executing",
+      "status": "in_progress",
+      "step": "Run the next local step"
+    },
+    {
+      "index": 4,
+      "phase": "validating",
+      "status": "pending",
+      "step": "Verify outcomes and inspect failures"
+    }
+  ],
+  "progress_pct": 60,
+  "references": [
+    {
+      "kind": "patterns",
+      "label": "success pattern store",
+      "ts": "2026-03-14T08:17:15.579487+00:00",
+      "value": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/runtime-permission-stop-check/success-patterns.json"
+    },
+    {
+      "kind": "adapters",
+      "label": "adapter registry",
+      "ts": "2026-03-14T08:17:15.612244+00:00",
+      "value": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/runtime-permission-stop-check/adapters.json"
+    }
+  ],
+  "repair_depth": "shallow",
+  "rule_context": {
+    "active_layers": [
+      "hard",
+      "soft",
+      "experimental"
+    ],
+    "applied_rules": [
+      {
+        "action": "Stop and reduce scope instead of retrying the blocked path",
+        "layer": "hard",
+        "priority": 100,
+        "rule_id": "stop-on-nonrepair-denial",
+        "scope": "all Polaris runs",
+        "tags": [
+          "stop",
+          "runtime",
+          "local"
+        ],
+        "trigger": "an explicit non-repair denial appears"
+      }
+    ]
+  },
+  "run_id": "polaris-orchestrated-run",
+  "runtime": {
+    "completed_at": null,
+    "durable_status_surfaces": {
+      "live_status": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/runtime-permission-stop-check/runtime-live-status.json"
+    },
+    "last_heartbeat_at": "2026-03-14T08:17:16.837639+00:00",
+    "last_heartbeat_summary": "execution surfaces updated",
+    "lifecycle_stage": "blocked",
+    "started_at": "2026-03-14T08:17:15.518433+00:00"
+  },
+  "schema_version": 5,
+  "state_density": "minimal",
+  "state_machine": {
+    "active_branch": "execution-main",
+    "allowed_transitions": {
+      "blocked": [
+        "planning",
+        "ready",
+        "executing",
+        "completed"
+      ],
+      "completed": [],
+      "executing": [
+        "validating",
+        "repairing",
+        "blocked"
+      ],
+      "intake": [
+        "planning",
+        "blocked"
+      ],
+      "planning": [
+        "ready",
+        "executing",
+        "blocked"
+      ],
+      "ready": [
+        "executing",
+        "blocked"
+      ],
+      "repairing": [
+        "ready",
+        "executing",
+        "blocked"
+      ],
+      "validating": [
+        "completed",
+        "repairing",
+        "blocked"
+      ]
+    },
+    "blocked": {
+      "is_blocked": true,
+      "reason": "do not retry the same blocked action until the scope is reduced or the user changes the request",
+      "references": [
+        "runtime-repair-report.json",
+        "runtime-repair-plan.json",
+        "runtime-repair-results.json"
+      ]
+    },
+    "history": [
+      {
+        "branch_id": "execution-main",
+        "from": "executing",
+        "summary": "Standard profile opened a shallow repair pass",
+        "to": "repairing",
+        "ts": "2026-03-14T08:17:16.781816+00:00"
+      },
+      {
+        "branch_id": "execution-main",
+        "from": "repairing",
+        "summary": "do not retry the same blocked action until the scope is reduced or the user changes the request",
+        "to": "blocked",
+        "ts": "2026-03-14T08:17:16.837637+00:00"
+      }
+    ],
+    "node": "blocked"
+  },
+  "status": "blocked",
+  "summary_outcome": "do not retry the same blocked action until the scope is reduced or the user changes the request",
+  "updated_at": "2026-03-14T08:17:16.869967+00:00"
+}

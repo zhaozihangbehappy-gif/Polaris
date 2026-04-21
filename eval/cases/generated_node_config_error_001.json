@@ -1,0 +1,17 @@
+{
+  "case_id": "generated_node_config_error_001",
+  "source": "authored_fixture",
+  "reverse_from_pattern": "node.config_error.001",
+  "pattern_id": "node.config_error.001",
+  "source_pool": "official",
+  "ecosystem": "node",
+  "error_class": "config_error",
+  "initial_prompt": "In the project at {workdir}, this node config_error fails: TypeScript config error \u2014 tsconfig.json missing or malformed; ensure cwd contains valid tsconfig. Reproduce the failure with `node check-tsconfig.js`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+  "success_criteria": {
+    "root_cause_regex": ".+",
+    "fix_command_test": "cd {workdir} && node check-tsconfig.js"
+  },
+  "max_rounds": 6,
+  "fixture_strategy": "authored_files",
+  "promotion_eligible": true
+}

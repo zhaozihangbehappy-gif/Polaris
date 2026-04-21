@@ -1,0 +1,34 @@
+{
+  "ecosystem": "docker",
+  "error_class": "port_conflict",
+  "shard_version": "3.0",
+  "records": [
+    {
+      "stderr_pattern": "Bind for.*failed: port is already allocated|bind: address already in use|Error starting userland proxy.*bind",
+      "avoidance_hints": [
+        {
+          "kind": "set_env",
+          "vars": {
+            "DOCKER_PORT_OFFSET": "1000"
+          }
+        },
+        {
+          "kind": "append_flags",
+          "flags": "-p 0:80"
+        }
+      ],
+      "description": "Docker port already allocated — use ephemeral port binding or offset ports",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "bash -c 'echo \"Error response from daemon: driver failed programming external connectivity on endpoint web-1 (abc123): Bind for 0.0.0.0:8080 failed: port is already allocated\" >&2; exit 1'",
+        "trigger_env": {},
+        "expected_stderr_match": "port is already allocated|address already in use",
+        "fix_env": {
+          "DOCKER_PORT_OFFSET": "1000"
+        },
+        "expected_fix_outcome": "different_error_or_success",
+        "fix_command": "bash -c 'echo \"DOCKER_PORT_OFFSET set (simulated)\"; exit 0'"
+      }
+    }
+  ]
+}

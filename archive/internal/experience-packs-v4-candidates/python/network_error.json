@@ -1,0 +1,319 @@
+{
+  "ecosystem": "python",
+  "error_class": "network_error",
+  "schema_version": 4,
+  "records": [
+    {
+      "pattern_id": "candidate.python.network_error.000",
+      "ecosystem": "python",
+      "error_class": "network_error",
+      "description": "PyPI SSL verify failure corp proxy",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "SSLError.*CERTIFICATE_VERIFY_FAILED"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "python3 -c 'import urllib.request; urllib.request.urlopen(\"https://pypi.org\", timeout=3)' 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "SSLError.*CERTIFICATE_VERIFY_FAILED"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Network/TLS: PyPI SSL verify failure corp proxy"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.network_error.001",
+      "ecosystem": "python",
+      "error_class": "network_error",
+      "description": "pip install connection timeout",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "ReadTimeoutError.*pypi\\.org"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "python3 -c 'import urllib.request; urllib.request.urlopen(\"https://pypi.org\", timeout=3)' 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "ReadTimeoutError.*pypi\\.org"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Network/TLS: pip install connection timeout"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.network_error.002",
+      "ecosystem": "python",
+      "error_class": "network_error",
+      "description": "DNS resolution of PyPI mirror",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "NewConnectionError.*Name or service not known"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "python3 -c 'import urllib.request; urllib.request.urlopen(\"https://pypi.org\", timeout=3)' 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "NewConnectionError.*Name or service not known"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Network/TLS: DNS resolution of PyPI mirror"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.network_error.003",
+      "ecosystem": "python",
+      "error_class": "network_error",
+      "description": "requests proxy auth required",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "407 Proxy Authentication Required"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "python3 -c 'import urllib.request; urllib.request.urlopen(\"https://pypi.org\", timeout=3)' 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "407 Proxy Authentication Required"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Network/TLS: requests proxy auth required"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.network_error.004",
+      "ecosystem": "python",
+      "error_class": "network_error",
+      "description": "urllib3 retry exhausted",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "Max retries exceeded"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "python3 -c 'import urllib.request; urllib.request.urlopen(\"https://pypi.org\", timeout=3)' 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "Max retries exceeded"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Network/TLS: urllib3 retry exhausted"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.network_error.005",
+      "ecosystem": "python",
+      "error_class": "network_error",
+      "description": "pip TLS handshake failure",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "TLSV1_ALERT_PROTOCOL_VERSION"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "python3 -c 'import urllib.request; urllib.request.urlopen(\"https://pypi.org\", timeout=3)' 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "TLSV1_ALERT_PROTOCOL_VERSION"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Network/TLS: pip TLS handshake failure"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.network_error.006",
+      "ecosystem": "python",
+      "error_class": "network_error",
+      "description": "websocket connection closed",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "ConnectionClosedError"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "python3 -c 'import urllib.request; urllib.request.urlopen(\"https://pypi.org\", timeout=3)' 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "ConnectionClosedError"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Network/TLS: websocket connection closed"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.network_error.007",
+      "ecosystem": "python",
+      "error_class": "network_error",
+      "description": "httpx read timeout",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "httpx\\.ReadTimeout"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "python3 -c 'import urllib.request; urllib.request.urlopen(\"https://pypi.org\", timeout=3)' 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "httpx\\.ReadTimeout"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Network/TLS: httpx read timeout"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    }
+  ]
+}

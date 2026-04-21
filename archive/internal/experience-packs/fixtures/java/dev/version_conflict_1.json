@@ -1,0 +1,5 @@
+{
+  "stderr": "Exception in thread \"main\" java.lang.UnsupportedClassVersionError: com/myapp/Main has been compiled by a more recent version of the Java Runtime (class file version 65.0), this version of the Java Runtime only recognizes class file versions up to 61.0\n\tat java.base/java.lang.ClassLoader.defineClass1(Native Method)\n\tat java.base/java.lang.ClassLoader.defineClass(ClassLoader.java:1017)\n\tat java.base/java.security.SecureClassLoader.defineClass(SecureClassLoader.java:150)",
+  "error_class": "version_conflict",
+  "source": "compiled with JDK 21 but run with JDK 17"
+}

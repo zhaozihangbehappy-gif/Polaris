@@ -1,0 +1,17 @@
+{
+  "case_id": "generated_python_port_conflict_000",
+  "source": "authored_fixture",
+  "reverse_from_pattern": "python.port_conflict.000",
+  "pattern_id": "python.port_conflict.000",
+  "source_pool": "official",
+  "ecosystem": "python",
+  "error_class": "port_conflict",
+  "initial_prompt": "In the project at {workdir}, this python port_conflict fails: Port already in use \u2014 set PORT=0 to auto-select a free port, or change the port number. Reproduce the failure with `python3 -m unittest -q`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+  "success_criteria": {
+    "root_cause_regex": ".+",
+    "fix_command_test": "cd {workdir} && python3 -m unittest -q"
+  },
+  "max_rounds": 6,
+  "fixture_strategy": "authored_files",
+  "promotion_eligible": true
+}

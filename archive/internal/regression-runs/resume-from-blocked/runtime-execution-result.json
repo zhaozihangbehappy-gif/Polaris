@@ -1,0 +1,569 @@
+{
+  "adapter": "shell-local",
+  "applied_rule_ids": [
+    "stop-on-nonrepair-denial",
+    "repair-rule-1c6e7cc8a952"
+  ],
+  "applied_rule_layers": [
+    "hard",
+    "soft"
+  ],
+  "executed_ordering": [
+    "diagnose",
+    "generic-probes",
+    "record-evidence",
+    "recover"
+  ],
+  "execution_contract": {
+    "kind": "runner",
+    "pattern": "repair-pattern-807fd04b957e",
+    "rule_count": 2,
+    "strategy": {
+      "execution_ordering": [
+        "diagnose",
+        "generic-probes",
+        "record-evidence",
+        "recover"
+      ],
+      "fallback_choice": "sticky-adapter-first",
+      "retry_policy": "respect-hard-stop-rules",
+      "strategy_trace": {
+        "execution_kind": "runner",
+        "execution_profile": "standard",
+        "experimental_rules": [],
+        "hard_rules": [
+          "stop-on-nonrepair-denial"
+        ],
+        "selected_pattern": "repair-pattern-807fd04b957e",
+        "slot_permissions": {
+          "experimental": [
+            "fallback_choice",
+            "validation_strategy"
+          ],
+          "hard": [
+            "retry_policy"
+          ],
+          "pattern": [
+            "execution_ordering",
+            "fallback_choice",
+            "validation_strategy"
+          ],
+          "soft": [
+            "execution_ordering",
+            "fallback_choice",
+            "retry_policy",
+            "validation_strategy"
+          ]
+        },
+        "slot_resolution": {
+          "execution_ordering": {
+            "candidates": [
+              {
+                "confidence": 68,
+                "layer": "pattern",
+                "priority": 1,
+                "reason": "pattern:repair-pattern-807fd04b957e",
+                "source_id": "repair-pattern-807fd04b957e",
+                "value": [
+                  "diagnose",
+                  "generic-probes",
+                  "record-evidence",
+                  "recover"
+                ]
+              }
+            ],
+            "default": [
+              "execute",
+              "validate"
+            ],
+            "ignored": [],
+            "winner": {
+              "layer": "pattern",
+              "reason": "pattern:repair-pattern-807fd04b957e",
+              "source_id": "repair-pattern-807fd04b957e",
+              "value": [
+                "diagnose",
+                "generic-probes",
+                "record-evidence",
+                "recover"
+              ]
+            }
+          },
+          "fallback_choice": {
+            "candidates": [
+              {
+                "confidence": 68,
+                "layer": "pattern",
+                "priority": 1,
+                "reason": "pattern:repair-pattern-807fd04b957e",
+                "source_id": "repair-pattern-807fd04b957e",
+                "value": "sticky-adapter-first"
+              }
+            ],
+            "default": "selected-adapter-only",
+            "ignored": [],
+            "winner": {
+              "layer": "pattern",
+              "reason": "pattern:repair-pattern-807fd04b957e",
+              "source_id": "repair-pattern-807fd04b957e",
+              "value": "sticky-adapter-first"
+            }
+          },
+          "retry_policy": {
+            "candidates": [
+              {
+                "confidence": 0,
+                "layer": "hard",
+                "priority": 100,
+                "reason": "rule:stop-on-nonrepair-denial",
+                "source_id": "stop-on-nonrepair-denial",
+                "value": "respect-hard-stop-rules"
+              },
+              {
+                "confidence": 0,
+                "layer": "soft",
+                "priority": 55,
+                "reason": "rule:repair-rule-1c6e7cc8a952",
+                "source_id": "repair-rule-1c6e7cc8a952",
+                "value": "bounded-repair-with-evidence"
+              }
+            ],
+            "default": "bounded-repair",
+            "ignored": [],
+            "winner": {
+              "layer": "hard",
+              "reason": "rule:stop-on-nonrepair-denial",
+              "source_id": "stop-on-nonrepair-denial",
+              "value": "respect-hard-stop-rules"
+            }
+          },
+          "validation_strategy": {
+            "candidates": [
+              {
+                "confidence": 68,
+                "layer": "pattern",
+                "priority": 1,
+                "reason": "pattern:repair-pattern-807fd04b957e",
+                "source_id": "repair-pattern-807fd04b957e",
+                "value": "runner-contract-strict"
+              }
+            ],
+            "default": "runner-contract-match",
+            "ignored": [],
+            "winner": {
+              "layer": "pattern",
+              "reason": "pattern:repair-pattern-807fd04b957e",
+              "source_id": "repair-pattern-807fd04b957e",
+              "value": "runner-contract-strict"
+            }
+          }
+        },
+        "soft_rules": [
+          "repair-rule-1c6e7cc8a952"
+        ]
+      },
+      "validation_strategy": "runner-contract-strict"
+    },
+    "validator": {
+      "baseline_stage_count": 3,
+      "budget_profile": "standard",
+      "expected_adapter": "shell-local",
+      "expected_execution_ordering": [
+        "diagnose",
+        "generic-probes",
+        "record-evidence",
+        "recover"
+      ],
+      "expected_goal": "Demonstrate Polaris resume from blocked",
+      "expected_pattern": "repair-pattern-807fd04b957e",
+      "expected_rule_ids": [
+        "stop-on-nonrepair-denial",
+        "repair-rule-1c6e7cc8a952"
+      ],
+      "expected_stage_order": [
+        "diagnose",
+        "generic-probes",
+        "record-evidence",
+        "recover"
+      ],
+      "expected_status": "ok",
+      "expected_strategy": {
+        "execution_ordering": [
+          "diagnose",
+          "generic-probes",
+          "record-evidence",
+          "recover"
+        ],
+        "fallback_choice": "sticky-adapter-first",
+        "retry_policy": "respect-hard-stop-rules",
+        "strategy_trace": {
+          "execution_kind": "runner",
+          "execution_profile": "standard",
+          "experimental_rules": [],
+          "hard_rules": [
+            "stop-on-nonrepair-denial"
+          ],
+          "selected_pattern": "repair-pattern-807fd04b957e",
+          "slot_permissions": {
+            "experimental": [
+              "fallback_choice",
+              "validation_strategy"
+            ],
+            "hard": [
+              "retry_policy"
+            ],
+            "pattern": [
+              "execution_ordering",
+              "fallback_choice",
+              "validation_strategy"
+            ],
+            "soft": [
+              "execution_ordering",
+              "fallback_choice",
+              "retry_policy",
+              "validation_strategy"
+            ]
+          },
+          "slot_resolution": {
+            "execution_ordering": {
+              "candidates": [
+                {
+                  "confidence": 68,
+                  "layer": "pattern",
+                  "priority": 1,
+                  "reason": "pattern:repair-pattern-807fd04b957e",
+                  "source_id": "repair-pattern-807fd04b957e",
+                  "value": [
+                    "diagnose",
+                    "generic-probes",
+                    "record-evidence",
+                    "recover"
+                  ]
+                }
+              ],
+              "default": [
+                "execute",
+                "validate"
+              ],
+              "ignored": [],
+              "winner": {
+                "layer": "pattern",
+                "reason": "pattern:repair-pattern-807fd04b957e",
+                "source_id": "repair-pattern-807fd04b957e",
+                "value": [
+                  "diagnose",
+                  "generic-probes",
+                  "record-evidence",
+                  "recover"
+                ]
+              }
+            },
+            "fallback_choice": {
+              "candidates": [
+                {
+                  "confidence": 68,
+                  "layer": "pattern",
+                  "priority": 1,
+                  "reason": "pattern:repair-pattern-807fd04b957e",
+                  "source_id": "repair-pattern-807fd04b957e",
+                  "value": "sticky-adapter-first"
+                }
+              ],
+              "default": "selected-adapter-only",
+              "ignored": [],
+              "winner": {
+                "layer": "pattern",
+                "reason": "pattern:repair-pattern-807fd04b957e",
+                "source_id": "repair-pattern-807fd04b957e",
+                "value": "sticky-adapter-first"
+              }
+            },
+            "retry_policy": {
+              "candidates": [
+                {
+                  "confidence": 0,
+                  "layer": "hard",
+                  "priority": 100,
+                  "reason": "rule:stop-on-nonrepair-denial",
+                  "source_id": "stop-on-nonrepair-denial",
+                  "value": "respect-hard-stop-rules"
+                },
+                {
+                  "confidence": 0,
+                  "layer": "soft",
+                  "priority": 55,
+                  "reason": "rule:repair-rule-1c6e7cc8a952",
+                  "source_id": "repair-rule-1c6e7cc8a952",
+                  "value": "bounded-repair-with-evidence"
+                }
+              ],
+              "default": "bounded-repair",
+              "ignored": [],
+              "winner": {
+                "layer": "hard",
+                "reason": "rule:stop-on-nonrepair-denial",
+                "source_id": "stop-on-nonrepair-denial",
+                "value": "respect-hard-stop-rules"
+              }
+            },
+            "validation_strategy": {
+              "candidates": [
+                {
+                  "confidence": 68,
+                  "layer": "pattern",
+                  "priority": 1,
+                  "reason": "pattern:repair-pattern-807fd04b957e",
+                  "source_id": "repair-pattern-807fd04b957e",
+                  "value": "runner-contract-strict"
+                }
+              ],
+              "default": "runner-contract-match",
+              "ignored": [],
+              "winner": {
+                "layer": "pattern",
+                "reason": "pattern:repair-pattern-807fd04b957e",
+                "source_id": "repair-pattern-807fd04b957e",
+                "value": "runner-contract-strict"
+              }
+            }
+          },
+          "soft_rules": [
+            "repair-rule-1c6e7cc8a952"
+          ]
+        },
+        "validation_strategy": "runner-contract-strict"
+      },
+      "hot_path_budget_source": "repair-pattern-807fd04b957e",
+      "kind": "runner_result_contract",
+      "max_learning_hot_path_ops": 1,
+      "max_repair_probe_steps": 4,
+      "max_retry_actions": 0,
+      "max_selection_inputs": 4,
+      "max_stage_count": 4,
+      "max_stage_growth": 1,
+      "max_state_writes": 56,
+      "observed_selection_inputs": 3,
+      "output_file": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/resume-from-blocked/runtime-execution-result.json",
+      "required_fields": [
+        "status",
+        "adapter",
+        "goal",
+        "result",
+        "strategy",
+        "executed_ordering",
+        "stage_results"
+      ]
+    }
+  },
+  "execution_profile": "standard",
+  "goal": "Demonstrate Polaris resume from blocked",
+  "mode": "short",
+  "notes": [
+    "task executed through adapter contract",
+    "selected rules and pattern were supplied to the runner"
+  ],
+  "result": {
+    "stage_count": 4,
+    "summary": "Executed local task for goal: Demonstrate Polaris resume from blocked",
+    "used_pattern_guidance": true,
+    "used_rule_guidance": true
+  },
+  "selected_pattern": "repair-pattern-807fd04b957e",
+  "selected_pattern_sequence": [
+    "diagnose",
+    "generic-probes",
+    "record-evidence",
+    "recover"
+  ],
+  "stage_results": [
+    {
+      "details": {
+        "adapter": "shell-local",
+        "goal": "Demonstrate Polaris resume from blocked",
+        "max_retry_actions": 0,
+        "retry_policy": "respect-hard-stop-rules",
+        "rule_count": 2
+      },
+      "status": "ok",
+      "step": "diagnose"
+    },
+    {
+      "details": {
+        "cwd": "/home/administrator/.openclaw/workspace/projects/polaris-skill",
+        "selected_pattern": "repair-pattern-807fd04b957e",
+        "state_file": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/resume-from-blocked/execution-state.json",
+        "validation_strategy": "runner-contract-strict"
+      },
+      "status": "ok",
+      "step": "generic-probes"
+    },
+    {
+      "details": {
+        "cwd": "/home/administrator/.openclaw/workspace/projects/polaris-skill",
+        "selected_pattern": "repair-pattern-807fd04b957e",
+        "state_file": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/resume-from-blocked/execution-state.json",
+        "validation_strategy": "runner-contract-strict"
+      },
+      "status": "ok",
+      "step": "record-evidence"
+    },
+    {
+      "details": {
+        "max_retry_actions": 0,
+        "recovery_ready": true,
+        "retry_policy": "respect-hard-stop-rules"
+      },
+      "status": "ok",
+      "step": "recover"
+    }
+  ],
+  "state": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/resume-from-blocked/execution-state.json",
+  "status": "ok",
+  "strategy": {
+    "execution_ordering": [
+      "diagnose",
+      "generic-probes",
+      "record-evidence",
+      "recover"
+    ],
+    "fallback_choice": "sticky-adapter-first",
+    "retry_policy": "respect-hard-stop-rules",
+    "strategy_trace": {
+      "execution_kind": "runner",
+      "execution_profile": "standard",
+      "experimental_rules": [],
+      "hard_rules": [
+        "stop-on-nonrepair-denial"
+      ],
+      "selected_pattern": "repair-pattern-807fd04b957e",
+      "slot_permissions": {
+        "experimental": [
+          "fallback_choice",
+          "validation_strategy"
+        ],
+        "hard": [
+          "retry_policy"
+        ],
+        "pattern": [
+          "execution_ordering",
+          "fallback_choice",
+          "validation_strategy"
+        ],
+        "soft": [
+          "execution_ordering",
+          "fallback_choice",
+          "retry_policy",
+          "validation_strategy"
+        ]
+      },
+      "slot_resolution": {
+        "execution_ordering": {
+          "candidates": [
+            {
+              "confidence": 68,
+              "layer": "pattern",
+              "priority": 1,
+              "reason": "pattern:repair-pattern-807fd04b957e",
+              "source_id": "repair-pattern-807fd04b957e",
+              "value": [
+                "diagnose",
+                "generic-probes",
+                "record-evidence",
+                "recover"
+              ]
+            }
+          ],
+          "default": [
+            "execute",
+            "validate"
+          ],
+          "ignored": [],
+          "winner": {
+            "layer": "pattern",
+            "reason": "pattern:repair-pattern-807fd04b957e",
+            "source_id": "repair-pattern-807fd04b957e",
+            "value": [
+              "diagnose",
+              "generic-probes",
+              "record-evidence",
+              "recover"
+            ]
+          }
+        },
+        "fallback_choice": {
+          "candidates": [
+            {
+              "confidence": 68,
+              "layer": "pattern",
+              "priority": 1,
+              "reason": "pattern:repair-pattern-807fd04b957e",
+              "source_id": "repair-pattern-807fd04b957e",
+              "value": "sticky-adapter-first"
+            }
+          ],
+          "default": "selected-adapter-only",
+          "ignored": [],
+          "winner": {
+            "layer": "pattern",
+            "reason": "pattern:repair-pattern-807fd04b957e",
+            "source_id": "repair-pattern-807fd04b957e",
+            "value": "sticky-adapter-first"
+          }
+        },
+        "retry_policy": {
+          "candidates": [
+            {
+              "confidence": 0,
+              "layer": "hard",
+              "priority": 100,
+              "reason": "rule:stop-on-nonrepair-denial",
+              "source_id": "stop-on-nonrepair-denial",
+              "value": "respect-hard-stop-rules"
+            },
+            {
+              "confidence": 0,
+              "layer": "soft",
+              "priority": 55,
+              "reason": "rule:repair-rule-1c6e7cc8a952",
+              "source_id": "repair-rule-1c6e7cc8a952",
+              "value": "bounded-repair-with-evidence"
+            }
+          ],
+          "default": "bounded-repair",
+          "ignored": [],
+          "winner": {
+            "layer": "hard",
+            "reason": "rule:stop-on-nonrepair-denial",
+            "source_id": "stop-on-nonrepair-denial",
+            "value": "respect-hard-stop-rules"
+          }
+        },
+        "validation_strategy": {
+          "candidates": [
+            {
+              "confidence": 68,
+              "layer": "pattern",
+              "priority": 1,
+              "reason": "pattern:repair-pattern-807fd04b957e",
+              "source_id": "repair-pattern-807fd04b957e",
+              "value": "runner-contract-strict"
+            }
+          ],
+          "default": "runner-contract-match",
+          "ignored": [],
+          "winner": {
+            "layer": "pattern",
+            "reason": "pattern:repair-pattern-807fd04b957e",
+            "source_id": "repair-pattern-807fd04b957e",
+            "value": "runner-contract-strict"
+          }
+        }
+      },
+      "soft_rules": [
+        "repair-rule-1c6e7cc8a952"
+      ]
+    },
+    "validation_strategy": "runner-contract-strict"
+  },
+  "ts": "2026-03-15T13:36:44.150574+00:00"
+}

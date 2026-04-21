@@ -1,0 +1,12 @@
+{
+  "case_id": "case_006_node_fs_enoent",
+  "source": "pattern_reverse",
+  "reverse_from_pattern": "node.file_not_found.001",
+  "ecosystem": "node",
+  "initial_prompt": "The Node.js script at {workdir}/build.js fails with ENOENT because it writes a generated file into a missing directory. Fix the script so `node build.js` succeeds from the project root.",
+  "success_criteria": {
+    "root_cause_regex": "ENOENT|missing directory|mkdirSync|recursive",
+    "fix_command_test": "cd {workdir} && node build.js && test -f dist/out.txt"
+  },
+  "max_rounds": 8
+}

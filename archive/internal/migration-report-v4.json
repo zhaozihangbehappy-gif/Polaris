@@ -1,0 +1,17 @@
+{
+  "schema_version": 4,
+  "total_patterns_migrated": 167,
+  "per_ecosystem": {
+    "python": 28,
+    "node": 25,
+    "docker": 21,
+    "go": 18,
+    "java": 21,
+    "rust": 20,
+    "ruby": 15,
+    "terraform": 19
+  },
+  "needs_human_review_items_total": 501,
+  "patterns_counting_toward_1000_target": 0,
+  "note": "All patterns migrate schema-wise but count=0 for the 1000-target because agent_reproducibility is empty until Gate 2 eval harness runs and records verified_live evidence."
+}

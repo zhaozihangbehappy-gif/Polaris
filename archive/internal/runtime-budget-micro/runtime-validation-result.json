@@ -1,0 +1,256 @@
+{
+  "output_file": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/runtime-budget-micro/runtime-execution-result.json",
+  "payload": {
+    "adapter": "shell-local",
+    "applied_rule_ids": [
+      "stop-on-nonrepair-denial"
+    ],
+    "applied_rule_layers": [
+      "hard"
+    ],
+    "executed_ordering": [
+      "execute",
+      "validate"
+    ],
+    "execution_contract": {
+      "kind": "runner",
+      "pattern": null,
+      "rule_count": 1,
+      "strategy": {
+        "execution_ordering": [
+          "execute",
+          "validate"
+        ],
+        "fallback_choice": "selected-adapter-only",
+        "retry_policy": "respect-hard-stop-rules",
+        "strategy_trace": {
+          "execution_kind": "runner",
+          "execution_profile": "micro",
+          "experimental_rules": [],
+          "hard_rules": [
+            "stop-on-nonrepair-denial"
+          ],
+          "selected_pattern": null,
+          "slot_permissions": {
+            "experimental": [
+              "fallback_choice",
+              "validation_strategy"
+            ],
+            "hard": [
+              "retry_policy"
+            ],
+            "pattern": [
+              "execution_ordering",
+              "fallback_choice",
+              "validation_strategy"
+            ],
+            "soft": [
+              "execution_ordering",
+              "fallback_choice",
+              "retry_policy",
+              "validation_strategy"
+            ]
+          },
+          "slot_resolution": {
+            "execution_ordering": {
+              "candidates": [],
+              "default": [
+                "execute",
+                "validate"
+              ],
+              "ignored": [],
+              "winner": null
+            },
+            "fallback_choice": {
+              "candidates": [],
+              "default": "selected-adapter-only",
+              "ignored": [],
+              "winner": null
+            },
+            "retry_policy": {
+              "candidates": [
+                {
+                  "confidence": 0,
+                  "layer": "hard",
+                  "priority": 100,
+                  "reason": "rule:stop-on-nonrepair-denial",
+                  "source_id": "stop-on-nonrepair-denial",
+                  "value": "respect-hard-stop-rules"
+                }
+              ],
+              "default": "bounded-repair",
+              "ignored": [],
+              "winner": {
+                "layer": "hard",
+                "reason": "rule:stop-on-nonrepair-denial",
+                "source_id": "stop-on-nonrepair-denial",
+                "value": "respect-hard-stop-rules"
+              }
+            },
+            "validation_strategy": {
+              "candidates": [],
+              "default": "runner-contract-match",
+              "ignored": [],
+              "winner": null
+            }
+          },
+          "soft_rules": []
+        },
+        "validation_strategy": "runner-contract-match"
+      },
+      "validator": {
+        "baseline_stage_count": 2,
+        "budget_profile": "micro",
+        "expected_adapter": "shell-local",
+        "expected_execution_ordering": [],
+        "expected_goal": "Demonstrate Polaris local orchestration flow",
+        "expected_pattern": null,
+        "expected_rule_ids": [
+          "stop-on-nonrepair-denial"
+        ],
+        "expected_stage_order": [],
+        "expected_status": "ok",
+        "expected_strategy": null,
+        "hot_path_budget_source": "baseline",
+        "kind": "runner_result_contract",
+        "max_learning_hot_path_ops": 0,
+        "max_repair_probe_steps": 0,
+        "max_retry_actions": 0,
+        "max_selection_inputs": 1,
+        "max_stage_count": 2,
+        "max_stage_growth": 0,
+        "max_state_writes": 18,
+        "observed_selection_inputs": 1,
+        "output_file": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/runtime-budget-micro/runtime-execution-result.json",
+        "required_fields": [
+          "status",
+          "adapter",
+          "goal",
+          "result"
+        ]
+      }
+    },
+    "execution_profile": "micro",
+    "goal": "Demonstrate Polaris local orchestration flow",
+    "mode": "short",
+    "notes": [
+      "task executed through adapter contract",
+      "selected rules and pattern were supplied to the runner"
+    ],
+    "result": {
+      "stage_count": 2,
+      "summary": "Executed local task for goal: Demonstrate Polaris local orchestration flow",
+      "used_pattern_guidance": false,
+      "used_rule_guidance": true
+    },
+    "selected_pattern": null,
+    "selected_pattern_sequence": [],
+    "stage_results": [
+      {
+        "details": {
+          "execution_profile": "micro",
+          "mode": "short",
+          "validation_strategy": "runner-contract-match"
+        },
+        "status": "ok",
+        "step": "execute"
+      },
+      {
+        "details": {
+          "execution_profile": "micro",
+          "mode": "short",
+          "validation_strategy": "runner-contract-match"
+        },
+        "status": "ok",
+        "step": "validate"
+      }
+    ],
+    "state": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/runtime-budget-micro/execution-state.json",
+    "status": "ok",
+    "strategy": {
+      "execution_ordering": [
+        "execute",
+        "validate"
+      ],
+      "fallback_choice": "selected-adapter-only",
+      "retry_policy": "respect-hard-stop-rules",
+      "strategy_trace": {
+        "execution_kind": "runner",
+        "execution_profile": "micro",
+        "experimental_rules": [],
+        "hard_rules": [
+          "stop-on-nonrepair-denial"
+        ],
+        "selected_pattern": null,
+        "slot_permissions": {
+          "experimental": [
+            "fallback_choice",
+            "validation_strategy"
+          ],
+          "hard": [
+            "retry_policy"
+          ],
+          "pattern": [
+            "execution_ordering",
+            "fallback_choice",
+            "validation_strategy"
+          ],
+          "soft": [
+            "execution_ordering",
+            "fallback_choice",
+            "retry_policy",
+            "validation_strategy"
+          ]
+        },
+        "slot_resolution": {
+          "execution_ordering": {
+            "candidates": [],
+            "default": [
+              "execute",
+              "validate"
+            ],
+            "ignored": [],
+            "winner": null
+          },
+          "fallback_choice": {
+            "candidates": [],
+            "default": "selected-adapter-only",
+            "ignored": [],
+            "winner": null
+          },
+          "retry_policy": {
+            "candidates": [
+              {
+                "confidence": 0,
+                "layer": "hard",
+                "priority": 100,
+                "reason": "rule:stop-on-nonrepair-denial",
+                "source_id": "stop-on-nonrepair-denial",
+                "value": "respect-hard-stop-rules"
+              }
+            ],
+            "default": "bounded-repair",
+            "ignored": [],
+            "winner": {
+              "layer": "hard",
+              "reason": "rule:stop-on-nonrepair-denial",
+              "source_id": "stop-on-nonrepair-denial",
+              "value": "respect-hard-stop-rules"
+            }
+          },
+          "validation_strategy": {
+            "candidates": [],
+            "default": "runner-contract-match",
+            "ignored": [],
+            "winner": null
+          }
+        },
+        "soft_rules": []
+      },
+      "validation_strategy": "runner-contract-match"
+    },
+    "ts": "2026-03-14T11:24:25.605127+00:00"
+  },
+  "status": "ok",
+  "validator_kind": "runner_result_contract"
+}

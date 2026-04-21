@@ -1,0 +1,5 @@
+{
+  "stderr": "/home/user/.gems/gems/puma-6.4.0/lib/puma/binder.rb:325:in `initialize': Address already in use - bind(2) for \"0.0.0.0\" port 3000 (Errno::EADDRINUSE)\n\tfrom /home/user/.gems/gems/puma-6.4.0/lib/puma/binder.rb:325:in `new'\n\tfrom /home/user/.gems/gems/puma-6.4.0/lib/puma/binder.rb:325:in `add_tcp_listener'",
+  "error_class": "port_conflict",
+  "source": "Errno::EADDRINUSE on Rails/Puma default port 3000"
+}

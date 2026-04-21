@@ -1,0 +1,241 @@
+{
+  "ecosystem": "go",
+  "error_class": "config_error",
+  "schema_version": 4,
+  "records": [
+    {
+      "pattern_id": "candidate.go.config_error.000",
+      "ecosystem": "go",
+      "error_class": "config_error",
+      "description": "GOFLAGS overrides breaks modules",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "GOFLAGS.*-mod=vendor.*conflict"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "go env 2>&1 | head -20",
+        "trigger_env": {},
+        "expected_stderr_match": "GOFLAGS.*-mod=vendor.*conflict"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Go config_error: GOFLAGS overrides breaks modules"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.go.config_error.001",
+      "ecosystem": "go",
+      "error_class": "config_error",
+      "description": "GOPROXY misconfigured private",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "module lookup disabled by GOPROXY=off"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "go env 2>&1 | head -20",
+        "trigger_env": {},
+        "expected_stderr_match": "module lookup disabled by GOPROXY=off"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Go config_error: GOPROXY misconfigured private"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.go.config_error.002",
+      "ecosystem": "go",
+      "error_class": "config_error",
+      "description": "GOPRIVATE not set for private repo",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "reading.*git.*HTTPS.*401"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "go env 2>&1 | head -20",
+        "trigger_env": {},
+        "expected_stderr_match": "reading.*git.*HTTPS.*401"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Go config_error: GOPRIVATE not set for private repo"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.go.config_error.003",
+      "ecosystem": "go",
+      "error_class": "config_error",
+      "description": "go env GOROOT wrong after brew upgrade",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "GOROOT.*does not exist"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "go env 2>&1 | head -20",
+        "trigger_env": {},
+        "expected_stderr_match": "GOROOT.*does not exist"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Go config_error: go env GOROOT wrong after brew upgrade"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.go.config_error.004",
+      "ecosystem": "go",
+      "error_class": "config_error",
+      "description": "go workspace go.work not synced",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "go: go\\.work.*inconsistent"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "go env 2>&1 | head -20",
+        "trigger_env": {},
+        "expected_stderr_match": "go: go\\.work.*inconsistent"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Go config_error: go workspace go.work not synced"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.go.config_error.005",
+      "ecosystem": "go",
+      "error_class": "config_error",
+      "description": "CGO_ENABLED mismatch in cross-compile",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "CGO_ENABLED=0.*cannot use cgo"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "go env 2>&1 | head -20",
+        "trigger_env": {},
+        "expected_stderr_match": "CGO_ENABLED=0.*cannot use cgo"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Go config_error: CGO_ENABLED mismatch in cross-compile"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    }
+  ]
+}

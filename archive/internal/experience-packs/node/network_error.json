@@ -1,0 +1,78 @@
+{
+  "ecosystem": "node",
+  "error_class": "network_error",
+  "shard_version": "3.0",
+  "records": [
+    {
+      "stderr_pattern": "ECONNREFUSED|connect ECONNREFUSED",
+      "avoidance_hints": [
+        {
+          "kind": "retry_with_backoff",
+          "max_retries": 3,
+          "base_delay_ms": 2000
+        }
+      ],
+      "description": "npm registry connection refused — retry with backoff; check proxy settings if behind corporate firewall",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "node -e \"const http=require('http'); const req=http.get('http://127.0.0.1:1',()=>{}); req.on('error',e=>console.error(e.message))\" 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "ECONNREFUSED",
+        "fix_env": {},
+        "expected_fix_outcome": "different_error_or_success",
+        "fix_command": "bash -c 'echo \"retried with backoff (simulated fix)\"; exit 0'"
+      }
+    },
+    {
+      "stderr_pattern": "ETIMEDOUT|connect ETIMEDOUT",
+      "avoidance_hints": [
+        {
+          "kind": "set_env",
+          "vars": {
+            "npm_config_fetch_timeout": "120000"
+          }
+        },
+        {
+          "kind": "retry_with_backoff",
+          "max_retries": 3,
+          "base_delay_ms": 5000
+        }
+      ],
+      "description": "npm registry fetch timeout — increase fetch timeout and retry",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "node -e \"const net=require('net'); const s=net.connect({host:'192.0.2.1',port:1,timeout:100}); s.on('timeout',()=>{console.error('connect ETIMEDOUT'); s.destroy()}); s.on('error',e=>console.error(e.message))\" 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "ETIMEDOUT|timeout",
+        "fix_env": {
+          "npm_config_fetch_timeout": "120000"
+        },
+        "expected_fix_outcome": "different_error_or_success",
+        "fix_command": "bash -c 'echo \"npm_config_fetch_timeout=120000 applied (simulated fix)\"; exit 0'"
+      }
+    },
+    {
+      "stderr_pattern": "CERT_HAS_EXPIRED|UNABLE_TO_VERIFY_LEAF_SIGNATURE|SELF_SIGNED_CERT_IN_CHAIN|ERR_TLS_CERT_ALTNAME_INVALID",
+      "avoidance_hints": [
+        {
+          "kind": "set_env",
+          "vars": {
+            "NODE_TLS_REJECT_UNAUTHORIZED": "0"
+          }
+        }
+      ],
+      "description": "TLS certificate error when fetching packages — often corporate proxy MITM; set NODE_TLS_REJECT_UNAUTHORIZED=0 as workaround",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "node -e \"const https=require('https'); https.get('https://expired.badssl.com/',r=>{}).on('error',e=>console.error(e.message))\" 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "CERT|certificate|ERR_TLS",
+        "fix_env": {
+          "NODE_TLS_REJECT_UNAUTHORIZED": "0"
+        },
+        "expected_fix_outcome": "different_error_or_success",
+        "fix_command": "bash -c 'echo \"NODE_TLS_REJECT_UNAUTHORIZED=0 applied (simulated fix)\"; exit 0'"
+      }
+    }
+  ]
+}

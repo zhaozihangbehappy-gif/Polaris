@@ -1,0 +1,1 @@
+{"stderr": "open /home/user/go/src/github.com/myapp/config/config.yaml: no such file or directory\ngo run: cannot run non-main package\nstat /home/user/projects/myapp/config.go: no such file or directory", "error_class": "file_not_found", "source": "go run referencing config file that does not exist in expected path"}

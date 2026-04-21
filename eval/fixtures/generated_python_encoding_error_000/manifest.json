@@ -1,0 +1,16 @@
+{
+  "case_id": "generated_python_encoding_error_000",
+  "files": [
+    "reader.py",
+    "test_reader.py",
+    "city.txt"
+  ],
+  "dependencies": {},
+  "build_commands": [],
+  "expected_failure_command": "cd {workdir} && python3 -m unittest -q",
+  "expected_failure_stderr_regex": "UnicodeDecodeError: 'ascii' codec can't decode",
+  "manifest_schema_version": 1,
+  "bash_self_contained": false,
+  "reverse_from_pattern": "python.encoding_error.000",
+  "source_pool": "official"
+}

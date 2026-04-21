@@ -1,0 +1,358 @@
+{
+  "ecosystem": "node",
+  "error_class": "network_error",
+  "schema_version": 4,
+  "records": [
+    {
+      "pattern_id": "node.network_error.000",
+      "ecosystem": "node",
+      "error_class": "network_error",
+      "description": "npm registry connection refused \u2014 retry with backoff; check proxy settings if behind corporate firewall",
+      "source": "prebuilt",
+      "trigger_signals": {
+        "stderr_regex": [
+          "ECONNREFUSED|connect ECONNREFUSED"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "node -e \"const http=require('http'); const req=http.get('http://127.0.0.1:1',()=>{}); req.on('error',e=>console.error(e.message))\" 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "ECONNREFUSED",
+        "expected_fix_outcome": "different_error_or_success"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "retry_with_backoff",
+            "max_retries": 3,
+            "base_delay_ms": 2000
+          }
+        ],
+        "fix_command": "bash -c 'echo \"retried with backoff (simulated fix)\"; exit 0'",
+        "fix_env": {},
+        "description": "npm registry connection refused \u2014 retry with backoff; check proxy settings if behind corporate firewall"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "legacy_v3": {
+        "stderr_pattern": "ECONNREFUSED|connect ECONNREFUSED",
+        "avoidance_hints": [
+          {
+            "kind": "retry_with_backoff",
+            "max_retries": 3,
+            "base_delay_ms": 2000
+          }
+        ],
+        "description": "npm registry connection refused \u2014 retry with backoff; check proxy settings if behind corporate firewall",
+        "source": "prebuilt",
+        "reproduction": {
+          "command": "node -e \"const http=require('http'); const req=http.get('http://127.0.0.1:1',()=>{}); req.on('error',e=>console.error(e.message))\" 2>&1 || true",
+          "trigger_env": {},
+          "expected_stderr_match": "ECONNREFUSED",
+          "fix_env": {},
+          "expected_fix_outcome": "different_error_or_success",
+          "fix_command": "bash -c 'echo \"retried with backoff (simulated fix)\"; exit 0'"
+        }
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ],
+      "authored_fixture": {
+        "authored_at": "2026-04-20T02:53:44+00:00",
+        "authored_by": "codex",
+        "authored_with_prompt_sha256": "e913afb501becf36236c513b8fb8dc7e47dd03b9f8911a5ae2f2c04a175db06b",
+        "verification_command": "node verify.js",
+        "expected_stderr_regex": "ECONNREFUSED|connect ECONNREFUSED",
+        "files": [
+          {
+            "path": "package.json",
+            "content": "{\n  \"name\": \"node-network-error-000\",\n  \"version\": \"1.0.0\",\n  \"private\": true,\n  \"scripts\": {\n    \"test\": \"node verify.js\"\n  }\n}\n"
+          },
+          {
+            "path": "flaky-registry.js",
+            "content": "'use strict';\n\nlet attempts = 0;\n\nasync function requestPackage(name) {\n  attempts += 1;\n\n  if (attempts === 1) {\n    const error = new Error('connect ECONNREFUSED 127.0.0.1:4873');\n    error.code = 'ECONNREFUSED';\n    error.errno = -111;\n    error.syscall = 'connect';\n    error.address = '127.0.0.1';\n    error.port = 4873;\n    throw error;\n  }\n\n  return { name, version: '1.0.0' };\n}\n\nmodule.exports = { requestPackage };\n"
+          },
+          {
+            "path": "registry-client.js",
+            "content": "'use strict';\n\nconst { requestPackage } = require('./flaky-registry');\n\nasync function fetchPackageMeta(name) {\n  return requestPackage(name);\n}\n\nmodule.exports = { fetchPackageMeta };\n"
+          },
+          {
+            "path": "verify.js",
+            "content": "'use strict';\n\nconst assert = require('node:assert/strict');\nconst { fetchPackageMeta } = require('./registry-client');\n\nasync function main() {\n  const metadata = await fetchPackageMeta('example-package');\n  assert.deepEqual(metadata, { name: 'example-package', version: '1.0.0' });\n}\n\nmain().catch((error) => {\n  console.error(error);\n  process.exitCode = 1;\n});\n"
+          }
+        ],
+        "reference_fix_files": [
+          {
+            "path": "registry-client.js",
+            "content": "'use strict';\n\nconst { requestPackage } = require('./flaky-registry');\n\nfunction sleep(ms) {\n  return new Promise((resolve) => setTimeout(resolve, ms));\n}\n\nasync function fetchPackageMeta(name, options = {}) {\n  const retries = options.retries ?? 3;\n  const backoffMs = options.backoffMs ?? 10;\n\n  for (let attempt = 0; ; attempt += 1) {\n    try {\n      return await requestPackage(name);\n    } catch (error) {\n      if (error.code !== 'ECONNREFUSED' || attempt >= retries) {\n        throw error;\n      }\n      await sleep(backoffMs * 2 ** attempt);\n    }\n  }\n}\n\nmodule.exports = { fetchPackageMeta };\n"
+          }
+        ],
+        "fix_rationale": "Retrying ECONNREFUSED with exponential backoff lets a transient npm registry or proxy refusal recover before the client fails.",
+        "reviewer_record": {
+          "validated_in_sandbox_at": "2026-04-20T02:53:44+00:00",
+          "sandbox_pre_fix_exit_code": 1,
+          "sandbox_pre_fix_stderr_match": true,
+          "sandbox_post_fix_exit_code": 0,
+          "sandbox_workdir_hash_pre": "2c94e66c97bc15ff2925bbcf80c067dd8a1b8f33029e33e92f7f56b080687134",
+          "sandbox_workdir_hash_post": "a8cfa78b6ceca544e428c5b2323861946e3887fcbb0a58fedb909b273f2fc21b",
+          "notes": "authored by codex; pre-fix fails+matches regex, post-fix passes"
+        }
+      }
+    },
+    {
+      "pattern_id": "node.network_error.001",
+      "ecosystem": "node",
+      "error_class": "network_error",
+      "description": "npm registry fetch timeout \u2014 increase fetch timeout and retry",
+      "source": "prebuilt",
+      "trigger_signals": {
+        "stderr_regex": [
+          "ETIMEDOUT|connect ETIMEDOUT"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "node -e \"const net=require('net'); const s=net.connect({host:'192.0.2.1',port:1,timeout:100}); s.on('timeout',()=>{console.error('connect ETIMEDOUT'); s.destroy()}); s.on('error',e=>console.error(e.message))\" 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "ETIMEDOUT|timeout",
+        "expected_fix_outcome": "different_error_or_success"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "npm_config_fetch_timeout": "120000"
+            }
+          },
+          {
+            "kind": "retry_with_backoff",
+            "max_retries": 3,
+            "base_delay_ms": 5000
+          }
+        ],
+        "fix_command": "bash -c 'echo \"npm_config_fetch_timeout=120000 applied (simulated fix)\"; exit 0'",
+        "fix_env": {
+          "npm_config_fetch_timeout": "120000"
+        },
+        "description": "npm registry fetch timeout \u2014 increase fetch timeout and retry"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": [
+          {
+            "agent": "claude_code",
+            "agent_version": "unknown",
+            "model": "claude-opus-4-7",
+            "date_verified": "2026-04-20T11:29:03+00:00",
+            "status": "verified_live",
+            "artifact_path": "eval/runs/20260420T192827/transcripts/claude_code__generated_node_network_error_001__polaris.txt",
+            "transcript_hash": "9d7ddf0b8b2c833895c47c38c007e435af1355758a71b2e31a9cff6b2f593d54",
+            "pre_failure_reproduced": true,
+            "workdir_manifest_hash": "b8523851a69246ca23a9bb216fd972591fdcd88450fda4f3ed4735b42a92f206",
+            "notes": "case=generated_node_network_error_001 polaris_enabled=True rounds=1 tool_calls=6 tokens=393"
+          }
+        ]
+      },
+      "legacy_v3": {
+        "stderr_pattern": "ETIMEDOUT|connect ETIMEDOUT",
+        "avoidance_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "npm_config_fetch_timeout": "120000"
+            }
+          },
+          {
+            "kind": "retry_with_backoff",
+            "max_retries": 3,
+            "base_delay_ms": 5000
+          }
+        ],
+        "description": "npm registry fetch timeout \u2014 increase fetch timeout and retry",
+        "source": "prebuilt",
+        "reproduction": {
+          "command": "node -e \"const net=require('net'); const s=net.connect({host:'192.0.2.1',port:1,timeout:100}); s.on('timeout',()=>{console.error('connect ETIMEDOUT'); s.destroy()}); s.on('error',e=>console.error(e.message))\" 2>&1 || true",
+          "trigger_env": {},
+          "expected_stderr_match": "ETIMEDOUT|timeout",
+          "fix_env": {
+            "npm_config_fetch_timeout": "120000"
+          },
+          "expected_fix_outcome": "different_error_or_success",
+          "fix_command": "bash -c 'echo \"npm_config_fetch_timeout=120000 applied (simulated fix)\"; exit 0'"
+        }
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds"
+      ],
+      "authored_fixture": {
+        "authored_at": "2026-04-20T02:53:37+00:00",
+        "authored_by": "codex",
+        "authored_with_prompt_sha256": "378f5e7e0d2b6ce0481ad7f3f6171c43d0c2af1dc4756a550bc6279049378493",
+        "verification_command": "npm test",
+        "expected_stderr_regex": "ETIMEDOUT|connect ETIMEDOUT",
+        "files": [
+          {
+            "path": "package.json",
+            "content": "{\n  \"name\": \"node-network-error-001\",\n  \"version\": \"1.0.0\",\n  \"private\": true,\n  \"scripts\": {\n    \"test\": \"node registry-fetch.js\"\n  }\n}\n"
+          },
+          {
+            "path": "registry-fetch.js",
+            "content": "const { setTimeout: sleep } = require('node:timers/promises');\n\nconst npmConfig = {\n  fetchTimeout: 30,\n  fetchRetries: 0\n};\n\nasync function simulatedRegistryFetch(attempt) {\n  const responseDelay = attempt === 0 ? 200 : 80;\n  await sleep(responseDelay);\n  return { statusCode: 200, body: JSON.stringify({ name: 'tiny-package', version: '1.0.0' }) };\n}\n\nasync function fetchOnce(attempt, timeoutMs) {\n  const timeout = sleep(timeoutMs).then(() => {\n    const err = new Error(`connect ETIMEDOUT registry.npmjs.org after ${timeoutMs}ms`);\n    err.code = 'ETIMEDOUT';\n    throw err;\n  });\n\n  return Promise.race([simulatedRegistryFetch(attempt), timeout]);\n}\n\nasync function fetchWithRetry() {\n  let lastError;\n\n  for (let attempt = 0; attempt <= npmConfig.fetchRetries; attempt += 1) {\n    try {\n      return await fetchOnce(attempt, npmConfig.fetchTimeout);\n    } catch (err) {\n      lastError = err;\n      if (err.code !== 'ETIMEDOUT') {\n        throw err;\n      }\n    }\n  }\n\n  throw lastError;\n}\n\nasync function main() {\n  const response = await fetchWithRetry();\n  const pkg = JSON.parse(response.body);\n  if (response.statusCode !== 200 || pkg.name !== 'tiny-package') {\n    throw new Error('Unexpected registry response');\n  }\n}\n\nif (require.main === module) {\n  main();\n}\n\nmodule.exports = { fetchWithRetry };\n"
+          }
+        ],
+        "reference_fix_files": [
+          {
+            "path": "registry-fetch.js",
+            "content": "const { setTimeout: sleep } = require('node:timers/promises');\n\nconst npmConfig = {\n  fetchTimeout: 120,\n  fetchRetries: 1\n};\n\nasync function simulatedRegistryFetch(attempt) {\n  const responseDelay = attempt === 0 ? 200 : 80;\n  await sleep(responseDelay);\n  return { statusCode: 200, body: JSON.stringify({ name: 'tiny-package', version: '1.0.0' }) };\n}\n\nasync function fetchOnce(attempt, timeoutMs) {\n  const timeout = sleep(timeoutMs).then(() => {\n    const err = new Error(`connect ETIMEDOUT registry.npmjs.org after ${timeoutMs}ms`);\n    err.code = 'ETIMEDOUT';\n    throw err;\n  });\n\n  return Promise.race([simulatedRegistryFetch(attempt), timeout]);\n}\n\nasync function fetchWithRetry() {\n  let lastError;\n\n  for (let attempt = 0; attempt <= npmConfig.fetchRetries; attempt += 1) {\n    try {\n      return await fetchOnce(attempt, npmConfig.fetchTimeout);\n    } catch (err) {\n      lastError = err;\n      if (err.code !== 'ETIMEDOUT') {\n        throw err;\n      }\n    }\n  }\n\n  throw lastError;\n}\n\nasync function main() {\n  const response = await fetchWithRetry();\n  const pkg = JSON.parse(response.body);\n  if (response.statusCode !== 200 || pkg.name !== 'tiny-package') {\n    throw new Error('Unexpected registry response');\n  }\n}\n\nif (require.main === module) {\n  main();\n}\n\nmodule.exports = { fetchWithRetry };\n"
+          }
+        ],
+        "fix_rationale": "Increasing the simulated npm fetch timeout and allowing one retry lets the delayed registry fetch complete after the initial timeout.",
+        "reviewer_record": {
+          "validated_in_sandbox_at": "2026-04-20T02:53:37+00:00",
+          "sandbox_pre_fix_exit_code": 1,
+          "sandbox_pre_fix_stderr_match": true,
+          "sandbox_post_fix_exit_code": 0,
+          "sandbox_workdir_hash_pre": "b8523851a69246ca23a9bb216fd972591fdcd88450fda4f3ed4735b42a92f206",
+          "sandbox_workdir_hash_post": "160cf6a86393158e1afd7e18ba9bddec7a0b2dfe45d48c2fd9291cfc1059d73f",
+          "notes": "authored by codex; pre-fix fails+matches regex, post-fix passes"
+        }
+      }
+    },
+    {
+      "pattern_id": "node.network_error.002",
+      "ecosystem": "node",
+      "error_class": "network_error",
+      "description": "TLS certificate error when fetching packages \u2014 often corporate proxy MITM; set NODE_TLS_REJECT_UNAUTHORIZED=0 as workaround",
+      "source": "prebuilt",
+      "trigger_signals": {
+        "stderr_regex": [
+          "CERT_HAS_EXPIRED|UNABLE_TO_VERIFY_LEAF_SIGNATURE|SELF_SIGNED_CERT_IN_CHAIN|ERR_TLS_CERT_ALTNAME_INVALID"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "node -e \"const https=require('https'); https.get('https://expired.badssl.com/',r=>{}).on('error',e=>console.error(e.message))\" 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "CERT|certificate|ERR_TLS",
+        "expected_fix_outcome": "different_error_or_success"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "NODE_TLS_REJECT_UNAUTHORIZED": "0"
+            }
+          }
+        ],
+        "fix_command": "bash -c 'echo \"NODE_TLS_REJECT_UNAUTHORIZED=0 applied (simulated fix)\"; exit 0'",
+        "fix_env": {
+          "NODE_TLS_REJECT_UNAUTHORIZED": "0"
+        },
+        "description": "TLS certificate error when fetching packages \u2014 often corporate proxy MITM; set NODE_TLS_REJECT_UNAUTHORIZED=0 as workaround"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "legacy_v3": {
+        "stderr_pattern": "CERT_HAS_EXPIRED|UNABLE_TO_VERIFY_LEAF_SIGNATURE|SELF_SIGNED_CERT_IN_CHAIN|ERR_TLS_CERT_ALTNAME_INVALID",
+        "avoidance_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "NODE_TLS_REJECT_UNAUTHORIZED": "0"
+            }
+          }
+        ],
+        "description": "TLS certificate error when fetching packages \u2014 often corporate proxy MITM; set NODE_TLS_REJECT_UNAUTHORIZED=0 as workaround",
+        "source": "prebuilt",
+        "reproduction": {
+          "command": "node -e \"const https=require('https'); https.get('https://expired.badssl.com/',r=>{}).on('error',e=>console.error(e.message))\" 2>&1 || true",
+          "trigger_env": {},
+          "expected_stderr_match": "CERT|certificate|ERR_TLS",
+          "fix_env": {
+            "NODE_TLS_REJECT_UNAUTHORIZED": "0"
+          },
+          "expected_fix_outcome": "different_error_or_success",
+          "fix_command": "bash -c 'echo \"NODE_TLS_REJECT_UNAUTHORIZED=0 applied (simulated fix)\"; exit 0'"
+        }
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ],
+      "authored_fixture": {
+        "authored_at": "2026-04-20T09:58:59+00:00",
+        "authored_by": "codex",
+        "authored_with_prompt_sha256": "cec3bdf2ff07915fa9b6315936b9eefabd2eff90a950ac9479a37c828d294a41",
+        "verification_command": "npm test",
+        "expected_stderr_regex": "CERT_HAS_EXPIRED",
+        "files": [
+          {
+            "path": "package.json",
+            "content": "{\n  \"name\": \"polaris-node-network-error-002\",\n  \"version\": \"1.0.0\",\n  \"private\": true,\n  \"scripts\": {\n    \"test\": \"node tls-fetch.js\"\n  }\n}\n"
+          },
+          {
+            "path": "tls-fetch.js",
+            "content": "const fs = require('node:fs');\nconst tls = require('node:tls');\nconst { Duplex } = require('node:stream');\n\nclass LocalSocket extends Duplex {\n  _read() {}\n\n  _write(chunk, _encoding, callback) {\n    this.peer.push(chunk);\n    callback();\n  }\n\n  _final(callback) {\n    this.peer.push(null);\n    callback();\n  }\n}\n\nconst clientSide = new LocalSocket();\nconst serverSide = new LocalSocket();\nclientSide.peer = serverSide;\nserverSide.peer = clientSide;\n\nconst server = new tls.TLSSocket(serverSide, {\n  isServer: true,\n  secureContext: tls.createSecureContext({\n    key: fs.readFileSync('server.key'),\n    cert: fs.readFileSync('server.pem'),\n  }),\n});\nserver.on('error', () => {});\n\nconst client = tls.connect({\n  socket: clientSide,\n  servername: 'localhost',\n  ca: fs.readFileSync('ca.pem'),\n}, () => {\n  client.end();\n  server.end();\n});\n"
+          },
+          {
+            "path": "ca.pem",
+            "content": "-----BEGIN CERTIFICATE-----\nMIIBlTCCATugAwIBAgIUKuWAghzWYqq8atEDWwCT669hD+YwCgYIKoZIzj0EAwIw\nIDEeMBwGA1UEAwwVUG9sYXJpcyBMb2NhbCBSb290IENBMB4XDTI2MDQyMDA5NTY1\nN1oXDTM2MDQxNzA5NTY1N1owIDEeMBwGA1UEAwwVUG9sYXJpcyBMb2NhbCBSb290\nIENBMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEHZLULSvnNdLoZq8Q/cfASNgj\njhwcDsyegw5ew7+NSNw0WUly2pMxCCGPSH7RY44C94btiihyQ7lfNWImgQJKlKNT\nMFEwHQYDVR0OBBYEFEsKl1V/a9Q5FD2VacM17Zq+PFsmMB8GA1UdIwQYMBaAFEsK\nl1V/a9Q5FD2VacM17Zq+PFsmMA8GA1UdEwEB/wQFMAMBAf8wCgYIKoZIzj0EAwID\nSAAwRQIhAOhuEZFJB5Iv5J/mpziL8JSzm20w/b7QQQJopXAQV0jkAiA3mYY6nddo\nIpl5mjyI1rjD3sFLnXQ2kTLqhBofV+qGlw==\n-----END CERTIFICATE-----\n"
+          },
+          {
+            "path": "server.pem",
+            "content": "-----BEGIN CERTIFICATE-----\nMIIBsDCCAVagAwIBAgIUdSHi7AfzuLPOQUHzGWKbUBr8qSYwCgYIKoZIzj0EAwIw\nIDEeMBwGA1UEAwwVUG9sYXJpcyBMb2NhbCBSb290IENBMB4XDTI2MDQyMDA5NTY1\nN1oXDTI2MDQxOTA5NTY1N1owFDESMBAGA1UEAwwJbG9jYWxob3N0MFkwEwYHKoZI\nzj0CAQYIKoZIzj0DAQcDQgAEqgzSXcwt8/eo9l1nY3VzgZR0ByXz190tHM7YsHv0\njPytKtyfUBMo0fbIeT3hmFPTNYw8rQWe0Jr6dr7ZnYfwlaN6MHgwFAYDVR0RBA0w\nC4IJbG9jYWxob3N0MAsGA1UdDwQEAwIHgDATBgNVHSUEDDAKBggrBgEFBQcDATAd\nBgNVHQ4EFgQU5UoZBYm2oj4oKcESMBF+9n9a2LMwHwYDVR0jBBgwFoAUSwqXVX9r\n1DkUPZVpwzXtmr48WyYwCgYIKoZIzj0EAwIDSAAwRQIgJZbxhgVyDqSI5OY2ZBRd\nKeE8V6xR3ZenOWAE74NGp0MCIQCFdtMBvssThcb2fd+v0awi6Km/44Hp5nJ+apYr\ncYp8Zw==\n-----END CERTIFICATE-----\n"
+          },
+          {
+            "path": "server.key",
+            "content": "-----BEGIN EC PRIVATE KEY-----\nMHcCAQEEIGK5MZUxb/luAt90b0azLPnKzyzJ/XMorsWuGPiRrU5eoAoGCCqGSM49\nAwEHoUQDQgAEqgzSXcwt8/eo9l1nY3VzgZR0ByXz190tHM7YsHv0jPytKtyfUBMo\n0fbIeT3hmFPTNYw8rQWe0Jr6dr7ZnYfwlQ==\n-----END EC PRIVATE KEY-----\n"
+          }
+        ],
+        "reference_fix_files": [
+          {
+            "path": "package.json",
+            "content": "{\n  \"name\": \"polaris-node-network-error-002\",\n  \"version\": \"1.0.0\",\n  \"private\": true,\n  \"scripts\": {\n    \"test\": \"NODE_TLS_REJECT_UNAUTHORIZED=0 node tls-fetch.js\"\n  }\n}\n"
+          }
+        ],
+        "fix_rationale": "Setting NODE_TLS_REJECT_UNAUTHORIZED=0 disables Node TLS certificate verification so the expired local certificate no longer aborts the fetch.",
+        "reviewer_record": {
+          "validated_in_sandbox_at": "2026-04-20T09:58:59+00:00",
+          "sandbox_pre_fix_exit_code": 1,
+          "sandbox_pre_fix_stderr_match": true,
+          "sandbox_post_fix_exit_code": 0,
+          "sandbox_workdir_hash_pre": "2786c5e6b54b24a2cbbf4d09971e0c06583cc9c21d25a12a17b2488ae6eb1ae4",
+          "sandbox_workdir_hash_post": "e785a560dfef423c0559e0ef642f4b47624f63e72cf31b1ebfeb45ea5f380590",
+          "notes": "authored by codex; pre-fix fails+matches regex, post-fix passes"
+        }
+      }
+    }
+  ]
+}

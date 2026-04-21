@@ -1,0 +1,13 @@
+{
+  "schema_version": 6,
+  "status": "in_progress",
+  "state_machine": {
+    "node": "executing"
+  },
+  "compat": {
+    "upgraded_from": null,
+    "upgraded_at": null,
+    "runtime_format": 1,
+    "resumed_count": 0
+  }
+}

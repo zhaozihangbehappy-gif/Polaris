@@ -1,0 +1,17 @@
+{
+  "case_id": "generated_java_config_error_001",
+  "source": "authored_fixture",
+  "reverse_from_pattern": "java.config_error.001",
+  "pattern_id": "java.config_error.001",
+  "source_pool": "official",
+  "ecosystem": "java",
+  "error_class": "config_error",
+  "initial_prompt": "In the project at {workdir}, this java config_error fails: Invalid pom.xml \u2014 fix XML syntax in POM file. Reproduce the failure with `javac PomValidator.java && java PomValidator`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+  "success_criteria": {
+    "root_cause_regex": ".+",
+    "fix_command_test": "cd {workdir} && javac PomValidator.java && java PomValidator"
+  },
+  "max_rounds": 6,
+  "fixture_strategy": "authored_files",
+  "promotion_eligible": true
+}

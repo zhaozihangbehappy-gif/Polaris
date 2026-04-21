@@ -1,0 +1,51 @@
+{
+  "patterns": [
+    {
+      "adapter": null,
+      "best_lifecycle_state": "validated",
+      "confidence": 72,
+      "created_at": "2026-03-14T03:51:46.076702+00:00",
+      "demotion_count": 0,
+      "evidence": [
+        "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/references/repair-actions.md"
+      ],
+      "evidence_count": 1,
+      "expires_at": null,
+      "fingerprint": "bounded-local-repair",
+      "history": [
+        {
+          "event": "captured",
+          "reason": "new_pattern",
+          "ts": "2026-03-14T03:51:46.076722+00:00"
+        }
+      ],
+      "last_validated_at": "2026-03-14T03:51:46.076716+00:00",
+      "lifecycle_state": "validated",
+      "modes": [
+        "long"
+      ],
+      "outcome": "bounded recovery without crossing safeguards",
+      "pattern_id": "bounded-local-repair",
+      "promotion_count": 0,
+      "reusable": true,
+      "selection_count": 0,
+      "sequence": [
+        "detect",
+        "branch",
+        "probe",
+        "recover",
+        "record"
+      ],
+      "summary": "Local repair branches should stay probe-only and feed explicit recovery references",
+      "tags": [
+        "repair",
+        "local",
+        "orchestration"
+      ],
+      "trigger": "repairable local runtime failure",
+      "updated_at": "2026-03-14T03:51:46.076714+00:00",
+      "validation_count": 1
+    }
+  ],
+  "schema_version": 1
+}

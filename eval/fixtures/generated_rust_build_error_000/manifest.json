@@ -1,0 +1,16 @@
+{
+  "case_id": "generated_rust_build_error_000",
+  "files": [
+    "Cargo.toml",
+    "Cargo.lock",
+    "src/lib.rs"
+  ],
+  "dependencies": {},
+  "build_commands": [],
+  "expected_failure_command": "cd {workdir} && env PATH=\"$PWD/no_cc_path\" RUSTC=\"$HOME/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/bin/rustc\" \"$HOME/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/bin/cargo\" clean --quiet && env PATH=\"$PWD/no_cc_path\" RUSTC=\"$HOME/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/bin/rustc\" \"$HOME/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/bin/cargo\" test --quiet --lib",
+  "expected_failure_stderr_regex": "error: linker `cc` not found|linker .* not found",
+  "manifest_schema_version": 1,
+  "bash_self_contained": false,
+  "reverse_from_pattern": "rust.build_error.000",
+  "source_pool": "official"
+}

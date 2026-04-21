@@ -1,0 +1,5 @@
+{
+  "stderr": "Traceback (most recent call last):\n  File \"/home/user/project/app.py\", line 8, in <module>\n    import tomllib\n  File \"/home/user/project/app.py\", line 9, in <module>\n    config = tomllib.loads(open('pyproject.toml').read())\n  File \"/usr/lib/python3.11/tomllib/_parser.py\", line 68, in loads\n    pos = key_value_pair(src, pos, out, header, parse_float)\n  File \"/usr/lib/python3.11/tomllib/_parser.py\", line 331, in key_value_pair\n    raise suffixed_err(src, pos, 'Invalid value')\ntomllib.TOMLDecodeError: Invalid value (at line 14, column 12)",
+  "error_class": "config_error",
+  "source": "invalid TOML syntax in pyproject.toml"
+}

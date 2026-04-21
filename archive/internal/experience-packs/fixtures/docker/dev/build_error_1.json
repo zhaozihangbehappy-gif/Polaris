@@ -1,0 +1,5 @@
+{
+  "stderr": "COPY failed: file not found in build context or excluded by .dockerignore: stat src/package.json: file does not exist",
+  "error_class": "build_error",
+  "source": "docker build with COPY referencing file excluded by .dockerignore"
+}

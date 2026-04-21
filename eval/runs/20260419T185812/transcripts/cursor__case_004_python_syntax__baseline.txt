@@ -1,0 +1,26 @@
+[pre_failure_command]
+cd /tmp/_polaris_runs/20260419T185812/cursor/case_004_python_syntax/baseline && python3 app.py
+[pre_failure_output]
+
+  File "/tmp/_polaris_runs/20260419T185812/cursor/case_004_python_syntax/baseline/app.py", line 1
+    def greet(name)
+                   ^
+SyntaxError: expected ':'
+
+[pre_failure_reproduced]
+true
+[agent_transcript]
+[cursor manual transcript missing: /home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/eval/runs/manual_cursor/case_004_python_syntax__baseline.json]
+[post_fix_command]
+cd /tmp/_polaris_runs/20260419T185812/cursor/case_004_python_syntax/baseline && python3 app.py
+[post_fix_output]
+
+  File "/tmp/_polaris_runs/20260419T185812/cursor/case_004_python_syntax/baseline/app.py", line 1
+    def greet(name)
+                   ^
+SyntaxError: expected ':'
+
+[post_fix_ci_pass]
+False
+[contamination_hits]
+[]

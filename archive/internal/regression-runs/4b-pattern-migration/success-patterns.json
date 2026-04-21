@@ -1,0 +1,84 @@
+{
+  "patterns": [
+    {
+      "adapter": null,
+      "asset_version": 1,
+      "confidence": 70,
+      "created_at": "2026-01-01T00:00:00+00:00",
+      "demotion_count": 0,
+      "evidence": [
+        "e1"
+      ],
+      "evidence_count": 1,
+      "expires_at": null,
+      "fingerprint": "v1-test",
+      "last_validated_at": "2026-01-01T00:00:00+00:00",
+      "lifecycle_state": "experimental",
+      "migrated_from": "pre-step4",
+      "modes": [
+        "long"
+      ],
+      "outcome": "pass",
+      "pattern_id": "v1-test",
+      "promotion_count": 0,
+      "reusable": true,
+      "selection_count": 0,
+      "sequence": [
+        "a",
+        "b"
+      ],
+      "strategy_hints": {},
+      "summary": "v1 test pattern",
+      "tags": [
+        "test"
+      ],
+      "trigger": "test",
+      "updated_at": "2026-01-01T00:00:00+00:00",
+      "validation_count": 1
+    },
+    {
+      "adapter": null,
+      "asset_version": 2,
+      "best_lifecycle_state": "experimental",
+      "confidence": 60,
+      "created_at": "2026-03-15T13:36:50.524097+00:00",
+      "demotion_count": 0,
+      "evidence": [
+        "e2"
+      ],
+      "evidence_count": 1,
+      "expires_at": null,
+      "fingerprint": "v2-test",
+      "history": [
+        {
+          "event": "captured",
+          "reason": "new_pattern",
+          "ts": "2026-03-15T13:36:50.524123+00:00"
+        }
+      ],
+      "last_validated_at": "2026-03-15T13:36:50.524115+00:00",
+      "lifecycle_state": "experimental",
+      "modes": [
+        "long"
+      ],
+      "outcome": "pass",
+      "pattern_id": "v2-test",
+      "promotion_count": 0,
+      "reusable": true,
+      "selection_count": 0,
+      "sequence": [
+        "a",
+        "b"
+      ],
+      "strategy_hints": {},
+      "summary": "v2 test",
+      "tags": [
+        "test"
+      ],
+      "trigger": "test",
+      "updated_at": "2026-03-15T13:36:50.524113+00:00",
+      "validation_count": 1
+    }
+  ],
+  "schema_version": 1
+}

@@ -1,0 +1,12 @@
+{
+  "case_id": "case_004_python_syntax",
+  "source": "pattern_reverse",
+  "reverse_from_pattern": "python.syntax_error.000",
+  "ecosystem": "python",
+  "initial_prompt": "The Python script at {workdir}/app.py fails with a SyntaxError when run with `python3 app.py`. Fix the syntax error with the smallest safe edit, then verify the script runs.",
+  "success_criteria": {
+    "root_cause_regex": "SyntaxError|missing colon|syntax",
+    "fix_command_test": "cd {workdir} && python3 app.py"
+  },
+  "max_rounds": 8
+}

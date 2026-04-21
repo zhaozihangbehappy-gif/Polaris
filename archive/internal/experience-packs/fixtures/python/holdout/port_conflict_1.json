@@ -1,0 +1,5 @@
+{
+  "stderr": "Traceback (most recent call last):\n  File \"/home/user/project/manage.py\", line 22, in <module>\n    main()\n  File \"/home/user/project/manage.py\", line 18, in main\n    execute_from_command_line(sys.argv)\n  File \"/home/user/.local/lib/python3.10/site-packages/django/core/management/__init__.py\", line 442, in execute_from_command_line\n    utility.execute()\n  File \"/home/user/.local/lib/python3.10/site-packages/django/core/servers/basehttp.py\", line 76, in run\n    httpd = self.server_class(self.addr, WSGIRequestHandler)\n  File \"/usr/lib/python3.10/socketserver.py\", line 452, in server_bind\n    self.socket.bind(self.server_address)\nOSError: [Errno 98] Address already in use",
+  "error_class": "port_conflict",
+  "source": "Django runserver port conflict"
+}

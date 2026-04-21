@@ -1,0 +1,163 @@
+{
+  "ecosystem": "terraform",
+  "error_class": "config_error",
+  "schema_version": 4,
+  "records": [
+    {
+      "pattern_id": "candidate.terraform.config_error.000",
+      "ecosystem": "terraform",
+      "error_class": "config_error",
+      "description": "HCL interpolation deprecated syntax",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "interpolation-only expressions are deprecated"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "terraform version 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "interpolation-only expressions are deprecated"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Terraform config_error: HCL interpolation deprecated syntax"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.terraform.config_error.001",
+      "ecosystem": "terraform",
+      "error_class": "config_error",
+      "description": "for_each with unknown values",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "for_each.*unknown"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "terraform version 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "for_each.*unknown"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Terraform config_error: for_each with unknown values"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.terraform.config_error.002",
+      "ecosystem": "terraform",
+      "error_class": "config_error",
+      "description": "count vs for_each mix-up",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "count.*for_each.*cannot"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "terraform version 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "count.*for_each.*cannot"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Terraform config_error: count vs for_each mix-up"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.terraform.config_error.003",
+      "ecosystem": "terraform",
+      "error_class": "config_error",
+      "description": "sensitive output to module caller",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "sensitive.*output"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "terraform version 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "sensitive.*output"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Terraform config_error: sensitive output to module caller"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    }
+  ]
+}

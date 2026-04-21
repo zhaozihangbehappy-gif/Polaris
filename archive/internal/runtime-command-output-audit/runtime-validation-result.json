@@ -1,0 +1,8 @@
+{
+  "payload": {
+    "actual_stdout": "POLARIS_COMMAND_OUTPUT::STANDARD::shell-local",
+    "expected_stdout": "POLARIS_COMMAND_OUTPUT::STANDARD::shell-local"
+  },
+  "status": "ok",
+  "validator_kind": "command_output_result"
+}

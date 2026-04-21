@@ -1,0 +1,10 @@
+{
+  "adapter": "file-transform-local",
+  "contract_kind": "file_transform",
+  "output_file": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/runtime-deep-file-transform-check/runtime-transform-output.txt",
+  "rendered_command": "python3 /home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/scripts/polaris_file_transform.py --input-file /home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/runtime-deep-file-transform-check/runtime-transform-input.txt --output-file /home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/runtime-deep-file-transform-check/runtime-transform-output.txt --marker POLARIS_TRANSFORM::DEEP::file-transform-local --mode append-marker",
+  "returncode": 0,
+  "status": "ok",
+  "stderr": "",
+  "stdout": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/runtime-deep-file-transform-check/runtime-transform-output.txt"
+}

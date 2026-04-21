@@ -1,0 +1,17 @@
+{
+  "case_id": "generated_java_build_error_002",
+  "source": "authored_fixture",
+  "reverse_from_pattern": "java.build_error.002",
+  "pattern_id": "java.build_error.002",
+  "source_pool": "official",
+  "ecosystem": "java",
+  "error_class": "build_error",
+  "initial_prompt": "In the project at {workdir}, this java build_error fails: Gradle compileJava task failure \u2014 check JAVA_HOME and source compatibility. Reproduce the failure with `bash build.sh`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+  "success_criteria": {
+    "root_cause_regex": ".+",
+    "fix_command_test": "cd {workdir} && bash build.sh"
+  },
+  "max_rounds": 6,
+  "fixture_strategy": "authored_files",
+  "promotion_eligible": true
+}

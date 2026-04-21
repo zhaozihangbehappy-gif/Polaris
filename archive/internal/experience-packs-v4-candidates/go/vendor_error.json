@@ -1,0 +1,241 @@
+{
+  "ecosystem": "go",
+  "error_class": "vendor_error",
+  "schema_version": 4,
+  "records": [
+    {
+      "pattern_id": "candidate.go.vendor_error.000",
+      "ecosystem": "go",
+      "error_class": "vendor_error",
+      "description": "vendor/modules.txt out of sync",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "inconsistent vendoring"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "go env 2>&1 | head -20",
+        "trigger_env": {},
+        "expected_stderr_match": "inconsistent vendoring"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Go vendor_error: vendor/modules.txt out of sync"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.go.vendor_error.001",
+      "ecosystem": "go",
+      "error_class": "vendor_error",
+      "description": "vendored package missing LICENSE",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "vendor.*LICENSE.*missing"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "go env 2>&1 | head -20",
+        "trigger_env": {},
+        "expected_stderr_match": "vendor.*LICENSE.*missing"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Go vendor_error: vendored package missing LICENSE"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.go.vendor_error.002",
+      "ecosystem": "go",
+      "error_class": "vendor_error",
+      "description": "vendor and module version drift",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "vendor.*does not match go\\.mod"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "go env 2>&1 | head -20",
+        "trigger_env": {},
+        "expected_stderr_match": "vendor.*does not match go\\.mod"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Go vendor_error: vendor and module version drift"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.go.vendor_error.003",
+      "ecosystem": "go",
+      "error_class": "vendor_error",
+      "description": "go build -mod=vendor with no vendor dir",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "no vendor directory"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "go env 2>&1 | head -20",
+        "trigger_env": {},
+        "expected_stderr_match": "no vendor directory"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Go vendor_error: go build -mod=vendor with no vendor dir"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.go.vendor_error.004",
+      "ecosystem": "go",
+      "error_class": "vendor_error",
+      "description": "vendor exclusions via go mod why",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "go mod why.*not imported"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "go env 2>&1 | head -20",
+        "trigger_env": {},
+        "expected_stderr_match": "go mod why.*not imported"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Go vendor_error: vendor exclusions via go mod why"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.go.vendor_error.005",
+      "ecosystem": "go",
+      "error_class": "vendor_error",
+      "description": "vendor shipping generated code stale",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "vendor.*out of date"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "go env 2>&1 | head -20",
+        "trigger_env": {},
+        "expected_stderr_match": "vendor.*out of date"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Go vendor_error: vendor shipping generated code stale"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    }
+  ]
+}

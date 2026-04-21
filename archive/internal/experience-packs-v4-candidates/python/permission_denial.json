@@ -1,0 +1,319 @@
+{
+  "ecosystem": "python",
+  "error_class": "permission_denial",
+  "schema_version": 4,
+  "records": [
+    {
+      "pattern_id": "candidate.python.permission_denial.000",
+      "ecosystem": "python",
+      "error_class": "permission_denial",
+      "description": "pip install needs sudo globally",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "PermissionError.*site-packages"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "id && umask 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "PermissionError.*site-packages"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Adjust permissions or use venv: pip install needs sudo globally"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.permission_denial.001",
+      "ecosystem": "python",
+      "error_class": "permission_denial",
+      "description": "Read-only fs for cache",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "\\[Errno 30\\] Read-only file system"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "id && umask 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "\\[Errno 30\\] Read-only file system"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Adjust permissions or use venv: Read-only fs for cache"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.permission_denial.002",
+      "ecosystem": "python",
+      "error_class": "permission_denial",
+      "description": "Cannot write to /usr/local/lib",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "Permission denied.*/usr/local/lib"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "id && umask 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "Permission denied.*/usr/local/lib"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Adjust permissions or use venv: Cannot write to /usr/local/lib"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.permission_denial.003",
+      "ecosystem": "python",
+      "error_class": "permission_denial",
+      "description": "Temp dir permission in container",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "PermissionError.*/tmp"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "id && umask 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "PermissionError.*/tmp"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Adjust permissions or use venv: Temp dir permission in container"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.permission_denial.004",
+      "ecosystem": "python",
+      "error_class": "permission_denial",
+      "description": "Pickle file unwritable",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "PermissionError.*\\.pkl"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "id && umask 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "PermissionError.*\\.pkl"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Adjust permissions or use venv: Pickle file unwritable"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.permission_denial.005",
+      "ecosystem": "python",
+      "error_class": "permission_denial",
+      "description": "Pytest cache dir unwritable",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "\\.pytest_cache.*Permission denied"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "id && umask 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "\\.pytest_cache.*Permission denied"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Adjust permissions or use venv: Pytest cache dir unwritable"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.permission_denial.006",
+      "ecosystem": "python",
+      "error_class": "permission_denial",
+      "description": "Django migrations dir readonly",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "migrations.*Permission denied"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "id && umask 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "migrations.*Permission denied"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Adjust permissions or use venv: Django migrations dir readonly"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.permission_denial.007",
+      "ecosystem": "python",
+      "error_class": "permission_denial",
+      "description": "Coverage data file unwritable",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "\\.coverage.*Permission denied"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "id && umask 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "\\.coverage.*Permission denied"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Adjust permissions or use venv: Coverage data file unwritable"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    }
+  ]
+}

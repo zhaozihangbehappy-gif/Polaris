@@ -1,0 +1,54 @@
+{
+  "patterns": [
+    {
+      "adapter": null,
+      "asset_version": 2,
+      "best_lifecycle_state": "experimental",
+      "confidence": 73,
+      "created_at": "2026-01-01T00:00:00+00:00",
+      "demotion_count": 0,
+      "evidence": [
+        "e1",
+        "e2"
+      ],
+      "evidence_count": 2,
+      "expires_at": null,
+      "fingerprint": "merge-target",
+      "history": [
+        {
+          "best_lifecycle_state": "experimental",
+          "confidence": 73,
+          "event": "merged_validation",
+          "evidence_count": 2,
+          "reason": "rerun_capture",
+          "retained_lifecycle": "experimental",
+          "ts": "2026-03-15T13:36:50.570366+00:00",
+          "validation_count": 2
+        }
+      ],
+      "last_validated_at": "2026-03-15T13:36:50.570365+00:00",
+      "lifecycle_state": "experimental",
+      "modes": [
+        "long"
+      ],
+      "outcome": "pass",
+      "pattern_id": "merge-target",
+      "promotion_count": 0,
+      "reusable": true,
+      "selection_count": 0,
+      "sequence": [
+        "a",
+        "b"
+      ],
+      "strategy_hints": {},
+      "summary": "updated pattern",
+      "tags": [
+        "test"
+      ],
+      "trigger": "test",
+      "updated_at": "2026-03-15T13:36:50.570364+00:00",
+      "validation_count": 2
+    }
+  ],
+  "schema_version": 1
+}

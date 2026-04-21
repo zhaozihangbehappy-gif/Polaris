@@ -1,0 +1,17 @@
+{
+  "case_id": "generated_java_missing_dependency_000",
+  "source": "authored_fixture",
+  "reverse_from_pattern": "java.missing_dependency.000",
+  "pattern_id": "java.missing_dependency.000",
+  "source_pool": "official",
+  "ecosystem": "java",
+  "error_class": "missing_dependency",
+  "initial_prompt": "In the project at {workdir}, this java missing_dependency fails: Java ClassNotFoundException \u2014 add cwd and lib to CLASSPATH. Reproduce the failure with `bash build.sh`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+  "success_criteria": {
+    "root_cause_regex": ".+",
+    "fix_command_test": "cd {workdir} && bash build.sh"
+  },
+  "max_rounds": 6,
+  "fixture_strategy": "authored_files",
+  "promotion_eligible": true
+}

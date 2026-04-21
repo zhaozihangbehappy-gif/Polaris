@@ -1,0 +1,9 @@
+{
+  "name": "node-resource-exhaustion-oom",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "NODE_OPTIONS=--max-old-space-size=24 node memory-check.js"
+  }
+}

@@ -1,0 +1,319 @@
+{
+  "ecosystem": "docker",
+  "error_class": "auth_error",
+  "schema_version": 4,
+  "records": [
+    {
+      "pattern_id": "candidate.docker.auth_error.000",
+      "ecosystem": "docker",
+      "error_class": "auth_error",
+      "description": "docker login saved plain text warning",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "credentials are stored unencrypted"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "docker info 2>&1 | head -5",
+        "trigger_env": {},
+        "expected_stderr_match": "credentials are stored unencrypted"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Docker auth_error: docker login saved plain text warning"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.docker.auth_error.001",
+      "ecosystem": "docker",
+      "error_class": "auth_error",
+      "description": "ECR token expired mid-build",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "no basic auth credentials"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "docker info 2>&1 | head -5",
+        "trigger_env": {},
+        "expected_stderr_match": "no basic auth credentials"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Docker auth_error: ECR token expired mid-build"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.docker.auth_error.002",
+      "ecosystem": "docker",
+      "error_class": "auth_error",
+      "description": "GCR keyless auth missing workload identity",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "gcr\\.io.*unauthorized"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "docker info 2>&1 | head -5",
+        "trigger_env": {},
+        "expected_stderr_match": "gcr\\.io.*unauthorized"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Docker auth_error: GCR keyless auth missing workload identity"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.docker.auth_error.003",
+      "ecosystem": "docker",
+      "error_class": "auth_error",
+      "description": "ACR AAD auth refresh token bad",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "azurecr.*401"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "docker info 2>&1 | head -5",
+        "trigger_env": {},
+        "expected_stderr_match": "azurecr.*401"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Docker auth_error: ACR AAD auth refresh token bad"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.docker.auth_error.004",
+      "ecosystem": "docker",
+      "error_class": "auth_error",
+      "description": "ghcr.io PAT needs read:packages scope",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "ghcr\\.io.*401|ghcr\\.io.*unauthorized"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "docker info 2>&1 | head -5",
+        "trigger_env": {},
+        "expected_stderr_match": "ghcr\\.io.*401|ghcr\\.io.*unauthorized"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Docker auth_error: ghcr.io PAT needs read:packages scope"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.docker.auth_error.005",
+      "ecosystem": "docker",
+      "error_class": "auth_error",
+      "description": "docker-config.json corrupted",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "error getting credentials.*error parsing"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "docker info 2>&1 | head -5",
+        "trigger_env": {},
+        "expected_stderr_match": "error getting credentials.*error parsing"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Docker auth_error: docker-config.json corrupted"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.docker.auth_error.006",
+      "ecosystem": "docker",
+      "error_class": "auth_error",
+      "description": "credHelpers binary missing",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "credential-helper.*not found"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "docker info 2>&1 | head -5",
+        "trigger_env": {},
+        "expected_stderr_match": "credential-helper.*not found"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Docker auth_error: credHelpers binary missing"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.docker.auth_error.007",
+      "ecosystem": "docker",
+      "error_class": "auth_error",
+      "description": "registry proxy cache auth pass-through",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "registry.*proxy.*401"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "docker info 2>&1 | head -5",
+        "trigger_env": {},
+        "expected_stderr_match": "registry.*proxy.*401"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Docker auth_error: registry proxy cache auth pass-through"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    }
+  ]
+}

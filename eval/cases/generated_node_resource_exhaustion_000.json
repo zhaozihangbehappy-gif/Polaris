@@ -1,0 +1,17 @@
+{
+  "case_id": "generated_node_resource_exhaustion_000",
+  "source": "authored_fixture",
+  "reverse_from_pattern": "node.resource_exhaustion.000",
+  "pattern_id": "node.resource_exhaustion.000",
+  "source_pool": "official",
+  "ecosystem": "node",
+  "error_class": "resource_exhaustion",
+  "initial_prompt": "In the project at {workdir}, this node resource_exhaustion fails: Node.js V8 heap OOM \u2014 increase max old space size via NODE_OPTIONS. Reproduce the failure with `npm test`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+  "success_criteria": {
+    "root_cause_regex": ".+",
+    "fix_command_test": "cd {workdir} && npm test"
+  },
+  "max_rounds": 6,
+  "fixture_strategy": "authored_files",
+  "promotion_eligible": true
+}

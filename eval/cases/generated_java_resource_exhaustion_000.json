@@ -1,0 +1,17 @@
+{
+  "case_id": "generated_java_resource_exhaustion_000",
+  "source": "authored_fixture",
+  "reverse_from_pattern": "java.resource_exhaustion.000",
+  "pattern_id": "java.resource_exhaustion.000",
+  "source_pool": "official",
+  "ecosystem": "java",
+  "error_class": "resource_exhaustion",
+  "initial_prompt": "In the project at {workdir}, this java resource_exhaustion fails: Java OOM heap space \u2014 increase max heap via JAVA_OPTS. Reproduce the failure with `javac MemoryExhaustion.java && JAVA_OPTS=\"-Xmx64m\" java MemoryExhaustion`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+  "success_criteria": {
+    "root_cause_regex": ".+",
+    "fix_command_test": "cd {workdir} && javac MemoryExhaustion.java && JAVA_OPTS=\"-Xmx64m\" java MemoryExhaustion"
+  },
+  "max_rounds": 6,
+  "fixture_strategy": "authored_files",
+  "promotion_eligible": true
+}

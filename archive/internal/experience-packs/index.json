@@ -1,0 +1,124 @@
+{
+  "schema_version": 3,
+  "ecosystems": {
+    "docker": {
+      "error_classes": [
+        "auth_error",
+        "build_error",
+        "config_error",
+        "image_not_found",
+        "network_error",
+        "permission_denial",
+        "port_conflict",
+        "resource_exhaustion",
+        "timeout",
+        "version_conflict"
+      ],
+      "total_records": 21,
+      "pack_version": "3.0"
+    },
+    "go": {
+      "error_classes": [
+        "build_error",
+        "config_error",
+        "missing_dependency",
+        "network_error",
+        "permission_denial",
+        "resource_exhaustion",
+        "timeout",
+        "version_conflict"
+      ],
+      "total_records": 18,
+      "pack_version": "3.0"
+    },
+    "java": {
+      "error_classes": [
+        "build_error",
+        "config_error",
+        "missing_dependency",
+        "network_error",
+        "permission_denial",
+        "resource_exhaustion",
+        "timeout",
+        "version_conflict"
+      ],
+      "total_records": 21,
+      "pack_version": "3.0"
+    },
+    "node": {
+      "error_classes": [
+        "build_error",
+        "config_error",
+        "encoding_error",
+        "file_not_found",
+        "missing_dependency",
+        "network_error",
+        "permission_denial",
+        "port_conflict",
+        "resource_exhaustion",
+        "timeout",
+        "version_conflict"
+      ],
+      "total_records": 25,
+      "pack_version": "3.0"
+    },
+    "python": {
+      "error_classes": [
+        "build_error",
+        "config_error",
+        "encoding_error",
+        "file_not_found",
+        "missing_dependency",
+        "network_error",
+        "permission_denial",
+        "port_conflict",
+        "resource_exhaustion",
+        "syntax_error",
+        "timeout",
+        "version_conflict"
+      ],
+      "total_records": 28,
+      "pack_version": "3.0"
+    },
+    "ruby": {
+      "error_classes": [
+        "build_error",
+        "config_error",
+        "encoding_error",
+        "missing_dependency",
+        "network_error",
+        "permission_denial",
+        "version_conflict"
+      ],
+      "total_records": 15,
+      "pack_version": "3.0"
+    },
+    "rust": {
+      "error_classes": [
+        "build_error",
+        "config_error",
+        "missing_dependency",
+        "network_error",
+        "permission_denial",
+        "resource_exhaustion",
+        "timeout",
+        "version_conflict"
+      ],
+      "total_records": 20,
+      "pack_version": "3.0"
+    },
+    "terraform": {
+      "error_classes": [
+        "auth_error",
+        "build_error",
+        "config_error",
+        "network_error",
+        "permission_denial",
+        "timeout",
+        "version_conflict"
+      ],
+      "total_records": 19,
+      "pack_version": "3.0"
+    }
+  }
+}

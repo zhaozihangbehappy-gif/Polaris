@@ -1,0 +1,8 @@
+{
+  "name": "node-missing-dependency-node-path",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "test": "node --loader ./node-path-loader.mjs app.mjs"
+  }
+}

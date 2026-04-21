@@ -1,0 +1,5 @@
+{
+  "stderr": "/home/user/project/src/main/java/com/myapp/App.java:3: error: package org.apache.commons.lang3 does not exist\nimport org.apache.commons.lang3.StringUtils;\n                                ^\n/home/user/project/src/main/java/com/myapp/App.java:14: error: cannot find symbol\n        String result = StringUtils.capitalize(input);\n                        ^\n  symbol:   variable StringUtils\n  location: class App\n2 errors",
+  "error_class": "missing_dependency",
+  "source": "commons-lang3 not declared in maven pom.xml"
+}

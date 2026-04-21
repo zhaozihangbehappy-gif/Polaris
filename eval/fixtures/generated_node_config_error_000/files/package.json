@@ -1,0 +1,7 @@
+{
+  "name": "config-error-repro",
+  "version": "1.0.0",
+  "scripts": {
+    "test": "node verify-package.js",
+  }
+}

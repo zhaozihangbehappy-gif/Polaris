@@ -1,0 +1,15 @@
+{
+  "case_id": "generated_python_port_conflict_000",
+  "files": [
+    "server.py",
+    "test_port_conflict.py"
+  ],
+  "dependencies": {},
+  "build_commands": [],
+  "expected_failure_command": "cd {workdir} && python3 -m unittest -q",
+  "expected_failure_stderr_regex": "OSError: \\[Errno 98\\] Address already in use|Address already in use",
+  "manifest_schema_version": 1,
+  "bash_self_contained": false,
+  "reverse_from_pattern": "python.port_conflict.000",
+  "source_pool": "official"
+}

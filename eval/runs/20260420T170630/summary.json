@@ -1,0 +1,13 @@
+{
+  "runners": [
+    "claude_code"
+  ],
+  "seed": 42,
+  "reconstructed": true,
+  "run_id": "20260420T170630",
+  "cases_total": 65,
+  "paired_cases": 65,
+  "runs_attempted": 130,
+  "runs_completed": 130,
+  "ci_pass_true_count": 67
+}

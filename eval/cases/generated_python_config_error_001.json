@@ -1,0 +1,17 @@
+{
+  "case_id": "generated_python_config_error_001",
+  "source": "authored_fixture",
+  "reverse_from_pattern": "python.config_error.001",
+  "pattern_id": "python.config_error.001",
+  "source_pool": "official",
+  "ecosystem": "python",
+  "error_class": "config_error",
+  "initial_prompt": "In the project at {workdir}, this python config_error fails: TOML config file has invalid syntax \u2014 check file for syntax errors. Reproduce the failure with `python3 -m unittest`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+  "success_criteria": {
+    "root_cause_regex": ".+",
+    "fix_command_test": "cd {workdir} && python3 -m unittest"
+  },
+  "max_rounds": 6,
+  "fixture_strategy": "authored_files",
+  "promotion_eligible": true
+}

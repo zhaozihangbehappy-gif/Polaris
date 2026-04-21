@@ -1,0 +1,31 @@
+{
+  "schema_version": 6,
+  "run_id": "test",
+  "goal": "test",
+  "mode": "long",
+  "execution_profile": "deep",
+  "status": "completed",
+  "phase": "completed",
+  "learning_backlog": [
+    {
+      "queued_at": "2026-01-01T00:00:00+00:00",
+      "kind": "success_marker",
+      "payload": {
+        "pattern_id": "test"
+      }
+    },
+    {
+      "queued_at": "2026-01-01T00:00:00+00:00",
+      "kind": "rule_candidate",
+      "payload": {
+        "rule_id": "test"
+      }
+    }
+  ],
+  "compat": {
+    "upgraded_from": null,
+    "upgraded_at": null,
+    "runtime_format": 1,
+    "resumed_count": 0
+  }
+}

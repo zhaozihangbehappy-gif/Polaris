@@ -1,0 +1,13 @@
+{
+  "case_id": "real_003_setuptools_editable_pep660",
+  "source": "real_issue",
+  "ecosystem": "python",
+  "initial_prompt": "At {workdir} is a minimal pyproject.toml-only Python package pinned to\nsetuptools==61.0.0 as its build backend. `pip install -e .` fails with\n\"build backend is missing the 'build_editable' hook\" and tells the user\nto \"Consider using a build backend that supports PEP 660.\" A non-editable\ninstall succeeds. Diagnose the setuptools 61.0.0 regression and apply a\ncorrect fix so that `pip install -e .` succeeds. Do not remove the\npyproject.toml, and do not switch to a non-editable install.",
+  "success_criteria": {
+    "root_cause_regex": "setuptools.*61\\.0\\.0|PEP 660|build_editable|setup\\.cfg|requires.*setuptools",
+    "fix_command_test": "cd {workdir} && pip install --no-index --find-links=./vendor --no-build-isolation -e ."
+  },
+  "max_rounds": 12,
+  "real_issue_url": "https://github.com/pypa/setuptools/issues/3226",
+  "pain_category": "unfamiliar_ecosystem"
+}

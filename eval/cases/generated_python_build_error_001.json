@@ -1,0 +1,17 @@
+{
+  "case_id": "generated_python_build_error_001",
+  "source": "authored_fixture",
+  "reverse_from_pattern": "python.build_error.001",
+  "pattern_id": "python.build_error.001",
+  "source_pool": "official",
+  "ecosystem": "python",
+  "error_class": "build_error",
+  "initial_prompt": "In the project at {workdir}, this python build_error fails: C/C++ compiler not found or failed \u2014 ensure CC/CXX env vars point to installed compiler. Reproduce the failure with `python3 build_native.py`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+  "success_criteria": {
+    "root_cause_regex": ".+",
+    "fix_command_test": "cd {workdir} && python3 build_native.py"
+  },
+  "max_rounds": 6,
+  "fixture_strategy": "authored_files",
+  "promotion_eligible": true
+}

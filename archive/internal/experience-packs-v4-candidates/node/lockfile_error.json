@@ -1,0 +1,434 @@
+{
+  "ecosystem": "node",
+  "error_class": "lockfile_error",
+  "schema_version": 4,
+  "records": [
+    {
+      "pattern_id": "candidate.node.lockfile_error.000",
+      "ecosystem": "node",
+      "error_class": "lockfile_error",
+      "description": "pnpm-lock outdated ERR_PNPM_OUTDATED_LOCKFILE",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "ERR_PNPM_OUTDATED_LOCKFILE"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "ls *lock* 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "ERR_PNPM_OUTDATED_LOCKFILE"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Lockfile: pnpm-lock outdated ERR_PNPM_OUTDATED_LOCKFILE"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ],
+      "authored_fixture": {
+        "authored_at": "2026-04-20T10:19:03+00:00",
+        "authored_by": "codex",
+        "authored_with_prompt_sha256": "2d8a710b412a77a12e8fe996a9ac4506a9fc4006fcf230686ca2f1e02cd9c6c6",
+        "verification_command": "pnpm install --frozen-lockfile --offline --lockfile-only 1>&2",
+        "expected_stderr_regex": "ERR_PNPM_OUTDATED_LOCKFILE",
+        "files": [
+          {
+            "path": "package.json",
+            "content": "{\n  \"name\": \"pnpm-lockfile-error-repro\",\n  \"version\": \"1.0.0\",\n  \"private\": true,\n  \"dependencies\": {\n    \"local-lib\": \"file:lib\"\n  }\n}\n"
+          },
+          {
+            "path": "lib/package.json",
+            "content": "{\n  \"name\": \"local-lib\",\n  \"version\": \"1.0.0\"\n}\n"
+          },
+          {
+            "path": "pnpm-lock.yaml",
+            "content": "lockfileVersion: '9.0'\n\nsettings:\n  autoInstallPeers: true\n  excludeLinksFromLockfile: false\n\nimporters:\n\n  .:\n    dependencies:\n      local-lib:\n        specifier: file:./lib\n        version: file:lib\n\npackages:\n\n  local-lib@file:lib:\n    resolution: {directory: lib, type: directory}\n\nsnapshots:\n\n  local-lib@file:lib: {}\n"
+          }
+        ],
+        "reference_fix_files": [
+          {
+            "path": "pnpm-lock.yaml",
+            "content": "lockfileVersion: '9.0'\n\nsettings:\n  autoInstallPeers: true\n  excludeLinksFromLockfile: false\n\nimporters:\n\n  .:\n    dependencies:\n      local-lib:\n        specifier: file:lib\n        version: file:lib\n\npackages:\n\n  local-lib@file:lib:\n    resolution: {directory: lib, type: directory}\n\nsnapshots:\n\n  local-lib@file:lib: {}\n"
+          }
+        ],
+        "fix_rationale": "Update pnpm-lock.yaml so the locked dependency specifier matches package.json.",
+        "reviewer_record": {
+          "validated_in_sandbox_at": "2026-04-20T10:19:03+00:00",
+          "sandbox_pre_fix_exit_code": 1,
+          "sandbox_pre_fix_stderr_match": true,
+          "sandbox_post_fix_exit_code": 0,
+          "sandbox_workdir_hash_pre": "5fdba1a0927dd4c265c9a553d460938418a02dac4f6697e0162fc75570ea4ae4",
+          "sandbox_workdir_hash_post": "78a448d495f2590d00bfde76d77e64dccc045160cf2e0e857703f289453ec1a4",
+          "notes": "authored by codex; pre-fix fails+matches regex, post-fix passes"
+        }
+      }
+    },
+    {
+      "pattern_id": "candidate.node.lockfile_error.001",
+      "ecosystem": "node",
+      "error_class": "lockfile_error",
+      "description": "npm ci lockfile mismatch",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "npm ERR!.*can only install packages when your package\\.json"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "ls *lock* 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "npm ERR!.*can only install packages when your package\\.json"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Lockfile: npm ci lockfile mismatch"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.node.lockfile_error.002",
+      "ecosystem": "node",
+      "error_class": "lockfile_error",
+      "description": "yarn.lock integrity check failed",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "yarn.*Integrity check failed"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "ls *lock* 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "yarn.*Integrity check failed"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Lockfile: yarn.lock integrity check failed"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.node.lockfile_error.003",
+      "ecosystem": "node",
+      "error_class": "lockfile_error",
+      "description": "mixed npm+pnpm lockfiles",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "both package-lock\\.json and pnpm-lock\\.yaml"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "ls *lock* 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "both package-lock\\.json and pnpm-lock\\.yaml"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Lockfile: mixed npm+pnpm lockfiles"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.node.lockfile_error.004",
+      "ecosystem": "node",
+      "error_class": "lockfile_error",
+      "description": "lockfile schema version bump",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "ERR_PNPM_LOCKFILE_BREAKING_CHANGE"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "ls *lock* 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "ERR_PNPM_LOCKFILE_BREAKING_CHANGE"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Lockfile: lockfile schema version bump"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.node.lockfile_error.005",
+      "ecosystem": "node",
+      "error_class": "lockfile_error",
+      "description": "corepack signature mismatch",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "corepack.*signature"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "ls *lock* 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "corepack.*signature"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Lockfile: corepack signature mismatch"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.node.lockfile_error.006",
+      "ecosystem": "node",
+      "error_class": "lockfile_error",
+      "description": "package-lock v3 vs v2",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "npm ERR!.*lockfileVersion"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "ls *lock* 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "npm ERR!.*lockfileVersion"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Lockfile: package-lock v3 vs v2"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.node.lockfile_error.007",
+      "ecosystem": "node",
+      "error_class": "lockfile_error",
+      "description": "yarn berry vs classic lock format",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "yarn\\.lock.*header"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "ls *lock* 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "yarn\\.lock.*header"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Lockfile: yarn berry vs classic lock format"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.node.lockfile_error.008",
+      "ecosystem": "node",
+      "error_class": "lockfile_error",
+      "description": "lockfile drift after manual edit package.json",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "lockfile.*out of sync"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "ls *lock* 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "lockfile.*out of sync"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Lockfile: lockfile drift after manual edit package.json"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.node.lockfile_error.009",
+      "ecosystem": "node",
+      "error_class": "lockfile_error",
+      "description": "missing optional dep causes lock mismatch",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "missing optional dependency"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "ls *lock* 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "missing optional dependency"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Lockfile: missing optional dep causes lock mismatch"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    }
+  ]
+}

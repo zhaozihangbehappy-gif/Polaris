@@ -1,0 +1,163 @@
+{
+  "ecosystem": "ruby",
+  "error_class": "version_conflict",
+  "schema_version": 4,
+  "records": [
+    {
+      "pattern_id": "candidate.ruby.version_conflict.000",
+      "ecosystem": "ruby",
+      "error_class": "version_conflict",
+      "description": "rbenv version file missing",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "rbenv: version .* is not installed"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "ruby --version 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "rbenv: version .* is not installed"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Ruby version_conflict: rbenv version file missing"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.ruby.version_conflict.001",
+      "ecosystem": "ruby",
+      "error_class": "version_conflict",
+      "description": "Gemfile ruby version unavailable",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "Your Ruby version is .* but your Gemfile specified"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "ruby --version 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "Your Ruby version is .* but your Gemfile specified"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Ruby version_conflict: Gemfile ruby version unavailable"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.ruby.version_conflict.002",
+      "ecosystem": "ruby",
+      "error_class": "version_conflict",
+      "description": "activesupport vs actionpack drift",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "activesupport.*actionpack.*incompatible"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "ruby --version 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "activesupport.*actionpack.*incompatible"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Ruby version_conflict: activesupport vs actionpack drift"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.ruby.version_conflict.003",
+      "ecosystem": "ruby",
+      "error_class": "version_conflict",
+      "description": "rails 7 vs sprockets 3 incompat",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "sprockets.*rails.*incompatible"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "ruby --version 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "sprockets.*rails.*incompatible"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Ruby version_conflict: rails 7 vs sprockets 3 incompat"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    }
+  ]
+}

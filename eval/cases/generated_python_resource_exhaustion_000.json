@@ -1,0 +1,17 @@
+{
+  "case_id": "generated_python_resource_exhaustion_000",
+  "source": "authored_fixture",
+  "reverse_from_pattern": "python.resource_exhaustion.000",
+  "pattern_id": "python.resource_exhaustion.000",
+  "source_pool": "official",
+  "ecosystem": "python",
+  "error_class": "resource_exhaustion",
+  "initial_prompt": "In the project at {workdir}, this python resource_exhaustion fails: Python ran out of memory \u2014 limit malloc arenas to reduce memory fragmentation. Reproduce the failure with `python3 memory_job.py`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+  "success_criteria": {
+    "root_cause_regex": ".+",
+    "fix_command_test": "cd {workdir} && python3 memory_job.py"
+  },
+  "max_rounds": 6,
+  "fixture_strategy": "authored_files",
+  "promotion_eligible": true
+}

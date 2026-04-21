@@ -1,0 +1,26 @@
+{
+  "candidate_fixes": [
+    "move the operation to a writable local location",
+    "reduce the action to a local alternative that fits the current environment"
+  ],
+  "confidence": "medium",
+  "depth_reason": "nonrepair_stop",
+  "escalate": true,
+  "evidence": [
+    "Permission denied while writing file"
+  ],
+  "failure_type": "permission_denial",
+  "next_depth": null,
+  "nonrepair_stop": true,
+  "probe_budget": 0,
+  "recommended_tree": "nonrepair_stop",
+  "references": [
+    "Polaris/references/repair-actions.md",
+    "Polaris/references/stop-classifications.md"
+  ],
+  "repair_class": "nonrepair_stop",
+  "repair_depth": "shallow",
+  "retry_guidance": "do not retry the same blocked action until the scope is reduced or the user changes the request",
+  "should_deepen": false,
+  "suggested_rule_layer": "hard"
+}

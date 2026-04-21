@@ -1,0 +1,136 @@
+{
+  "output_file": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/runtime-step2-repeat3/runtime-execution-result.json",
+  "payload": {
+    "adapter": "shell-local",
+    "applied_rule_ids": [
+      "stop-on-nonrepair-denial"
+    ],
+    "applied_rule_layers": [
+      "hard"
+    ],
+    "executed_ordering": [
+      "init",
+      "plan",
+      "select-adapter",
+      "execute",
+      "validate"
+    ],
+    "execution_contract": {
+      "kind": "runner",
+      "pattern": "standard-local-success-marker-success-5328e8b69290",
+      "rule_count": 1,
+      "strategy": {
+        "execution_ordering": [
+          "init",
+          "plan",
+          "select-adapter",
+          "execute",
+          "validate"
+        ],
+        "fallback_choice": "sticky-adapter-first",
+        "retry_policy": "respect-hard-stop-rules",
+        "strategy_trace": {
+          "execution_kind": "runner",
+          "execution_profile": "standard",
+          "experimental_rules": [],
+          "hard_rules": [
+            "stop-on-nonrepair-denial"
+          ],
+          "selected_pattern": "standard-local-success-marker-success-5328e8b69290",
+          "soft_rules": []
+        },
+        "validation_strategy": "runner-contract-strict"
+      }
+    },
+    "execution_profile": "standard",
+    "goal": "Demonstrate Polaris local orchestration flow",
+    "mode": "short",
+    "notes": [
+      "task executed through adapter contract",
+      "selected rules and pattern were supplied to the runner"
+    ],
+    "result": {
+      "stage_count": 5,
+      "summary": "Executed local task for goal: Demonstrate Polaris local orchestration flow",
+      "used_pattern_guidance": true,
+      "used_rule_guidance": true
+    },
+    "selected_pattern": "standard-local-success-marker-success-5328e8b69290",
+    "selected_pattern_sequence": [
+      "init",
+      "plan",
+      "select-adapter",
+      "execute",
+      "validate"
+    ],
+    "stage_results": [
+      {
+        "details": {
+          "execution_profile": "standard",
+          "mode": "short"
+        },
+        "status": "ok",
+        "step": "init"
+      },
+      {
+        "details": {
+          "execution_profile": "standard",
+          "mode": "short"
+        },
+        "status": "ok",
+        "step": "plan"
+      },
+      {
+        "details": {
+          "execution_profile": "standard",
+          "mode": "short"
+        },
+        "status": "ok",
+        "step": "select-adapter"
+      },
+      {
+        "details": {
+          "execution_profile": "standard",
+          "mode": "short"
+        },
+        "status": "ok",
+        "step": "execute"
+      },
+      {
+        "details": {
+          "execution_profile": "standard",
+          "mode": "short"
+        },
+        "status": "ok",
+        "step": "validate"
+      }
+    ],
+    "state": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/runtime-step2-repeat3/execution-state.json",
+    "status": "ok",
+    "strategy": {
+      "execution_ordering": [
+        "init",
+        "plan",
+        "select-adapter",
+        "execute",
+        "validate"
+      ],
+      "fallback_choice": "sticky-adapter-first",
+      "retry_policy": "respect-hard-stop-rules",
+      "strategy_trace": {
+        "execution_kind": "runner",
+        "execution_profile": "standard",
+        "experimental_rules": [],
+        "hard_rules": [
+          "stop-on-nonrepair-denial"
+        ],
+        "selected_pattern": "standard-local-success-marker-success-5328e8b69290",
+        "soft_rules": []
+      },
+      "validation_strategy": "runner-contract-strict"
+    },
+    "ts": "2026-03-14T09:39:27.514439+00:00"
+  },
+  "status": "ok",
+  "validator_kind": "runner_result_contract"
+}

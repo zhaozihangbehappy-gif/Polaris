@@ -1,0 +1,5 @@
+{
+  "stderr": "ERROR: Could not install packages due to an OSError: [Errno 13] Permission denied: '/usr/lib/python3.10/site-packages/pip'\nConsider using the `--user` option or check the permissions.\n\n[notice] A new release of pip is available: 23.0.1 -> 24.0\n[notice] To update, run: pip install --upgrade pip",
+  "error_class": "permission_denial",
+  "source": "pip install to system site-packages without sudo"
+}

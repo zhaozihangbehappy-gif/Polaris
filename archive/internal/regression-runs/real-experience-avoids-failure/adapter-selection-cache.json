@@ -1,0 +1,35 @@
+{
+  "entries": {
+    "a71ca0e935d0735c": {
+      "failure_count": 2,
+      "last_failure_at": "2026-03-15T13:36:40.205287+00:00",
+      "last_score": 62,
+      "last_status": "failure",
+      "prerequisite_snapshot": {
+        "checks": [
+          {
+            "available": true,
+            "name": "bash"
+          }
+        ],
+        "ready": true
+      },
+      "scenario": {
+        "execution_profile": "standard",
+        "failure_type": "moderate_local_task",
+        "max_cost": 5,
+        "max_trust": "workspace",
+        "mode": "short",
+        "require_durable_status": false,
+        "required_capabilities": [
+          "local-exec",
+          "reporting",
+          "shell-command"
+        ]
+      },
+      "selected_adapter": "shell-command",
+      "updated_at": "2026-03-15T13:36:40.205273+00:00"
+    }
+  },
+  "schema_version": 1
+}

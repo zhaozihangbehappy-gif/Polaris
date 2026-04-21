@@ -1,0 +1,124 @@
+{
+  "ecosystem": "terraform",
+  "error_class": "version_conflict",
+  "schema_version": 4,
+  "records": [
+    {
+      "pattern_id": "candidate.terraform.version_conflict.000",
+      "ecosystem": "terraform",
+      "error_class": "version_conflict",
+      "description": "terraform core too old for feature",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "required_version"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "terraform version 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "required_version"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Terraform version_conflict: terraform core too old for feature"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.terraform.version_conflict.001",
+      "ecosystem": "terraform",
+      "error_class": "version_conflict",
+      "description": "tfstate moved resource not known",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "moved block.*unknown"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "terraform version 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "moved block.*unknown"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Terraform version_conflict: tfstate moved resource not known"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.terraform.version_conflict.002",
+      "ecosystem": "terraform",
+      "error_class": "version_conflict",
+      "description": "opentofu vs terraform state difference",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "OpenTofu.*Terraform.*state"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "terraform version 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "OpenTofu.*Terraform.*state"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Terraform version_conflict: opentofu vs terraform state difference"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    }
+  ]
+}

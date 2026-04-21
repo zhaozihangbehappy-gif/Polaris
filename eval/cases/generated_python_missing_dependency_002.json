@@ -1,0 +1,17 @@
+{
+  "case_id": "generated_python_missing_dependency_002",
+  "source": "authored_fixture",
+  "reverse_from_pattern": "python.missing_dependency.002",
+  "pattern_id": "python.missing_dependency.002",
+  "source_pool": "official",
+  "ecosystem": "python",
+  "error_class": "missing_dependency",
+  "initial_prompt": "In the project at {workdir}, this python missing_dependency fails: Cannot import name from package \u2014 likely version mismatch or stale install; ensure PYTHONPATH includes project root. Reproduce the failure with `python3 -m unittest test_renderer`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+  "success_criteria": {
+    "root_cause_regex": ".+",
+    "fix_command_test": "cd {workdir} && python3 -m unittest test_renderer"
+  },
+  "max_rounds": 6,
+  "fixture_strategy": "authored_files",
+  "promotion_eligible": true
+}

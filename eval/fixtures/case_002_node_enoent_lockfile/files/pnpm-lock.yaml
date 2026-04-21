@@ -1,0 +1,12 @@
+lockfileVersion: '9.0'
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+importers:
+  .:
+    dependencies:
+      '@polaris-case02/old-name':
+        specifier: workspace:*
+        version: link:packages/old-name
+  packages/old-name:
+    dependencies: {}

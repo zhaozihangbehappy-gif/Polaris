@@ -1,0 +1,12 @@
+{
+  "case_id": "case_001_python_pythonpath",
+  "source": "pattern_reverse",
+  "reverse_from_pattern": "python.missing_dependency.000",
+  "ecosystem": "python",
+  "initial_prompt": "I have a Python project at {workdir} with files src/mymod.py containing X=1, and a test script test.py doing `import mymod`. Running `python3 test.py` fails with ModuleNotFoundError. Fix it.",
+  "success_criteria": {
+    "root_cause_regex": "PYTHONPATH|sys\\.path|package layout",
+    "fix_command_test": "cd {workdir} && python3 test.py"
+  },
+  "max_rounds": 10
+}

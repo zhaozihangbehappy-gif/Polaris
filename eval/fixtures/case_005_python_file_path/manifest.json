@@ -1,0 +1,25 @@
+{
+  "case_id": "case_005_python_file_path",
+  "files": [
+    {
+      "relpath": "data/value.txt",
+      "sha256": "d1c5480fba8021cb5006d04e56717159b4e6704ef1289e0e031878c3a7ab08ce",
+      "size": 11
+    },
+    {
+      "relpath": "scripts/read_value.py",
+      "sha256": "7667bd3b248756cc7feaac71b2fbe3dedbbaa4491e440e6b9acec7d130853009",
+      "size": 90
+    }
+  ],
+  "dependencies": {
+    "python3": ">=3.10"
+  },
+  "build_commands": [
+    "rm -rf {workdir} && mkdir -p {workdir}",
+    "cp -r files/. {workdir}/"
+  ],
+  "expected_failure_command": "cd {workdir}/scripts && python3 read_value.py",
+  "expected_failure_stderr_regex": "FileNotFoundError",
+  "manifest_schema_version": 1
+}

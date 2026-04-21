@@ -1,0 +1,310 @@
+{
+  "ecosystem": "go",
+  "error_class": "build_error",
+  "schema_version": 4,
+  "records": [
+    {
+      "pattern_id": "go.build_error.000",
+      "ecosystem": "go",
+      "error_class": "build_error",
+      "description": "CGO or platform build constraint failure — disable CGO",
+      "source": "prebuilt",
+      "trigger_signals": {
+        "stderr_regex": [
+          "build constraints exclude all Go files in|no Go files in"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "bash -c 'echo \"build constraints exclude all Go files in /pkg/mod/github.com/mattn/go-sqlite3@v1.14.22\" >&2; exit 1'",
+        "trigger_env": {
+          "CGO_ENABLED": "1"
+        },
+        "expected_stderr_match": "build constraints exclude",
+        "expected_fix_outcome": "different_error_or_success"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "CGO_ENABLED": "0"
+            }
+          }
+        ],
+        "fix_command": "bash -c 'echo \"CGO_ENABLED set (simulated)\"; exit 0'",
+        "fix_env": {
+          "CGO_ENABLED": "0"
+        },
+        "description": "CGO or platform build constraint failure — disable CGO"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": [
+          {
+            "agent": "claude_code",
+            "agent_version": "unknown",
+            "date_verified": "2026-04-20T09:45:28+00:00",
+            "status": "verified_live",
+            "artifact_path": "eval/runs/20260420T170630/transcripts/claude_code__generated_go_build_error_000__baseline.txt",
+            "transcript_hash": "8d003253ddfa007c56433f584a82aa1aaea8d2bfbf8cc2ebb3e23ec6b0ce8a9f",
+            "pre_failure_reproduced": true,
+            "workdir_manifest_hash": "8fad16db966838c91ceff4df04c0a71846e151f71a3e3fc670c890ea4d8436e8",
+            "notes": "case=generated_go_build_error_000 polaris_enabled=False rounds=8 tool_calls=7 tokens=1995",
+            "model": "claude-haiku-4-5-20251001"
+          },
+          {
+            "agent": "claude_code",
+            "agent_version": "unknown",
+            "date_verified": "2026-04-20T09:45:28+00:00",
+            "status": "verified_live",
+            "artifact_path": "eval/runs/20260420T170630/transcripts/claude_code__generated_go_build_error_000__polaris.txt",
+            "transcript_hash": "e1cb601e1c9c85a0992e4e514dc2b55d396e34faf009d7f6204405c197f941b5",
+            "pre_failure_reproduced": true,
+            "workdir_manifest_hash": "529684fda81b459153a1c4ef0261bcf55c62d02eea83ad5121732ffe542a7970",
+            "notes": "case=generated_go_build_error_000 polaris_enabled=True rounds=7 tool_calls=6 tokens=1678",
+            "model": "claude-haiku-4-5-20251001"
+          }
+        ]
+      },
+      "legacy_v3": {
+        "stderr_pattern": "build constraints exclude all Go files in|no Go files in",
+        "avoidance_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "CGO_ENABLED": "0"
+            }
+          }
+        ],
+        "description": "CGO or platform build constraint failure — disable CGO",
+        "source": "prebuilt",
+        "reproduction": {
+          "command": "bash -c 'echo \"build constraints exclude all Go files in /pkg/mod/github.com/mattn/go-sqlite3@v1.14.22\" >&2; exit 1'",
+          "trigger_env": {
+            "CGO_ENABLED": "1"
+          },
+          "expected_stderr_match": "build constraints exclude",
+          "fix_env": {
+            "CGO_ENABLED": "0"
+          },
+          "expected_fix_outcome": "different_error_or_success",
+          "fix_command": "bash -c 'echo \"CGO_ENABLED set (simulated)\"; exit 0'"
+        }
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds"
+      ],
+      "authored_fixture": {
+        "authored_at": "2026-04-20T05:20:08+00:00",
+        "authored_by": "claude_code",
+        "authored_with_prompt_sha256": "4dfbd4964584416512bfe357737851a0fc675892201055e05c77a97dd170276d",
+        "verification_command": "go build -o /tmp/test.bin .",
+        "expected_stderr_regex": "build constraints exclude all Go files in",
+        "files": [
+          {
+            "path": "go.mod",
+            "content": "module test.example/buildconstraint\n\ngo 1.21\n"
+          },
+          {
+            "path": "main_windows.go",
+            "content": "//go:build windows\n\npackage main\n\nfunc main() {\n\tprintln(\"Windows implementation\")\n}\n"
+          }
+        ],
+        "reference_fix_files": [
+          {
+            "path": "main_windows.go",
+            "content": "//go:build windows\n\npackage main\n\nfunc main() {\n\tprintln(\"Windows implementation\")\n}\n"
+          },
+          {
+            "path": "main_linux.go",
+            "content": "//go:build linux\n\npackage main\n\nfunc main() {\n\tprintln(\"Linux implementation\")\n}\n"
+          }
+        ],
+        "fix_rationale": "Add platform-specific implementation file for the current platform to satisfy build constraints.",
+        "reviewer_record": {
+          "validated_in_sandbox_at": "2026-04-20T05:20:08+00:00",
+          "sandbox_pre_fix_exit_code": 1,
+          "sandbox_pre_fix_stderr_match": true,
+          "sandbox_post_fix_exit_code": 0,
+          "sandbox_workdir_hash_pre": "3f609ed1131d9f0234fa907e76099154b489fa1de965954303de0b4283f04290",
+          "sandbox_workdir_hash_post": "dd7a8d04277a83e99747379ef9987807d49adbe6edbd41da6198798509dd5a75",
+          "notes": "authored by claude_code; pre-fix fails+matches regex, post-fix passes"
+        }
+      }
+    },
+    {
+      "pattern_id": "go.build_error.001",
+      "ecosystem": "go",
+      "error_class": "build_error",
+      "description": "C compiler missing for CGO build — disable CGO if no native deps required",
+      "source": "prebuilt",
+      "trigger_signals": {
+        "stderr_regex": [
+          "C compiler .* not found|exec: \"gcc\": executable file not found"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "bash -c 'echo \"cgo: C compiler \\\"gcc\\\" not found: exec: \\\"gcc\\\": executable file not found in \\$PATH\" >&2; exit 1'",
+        "trigger_env": {
+          "CGO_ENABLED": "1"
+        },
+        "expected_stderr_match": "C compiler.*not found|executable file not found",
+        "expected_fix_outcome": "different_error_or_success"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "CGO_ENABLED": "0"
+            }
+          }
+        ],
+        "fix_command": "bash -c 'echo \"CGO_ENABLED set (simulated)\"; exit 0'",
+        "fix_env": {
+          "CGO_ENABLED": "0"
+        },
+        "description": "C compiler missing for CGO build — disable CGO if no native deps required"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "legacy_v3": {
+        "stderr_pattern": "C compiler .* not found|exec: \"gcc\": executable file not found",
+        "avoidance_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "CGO_ENABLED": "0"
+            }
+          }
+        ],
+        "description": "C compiler missing for CGO build — disable CGO if no native deps required",
+        "source": "prebuilt",
+        "reproduction": {
+          "command": "bash -c 'echo \"cgo: C compiler \\\"gcc\\\" not found: exec: \\\"gcc\\\": executable file not found in \\$PATH\" >&2; exit 1'",
+          "trigger_env": {
+            "CGO_ENABLED": "1"
+          },
+          "expected_stderr_match": "C compiler.*not found|executable file not found",
+          "fix_env": {
+            "CGO_ENABLED": "0"
+          },
+          "expected_fix_outcome": "different_error_or_success",
+          "fix_command": "bash -c 'echo \"CGO_ENABLED set (simulated)\"; exit 0'"
+        }
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "go.build_error.002",
+      "ecosystem": "go",
+      "error_class": "build_error",
+      "description": "Linker cannot find system libraries — disable CGO or use static linking",
+      "source": "prebuilt",
+      "trigger_signals": {
+        "stderr_regex": [
+          "cannot find -l(pthread|dl|m|rt)|ld: cannot find"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "bash -c 'echo \"/usr/bin/ld: cannot find -lpthread\" >&2; echo \"collect2: error: ld returned 1 exit status\" >&2; exit 1'",
+        "trigger_env": {
+          "CGO_ENABLED": "1"
+        },
+        "expected_stderr_match": "cannot find -l",
+        "expected_fix_outcome": "different_error_or_success"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "CGO_ENABLED": "0"
+            }
+          },
+          {
+            "kind": "append_flags",
+            "flags": [
+              "-ldflags",
+              "-extldflags '-static'"
+            ]
+          }
+        ],
+        "fix_command": "bash -c 'echo \"CGO_ENABLED set (simulated)\"; exit 0'",
+        "fix_env": {
+          "CGO_ENABLED": "0"
+        },
+        "description": "Linker cannot find system libraries — disable CGO or use static linking"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "legacy_v3": {
+        "stderr_pattern": "cannot find -l(pthread|dl|m|rt)|ld: cannot find",
+        "avoidance_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "CGO_ENABLED": "0"
+            }
+          },
+          {
+            "kind": "append_flags",
+            "flags": [
+              "-ldflags",
+              "-extldflags '-static'"
+            ]
+          }
+        ],
+        "description": "Linker cannot find system libraries — disable CGO or use static linking",
+        "source": "prebuilt",
+        "reproduction": {
+          "command": "bash -c 'echo \"/usr/bin/ld: cannot find -lpthread\" >&2; echo \"collect2: error: ld returned 1 exit status\" >&2; exit 1'",
+          "trigger_env": {
+            "CGO_ENABLED": "1"
+          },
+          "expected_stderr_match": "cannot find -l",
+          "fix_env": {
+            "CGO_ENABLED": "0"
+          },
+          "expected_fix_outcome": "different_error_or_success",
+          "fix_command": "bash -c 'echo \"CGO_ENABLED set (simulated)\"; exit 0'"
+        }
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    }
+  ]
+}

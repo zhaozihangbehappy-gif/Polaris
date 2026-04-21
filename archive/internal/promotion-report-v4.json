@@ -1,0 +1,19 @@
+{
+  "run_dir": "eval/runs/20260420T201902",
+  "mock_ignored_count": 0,
+  "blocked_count": 0,
+  "blocked": [],
+  "evidence_appended_count": 1,
+  "evidence_appended": [
+    {
+      "pattern_id": "node.file_not_found.000",
+      "runner": "claude_code",
+      "case_id": "generated_node_file_not_found_000",
+      "transcript_hash": "0aa7bbfbbc0c4d508ff6304072a6067fdee583ca1f8b733270a2ad4352d7f52c"
+    }
+  ],
+  "promoted_count": 0,
+  "promoted": [],
+  "duplicate_skipped_count": 0,
+  "duplicate_skipped": []
+}

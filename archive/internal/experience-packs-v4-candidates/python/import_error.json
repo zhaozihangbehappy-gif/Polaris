@@ -1,0 +1,397 @@
+{
+  "ecosystem": "python",
+  "error_class": "import_error",
+  "schema_version": 4,
+  "records": [
+    {
+      "pattern_id": "candidate.python.import_error.000",
+      "ecosystem": "python",
+      "error_class": "import_error",
+      "description": "Circular import in app package",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "ImportError.*cannot import name.*partially initialized"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "python3 -c 'import sys; print(sys.path)' 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "ImportError.*cannot import name.*partially initialized"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Resolve import: Circular import in app package"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.import_error.001",
+      "ecosystem": "python",
+      "error_class": "import_error",
+      "description": "Relative import in __main__",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "ImportError.*attempted relative import with no known parent"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "python3 -c 'import sys; print(sys.path)' 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "ImportError.*attempted relative import with no known parent"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Resolve import: Relative import in __main__"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.import_error.002",
+      "ecosystem": "python",
+      "error_class": "import_error",
+      "description": "Namespace package collision",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "pkg_resources.*VersionConflict"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "python3 -c 'import sys; print(sys.path)' 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "pkg_resources.*VersionConflict"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Resolve import: Namespace package collision"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.import_error.003",
+      "ecosystem": "python",
+      "error_class": "import_error",
+      "description": "Stale .pyc from py2→py3",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "ImportError.*bad magic number"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "python3 -c 'import sys; print(sys.path)' 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "ImportError.*bad magic number"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Resolve import: Stale .pyc from py2→py3"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.import_error.004",
+      "ecosystem": "python",
+      "error_class": "import_error",
+      "description": "Egg-info shadowing installed version",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "DistributionNotFound"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "python3 -c 'import sys; print(sys.path)' 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "DistributionNotFound"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Resolve import: Egg-info shadowing installed version"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.import_error.005",
+      "ecosystem": "python",
+      "error_class": "import_error",
+      "description": "from __future__ placement error",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "SyntaxError.*from __future__ imports must occur"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "python3 -c 'import sys; print(sys.path)' 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "SyntaxError.*from __future__ imports must occur"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Resolve import: from __future__ placement error"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.import_error.006",
+      "ecosystem": "python",
+      "error_class": "import_error",
+      "description": "__init__.py accidentally empty dir pkg",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "ModuleNotFoundError.*No module named"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "python3 -c 'import sys; print(sys.path)' 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "ModuleNotFoundError.*No module named"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Resolve import: __init__.py accidentally empty dir pkg"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.import_error.007",
+      "ecosystem": "python",
+      "error_class": "import_error",
+      "description": "importlib.resources API change",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "AttributeError.*open_text"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "python3 -c 'import sys; print(sys.path)' 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "AttributeError.*open_text"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Resolve import: importlib.resources API change"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.import_error.008",
+      "ecosystem": "python",
+      "error_class": "import_error",
+      "description": "C extension ABI mismatch",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "ImportError.*undefined symbol"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "python3 -c 'import sys; print(sys.path)' 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "ImportError.*undefined symbol"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Resolve import: C extension ABI mismatch"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.import_error.009",
+      "ecosystem": "python",
+      "error_class": "import_error",
+      "description": "numpy .so ABI stale",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "numpy\\.core\\.multiarray failed to import"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "python3 -c 'import sys; print(sys.path)' 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "numpy\\.core\\.multiarray failed to import"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Resolve import: numpy .so ABI stale"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    }
+  ]
+}

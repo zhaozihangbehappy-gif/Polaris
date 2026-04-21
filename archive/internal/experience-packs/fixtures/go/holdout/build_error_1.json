@@ -1,0 +1,1 @@
+{"stderr": "# github.com/myapp/service\n./main.go:15:2: imported and not used: \"fmt\"\n./main.go:29:14: cannot convert result (variable of type int) to type string", "error_class": "build_error", "source": "go build with unused import and type conversion error"}

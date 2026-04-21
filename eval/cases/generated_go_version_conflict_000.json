@@ -1,0 +1,17 @@
+{
+  "case_id": "generated_go_version_conflict_000",
+  "source": "authored_fixture",
+  "reverse_from_pattern": "go.version_conflict.000",
+  "pattern_id": "go.version_conflict.000",
+  "source_pool": "official",
+  "ecosystem": "go",
+  "error_class": "version_conflict",
+  "initial_prompt": "In the project at {workdir}, this go version_conflict fails: go.mod minimum Go version exceeds installed version \u2014 enable auto toolchain download. Reproduce the failure with `go build`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+  "success_criteria": {
+    "root_cause_regex": ".+",
+    "fix_command_test": "cd {workdir} && go build"
+  },
+  "max_rounds": 6,
+  "fixture_strategy": "authored_files",
+  "promotion_eligible": true
+}

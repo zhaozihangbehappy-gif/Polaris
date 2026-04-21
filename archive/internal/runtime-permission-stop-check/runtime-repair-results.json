@@ -1,0 +1,16 @@
+{
+  "executed_at": "2026-03-14T08:17:16.660740+00:00",
+  "failure_type": "permission_denial",
+  "results": [
+    {
+      "action": null,
+      "outcome": {
+        "note": "Execution skipped because the plan is not safe to run automatically.",
+        "returncode": null,
+        "stderr": "",
+        "stdout": ""
+      }
+    }
+  ],
+  "safe_to_execute": false
+}

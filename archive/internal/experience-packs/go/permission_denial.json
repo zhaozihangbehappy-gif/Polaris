@@ -1,0 +1,65 @@
+{
+  "ecosystem": "go",
+  "error_class": "permission_denial",
+  "shard_version": "3.0",
+  "records": [
+    {
+      "stderr_pattern": "could not create module cache.*permission denied|mkdir .*/go/pkg/mod.*permission denied",
+      "avoidance_hints": [
+        {
+          "kind": "set_env",
+          "vars": {
+            "GOPATH": "/tmp/go",
+            "GOCACHE": "/tmp/go-cache"
+          }
+        },
+        {
+          "kind": "create_dir",
+          "path": "/tmp/go/pkg/mod"
+        }
+      ],
+      "description": "Module cache directory not writable — redirect GOPATH and GOCACHE to /tmp",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "bash -c 'echo \"go: could not create module cache: mkdir /home/user/go/pkg/mod: permission denied\" >&2; exit 1'",
+        "trigger_env": {
+          "GOPATH": "/root/go"
+        },
+        "expected_stderr_match": "could not create module cache.*permission denied",
+        "fix_env": {
+          "GOPATH": "/tmp/go",
+          "GOCACHE": "/tmp/go-cache"
+        },
+        "expected_fix_outcome": "different_error_or_success",
+        "fix_command": "bash -c 'echo \"GOPATH set (simulated)\"; exit 0'"
+      }
+    },
+    {
+      "stderr_pattern": "EACCES|go install.*permission denied|writing.*GOBIN.*permission denied",
+      "avoidance_hints": [
+        {
+          "kind": "set_env",
+          "vars": {
+            "GOBIN": "/tmp/go/bin",
+            "GOPATH": "/tmp/go"
+          }
+        }
+      ],
+      "description": "go install cannot write to GOBIN — redirect GOBIN to writable directory",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "bash -c 'echo \"go install: open /usr/local/go/bin/tool: EACCES: permission denied\" >&2; exit 1'",
+        "trigger_env": {
+          "GOBIN": "/usr/local/go/bin"
+        },
+        "expected_stderr_match": "EACCES|permission denied",
+        "fix_env": {
+          "GOBIN": "/tmp/go/bin",
+          "GOPATH": "/tmp/go"
+        },
+        "expected_fix_outcome": "different_error_or_success",
+        "fix_command": "bash -c 'echo \"GOBIN set (simulated)\"; exit 0'"
+      }
+    }
+  ]
+}

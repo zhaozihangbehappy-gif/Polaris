@@ -1,0 +1,15 @@
+{
+  "case_id": "generated_node_file_not_found_001",
+  "files": [
+    "package.json",
+    "reader.js"
+  ],
+  "dependencies": {},
+  "build_commands": [],
+  "expected_failure_command": "cd {workdir} && node reader.js",
+  "expected_failure_stderr_regex": "ENOENT: no such file or directory, open '.*data/config\\.json'",
+  "manifest_schema_version": 1,
+  "bash_self_contained": false,
+  "reverse_from_pattern": "node.file_not_found.001",
+  "source_pool": "official"
+}

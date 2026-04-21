@@ -1,0 +1,15 @@
+{
+  "case_id": "generated_node_version_conflict_000",
+  "files": [
+    "package.json",
+    ".npmrc"
+  ],
+  "dependencies": {},
+  "build_commands": [],
+  "expected_failure_command": "cd {workdir} && npm install --package-lock=false",
+  "expected_failure_stderr_regex": "EBADENGINE|engine.*Unsupported|Not compatible with your version of node",
+  "manifest_schema_version": 1,
+  "bash_self_contained": false,
+  "reverse_from_pattern": "node.version_conflict.000",
+  "source_pool": "official"
+}

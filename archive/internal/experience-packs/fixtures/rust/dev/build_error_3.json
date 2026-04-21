@@ -1,0 +1,5 @@
+{
+  "stderr": "error: could not compile `openssl-sys` (build script)\n\nCaused by:\n  process didn't exit successfully: `/tmp/target/debug/build/openssl-sys-abc123/build-script-main` (exit status: 101)\n  --- stderr\n  thread 'main' panicked at '\n\n  Could not find directory of OpenSSL installation, and this `-sys` crate cannot\n  proceed without this knowledge. If OpenSSL is installed and this crate had\n  trouble finding it, you can set the `OPENSSL_DIR` environment variable.\n\n  ', /home/user/.cargo/registry/src/index.crates.io-abc123/openssl-sys-0.9.93/build/find_normal.rs:190:5",
+  "error_class": "build_error",
+  "source": "cargo build with openssl-sys requiring system OpenSSL headers"
+}

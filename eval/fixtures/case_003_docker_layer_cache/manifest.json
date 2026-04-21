@@ -1,0 +1,30 @@
+{
+  "case_id": "case_003_docker_layer_cache",
+  "files": [
+    {
+      "relpath": ".dockerignore",
+      "sha256": "b6cd92a86399eb89d11bc39faf50c703154361a5695ec6a70d659f6e7cb5f455",
+      "size": 7
+    },
+    {
+      "relpath": "Dockerfile",
+      "sha256": "1aa4a2737373e1130a888bd241d32f4f17b426a07e89a21edffb59aefe5dbc28",
+      "size": 220
+    },
+    {
+      "relpath": "app.py",
+      "sha256": "f2d1a16a3ca60208607ee421d161a622856f4cef11000f22d86d82f1b43985b4",
+      "size": 29
+    }
+  ],
+  "dependencies": {
+    "docker": ">=24.0"
+  },
+  "build_commands": [
+    "rm -rf {workdir} && mkdir -p {workdir}",
+    "cp -r files/. {workdir}/"
+  ],
+  "expected_failure_command": "cd {workdir} && docker build -t polaris-case03 .",
+  "expected_failure_stderr_regex": "app.py.*not found|failed to compute cache key",
+  "manifest_schema_version": 1
+}

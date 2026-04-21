@@ -1,0 +1,5 @@
+{
+  "stderr": "  File \"/home/user/project/api/handlers.py\", line 29\n    match response.status_code:\n          ^\nSyntaxError: invalid syntax",
+  "error_class": "syntax_error",
+  "source": "match statement used with Python 3.9 (requires 3.10+)"
+}

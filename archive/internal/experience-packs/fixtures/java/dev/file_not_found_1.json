@@ -1,0 +1,5 @@
+{
+  "stderr": "Exception in thread \"main\" java.io.FileNotFoundException: /home/user/project/config/application.properties (No such file or directory)\n\tat java.base/java.io.FileInputStream.open0(Native Method)\n\tat java.base/java.io.FileInputStream.open(FileInputStream.java:219)\n\tat java.base/java.io.FileInputStream.<init>(FileInputStream.java:157)\n\tat com.myapp.config.ConfigLoader.load(ConfigLoader.java:23)\n\tat com.myapp.Main.main(Main.java:11)",
+  "error_class": "file_not_found",
+  "source": "application.properties missing from config directory"
+}

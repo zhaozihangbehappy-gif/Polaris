@@ -1,0 +1,26 @@
+{
+  "candidate_fixes": [
+    "verify the path relative to the current working directory",
+    "create the required file only if the task explicitly calls for it"
+  ],
+  "confidence": "high",
+  "depth_reason": "repeated_failure",
+  "escalate": false,
+  "evidence": [
+    "cat: /nonexistent/polaris-avoid-test-file.txt: No such file or directory"
+  ],
+  "failure_type": "path_or_missing_file",
+  "next_depth": "deep",
+  "nonrepair_stop": false,
+  "probe_budget": 4,
+  "recommended_tree": "path_probe_tree",
+  "references": [
+    "Polaris/references/repair-actions.md",
+    "Polaris/references/stop-classifications.md"
+  ],
+  "repair_class": "path_probe_tree",
+  "repair_depth": "medium",
+  "retry_guidance": "retry after verifying the target path and the current workdir",
+  "should_deepen": true,
+  "suggested_rule_layer": "soft"
+}

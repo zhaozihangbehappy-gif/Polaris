@@ -1,0 +1,22 @@
+[pre_failure_command]
+cd /tmp/_polaris_runs/20260419T190704/mock/generated_docker_auth_error_001/polaris && bash -c 'echo "DENIED: access to the requested resource is not authorized" >&2; exit 1'
+[pre_failure_output]
+
+DENIED: access to the requested resource is not authorized
+
+[pre_failure_reproduced]
+true
+[agent_transcript]
+[MOCK transcript for generated_docker_auth_error_001 polaris=True seed=1]
+rounds=6 tokens=4775 tool_calls=10 ci_pass=True
+
+[post_fix_command]
+cd /tmp/_polaris_runs/20260419T190704/mock/generated_docker_auth_error_001/polaris && bash -c 'echo "DOCKER_CONFIG set (simulated)"; exit 0'
+[post_fix_output]
+DOCKER_CONFIG set (simulated)
+
+
+[post_fix_ci_pass]
+True
+[contamination_hits]
+[]

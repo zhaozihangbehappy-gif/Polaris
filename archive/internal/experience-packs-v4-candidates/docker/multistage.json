@@ -1,0 +1,163 @@
+{
+  "ecosystem": "docker",
+  "error_class": "multistage",
+  "schema_version": 4,
+  "records": [
+    {
+      "pattern_id": "candidate.docker.multistage.000",
+      "ecosystem": "docker",
+      "error_class": "multistage",
+      "description": "stage target name typo in --target",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "target stage .* could not be found"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "docker info 2>&1 | head -5",
+        "trigger_env": {},
+        "expected_stderr_match": "target stage .* could not be found"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Docker multistage: stage target name typo in --target"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.docker.multistage.001",
+      "ecosystem": "docker",
+      "error_class": "multistage",
+      "description": "BUILDPLATFORM vs TARGETPLATFORM mix-up",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "TARGETPLATFORM.*not set"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "docker info 2>&1 | head -5",
+        "trigger_env": {},
+        "expected_stderr_match": "TARGETPLATFORM.*not set"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Docker multistage: BUILDPLATFORM vs TARGETPLATFORM mix-up"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.docker.multistage.002",
+      "ecosystem": "docker",
+      "error_class": "multistage",
+      "description": "ONBUILD instruction in multi-stage",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "ONBUILD.*trigger"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "docker info 2>&1 | head -5",
+        "trigger_env": {},
+        "expected_stderr_match": "ONBUILD.*trigger"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Docker multistage: ONBUILD instruction in multi-stage"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.docker.multistage.003",
+      "ecosystem": "docker",
+      "error_class": "multistage",
+      "description": "heredoc not propagated across stages",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "heredoc.*stage"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "docker info 2>&1 | head -5",
+        "trigger_env": {},
+        "expected_stderr_match": "heredoc.*stage"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Docker multistage: heredoc not propagated across stages"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    }
+  ]
+}

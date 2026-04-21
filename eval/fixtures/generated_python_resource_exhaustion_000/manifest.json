@@ -1,0 +1,14 @@
+{
+  "case_id": "generated_python_resource_exhaustion_000",
+  "files": [
+    "memory_job.py"
+  ],
+  "dependencies": {},
+  "build_commands": [],
+  "expected_failure_command": "cd {workdir} && python3 memory_job.py",
+  "expected_failure_stderr_regex": "MemoryError",
+  "manifest_schema_version": 1,
+  "bash_self_contained": false,
+  "reverse_from_pattern": "python.resource_exhaustion.000",
+  "source_pool": "official"
+}

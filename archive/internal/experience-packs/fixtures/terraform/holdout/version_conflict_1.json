@@ -1,0 +1,1 @@
+{"stderr": "Error: Module not compatible with Terraform 1.5.7\n\nModule module.eks (from registry.terraform.io/terraform-aws-modules/eks/aws) requires Terraform >= 1.6.1.\n\nYou are running Terraform v1.5.7.\n", "error_class": "version_conflict", "source": "terraform-core-1.5.7"}

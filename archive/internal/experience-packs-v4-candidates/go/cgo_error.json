@@ -1,0 +1,241 @@
+{
+  "ecosystem": "go",
+  "error_class": "cgo_error",
+  "schema_version": 4,
+  "records": [
+    {
+      "pattern_id": "candidate.go.cgo_error.000",
+      "ecosystem": "go",
+      "error_class": "cgo_error",
+      "description": "cgo on Alpine musl vs glibc",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "undefined reference.*__explicit_bzero_chk"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "go env 2>&1 | head -20",
+        "trigger_env": {},
+        "expected_stderr_match": "undefined reference.*__explicit_bzero_chk"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Go cgo_error: cgo on Alpine musl vs glibc"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.go.cgo_error.001",
+      "ecosystem": "go",
+      "error_class": "cgo_error",
+      "description": "pkg-config missing dev package",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "pkg-config: exec.*not found"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "go env 2>&1 | head -20",
+        "trigger_env": {},
+        "expected_stderr_match": "pkg-config: exec.*not found"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Go cgo_error: pkg-config missing dev package"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.go.cgo_error.002",
+      "ecosystem": "go",
+      "error_class": "cgo_error",
+      "description": "cgo LDFLAGS malformed",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "cgo.*LDFLAGS.*invalid"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "go env 2>&1 | head -20",
+        "trigger_env": {},
+        "expected_stderr_match": "cgo.*LDFLAGS.*invalid"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Go cgo_error: cgo LDFLAGS malformed"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.go.cgo_error.003",
+      "ecosystem": "go",
+      "error_class": "cgo_error",
+      "description": "cross-compile cgo CC not set",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "CC.*not found.*cross"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "go env 2>&1 | head -20",
+        "trigger_env": {},
+        "expected_stderr_match": "CC.*not found.*cross"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Go cgo_error: cross-compile cgo CC not set"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.go.cgo_error.004",
+      "ecosystem": "go",
+      "error_class": "cgo_error",
+      "description": "dlopen shared lib path missing",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "libc\\\\.so.*cannot open"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "go env 2>&1 | head -20",
+        "trigger_env": {},
+        "expected_stderr_match": "libc\\\\.so.*cannot open"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Go cgo_error: dlopen shared lib path missing"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.go.cgo_error.005",
+      "ecosystem": "go",
+      "error_class": "cgo_error",
+      "description": "cgo callback ABI mismatch",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "cgo argument has Go pointer"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "go env 2>&1 | head -20",
+        "trigger_env": {},
+        "expected_stderr_match": "cgo argument has Go pointer"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Go cgo_error: cgo callback ABI mismatch"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    }
+  ]
+}

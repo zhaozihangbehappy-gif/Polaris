@@ -1,0 +1,168 @@
+{
+  "patterns": [
+    {
+      "adapter": "shell-local",
+      "best_lifecycle_state": "experimental",
+      "confidence": 68,
+      "created_at": "2026-03-14T09:38:22.289977+00:00",
+      "demotion_count": 0,
+      "evidence": [
+        "runtime-repair-results.json",
+        "runtime-repair-plan.json",
+        "runtime-repair-report.json"
+      ],
+      "evidence_count": 3,
+      "expires_at": null,
+      "fingerprint": "repair-pattern-807fd04b957e",
+      "history": [
+        {
+          "event": "captured",
+          "reason": "new_pattern",
+          "ts": "2026-03-14T09:38:22.290000+00:00"
+        }
+      ],
+      "last_validated_at": "2026-03-14T09:38:22.289993+00:00",
+      "lifecycle_state": "experimental",
+      "modes": [
+        "short"
+      ],
+      "outcome": "generic repair path documented with bounded local evidence",
+      "pattern_id": "repair-pattern-807fd04b957e",
+      "promotion_count": 0,
+      "reusable": true,
+      "selection_count": 0,
+      "sequence": [
+        "diagnose",
+        "generic-probes",
+        "record-evidence",
+        "recover"
+      ],
+      "summary": "Unknown failures improved after bounded generic local probes captured enough evidence to guide the next retry",
+      "tags": [
+        "repair",
+        "local",
+        "unknown",
+        "generic_probe_tree",
+        "shallow",
+        "generic",
+        "triage",
+        "orchestration"
+      ],
+      "trigger": "unknown",
+      "updated_at": "2026-03-14T09:38:22.289992+00:00",
+      "validation_count": 1
+    },
+    {
+      "adapter": "shell-local",
+      "best_lifecycle_state": "validated",
+      "confidence": 76,
+      "created_at": "2026-03-14T09:38:20.245251+00:00",
+      "demotion_count": 0,
+      "evidence": [
+        "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/runtime-step2-repeat2/execution-state.json",
+        "runtime-status.json"
+      ],
+      "evidence_count": 2,
+      "expires_at": null,
+      "fingerprint": "success-5328e8b69290",
+      "history": [
+        {
+          "event": "captured",
+          "reason": "new_pattern",
+          "ts": "2026-03-14T09:38:20.245275+00:00"
+        },
+        {
+          "event": "auto_promoted",
+          "reason": "evidence_threshold_met",
+          "to": "validated",
+          "ts": "2026-03-14T09:38:20.245281+00:00"
+        }
+      ],
+      "last_selected_at": "2026-03-14T09:38:20.911263+00:00",
+      "last_validated_at": "2026-03-14T09:38:20.245282+00:00",
+      "lifecycle_state": "validated",
+      "modes": [
+        "short"
+      ],
+      "outcome": "task completed locally while keeping heavier learning work off the hot path",
+      "pattern_id": "standard-local-success-marker-success-5328e8b69290",
+      "promotion_count": 1,
+      "reusable": true,
+      "selection_count": 1,
+      "sequence": [
+        "init",
+        "plan",
+        "select-adapter",
+        "execute",
+        "validate"
+      ],
+      "summary": "Standard profile finished with light foreground orchestration and deferred learning consolidation",
+      "tags": [
+        "orchestration",
+        "local",
+        "standard",
+        "deferred-learning"
+      ],
+      "trigger": "standard local task",
+      "updated_at": "2026-03-14T09:38:20.245265+00:00",
+      "validation_count": 1
+    },
+    {
+      "adapter": null,
+      "best_lifecycle_state": "validated",
+      "confidence": 74,
+      "created_at": "2026-03-14T09:38:18.595008+00:00",
+      "demotion_count": 0,
+      "evidence": [
+        "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/references/repair-actions.md"
+      ],
+      "evidence_count": 1,
+      "expires_at": null,
+      "fingerprint": "bounded-local-repair",
+      "history": [
+        {
+          "event": "captured",
+          "reason": "new_pattern",
+          "ts": "2026-03-14T09:38:18.595030+00:00"
+        },
+        {
+          "best_lifecycle_state": "validated",
+          "confidence": 74,
+          "event": "merged_validation",
+          "evidence_count": 1,
+          "reason": "rerun_capture",
+          "retained_lifecycle": "validated",
+          "ts": "2026-03-14T09:38:20.612011+00:00",
+          "validation_count": 2
+        }
+      ],
+      "last_validated_at": "2026-03-14T09:38:20.612009+00:00",
+      "lifecycle_state": "validated",
+      "modes": [
+        "long"
+      ],
+      "outcome": "bounded recovery without crossing safeguards",
+      "pattern_id": "bounded-local-repair",
+      "promotion_count": 0,
+      "reusable": true,
+      "selection_count": 0,
+      "sequence": [
+        "detect",
+        "branch",
+        "probe",
+        "recover",
+        "record"
+      ],
+      "summary": "Local repair branches should stay probe-only and feed explicit recovery references",
+      "tags": [
+        "repair",
+        "local",
+        "orchestration"
+      ],
+      "trigger": "repairable local runtime failure",
+      "updated_at": "2026-03-14T09:38:20.612008+00:00",
+      "validation_count": 2
+    }
+  ],
+  "schema_version": 1
+}

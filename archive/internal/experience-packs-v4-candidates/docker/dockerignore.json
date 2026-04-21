@@ -1,0 +1,241 @@
+{
+  "ecosystem": "docker",
+  "error_class": "dockerignore",
+  "schema_version": 4,
+  "records": [
+    {
+      "pattern_id": "candidate.docker.dockerignore.000",
+      "ecosystem": "docker",
+      "error_class": "dockerignore",
+      "description": ".dockerignore excludes required file",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "executor failed.*COPY.*excluded"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "docker info 2>&1 | head -5",
+        "trigger_env": {},
+        "expected_stderr_match": "executor failed.*COPY.*excluded"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Docker dockerignore: .dockerignore excludes required file"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.docker.dockerignore.001",
+      "ecosystem": "docker",
+      "error_class": "dockerignore",
+      "description": ".dockerignore negation syntax wrong",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "dockerignore.*pattern"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "docker info 2>&1 | head -5",
+        "trigger_env": {},
+        "expected_stderr_match": "dockerignore.*pattern"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Docker dockerignore: .dockerignore negation syntax wrong"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.docker.dockerignore.002",
+      "ecosystem": "docker",
+      "error_class": "dockerignore",
+      "description": "workspace marker dir excluded",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "\\.git.*excluded|\\.codex.*excluded"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "docker info 2>&1 | head -5",
+        "trigger_env": {},
+        "expected_stderr_match": "\\.git.*excluded|\\.codex.*excluded"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Docker dockerignore: workspace marker dir excluded"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.docker.dockerignore.003",
+      "ecosystem": "docker",
+      "error_class": "dockerignore",
+      "description": ".dockerignore vs multi-stage staged copy",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "COPY --from.*excluded"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "docker info 2>&1 | head -5",
+        "trigger_env": {},
+        "expected_stderr_match": "COPY --from.*excluded"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Docker dockerignore: .dockerignore vs multi-stage staged copy"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.docker.dockerignore.004",
+      "ecosystem": "docker",
+      "error_class": "dockerignore",
+      "description": ".dockerignore symlink traversal",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "symlink.*excluded"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "docker info 2>&1 | head -5",
+        "trigger_env": {},
+        "expected_stderr_match": "symlink.*excluded"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Docker dockerignore: .dockerignore symlink traversal"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.docker.dockerignore.005",
+      "ecosystem": "docker",
+      "error_class": "dockerignore",
+      "description": ".dockerignore case-sensitivity surprise",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "Dockerfile.*filename case"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "docker info 2>&1 | head -5",
+        "trigger_env": {},
+        "expected_stderr_match": "Dockerfile.*filename case"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Docker dockerignore: .dockerignore case-sensitivity surprise"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    }
+  ]
+}

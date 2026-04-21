@@ -1,0 +1,25 @@
+[pre_failure_command]
+cd /tmp/_polaris_runs/20260419T183900/mock/case_001_python_pythonpath/baseline && python3 test.py
+[pre_failure_output]
+
+Traceback (most recent call last):
+  File "/tmp/_polaris_runs/20260419T183900/mock/case_001_python_pythonpath/baseline/test.py", line 1, in <module>
+    import mymod
+ModuleNotFoundError: No module named 'mymod'
+
+[pre_failure_reproduced]
+true
+[agent_transcript]
+[MOCK transcript for case_001_python_pythonpath polaris=False seed=1]
+rounds=8 tokens=3345 tool_calls=10 ci_pass=True
+
+[post_fix_command]
+cd /tmp/_polaris_runs/20260419T183900/mock/case_001_python_pythonpath/baseline && PYTHONPATH=src python3 test.py
+[post_fix_output]
+1
+
+
+[post_fix_ci_pass]
+True
+[contamination_hits]
+[]

@@ -1,0 +1,257 @@
+{
+  "ecosystem": "java",
+  "error_class": "permission_denial",
+  "schema_version": 4,
+  "records": [
+    {
+      "pattern_id": "java.permission_denial.000",
+      "ecosystem": "java",
+      "error_class": "permission_denial",
+      "description": "Maven repository permission denied — redirect to writable /tmp",
+      "source": "prebuilt",
+      "trigger_signals": {
+        "stderr_regex": [
+          "java\\.security\\.AccessControlException|Permission denied.*\\.m2"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "bash -c 'echo \"Permission denied: /home/user/.m2/repository\" >&2; exit 1'",
+        "trigger_env": {},
+        "expected_stderr_match": "Permission denied",
+        "expected_fix_outcome": "different_error_or_success"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "MAVEN_OPTS": "-Dmaven.repo.local=/tmp/.m2"
+            }
+          }
+        ],
+        "fix_command": "bash -c 'echo \"MAVEN_OPTS set (simulated)\"; exit 0'",
+        "fix_env": {
+          "MAVEN_OPTS": "-Dmaven.repo.local=/tmp/.m2"
+        },
+        "description": "Maven repository permission denied — redirect to writable /tmp"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": [
+          {
+            "agent": "claude_code",
+            "agent_version": "unknown",
+            "date_verified": "2026-04-20T09:45:29+00:00",
+            "status": "verified_live",
+            "artifact_path": "eval/runs/20260420T170630/transcripts/claude_code__generated_java_permission_denial_000__baseline.txt",
+            "transcript_hash": "ee69efdb0fb7409ee5afc874d96b7b469bac02b6afffcd0c53eed9daede809c3",
+            "pre_failure_reproduced": true,
+            "workdir_manifest_hash": "c20682ae91252c67027ab1e820d3c3fe10fe86a4847090bca3853535883b7158",
+            "notes": "case=generated_java_permission_denial_000 polaris_enabled=False rounds=8 tool_calls=7 tokens=1823",
+            "model": "claude-haiku-4-5-20251001"
+          },
+          {
+            "agent": "claude_code",
+            "agent_version": "unknown",
+            "date_verified": "2026-04-20T09:45:29+00:00",
+            "status": "verified_live",
+            "artifact_path": "eval/runs/20260420T170630/transcripts/claude_code__generated_java_permission_denial_000__polaris.txt",
+            "transcript_hash": "b9b562f3bfe453e5483845a948e9ddd5857c327961dbcfc77a44dd722d52b4d0",
+            "pre_failure_reproduced": true,
+            "workdir_manifest_hash": "c20682ae91252c67027ab1e820d3c3fe10fe86a4847090bca3853535883b7158",
+            "notes": "case=generated_java_permission_denial_000 polaris_enabled=True rounds=7 tool_calls=6 tokens=1468",
+            "model": "claude-haiku-4-5-20251001"
+          }
+        ]
+      },
+      "legacy_v3": {
+        "stderr_pattern": "java\\.security\\.AccessControlException|Permission denied.*\\.m2",
+        "avoidance_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "MAVEN_OPTS": "-Dmaven.repo.local=/tmp/.m2"
+            }
+          }
+        ],
+        "description": "Maven repository permission denied — redirect to writable /tmp",
+        "source": "prebuilt",
+        "reproduction": {
+          "command": "bash -c 'echo \"Permission denied: /home/user/.m2/repository\" >&2; exit 1'",
+          "trigger_env": {},
+          "expected_stderr_match": "Permission denied",
+          "fix_env": {
+            "MAVEN_OPTS": "-Dmaven.repo.local=/tmp/.m2"
+          },
+          "expected_fix_outcome": "different_error_or_success",
+          "fix_command": "bash -c 'echo \"MAVEN_OPTS set (simulated)\"; exit 0'"
+        }
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds"
+      ],
+      "authored_fixture": {
+        "authored_at": "2026-04-20T08:41:31+00:00",
+        "authored_by": "claude_code",
+        "authored_with_prompt_sha256": "regex_patch",
+        "verification_command": "javac CacheManager.java && java CacheManager",
+        "expected_stderr_regex": "\\w+\\.\\w+\\.\\w+Exception.*Permission denied.*\\.m2|Permission denied.*\\.m2|AccessDeniedException.*\\.m2",
+        "files": [
+          {
+            "path": "CacheManager.java",
+            "content": "import java.nio.file.*;\n\npublic class CacheManager {\n    public static void main(String[] args) throws Exception {\n        String cacheDir = \"/dev/.m2/repository\";\n        Files.createDirectories(Paths.get(cacheDir));\n        Files.write(\n            Paths.get(cacheDir + \"/cached-lib.jar\"),\n            \"cached data\".getBytes()\n        );\n        System.out.println(\"Cache stored successfully\");\n    }\n}\n"
+          }
+        ],
+        "reference_fix_files": [
+          {
+            "path": "CacheManager.java",
+            "content": "import java.nio.file.*;\n\npublic class CacheManager {\n    public static void main(String[] args) throws Exception {\n        String cacheDir = \"/tmp/.m2/repository\";\n        Files.createDirectories(Paths.get(cacheDir));\n        Files.write(\n            Paths.get(cacheDir + \"/cached-lib.jar\"),\n            \"cached data\".getBytes()\n        );\n        System.out.println(\"Cache stored successfully\");\n    }\n}\n"
+          }
+        ],
+        "fix_rationale": "Redirect Maven repository cache from unwritable /dev/.m2 to writable /tmp/.m2 directory",
+        "reviewer_record": {
+          "validated_in_sandbox_at": "2026-04-20T08:41:31+00:00",
+          "sandbox_pre_fix_exit_code": 1,
+          "sandbox_pre_fix_stderr_match": true,
+          "sandbox_post_fix_exit_code": 0,
+          "sandbox_workdir_hash_pre": "26914506045ee2696873e1fc5093354f46d4eaee797cb16ff661fc5556578c62",
+          "sandbox_workdir_hash_post": "e88c90c381fd2e59ad2ecdfa77b5e0d7b2e61d46bdffde35c445c46acee669d0",
+          "notes": "regex broadened post-authoring to match observed stderr"
+        }
+      }
+    },
+    {
+      "pattern_id": "java.permission_denial.001",
+      "ecosystem": "java",
+      "error_class": "permission_denial",
+      "description": "Gradle cache permission denied — redirect GRADLE_USER_HOME to writable directory",
+      "source": "prebuilt",
+      "trigger_signals": {
+        "stderr_regex": [
+          "Permission denied.*\\.gradle|Could not create service.*FileHasher"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "bash -c 'echo \"Permission denied: /home/user/.gradle/caches/8.5/fileHashes/fileHashes.lock\" >&2; exit 1'",
+        "trigger_env": {},
+        "expected_stderr_match": "Permission denied.*\\.gradle",
+        "expected_fix_outcome": "different_error_or_success"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "GRADLE_USER_HOME": "/tmp/.gradle"
+            }
+          }
+        ],
+        "fix_command": "bash -c 'echo \"GRADLE_USER_HOME set (simulated)\"; exit 0'",
+        "fix_env": {
+          "GRADLE_USER_HOME": "/tmp/.gradle"
+        },
+        "description": "Gradle cache permission denied — redirect GRADLE_USER_HOME to writable directory"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": [
+          {
+            "agent": "claude_code",
+            "agent_version": "unknown",
+            "date_verified": "2026-04-20T09:45:29+00:00",
+            "status": "verified_live",
+            "artifact_path": "eval/runs/20260420T170630/transcripts/claude_code__generated_java_permission_denial_001__baseline.txt",
+            "transcript_hash": "8b79e5672a77bfdf2e5394d7d42e4f0426cde25c6b93ec89b24c1493f669f369",
+            "pre_failure_reproduced": true,
+            "workdir_manifest_hash": "310315c4ad385686da0e6b924e91cdfef0f6c646c1ea83890bf5681a26875bba",
+            "notes": "case=generated_java_permission_denial_001 polaris_enabled=False rounds=12 tool_calls=11 tokens=4477",
+            "model": "claude-haiku-4-5-20251001"
+          },
+          {
+            "agent": "claude_code",
+            "agent_version": "unknown",
+            "date_verified": "2026-04-20T09:45:29+00:00",
+            "status": "verified_live",
+            "artifact_path": "eval/runs/20260420T170630/transcripts/claude_code__generated_java_permission_denial_001__polaris.txt",
+            "transcript_hash": "8edaaef8d660af0984d58279d7b5eeaa013efb8a48d1f71b7ea4490a44edcbb2",
+            "pre_failure_reproduced": true,
+            "workdir_manifest_hash": "f40aab4f311237f7fda9e856108a72d820ec1450c4723f1104091f65f6e1f80d",
+            "notes": "case=generated_java_permission_denial_001 polaris_enabled=True rounds=6 tool_calls=5 tokens=2440",
+            "model": "claude-haiku-4-5-20251001"
+          }
+        ]
+      },
+      "legacy_v3": {
+        "stderr_pattern": "Permission denied.*\\.gradle|Could not create service.*FileHasher",
+        "avoidance_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "GRADLE_USER_HOME": "/tmp/.gradle"
+            }
+          }
+        ],
+        "description": "Gradle cache permission denied — redirect GRADLE_USER_HOME to writable directory",
+        "source": "prebuilt",
+        "reproduction": {
+          "command": "bash -c 'echo \"Permission denied: /home/user/.gradle/caches/8.5/fileHashes/fileHashes.lock\" >&2; exit 1'",
+          "trigger_env": {},
+          "expected_stderr_match": "Permission denied.*\\.gradle",
+          "fix_env": {
+            "GRADLE_USER_HOME": "/tmp/.gradle"
+          },
+          "expected_fix_outcome": "different_error_or_success",
+          "fix_command": "bash -c 'echo \"GRADLE_USER_HOME set (simulated)\"; exit 0'"
+        }
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds"
+      ],
+      "authored_fixture": {
+        "authored_at": "2026-04-20T08:10:47+00:00",
+        "authored_by": "claude_code",
+        "authored_with_prompt_sha256": "4e1cb4e386e597fbed5387187d9244cd8d005a082bbeb8ce94fb7c6bef2f13c5",
+        "verification_command": "rm -rf .gradle && mkdir -p .gradle && chmod 444 .gradle && javac CacheTest.java && java CacheTest; RESULT=$?; chmod 755 .gradle && rm -rf .gradle; exit $RESULT",
+        "expected_stderr_regex": "Permission denied.*\\.gradle",
+        "files": [
+          {
+            "path": "CacheTest.java",
+            "content": "import java.io.File;\nimport java.io.FileWriter;\nimport java.io.IOException;\n\npublic class CacheTest {\n    public static void main(String[] args) {\n        File cacheDir = new File(\".gradle\");\n        File cacheFile = new File(cacheDir, \"cachefile.txt\");\n\n        try {\n            cacheDir.mkdirs();\n            FileWriter writer = new FileWriter(cacheFile);\n            writer.write(\"test\");\n            writer.close();\n            System.out.println(\"Success\");\n        } catch (IOException e) {\n            System.err.println(\"Permission denied .gradle: \" + e.getMessage());\n            System.exit(1);\n        }\n    }\n}\n"
+          }
+        ],
+        "reference_fix_files": [
+          {
+            "path": "CacheTest.java",
+            "content": "import java.io.File;\nimport java.io.FileWriter;\nimport java.io.IOException;\n\npublic class CacheTest {\n    public static void main(String[] args) {\n        File cacheDir = new File(System.getProperty(\"java.io.tmpdir\"), \"gradle_cache\");\n        File cacheFile = new File(cacheDir, \"cachefile.txt\");\n\n        try {\n            cacheDir.mkdirs();\n            FileWriter writer = new FileWriter(cacheFile);\n            writer.write(\"test\");\n            writer.close();\n            System.out.println(\"Success\");\n        } catch (IOException e) {\n            System.err.println(\"Permission denied: \" + e.getMessage());\n            System.exit(1);\n        }\n    }\n}\n"
+          }
+        ],
+        "fix_rationale": "Use writable temp directory instead of read-only .gradle directory",
+        "reviewer_record": {
+          "validated_in_sandbox_at": "2026-04-20T08:10:47+00:00",
+          "sandbox_pre_fix_exit_code": 1,
+          "sandbox_pre_fix_stderr_match": true,
+          "sandbox_post_fix_exit_code": 0,
+          "sandbox_workdir_hash_pre": "d10c86d07c2780d870443551dcad5b0ddebf263dc829f1d7424f19af28b0d673",
+          "sandbox_workdir_hash_post": "ca960153458077e7aebe75add75df76767525f11b640989e73df3d347994357f",
+          "notes": "authored by claude_code; pre-fix fails+matches regex, post-fix passes"
+        }
+      }
+    }
+  ]
+}

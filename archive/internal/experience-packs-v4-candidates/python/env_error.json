@@ -1,0 +1,319 @@
+{
+  "ecosystem": "python",
+  "error_class": "env_error",
+  "schema_version": 4,
+  "records": [
+    {
+      "pattern_id": "candidate.python.env_error.000",
+      "ecosystem": "python",
+      "error_class": "env_error",
+      "description": "venv activate script missing",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "activate: No such file"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "env | grep -E 'PYTHON|PATH|VIRTUAL' 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "activate: No such file"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Fix environment: venv activate script missing"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.env_error.001",
+      "ecosystem": "python",
+      "error_class": "env_error",
+      "description": "PYTHONPATH shadowing stdlib",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "ImportError.*No module named '_bootlocale'"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "env | grep -E 'PYTHON|PATH|VIRTUAL' 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "ImportError.*No module named '_bootlocale'"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Fix environment: PYTHONPATH shadowing stdlib"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.env_error.002",
+      "ecosystem": "python",
+      "error_class": "env_error",
+      "description": "virtualenv python symlink broken",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "bad interpreter.*No such file"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "env | grep -E 'PYTHON|PATH|VIRTUAL' 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "bad interpreter.*No such file"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Fix environment: virtualenv python symlink broken"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.env_error.003",
+      "ecosystem": "python",
+      "error_class": "env_error",
+      "description": "PATH missing pipx shims",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "pipx: command not found"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "env | grep -E 'PYTHON|PATH|VIRTUAL' 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "pipx: command not found"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Fix environment: PATH missing pipx shims"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.env_error.004",
+      "ecosystem": "python",
+      "error_class": "env_error",
+      "description": "pyenv shims not in PATH",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "pyenv: command not found|python: command not found"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "env | grep -E 'PYTHON|PATH|VIRTUAL' 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "pyenv: command not found|python: command not found"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Fix environment: pyenv shims not in PATH"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.env_error.005",
+      "ecosystem": "python",
+      "error_class": "env_error",
+      "description": "poetry env not linked",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "poetry.*No virtualenv created"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "env | grep -E 'PYTHON|PATH|VIRTUAL' 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "poetry.*No virtualenv created"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Fix environment: poetry env not linked"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.env_error.006",
+      "ecosystem": "python",
+      "error_class": "env_error",
+      "description": "conda env activation hook missing",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "CondaError.*activate"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "env | grep -E 'PYTHON|PATH|VIRTUAL' 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "CondaError.*activate"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Fix environment: conda env activation hook missing"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.env_error.007",
+      "ecosystem": "python",
+      "error_class": "env_error",
+      "description": "uv cache dir env var invalid",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "uv.*cache directory"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "env | grep -E 'PYTHON|PATH|VIRTUAL' 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "uv.*cache directory"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Fix environment: uv cache dir env var invalid"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    }
+  ]
+}

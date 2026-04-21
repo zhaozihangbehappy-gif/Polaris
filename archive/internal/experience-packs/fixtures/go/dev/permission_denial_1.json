@@ -1,0 +1,1 @@
+{"stderr": "go: could not create module cache: mkdir /home/user/go/pkg/mod: permission denied", "error_class": "permission_denial", "source": "go mod download when GOPATH module cache directory is not writable"}

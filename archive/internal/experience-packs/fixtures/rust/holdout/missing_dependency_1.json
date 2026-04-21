@@ -1,0 +1,5 @@
+{
+  "stderr": "error[E0432]: unresolved import `reqwest`\n --> src/client.rs:1:5\n  |\n1 | use reqwest::Client;\n  |     ^^^^^^^ use of undeclared crate or module `reqwest`\n\nerror: aborting due to previous error\n\nFor more information about this error, try `rustc --explain E0432`.",
+  "error_class": "missing_dependency",
+  "source": "cargo check with reqwest not listed in Cargo.toml dependencies"
+}

@@ -1,0 +1,109 @@
+{
+  "patterns": [
+    {
+      "adapter": "python-local",
+      "best_lifecycle_state": "validated",
+      "confidence": 76,
+      "created_at": "2026-03-14T03:03:28.820744+00:00",
+      "demotion_count": 0,
+      "evidence": [
+        "runtime-repair-results.json",
+        "runtime-repair-plan.json",
+        "runtime-repair-report.json"
+      ],
+      "evidence_count": 3,
+      "expires_at": null,
+      "fingerprint": "repair-pattern-95f0ad5876ce",
+      "history": [
+        {
+          "event": "captured",
+          "reason": "new_pattern",
+          "ts": "2026-03-14T03:03:28.820766+00:00"
+        },
+        {
+          "event": "auto_promoted",
+          "reason": "evidence_threshold_met",
+          "to": "validated",
+          "ts": "2026-03-14T03:03:28.820772+00:00"
+        }
+      ],
+      "last_validated_at": "2026-03-14T03:03:28.820774+00:00",
+      "lifecycle_state": "validated",
+      "modes": [
+        "short"
+      ],
+      "outcome": "tool-resolution repair path documented with local command evidence",
+      "pattern_id": "repair-pattern-95f0ad5876ce",
+      "promotion_count": 1,
+      "reusable": true,
+      "selection_count": 0,
+      "sequence": [
+        "diagnose",
+        "tool-probes",
+        "record-evidence",
+        "recover"
+      ],
+      "summary": "Missing-tool failures improved after bounded PATH and command-resolution probes captured local evidence",
+      "tags": [
+        "repair",
+        "local",
+        "missing_tool",
+        "tool_probe_tree",
+        "shallow",
+        "tooling",
+        "path",
+        "orchestration"
+      ],
+      "trigger": "missing_tool",
+      "updated_at": "2026-03-14T03:03:28.820758+00:00",
+      "validation_count": 1
+    },
+    {
+      "adapter": null,
+      "best_lifecycle_state": "validated",
+      "confidence": 72,
+      "created_at": "2026-03-14T03:03:27.595512+00:00",
+      "demotion_count": 0,
+      "evidence": [
+        "Polaris/references/repair-actions.md"
+      ],
+      "evidence_count": 1,
+      "expires_at": null,
+      "fingerprint": "bounded-local-repair",
+      "history": [
+        {
+          "event": "captured",
+          "reason": "new_pattern",
+          "ts": "2026-03-14T03:03:27.595532+00:00"
+        }
+      ],
+      "last_validated_at": "2026-03-14T03:03:27.595525+00:00",
+      "lifecycle_state": "validated",
+      "modes": [
+        "long"
+      ],
+      "outcome": "bounded recovery without crossing safeguards",
+      "pattern_id": "bounded-local-repair",
+      "promotion_count": 0,
+      "reusable": true,
+      "selection_count": 0,
+      "sequence": [
+        "detect",
+        "branch",
+        "probe",
+        "recover",
+        "record"
+      ],
+      "summary": "Local repair branches should stay probe-only and feed explicit recovery references",
+      "tags": [
+        "repair",
+        "local",
+        "orchestration"
+      ],
+      "trigger": "repairable local runtime failure",
+      "updated_at": "2026-03-14T03:03:27.595524+00:00",
+      "validation_count": 1
+    }
+  ],
+  "schema_version": 1
+}

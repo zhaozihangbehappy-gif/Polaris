@@ -1,0 +1,5 @@
+{
+  "stderr": "error: failed to parse manifest at `/home/user/project/Cargo.toml`\n\nCaused by:\n  TOML parse error at line 8, column 1\n    |\n  8 | [dependecies]\n    | ^^^^^^^^^^^^^^\n  unknown field `dependecies`, expected one of `package`, `lib`, `bin`, `dependencies`, `dev-dependencies`, `build-dependencies`, `features`, `target`, `workspace`, `badges`, `profile`, `patch`, `replace`",
+  "error_class": "config_error",
+  "source": "cargo build with typo in Cargo.toml section name"
+}

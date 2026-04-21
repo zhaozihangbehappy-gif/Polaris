@@ -1,0 +1,13 @@
+{
+  "name": "peer-conflict-fixture",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "verify": "npm install --offline --package-lock=false --ignore-scripts --no-audit --no-fund"
+  },
+  "dependencies": {
+    "host-lib": "file:packages/host-lib",
+    "plugin-a": "file:packages/plugin-a",
+    "plugin-b": "file:packages/plugin-b"
+  }
+}

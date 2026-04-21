@@ -1,0 +1,410 @@
+{
+  "ecosystem": "python",
+  "error_class": "syntax_error",
+  "schema_version": 4,
+  "records": [
+    {
+      "pattern_id": "python.syntax_error.000",
+      "ecosystem": "python",
+      "error_class": "syntax_error",
+      "description": "Python syntax error \u2014 likely Python version mismatch; disable bytecode cache to avoid stale .pyc",
+      "source": "prebuilt",
+      "trigger_signals": {
+        "stderr_regex": [
+          "SyntaxError: (invalid syntax|unexpected EOF|f-string)"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "python3 -c 'def f(: pass' 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "SyntaxError",
+        "expected_fix_outcome": "different_error_or_success"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "PYTHONDONTWRITEBYTECODE": "1"
+            }
+          }
+        ],
+        "fix_command": "python3 -c 'def f(): pass; print(\"ok\")' 2>&1 || true",
+        "fix_env": {
+          "PYTHONDONTWRITEBYTECODE": "1"
+        },
+        "description": "Python syntax error \u2014 likely Python version mismatch; disable bytecode cache to avoid stale .pyc"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": [
+          {
+            "agent": "claude_code",
+            "agent_version": "unknown",
+            "date_verified": "2026-04-20T04:48:54+00:00",
+            "status": "verified_live",
+            "artifact_path": "eval/runs/20260420T124715/transcripts/claude_code__generated_python_syntax_error_000__baseline.txt",
+            "transcript_hash": "3cd46c8e0909333b9e509ed1fe00bf76d9771799a695bf484cd8e5f150eeec39",
+            "pre_failure_reproduced": true,
+            "workdir_manifest_hash": "c065a3561bdbdca4f1f41e5dd1f2967aa1535d0aaffaeb7320e2e0d429ea1501",
+            "notes": "case=generated_python_syntax_error_000 polaris_enabled=False rounds=1 tool_calls=7 tokens=181",
+            "model": "claude-haiku-4-5-20251001"
+          },
+          {
+            "agent": "claude_code",
+            "agent_version": "unknown",
+            "date_verified": "2026-04-20T04:48:54+00:00",
+            "status": "verified_live",
+            "artifact_path": "eval/runs/20260420T124715/transcripts/claude_code__generated_python_syntax_error_000__polaris.txt",
+            "transcript_hash": "eadbbec89f1746d44737ae5eafdc5eae62be0b20e5fd581e2f459741dd4541ad",
+            "pre_failure_reproduced": true,
+            "workdir_manifest_hash": "c065a3561bdbdca4f1f41e5dd1f2967aa1535d0aaffaeb7320e2e0d429ea1501",
+            "notes": "case=generated_python_syntax_error_000 polaris_enabled=True rounds=1 tool_calls=8 tokens=215",
+            "model": "claude-haiku-4-5-20251001"
+          },
+          {
+            "agent": "claude_code",
+            "agent_version": "unknown",
+            "date_verified": "2026-04-20T09:45:28+00:00",
+            "status": "verified_live",
+            "artifact_path": "eval/runs/20260420T170630/transcripts/claude_code__case_004_python_syntax__baseline.txt",
+            "transcript_hash": "ade97f95569687bf22331eb4b63a331feabfff3027fd41612753fbeddb560c9b",
+            "pre_failure_reproduced": true,
+            "workdir_manifest_hash": "db8a1819c09a4535d2f1850ee83225dd980330e19a8dd7ce62d2d698a80dc444",
+            "notes": "case=case_004_python_syntax polaris_enabled=False rounds=4 tool_calls=3 tokens=737",
+            "model": "claude-haiku-4-5-20251001"
+          },
+          {
+            "agent": "claude_code",
+            "agent_version": "unknown",
+            "date_verified": "2026-04-20T09:45:28+00:00",
+            "status": "verified_live",
+            "artifact_path": "eval/runs/20260420T170630/transcripts/claude_code__case_004_python_syntax__polaris.txt",
+            "transcript_hash": "d0f8bd25906f08e25bd6b0cbc15e1059e98091988f42adeae616a9c04c097512",
+            "pre_failure_reproduced": true,
+            "workdir_manifest_hash": "db8a1819c09a4535d2f1850ee83225dd980330e19a8dd7ce62d2d698a80dc444",
+            "notes": "case=case_004_python_syntax polaris_enabled=True rounds=4 tool_calls=3 tokens=720",
+            "model": "claude-haiku-4-5-20251001"
+          }
+        ],
+        "invalidated_evidence": [
+          {
+            "agent": "codex",
+            "agent_version": "unknown",
+            "date_verified": "2026-04-19T10:56:10+00:00",
+            "status": "invalidated_synthetic_recipe",
+            "artifact_path": "eval/runs/20260419T185014/transcripts/codex__case_004_python_syntax__baseline.txt",
+            "transcript_hash": "172902059cc92af24ef360208a1d117581c6cf58493c53a30d75365184cc2766",
+            "pre_failure_reproduced": true,
+            "workdir_manifest_hash": "2d46650d6ce346a5acbec0c021f472b6b202329d7ebb04d335b2cd5588cf7d04",
+            "notes": "case=case_004_python_syntax polaris_enabled=False rounds=1 tool_calls=3 tokens=53202",
+            "invalidation_reason": "Evidence produced against a synthetic bash-echo recipe (pre-failure or fix_command that always succeeds/fails irrespective of agent action). Promotion to verified_live requires a pattern-level authored_fixture with a sandbox-validated reviewer_record. See VERIFIED_PROMOTION_REPORT.md and scripts/pattern_schema._is_synthetic_recipe.",
+            "invalidated_at": "2026-04-19T19:30:00+00:00"
+          },
+          {
+            "agent": "codex",
+            "agent_version": "unknown",
+            "date_verified": "2026-04-19T10:56:10+00:00",
+            "status": "invalidated_synthetic_recipe",
+            "artifact_path": "eval/runs/20260419T185014/transcripts/codex__case_004_python_syntax__polaris.txt",
+            "transcript_hash": "969f6412ae97e041621a63017be6011a3282432f4a23ac305879ab3226f4f331",
+            "pre_failure_reproduced": true,
+            "workdir_manifest_hash": "2d46650d6ce346a5acbec0c021f472b6b202329d7ebb04d335b2cd5588cf7d04",
+            "notes": "case=case_004_python_syntax polaris_enabled=True rounds=1 tool_calls=3 tokens=53721",
+            "invalidation_reason": "Evidence produced against a synthetic bash-echo recipe (pre-failure or fix_command that always succeeds/fails irrespective of agent action). Promotion to verified_live requires a pattern-level authored_fixture with a sandbox-validated reviewer_record. See VERIFIED_PROMOTION_REPORT.md and scripts/pattern_schema._is_synthetic_recipe.",
+            "invalidated_at": "2026-04-19T19:30:00+00:00"
+          }
+        ]
+      },
+      "legacy_v3": {
+        "stderr_pattern": "SyntaxError: (invalid syntax|unexpected EOF|f-string)",
+        "avoidance_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "PYTHONDONTWRITEBYTECODE": "1"
+            }
+          }
+        ],
+        "description": "Python syntax error \u2014 likely Python version mismatch; disable bytecode cache to avoid stale .pyc",
+        "source": "prebuilt",
+        "reproduction": {
+          "command": "python3 -c 'def f(: pass' 2>&1 || true",
+          "trigger_env": {},
+          "expected_stderr_match": "SyntaxError",
+          "fix_command": "python3 -c 'def f(): pass; print(\"ok\")' 2>&1 || true",
+          "fix_env": {
+            "PYTHONDONTWRITEBYTECODE": "1"
+          },
+          "expected_fix_outcome": "different_error_or_success"
+        }
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds"
+      ],
+      "authored_fixture": {
+        "authored_at": "2026-04-20T03:05:46+00:00",
+        "authored_by": "codex",
+        "authored_with_prompt_sha256": "93fe8cf063f47a2483dd0f366303a3f30b2ae1c9b871038b2a68b1769280cddf",
+        "verification_command": "PYTHONDONTWRITEBYTECODE=1 python3 -B -m unittest discover -s . -p 'test_*.py'",
+        "expected_stderr_regex": "SyntaxError: f-string",
+        "files": [
+          {
+            "path": "greeting.py",
+            "content": "def make_greeting(name):\n    return f\"Hello, {name!\"\n"
+          },
+          {
+            "path": "test_greeting.py",
+            "content": "import unittest\n\nfrom greeting import make_greeting\n\n\nclass GreetingTests(unittest.TestCase):\n    def test_make_greeting(self):\n        self.assertEqual(make_greeting(\"Ada\"), \"Hello, Ada!\")\n\n\nif __name__ == \"__main__\":\n    unittest.main()\n"
+          }
+        ],
+        "reference_fix_files": [
+          {
+            "path": "greeting.py",
+            "content": "def make_greeting(name):\n    return f\"Hello, {name}!\"\n"
+          }
+        ],
+        "fix_rationale": "Close the f-string replacement field so the module parses and the greeting function can be imported.",
+        "reviewer_record": {
+          "validated_in_sandbox_at": "2026-04-20T03:05:46+00:00",
+          "sandbox_pre_fix_exit_code": 1,
+          "sandbox_pre_fix_stderr_match": true,
+          "sandbox_post_fix_exit_code": 0,
+          "sandbox_workdir_hash_pre": "c065a3561bdbdca4f1f41e5dd1f2967aa1535d0aaffaeb7320e2e0d429ea1501",
+          "sandbox_workdir_hash_post": "c08aa7fddd0cec1861685e1786d160587f9fdfd17b917a14948855873f2f70b6",
+          "notes": "authored by codex; pre-fix fails+matches regex, post-fix passes"
+        }
+      }
+    },
+    {
+      "pattern_id": "python.syntax_error.001",
+      "ecosystem": "python",
+      "error_class": "syntax_error",
+      "description": "Indentation error \u2014 possibly stale .pyc from prior code version; disable bytecode cache",
+      "source": "prebuilt",
+      "trigger_signals": {
+        "stderr_regex": [
+          "IndentationError: (unexpected indent|expected an indented block)"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "printf 'def f():\\n  x = 1\\n    y = 2\\n' > /tmp/_polaris_repro_indent.py && python3 /tmp/_polaris_repro_indent.py 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "IndentationError",
+        "expected_fix_outcome": "different_error_or_success"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "PYTHONDONTWRITEBYTECODE": "1"
+            }
+          }
+        ],
+        "fix_command": "printf 'def f():\\n  x = 1\\n  y = 2\\nf(); print(\"ok\")\\n' > /tmp/_polaris_repro_indent.py && python3 /tmp/_polaris_repro_indent.py 2>&1 || true",
+        "fix_env": {
+          "PYTHONDONTWRITEBYTECODE": "1"
+        },
+        "description": "Indentation error \u2014 possibly stale .pyc from prior code version; disable bytecode cache"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "legacy_v3": {
+        "stderr_pattern": "IndentationError: (unexpected indent|expected an indented block)",
+        "avoidance_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "PYTHONDONTWRITEBYTECODE": "1"
+            }
+          }
+        ],
+        "description": "Indentation error \u2014 possibly stale .pyc from prior code version; disable bytecode cache",
+        "source": "prebuilt",
+        "reproduction": {
+          "command": "printf 'def f():\\n  x = 1\\n    y = 2\\n' > /tmp/_polaris_repro_indent.py && python3 /tmp/_polaris_repro_indent.py 2>&1 || true",
+          "trigger_env": {},
+          "expected_stderr_match": "IndentationError",
+          "fix_command": "printf 'def f():\\n  x = 1\\n  y = 2\\nf(); print(\"ok\")\\n' > /tmp/_polaris_repro_indent.py && python3 /tmp/_polaris_repro_indent.py 2>&1 || true",
+          "fix_env": {
+            "PYTHONDONTWRITEBYTECODE": "1"
+          },
+          "expected_fix_outcome": "different_error_or_success"
+        }
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ],
+      "authored_fixture": {
+        "authored_at": "2026-04-20T03:05:13+00:00",
+        "authored_by": "codex",
+        "authored_with_prompt_sha256": "615cb06285ac29c8092eebc5ae4b2d7a21f6f1be68d732d6d26194aa8b0fe765",
+        "verification_command": "PYTHONDONTWRITEBYTECODE=1 python3 -B -m unittest discover -s tests",
+        "expected_stderr_regex": "IndentationError: expected an indented block",
+        "files": [
+          {
+            "path": "app.py",
+            "content": "def greet(name):\nreturn f\"Hello, {name}!\"\n"
+          },
+          {
+            "path": "tests/test_app.py",
+            "content": "import unittest\n\nfrom app import greet\n\n\nclass GreetingTests(unittest.TestCase):\n    def test_greet_formats_name(self):\n        self.assertEqual(greet(\"Ada\"), \"Hello, Ada!\")\n\n\nif __name__ == \"__main__\":\n    unittest.main()\n"
+          }
+        ],
+        "reference_fix_files": [
+          {
+            "path": "app.py",
+            "content": "def greet(name):\n    return f\"Hello, {name}!\"\n"
+          }
+        ],
+        "fix_rationale": "Indenting the function body makes the module importable while preserving the expected greeting behavior.",
+        "reviewer_record": {
+          "validated_in_sandbox_at": "2026-04-20T03:05:13+00:00",
+          "sandbox_pre_fix_exit_code": 1,
+          "sandbox_pre_fix_stderr_match": true,
+          "sandbox_post_fix_exit_code": 0,
+          "sandbox_workdir_hash_pre": "6192d63de154756f96a515491e683421708808db0aede3f635ead37748a81e89",
+          "sandbox_workdir_hash_post": "db7f38ca5413c863742ca4405fbc88cbd4c0f5a9852f80f336e5150b8e5aceba",
+          "notes": "authored by codex; pre-fix fails+matches regex, post-fix passes"
+        }
+      }
+    },
+    {
+      "pattern_id": "python.syntax_error.002",
+      "ecosystem": "python",
+      "error_class": "syntax_error",
+      "description": "Mixed tabs and spaces \u2014 disable bytecode cache to prevent stale .pyc masking the fix",
+      "source": "prebuilt",
+      "trigger_signals": {
+        "stderr_regex": [
+          "TabError: inconsistent use of tabs and spaces"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "printf 'def f():\\n  x = 1\\n\\ty = 2\\n' > /tmp/_polaris_repro_tab.py && python3 /tmp/_polaris_repro_tab.py 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "TabError",
+        "expected_fix_outcome": "different_error_or_success"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "PYTHONDONTWRITEBYTECODE": "1"
+            }
+          }
+        ],
+        "fix_command": "printf 'def f():\\n  x = 1\\n  y = 2\\nf(); print(\"ok\")\\n' > /tmp/_polaris_repro_tab.py && python3 /tmp/_polaris_repro_tab.py 2>&1 || true",
+        "fix_env": {
+          "PYTHONDONTWRITEBYTECODE": "1"
+        },
+        "description": "Mixed tabs and spaces \u2014 disable bytecode cache to prevent stale .pyc masking the fix"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": [
+          {
+            "agent": "claude_code",
+            "agent_version": "unknown",
+            "model": "claude-haiku-4-5-20251001",
+            "date_verified": "2026-04-20T12:18:53+00:00",
+            "status": "verified_live",
+            "artifact_path": "eval/runs/20260420T201811/transcripts/claude_code__generated_python_syntax_error_002__polaris.txt",
+            "transcript_hash": "f963b5828726bf829db95b910a7e7348bac7aaf95d0377f7e8a80e985cdd87b2",
+            "pre_failure_reproduced": true,
+            "workdir_manifest_hash": "69e861d9d6217bb7cf17b1f6b9742dc1e8ee095ccdb54fca35781258d1313c2c",
+            "notes": "case=generated_python_syntax_error_002 polaris_enabled=True rounds=1 tool_calls=7 tokens=180"
+          }
+        ]
+      },
+      "legacy_v3": {
+        "stderr_pattern": "TabError: inconsistent use of tabs and spaces",
+        "avoidance_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "PYTHONDONTWRITEBYTECODE": "1"
+            }
+          }
+        ],
+        "description": "Mixed tabs and spaces \u2014 disable bytecode cache to prevent stale .pyc masking the fix",
+        "source": "prebuilt",
+        "reproduction": {
+          "command": "printf 'def f():\\n  x = 1\\n\\ty = 2\\n' > /tmp/_polaris_repro_tab.py && python3 /tmp/_polaris_repro_tab.py 2>&1 || true",
+          "trigger_env": {},
+          "expected_stderr_match": "TabError",
+          "fix_command": "printf 'def f():\\n  x = 1\\n  y = 2\\nf(); print(\"ok\")\\n' > /tmp/_polaris_repro_tab.py && python3 /tmp/_polaris_repro_tab.py 2>&1 || true",
+          "fix_env": {
+            "PYTHONDONTWRITEBYTECODE": "1"
+          },
+          "expected_fix_outcome": "different_error_or_success"
+        }
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds"
+      ],
+      "authored_fixture": {
+        "authored_at": "2026-04-20T03:06:08+00:00",
+        "authored_by": "codex",
+        "authored_with_prompt_sha256": "ff6119ec3eda545df5a3ae2e129e5982b24f556f18c61ac5ec4ceb517fa5817f",
+        "verification_command": "PYTHONDONTWRITEBYTECODE=1 python3 -B -m unittest test_broken_indent.py",
+        "expected_stderr_regex": "TabError: inconsistent use of tabs and spaces",
+        "files": [
+          {
+            "path": "broken_indent.py",
+            "content": "def greeting(name):\n\tif name:\n        return f\"Hello, {name}!\"\n\treturn \"Hello, stranger!\"\n"
+          },
+          {
+            "path": "test_broken_indent.py",
+            "content": "import unittest\n\nfrom broken_indent import greeting\n\n\nclass GreetingTests(unittest.TestCase):\n    def test_named_greeting(self):\n        self.assertEqual(greeting(\"Ada\"), \"Hello, Ada!\")\n\n\nif __name__ == \"__main__\":\n    unittest.main()\n"
+          }
+        ],
+        "reference_fix_files": [
+          {
+            "path": "broken_indent.py",
+            "content": "def greeting(name):\n    if name:\n        return f\"Hello, {name}!\"\n    return \"Hello, stranger!\"\n"
+          }
+        ],
+        "fix_rationale": "Use spaces consistently within the nested block so Python can parse the module.",
+        "reviewer_record": {
+          "validated_in_sandbox_at": "2026-04-20T03:06:08+00:00",
+          "sandbox_pre_fix_exit_code": 1,
+          "sandbox_pre_fix_stderr_match": true,
+          "sandbox_post_fix_exit_code": 0,
+          "sandbox_workdir_hash_pre": "69e861d9d6217bb7cf17b1f6b9742dc1e8ee095ccdb54fca35781258d1313c2c",
+          "sandbox_workdir_hash_post": "7717dca8243df1a9bd6cc9498ea29cee1fa17f5a6e6edcafb1e6d938b4605da7",
+          "notes": "authored by codex; pre-fix fails+matches regex, post-fix passes"
+        }
+      }
+    }
+  ]
+}

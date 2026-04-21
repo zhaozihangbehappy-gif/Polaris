@@ -1,0 +1,16 @@
+{
+  "case_id": "generated_go_config_error_001",
+  "files": [
+    "go.mod",
+    "main.go",
+    "build.sh"
+  ],
+  "dependencies": {},
+  "build_commands": [],
+  "expected_failure_command": "cd {workdir} && bash build.sh",
+  "expected_failure_stderr_regex": "GOPATH entry is relative|must be absolute path",
+  "manifest_schema_version": 1,
+  "bash_self_contained": false,
+  "reverse_from_pattern": "go.config_error.001",
+  "source_pool": "official"
+}

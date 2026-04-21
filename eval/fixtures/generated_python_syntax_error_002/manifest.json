@@ -1,0 +1,15 @@
+{
+  "case_id": "generated_python_syntax_error_002",
+  "files": [
+    "broken_indent.py",
+    "test_broken_indent.py"
+  ],
+  "dependencies": {},
+  "build_commands": [],
+  "expected_failure_command": "cd {workdir} && PYTHONDONTWRITEBYTECODE=1 python3 -B -m unittest test_broken_indent.py",
+  "expected_failure_stderr_regex": "TabError: inconsistent use of tabs and spaces",
+  "manifest_schema_version": 1,
+  "bash_self_contained": false,
+  "reverse_from_pattern": "python.syntax_error.002",
+  "source_pool": "official"
+}

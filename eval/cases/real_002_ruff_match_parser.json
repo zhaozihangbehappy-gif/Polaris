@@ -1,0 +1,13 @@
+{
+  "case_id": "real_002_ruff_match_parser",
+  "source": "real_issue",
+  "ecosystem": "python",
+  "initial_prompt": "At {workdir} is a Python 3.13 project with an app.py that uses a match\nstatement. `ruff check app.py` fails with a SyntaxError claiming match\nstatements were added in Python 3.10. The code is valid on 3.13. The ruff\nbinary on PATH is the pinned old version shipped in fixture/files/vendor.\nDiagnose why ruff rejects valid 3.13 code and apply the correct fix \u2014 do\nnot delete the match statement, and do not add `# noqa`.",
+  "success_criteria": {
+    "root_cause_regex": "upgrade ruff|ruff.*version|pip install.*ruff|target-version|ruff.*0\\.9",
+    "fix_command_test": "cd {workdir} && ruff check app.py"
+  },
+  "max_rounds": 12,
+  "real_issue_url": "https://github.com/astral-sh/ruff/issues/16417",
+  "pain_category": "ci_only"
+}

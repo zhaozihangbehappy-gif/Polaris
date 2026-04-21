@@ -1,0 +1,90 @@
+{
+  "runners": [
+    "codex",
+    "claude_code"
+  ],
+  "seed": 20260419,
+  "cases_total": 3,
+  "runs_attempted": 12,
+  "runs_completed": 12,
+  "deltas": [
+    {
+      "runner": "codex",
+      "case_id": "case_001_python_pythonpath",
+      "summary": {
+        "ci_pass_improved": false,
+        "rounds_pct_reduction": 0.0,
+        "token_delta": -3360,
+        "tool_calls_delta": -1,
+        "passes_hard_gate": false
+      }
+    },
+    {
+      "runner": "codex",
+      "case_id": "case_002_node_enoent_lockfile",
+      "summary": {
+        "ci_pass_improved": false,
+        "rounds_pct_reduction": 40.0,
+        "token_delta": -39342,
+        "tool_calls_delta": -1,
+        "passes_hard_gate": true
+      }
+    },
+    {
+      "runner": "codex",
+      "case_id": "case_003_docker_layer_cache",
+      "summary": {
+        "ci_pass_improved": false,
+        "rounds_pct_reduction": -100.0,
+        "token_delta": 30067,
+        "tool_calls_delta": 2,
+        "passes_hard_gate": false
+      }
+    },
+    {
+      "runner": "claude_code",
+      "case_id": "case_001_python_pythonpath",
+      "summary": {
+        "ci_pass_improved": false,
+        "rounds_pct_reduction": 0.0,
+        "token_delta": -18,
+        "tool_calls_delta": -1,
+        "passes_hard_gate": false
+      }
+    },
+    {
+      "runner": "claude_code",
+      "case_id": "case_002_node_enoent_lockfile",
+      "summary": {
+        "ci_pass_improved": false,
+        "rounds_pct_reduction": 0.0,
+        "token_delta": 266,
+        "tool_calls_delta": 3,
+        "passes_hard_gate": false
+      }
+    },
+    {
+      "runner": "claude_code",
+      "case_id": "case_003_docker_layer_cache",
+      "summary": {
+        "ci_pass_improved": false,
+        "rounds_pct_reduction": 0.0,
+        "token_delta": -119,
+        "tool_calls_delta": 0,
+        "passes_hard_gate": false
+      }
+    }
+  ],
+  "hard_gate_passing_pairs": 1,
+  "hard_gate_total_pairs": 6,
+  "launch_verdict": {
+    "status": "fail",
+    "reasons": [
+      "real_issue case share 0% < v0 minimum 30%",
+      "hard-gate pair pass rate 17% < launch minimum 50%"
+    ],
+    "pair_pass_rate": 0.16666666666666666,
+    "real_case_share": 0.0
+  },
+  "narrative_compliance": "Per NARRATIVE.md \u00a74: token-only gains do NOT count. A runner/case pair passes only if CI pass improves OR rounds_to_root_cause drops >= 30%."
+}

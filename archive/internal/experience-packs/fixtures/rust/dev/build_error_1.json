@@ -1,0 +1,5 @@
+{
+  "stderr": "error: linker `cc` not found\n  |\n  = note: No such file or directory (os error 2)\n\nerror: aborting due to previous error\n\nerror: could not compile `myproject` due to previous error",
+  "error_class": "build_error",
+  "source": "cargo build on minimal Ubuntu container without build-essential installed"
+}

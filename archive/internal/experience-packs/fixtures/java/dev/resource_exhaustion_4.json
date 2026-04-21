@@ -1,0 +1,5 @@
+{
+  "stderr": "Exception in thread \"main\" java.lang.StackOverflowError\n\tat com.myapp.util.TreeWalker.visit(TreeWalker.java:34)\n\tat com.myapp.util.TreeWalker.visit(TreeWalker.java:36)\n\tat com.myapp.util.TreeWalker.visit(TreeWalker.java:36)\n\tat com.myapp.util.TreeWalker.visit(TreeWalker.java:36)\n\tat com.myapp.util.TreeWalker.visit(TreeWalker.java:36)\n\tat com.myapp.util.TreeWalker.visit(TreeWalker.java:36)\n\t... 1024 more",
+  "error_class": "resource_exhaustion",
+  "source": "infinite recursion in tree walker without depth limit"
+}

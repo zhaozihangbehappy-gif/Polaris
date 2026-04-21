@@ -1,0 +1,16 @@
+{
+  "executed_at": "2026-03-15T13:35:57.748808+00:00",
+  "failure_type": "approval_denial",
+  "results": [
+    {
+      "action": null,
+      "outcome": {
+        "note": "Execution skipped because the plan is not safe to run automatically.",
+        "returncode": null,
+        "stderr": "",
+        "stdout": ""
+      }
+    }
+  ],
+  "safe_to_execute": false
+}

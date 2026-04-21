@@ -1,0 +1,5 @@
+{
+  "stderr": "node:internal/modules/cjs/loader:1080\n  throw err;\n  ^\n\nError: Cannot find module 'express'\nRequire stack:\n- /home/user/project/src/server.js\n    at Module._resolveFilename (node:internal/modules/cjs/loader:1077:15)\n    at Module._load (node:internal/modules/cjs/loader:922:27)\n    at Module.require (node:internal/modules/cjs/loader:1143:19)\n    at require (node:internal/modules/helpers:119:18)\n    at Object.<anonymous> (/home/user/project/src/server.js:1:17)\n    at Module._compile (node:internal/modules/cjs/loader:1256:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1310:10)\n    at Module.load (node:internal/modules/cjs/loader:1119:32)\n    at Module._load (node:internal/modules/cjs/loader:960:12)\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:86:12) {\n  code: 'MODULE_NOT_FOUND',\n  requireStack: [\n    '/home/user/project/src/server.js'\n  ]\n}",
+  "error_class": "missing_dependency",
+  "source": "Common error when node_modules not installed or NODE_PATH not set"
+}

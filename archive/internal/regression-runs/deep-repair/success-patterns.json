@@ -1,0 +1,191 @@
+{
+  "patterns": [
+    {
+      "adapter": "python-runtime-local",
+      "asset_version": 2,
+      "best_lifecycle_state": "validated",
+      "confidence": 88,
+      "created_at": "2026-03-15T13:35:55.662747+00:00",
+      "demotion_count": 0,
+      "evidence": [
+        "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/deep-repair/execution-state.json",
+        "runtime-status.json",
+        "runtime-events.jsonl"
+      ],
+      "evidence_count": 3,
+      "expires_at": null,
+      "fingerprint": "deep-success-ed35232108db",
+      "history": [
+        {
+          "event": "captured",
+          "reason": "new_pattern",
+          "ts": "2026-03-15T13:35:55.662767+00:00"
+        },
+        {
+          "event": "auto_promoted",
+          "reason": "evidence_threshold_met",
+          "to": "validated",
+          "ts": "2026-03-15T13:35:55.662774+00:00"
+        }
+      ],
+      "last_validated_at": "2026-03-15T13:35:55.662775+00:00",
+      "lifecycle_state": "validated",
+      "modes": [
+        "long"
+      ],
+      "outcome": "resumable orchestration with reviewable state and references",
+      "pattern_id": "layered-local-orchestration",
+      "promotion_count": 1,
+      "reusable": true,
+      "selection_count": 0,
+      "sequence": [
+        "init",
+        "plan",
+        "select-rules",
+        "rank-adapters",
+        "select-patterns",
+        "execute",
+        "validate"
+      ],
+      "strategy_hints": {
+        "execution_ordering": [
+          "precheck",
+          "execute",
+          "validate"
+        ],
+        "fallback_choice": "sticky-adapter-first",
+        "hot_path_budget": 3,
+        "validation_strategy": "runner-contract-strict"
+      },
+      "summary": "Layered rules plus ranked adapter selection keep runs local, resumable, and auditable",
+      "tags": [
+        "orchestration",
+        "local",
+        "success"
+      ],
+      "trigger": "long local task",
+      "updated_at": "2026-03-15T13:35:55.662759+00:00",
+      "validation_count": 1
+    },
+    {
+      "adapter": "python-runtime-local",
+      "asset_version": 2,
+      "best_lifecycle_state": "validated",
+      "confidence": 78,
+      "created_at": "2026-03-15T13:35:55.633858+00:00",
+      "demotion_count": 0,
+      "evidence": [
+        "runtime-repair-results.json",
+        "runtime-repair-plan.json",
+        "runtime-repair-report.json"
+      ],
+      "evidence_count": 3,
+      "expires_at": null,
+      "fingerprint": "repair-pattern-3d8a1c1fe2ad",
+      "history": [
+        {
+          "event": "captured",
+          "reason": "new_pattern",
+          "ts": "2026-03-15T13:35:55.633878+00:00"
+        },
+        {
+          "event": "auto_promoted",
+          "reason": "evidence_threshold_met",
+          "to": "validated",
+          "ts": "2026-03-15T13:35:55.633884+00:00"
+        }
+      ],
+      "last_validated_at": "2026-03-15T13:35:55.633886+00:00",
+      "lifecycle_state": "validated",
+      "modes": [
+        "long"
+      ],
+      "outcome": "dependency repair path documented with local environment evidence",
+      "pattern_id": "repair-pattern-3d8a1c1fe2ad",
+      "promotion_count": 1,
+      "reusable": true,
+      "selection_count": 0,
+      "sequence": [
+        "diagnose",
+        "dependency-probes",
+        "record-evidence",
+        "recover"
+      ],
+      "strategy_hints": {
+        "execution_ordering": [
+          "diagnose",
+          "dependency-probes",
+          "record-evidence",
+          "recover"
+        ],
+        "fallback_choice": "sticky-adapter-first",
+        "hot_path_budget": 4,
+        "validation_strategy": "runner-contract-strict"
+      },
+      "summary": "Dependency failures improved after a bounded local environment probe tree captured actionable evidence",
+      "tags": [
+        "repair",
+        "local",
+        "missing_dependency",
+        "env_probe_tree",
+        "deep",
+        "python",
+        "dependency",
+        "orchestration"
+      ],
+      "trigger": "missing_dependency",
+      "updated_at": "2026-03-15T13:35:55.633870+00:00",
+      "validation_count": 1
+    },
+    {
+      "adapter": null,
+      "asset_version": 2,
+      "best_lifecycle_state": "validated",
+      "confidence": 72,
+      "created_at": "2026-03-15T13:35:52.847892+00:00",
+      "demotion_count": 0,
+      "evidence": [
+        "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/references/repair-actions.md"
+      ],
+      "evidence_count": 1,
+      "expires_at": null,
+      "fingerprint": "bounded-local-repair",
+      "history": [
+        {
+          "event": "captured",
+          "reason": "new_pattern",
+          "ts": "2026-03-15T13:35:52.847914+00:00"
+        }
+      ],
+      "last_selected_at": "2026-03-15T13:35:53.204392+00:00",
+      "last_validated_at": "2026-03-15T13:35:52.847907+00:00",
+      "lifecycle_state": "validated",
+      "modes": [
+        "long"
+      ],
+      "outcome": "bounded recovery without crossing safeguards",
+      "pattern_id": "bounded-local-repair",
+      "promotion_count": 0,
+      "reusable": true,
+      "selection_count": 1,
+      "sequence": [
+        "detect",
+        "branch",
+        "probe",
+        "recover",
+        "record"
+      ],
+      "strategy_hints": {},
+      "summary": "Local repair branches should stay probe-only and feed explicit recovery references",
+      "tags": [
+        "repair",
+        "local",
+        "orchestration"
+      ],
+      "trigger": "repairable local runtime failure",
+      "updated_at": "2026-03-15T13:35:52.847905+00:00",
+      "validation_count": 1
+    }
+  ],
+  "schema_version": 1
+}

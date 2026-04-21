@@ -1,0 +1,174 @@
+{
+  "ecosystem": "python",
+  "pack_version": "2.0",
+  "records": [
+    {
+      "error_class": "missing_dependency",
+      "stderr_pattern": "ModuleNotFoundError: No module named '([^']+)'",
+      "avoidance_hints": [{"kind": "set_env", "vars": {"PYTHONPATH": ".:src"}}],
+      "description": "Python cannot import module — add cwd and src to PYTHONPATH"
+    },
+    {
+      "error_class": "missing_dependency",
+      "stderr_pattern": "ImportError: lib[a-zA-Z0-9_.]+\\.so[^:]*: cannot open shared object file",
+      "avoidance_hints": [{"kind": "set_env", "vars": {"LD_LIBRARY_PATH": "/usr/local/lib:/usr/lib"}}],
+      "description": "C extension cannot find shared library — add system lib dirs to LD_LIBRARY_PATH"
+    },
+    {
+      "error_class": "missing_dependency",
+      "stderr_pattern": "ImportError: cannot import name '([^']+)' from '([^']+)'",
+      "avoidance_hints": [{"kind": "set_env", "vars": {"PYTHONPATH": ".:src"}}],
+      "description": "Cannot import name from package — likely version mismatch or stale install"
+    },
+    {
+      "error_class": "missing_dependency",
+      "stderr_pattern": "ERROR: No matching distribution found for",
+      "avoidance_hints": [{"kind": "set_env", "vars": {"PIP_INDEX_URL": "https://pypi.org/simple/"}}],
+      "description": "pip cannot find package — ensure pip index URL is set to default PyPI"
+    },
+    {
+      "error_class": "missing_dependency",
+      "stderr_pattern": "ModuleNotFoundError: No module named '([^']+)'.*__init__",
+      "avoidance_hints": [{"kind": "set_env", "vars": {"PYTHONPATH": ".:src:lib"}}],
+      "description": "Package directory missing __init__.py or not on path — extend PYTHONPATH"
+    },
+    {
+      "error_class": "syntax_error",
+      "stderr_pattern": "SyntaxError: (invalid syntax|unexpected EOF|f-string)",
+      "avoidance_hints": [{"kind": "set_env", "vars": {"PYTHONDONTWRITEBYTECODE": "1"}}],
+      "description": "Python syntax error — likely Python version mismatch; disable bytecode cache"
+    },
+    {
+      "error_class": "syntax_error",
+      "stderr_pattern": "IndentationError: (unexpected indent|expected an indented block)",
+      "avoidance_hints": [{"kind": "set_env", "vars": {"PYTHONDONTWRITEBYTECODE": "1"}}],
+      "description": "Indentation error — possibly stale .pyc from prior code version"
+    },
+    {
+      "error_class": "syntax_error",
+      "stderr_pattern": "TabError: inconsistent use of tabs and spaces",
+      "avoidance_hints": [{"kind": "set_env", "vars": {"PYTHONDONTWRITEBYTECODE": "1"}}],
+      "description": "Mixed tabs and spaces — disable bytecode cache to prevent stale .pyc masking the fix"
+    },
+    {
+      "error_class": "permission_denial",
+      "stderr_pattern": "PermissionError: \\[Errno 13\\]",
+      "avoidance_hints": [{"kind": "rewrite_cwd", "target": "/tmp"}],
+      "description": "Write permission denied — rewrite cwd to writable directory"
+    },
+    {
+      "error_class": "permission_denial",
+      "stderr_pattern": "OSError: \\[Errno 13\\] Permission denied.*pip|Permission denied.*site-packages",
+      "avoidance_hints": [{"kind": "set_env", "vars": {"PIP_USER": "1", "PYTHONUSERBASE": "/tmp/_polaris_pip_user"}}],
+      "description": "pip install permission denied on system site-packages — use --user install"
+    },
+    {
+      "error_class": "file_not_found",
+      "stderr_pattern": "FileNotFoundError: \\[Errno 2\\]",
+      "avoidance_hints": [{"kind": "rewrite_cwd", "target": "."}],
+      "description": "File not found — cwd may be wrong; rewrite to project root"
+    },
+    {
+      "error_class": "file_not_found",
+      "stderr_pattern": "can't open file '([^']+)': \\[Errno 2\\] No such file or directory",
+      "avoidance_hints": [{"kind": "rewrite_cwd", "target": "."}],
+      "description": "Python script path not found — ensure cwd is the project root"
+    },
+    {
+      "error_class": "encoding_error",
+      "stderr_pattern": "UnicodeDecodeError: '(utf-?8|ascii|latin-?1)' codec can't decode",
+      "avoidance_hints": [{"kind": "set_env", "vars": {"PYTHONIOENCODING": "utf-8", "LC_ALL": "C.UTF-8"}}],
+      "description": "Unicode decode error — force UTF-8 IO encoding and locale"
+    },
+    {
+      "error_class": "encoding_error",
+      "stderr_pattern": "UnicodeEncodeError: '(ascii|latin-?1)' codec can't encode",
+      "avoidance_hints": [{"kind": "set_env", "vars": {"PYTHONIOENCODING": "utf-8", "LC_ALL": "C.UTF-8"}}],
+      "description": "Unicode encode error writing output — force UTF-8 encoding"
+    },
+    {
+      "error_class": "encoding_error",
+      "stderr_pattern": "UnicodeDecodeError:.*codec can't decode byte.*in position",
+      "avoidance_hints": [{"kind": "set_locale", "locale": "C.UTF-8"}],
+      "description": "File contains non-UTF-8 bytes — set locale to C.UTF-8"
+    },
+    {
+      "error_class": "resource_exhaustion",
+      "stderr_pattern": "MemoryError",
+      "avoidance_hints": [{"kind": "set_env", "vars": {"PYTHONMALLOC": "malloc", "MALLOC_ARENA_MAX": "2"}}],
+      "description": "Python ran out of memory — limit malloc arenas to reduce fragmentation"
+    },
+    {
+      "error_class": "resource_exhaustion",
+      "stderr_pattern": "RecursionError: maximum recursion depth exceeded",
+      "avoidance_hints": [{"kind": "set_env", "vars": {"PYTHONRECURSIONLIMIT": "10000"}}],
+      "description": "Recursion limit exceeded — increase PYTHONRECURSIONLIMIT"
+    },
+    {
+      "error_class": "version_conflict",
+      "stderr_pattern": "requires a different Python version.*not in '>=",
+      "avoidance_hints": [{"kind": "set_env", "vars": {"PIP_PYTHON_VERSION": ""}}],
+      "description": "Package requires a newer Python version — report constraint to user"
+    },
+    {
+      "error_class": "version_conflict",
+      "stderr_pattern": "ERROR:.*dependency resolver.*conflicting dependencies|ResolutionImpossible",
+      "avoidance_hints": [{"kind": "set_env", "vars": {"PIP_NO_DEPS": "0"}}],
+      "description": "pip dependency resolution conflict — report conflict details to user"
+    },
+    {
+      "error_class": "network_error",
+      "stderr_pattern": "ConnectionRefusedError: \\[Errno 111\\]|Failed to establish a new connection.*Connection refused",
+      "avoidance_hints": [{"kind": "retry_with_backoff", "max_retries": 3, "base_delay_ms": 2000}],
+      "description": "Connection refused — retry with backoff"
+    },
+    {
+      "error_class": "network_error",
+      "stderr_pattern": "ssl\\.SSLCertVerificationError|CERTIFICATE_VERIFY_FAILED",
+      "avoidance_hints": [{"kind": "set_env", "vars": {"REQUESTS_CA_BUNDLE": "", "CURL_CA_BUNDLE": ""}}],
+      "description": "SSL certificate verification failed — may need to set CA bundle path"
+    },
+    {
+      "error_class": "build_error",
+      "stderr_pattern": "fatal error: Python\\.h: No such file or directory",
+      "avoidance_hints": [{"kind": "set_env", "vars": {"CFLAGS": "-I/usr/include/python3"}}],
+      "description": "Missing Python.h header — python3-dev package likely not installed"
+    },
+    {
+      "error_class": "build_error",
+      "stderr_pattern": "error: command '(gcc|g\\+\\+|cc|c\\+\\+)' failed|error: linker `cc` not found",
+      "avoidance_hints": [{"kind": "set_env", "vars": {"CC": "gcc", "CXX": "g++"}}],
+      "description": "C/C++ compiler not found or failed — ensure CC/CXX env vars point to installed compiler"
+    },
+    {
+      "error_class": "build_error",
+      "stderr_pattern": "Failed building wheel for|error: subprocess-exited-with-error.*Building wheel",
+      "avoidance_hints": [{"kind": "set_env", "vars": {"PIP_NO_BUILD_ISOLATION": "0"}}],
+      "description": "Wheel build failed — likely missing system build dependencies"
+    },
+    {
+      "error_class": "timeout",
+      "stderr_pattern": "TimeoutExpired:.*timed out after \\d+ seconds|subprocess\\.TimeoutExpired",
+      "avoidance_hints": [{"kind": "set_timeout", "timeout_seconds": 300}],
+      "description": "Subprocess timed out — increase timeout to allow longer execution"
+    },
+    {
+      "error_class": "port_conflict",
+      "stderr_pattern": "OSError: \\[Errno 98\\] Address already in use|Address already in use",
+      "avoidance_hints": [{"kind": "set_env", "vars": {"PORT": "0"}}],
+      "description": "Port already in use — set PORT=0 to auto-select a free port"
+    },
+    {
+      "error_class": "config_error",
+      "stderr_pattern": "configparser\\.(NoSectionError|MissingSectionHeaderError|ParsingError)",
+      "avoidance_hints": [{"kind": "create_dir", "path": "."}],
+      "description": "Config file has missing section or parsing error"
+    },
+    {
+      "error_class": "config_error",
+      "stderr_pattern": "toml\\.TOMLDecodeError|tomllib\\._parser\\.TOMLDecodeError|Invalid value",
+      "avoidance_hints": [{"kind": "create_dir", "path": "."}],
+      "description": "TOML config file has invalid syntax — check file for syntax errors"
+    }
+  ]
+}

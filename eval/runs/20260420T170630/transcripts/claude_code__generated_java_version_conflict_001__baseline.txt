@@ -1,0 +1,40 @@
+[pre_failure_command]
+cd /tmp/_polaris_runs/20260420T170630/claude_code/generated_java_version_conflict_001/baseline && bash build.sh
+[pre_failure_output]
+
+warning: source release 11 requires target release 11
+Error: Could not find or load main class HelloWorld
+Caused by: java.lang.ClassNotFoundException: HelloWorld
+
+[pre_failure_reproduced]
+true
+[agent_transcript]
+[claude exit=1 rate_limited=False num_turns=1]
+---
+{"type":"system","subtype":"init","cwd":"/tmp/_polaris_runs/20260420T170630/claude_code/generated_java_version_conflict_001/baseline","session_id":"636a166d-07f8-47d4-8820-42cbafc9814b","tools":["Task","AskUserQuestion","Bash","CronCreate","CronDelete","CronList","Edit","EnterPlanMode","EnterWorktree","ExitPlanMode","ExitWorktree","Glob","Grep","Monitor","NotebookEdit","PushNotification","Read","RemoteTrigger","ScheduleWakeup","Skill","TaskOutput","TaskStop","TodoWrite","ToolSearch","WebFetch","WebSearch","Write"],"mcp_servers":[],"model":"claude-haiku-4-5-20251001","permissionMode":"bypassPermissions","slash_commands":["update-config","debug","simplify","batch","fewer-permission-prompts","loop","schedule","claude-api","compact","context","cost","heapdump","init","review","security-review","extra-usage","insights","team-onboarding"],"apiKeySource":"none","claude_code_version":"2.1.114","output_style":"default","agents":["Explore","general-purpose","Plan","statusline-setup"],"skills":["update-config","debug","simplify","batch","fewer-permission-prompts","loop","schedule","claude-api"],"plugins":[],"uuid":"dd0e7c0a-313f-4a3d-be62-1ce8a3777027","memory_paths":{"auto":"/home/administrator/.claude/projects/-tmp--polaris-runs-20260420T170630-claude-code-generated-java-version-conflict-001-baseline/memory/"},"fast_mode_state":"off"}
+{"type":"rate_limit_event","rate_limit_info":{"status":"rejected","resetsAt":1776690000,"rateLimitType":"five_hour","overageStatus":"rejected","overageDisabledReason":"org_level_disabled","isUsingOverage":false},"uuid":"c64bf96f-f2bb-4354-a556-2de7a3e38b00","session_id":"636a166d-07f8-47d4-8820-42cbafc9814b"}
+{"type":"assistant","message":{"id":"55213461-565a-421d-958f-97594602fae2","container":null,"model":"<synthetic>","role":"assistant","stop_reason":"stop_sequence","stop_sequence":"","type":"message","usage":{"input_tokens":0,"output_tokens":0,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"server_tool_use":{"web_search_requests":0,"web_fetch_requests":0},"service_tier":null,"cache_creation":{"ephemeral_1h_input_tokens":0,"ephemeral_5m_input_tokens":0},"inference_geo":null,"iterations":null,"speed":null},"content":[{"type":"text","text":"You've hit your limit · resets 9pm (Asia/Shanghai)"}],"context_management":null},"parent_tool_use_id":null,"session_id":"636a166d-07f8-47d4-8820-42cbafc9814b","uuid":"8cf5498a-cbc9-4811-a62c-8753ecc4d699","error":"rate_limit"}
+{"type":"result","subtype":"success","is_error":true,"api_error_status":429,"duration_ms":980,"duration_api_ms":0,"num_turns":1,"result":"You've hit your limit · resets 9pm (Asia/Shanghai)","stop_reason":"stop_sequence","session_id":"636a166d-07f8-47d4-8820-42cbafc9814b","total_cost_usd":0,"usage":{"input_tokens":0,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"output_tokens":0,"server_tool_use":{"web_search_requests":0,"web_fetch_requests":0},"service_tier":"standard","cache_creation":{"ephemeral_1h_input_tokens":0,"ephemeral_5m_input_tokens":0},"inference_geo":"","iterations":[],"speed":"standard"},"modelUsage":{},"permission_denials":[],"terminal_reason":"completed","fast_mode_state":"off","uuid":"ae7da018-5b06-4eec-b428-c82f9d364ee8"}
+
+---
+[stderr]
+
+---
+[fix_command_test output]
+
+warning: source release 11 requires target release 11
+Error: Could not find or load main class HelloWorld
+Caused by: java.lang.ClassNotFoundException: HelloWorld
+
+[post_fix_command]
+cd /tmp/_polaris_runs/20260420T170630/claude_code/generated_java_version_conflict_001/baseline && bash build.sh
+[post_fix_output]
+
+warning: source release 11 requires target release 11
+Error: Could not find or load main class HelloWorld
+Caused by: java.lang.ClassNotFoundException: HelloWorld
+
+[post_fix_ci_pass]
+False
+[contamination_hits]
+[]

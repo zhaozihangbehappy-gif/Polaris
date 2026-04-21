@@ -1,0 +1,85 @@
+[pre_failure_command]
+cd /tmp/_polaris_runs/20260420T170630/claude_code/generated_python_encoding_error_001/polaris && python3 -m unittest -q
+[pre_failure_output]
+
+======================================================================
+FAIL: test_runner_emits_unicode_report (test_report_runner.ReportRunnerTest.test_runner_emits_unicode_report)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/_polaris_runs/20260420T170630/claude_code/generated_python_encoding_error_001/polaris/test_report_runner.py", line 16, in test_runner_emits_unicode_report
+    self.assertEqual(result.returncode, 0, result.stderr)
+AssertionError: 1 != 0 : Traceback (most recent call last):
+  File "/tmp/_polaris_runs/20260420T170630/claude_code/generated_python_encoding_error_001/polaris/report_worker.py", line 6, in <module>
+    main()
+  File "/tmp/_polaris_runs/20260420T170630/claude_code/generated_python_encoding_error_001/polaris/report_worker.py", line 2, in main
+    print("build result: caf\xe9 \u2603")
+UnicodeEncodeError: 'ascii' codec can't encode character '\xe9' in position 17: ordinal not in range(128)
+
+
+----------------------------------------------------------------------
+Ran 1 test in 0.097s
+
+FAILED (failures=1)
+
+[pre_failure_reproduced]
+true
+[agent_transcript]
+[claude exit=1 rate_limited=False num_turns=1]
+---
+{"type":"system","subtype":"init","cwd":"/tmp/_polaris_runs/20260420T170630/claude_code/generated_python_encoding_error_001/polaris","session_id":"0dec3200-6fc9-4dee-945d-f7165021f85a","tools":["Task","AskUserQuestion","Bash","CronCreate","CronDelete","CronList","Edit","EnterPlanMode","EnterWorktree","ExitPlanMode","ExitWorktree","Glob","Grep","Monitor","NotebookEdit","PushNotification","Read","RemoteTrigger","ScheduleWakeup","Skill","TaskOutput","TaskStop","TodoWrite","ToolSearch","WebFetch","WebSearch","Write","mcp__polaris__polaris_lookup"],"mcp_servers":[{"name":"polaris","status":"connected"}],"model":"claude-haiku-4-5-20251001","permissionMode":"bypassPermissions","slash_commands":["update-config","debug","simplify","batch","fewer-permission-prompts","loop","schedule","claude-api","compact","context","cost","heapdump","init","review","security-review","extra-usage","insights","team-onboarding"],"apiKeySource":"none","claude_code_version":"2.1.114","output_style":"default","agents":["Explore","general-purpose","Plan","statusline-setup"],"skills":["update-config","debug","simplify","batch","fewer-permission-prompts","loop","schedule","claude-api"],"plugins":[],"uuid":"bbae85d1-d7b8-466b-b12c-67691d564cdc","memory_paths":{"auto":"/home/administrator/.claude/projects/-tmp--polaris-runs-20260420T170630-claude-code-generated-python-encoding-error-001-polaris/memory/"},"fast_mode_state":"off"}
+{"type":"rate_limit_event","rate_limit_info":{"status":"rejected","resetsAt":1776690000,"rateLimitType":"five_hour","overageStatus":"rejected","overageDisabledReason":"org_level_disabled","isUsingOverage":false},"uuid":"e56dfa46-7261-45b4-8609-d05c371ed918","session_id":"0dec3200-6fc9-4dee-945d-f7165021f85a"}
+{"type":"assistant","message":{"id":"e7c722d5-95d9-4fda-843b-50774627954a","container":null,"model":"<synthetic>","role":"assistant","stop_reason":"stop_sequence","stop_sequence":"","type":"message","usage":{"input_tokens":0,"output_tokens":0,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"server_tool_use":{"web_search_requests":0,"web_fetch_requests":0},"service_tier":null,"cache_creation":{"ephemeral_1h_input_tokens":0,"ephemeral_5m_input_tokens":0},"inference_geo":null,"iterations":null,"speed":null},"content":[{"type":"text","text":"You've hit your limit · resets 9pm (Asia/Shanghai)"}],"context_management":null},"parent_tool_use_id":null,"session_id":"0dec3200-6fc9-4dee-945d-f7165021f85a","uuid":"0ad5d5e7-d98e-4982-82e0-6dfa08ef2af7","error":"rate_limit"}
+{"type":"result","subtype":"success","is_error":true,"api_error_status":429,"duration_ms":818,"duration_api_ms":0,"num_turns":1,"result":"You've hit your limit · resets 9pm (Asia/Shanghai)","stop_reason":"stop_sequence","session_id":"0dec3200-6fc9-4dee-945d-f7165021f85a","total_cost_usd":0,"usage":{"input_tokens":0,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"output_tokens":0,"server_tool_use":{"web_search_requests":0,"web_fetch_requests":0},"service_tier":"standard","cache_creation":{"ephemeral_1h_input_tokens":0,"ephemeral_5m_input_tokens":0},"inference_geo":"","iterations":[],"speed":"standard"},"modelUsage":{},"permission_denials":[],"terminal_reason":"completed","fast_mode_state":"off","uuid":"acab113b-3511-47c1-9f52-c40cab79aead"}
+
+---
+[stderr]
+
+---
+[fix_command_test output]
+
+======================================================================
+FAIL: test_runner_emits_unicode_report (test_report_runner.ReportRunnerTest.test_runner_emits_unicode_report)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/_polaris_runs/20260420T170630/claude_code/generated_python_encoding_error_001/polaris/test_report_runner.py", line 16, in test_runner_emits_unicode_report
+    self.assertEqual(result.returncode, 0, result.stderr)
+AssertionError: 1 != 0 : Traceback (most recent call last):
+  File "/tmp/_polaris_runs/20260420T170630/claude_code/generated_python_encoding_error_001/polaris/report_worker.py", line 6, in <module>
+    main()
+  File "/tmp/_polaris_runs/20260420T170630/claude_code/generated_python_encoding_error_001/polaris/report_worker.py", line 2, in main
+    print("build result: caf\xe9 \u2603")
+UnicodeEncodeError: 'ascii' codec can't encode character '\xe9' in position 17: ordinal not in range(128)
+
+
+----------------------------------------------------------------------
+Ran 1 test in 0.101s
+
+FAILED (failures=1)
+
+[post_fix_command]
+cd /tmp/_polaris_runs/20260420T170630/claude_code/generated_python_encoding_error_001/polaris && python3 -m unittest -q
+[post_fix_output]
+
+======================================================================
+FAIL: test_runner_emits_unicode_report (test_report_runner.ReportRunnerTest.test_runner_emits_unicode_report)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/_polaris_runs/20260420T170630/claude_code/generated_python_encoding_error_001/polaris/test_report_runner.py", line 16, in test_runner_emits_unicode_report
+    self.assertEqual(result.returncode, 0, result.stderr)
+AssertionError: 1 != 0 : Traceback (most recent call last):
+  File "/tmp/_polaris_runs/20260420T170630/claude_code/generated_python_encoding_error_001/polaris/report_worker.py", line 6, in <module>
+    main()
+  File "/tmp/_polaris_runs/20260420T170630/claude_code/generated_python_encoding_error_001/polaris/report_worker.py", line 2, in main
+    print("build result: caf\xe9 \u2603")
+UnicodeEncodeError: 'ascii' codec can't encode character '\xe9' in position 17: ordinal not in range(128)
+
+
+----------------------------------------------------------------------
+Ran 1 test in 0.094s
+
+FAILED (failures=1)
+
+[post_fix_ci_pass]
+False
+[contamination_hits]
+[]

@@ -1,0 +1,5 @@
+{
+  "stderr": "FAILURE: Build failed with an exception.\n\n* What went wrong:\nExecution failed for task ':app:test'.\n> Process 'Gradle Test Executor 1' finished with non-zero exit value 137\n  This is likely due to the test process being killed (possibly OOM or timeout).\n\n* Try:\n> Run with --stacktrace option to get the full stack trace.",
+  "error_class": "timeout",
+  "source": "gradle test executor killed by signal 137 (OOM/timeout)"
+}

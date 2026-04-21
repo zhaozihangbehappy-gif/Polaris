@@ -1,0 +1,14 @@
+{
+  "case_id": "generated_python_timeout_000",
+  "files": [
+    "runner.py"
+  ],
+  "dependencies": {},
+  "build_commands": [],
+  "expected_failure_command": "cd {workdir} && python3 runner.py",
+  "expected_failure_stderr_regex": "subprocess\\.TimeoutExpired:.*timed out after [0-9.]+ seconds",
+  "manifest_schema_version": 1,
+  "bash_self_contained": false,
+  "reverse_from_pattern": "python.timeout.000",
+  "source_pool": "official"
+}

@@ -1,0 +1,5 @@
+{
+  "stderr": "  Building wheel for cryptography (pyproject.toml) ... error\n  error: subprocess-exited-with-error\n\n  × Building wheel for cryptography (pyproject.toml) did not run successfully.\n  │ exit code: 1\n  ╰─> [12 lines of output]\n      cargo rustc --lib --message-format=json-render-diagnostics --manifest-path Cargo.toml --release -v -- --cfg 'feature=\"default\"'\n      error: linker `cc` not found\n        |\n        = note: No such file or directory (os error 2)\n\n      error: could not compile `cryptography-rust` due to previous error\n      [end of output]\n\n  note: This error originates from a subprocess, and is likely not a problem with pip.\n  ERROR: Failed building wheel for cryptography",
+  "error_class": "build_error",
+  "source": "cryptography build requires cc linker (gcc not installed)"
+}

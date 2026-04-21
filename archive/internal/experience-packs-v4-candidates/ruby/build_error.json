@@ -1,0 +1,124 @@
+{
+  "ecosystem": "ruby",
+  "error_class": "build_error",
+  "schema_version": 4,
+  "records": [
+    {
+      "pattern_id": "candidate.ruby.build_error.000",
+      "ecosystem": "ruby",
+      "error_class": "build_error",
+      "description": "bundle exec rake build fails mkmf",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "mkmf\\\\.rb can't find header"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "ruby --version 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "mkmf\\\\.rb can't find header"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Ruby build_error: bundle exec rake build fails mkmf"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.ruby.build_error.001",
+      "ecosystem": "ruby",
+      "error_class": "build_error",
+      "description": "ruby FFI gem arch mismatch",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "FFI.*cannot load"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "ruby --version 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "FFI.*cannot load"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Ruby build_error: ruby FFI gem arch mismatch"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.ruby.build_error.002",
+      "ecosystem": "ruby",
+      "error_class": "build_error",
+      "description": "native mysql2 gem openssl missing",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "mysql2.*openssl"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "ruby --version 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "mysql2.*openssl"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Ruby build_error: native mysql2 gem openssl missing"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    }
+  ]
+}

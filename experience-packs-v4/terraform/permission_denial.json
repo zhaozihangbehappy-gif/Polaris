@@ -1,0 +1,233 @@
+{
+  "ecosystem": "terraform",
+  "error_class": "permission_denial",
+  "schema_version": 4,
+  "records": [
+    {
+      "pattern_id": "terraform.permission_denial.000",
+      "ecosystem": "terraform",
+      "error_class": "permission_denial",
+      "description": "Terraform plugin dir permission denied \u2014 redirect to writable /tmp",
+      "source": "prebuilt",
+      "trigger_signals": {
+        "stderr_regex": [
+          "Error:.*permission denied.*\\.terraform|Failed to read plugin dir"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "bash -c 'echo \"permission denied\" >&2; exit 1'",
+        "trigger_env": {},
+        "expected_stderr_match": "permission denied",
+        "expected_fix_outcome": "different_error_or_success"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "TF_DATA_DIR": "/tmp/.terraform"
+            }
+          }
+        ],
+        "fix_command": "bash -c 'echo \"TF_DATA_DIR set (simulated)\"; exit 0'",
+        "fix_env": {
+          "TF_DATA_DIR": "/tmp/.terraform"
+        },
+        "description": "Terraform plugin dir permission denied \u2014 redirect to writable /tmp"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "legacy_v3": {
+        "stderr_pattern": "Error:.*permission denied.*\\.terraform|Failed to read plugin dir",
+        "avoidance_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "TF_DATA_DIR": "/tmp/.terraform"
+            }
+          }
+        ],
+        "description": "Terraform plugin dir permission denied \u2014 redirect to writable /tmp",
+        "source": "prebuilt",
+        "reproduction": {
+          "command": "bash -c 'echo \"permission denied\" >&2; exit 1'",
+          "trigger_env": {},
+          "expected_stderr_match": "permission denied",
+          "fix_env": {
+            "TF_DATA_DIR": "/tmp/.terraform"
+          },
+          "expected_fix_outcome": "different_error_or_success",
+          "fix_command": "bash -c 'echo \"TF_DATA_DIR set (simulated)\"; exit 0'"
+        }
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "terraform.permission_denial.001",
+      "ecosystem": "terraform",
+      "error_class": "permission_denial",
+      "description": "AWS IAM access denied on resource operation \u2014 enable debug logging to surface required permissions",
+      "source": "prebuilt",
+      "trigger_signals": {
+        "stderr_regex": [
+          "AccessDenied|Access Denied|is not authorized to perform"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "bash -c 'echo \"AccessDenied\" >&2; exit 1'",
+        "trigger_env": {},
+        "expected_stderr_match": "AccessDenied|not authorized",
+        "expected_fix_outcome": "different_error_or_success"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "TF_LOG": "DEBUG",
+              "AWS_DEFAULT_REGION": "us-east-1"
+            }
+          }
+        ],
+        "fix_command": "bash -c 'echo \"TF_LOG set (simulated)\"; exit 0'",
+        "fix_env": {
+          "TF_LOG": "DEBUG"
+        },
+        "description": "AWS IAM access denied on resource operation \u2014 enable debug logging to surface required permissions"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "legacy_v3": {
+        "stderr_pattern": "AccessDenied|Access Denied|is not authorized to perform",
+        "avoidance_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "TF_LOG": "DEBUG",
+              "AWS_DEFAULT_REGION": "us-east-1"
+            }
+          }
+        ],
+        "description": "AWS IAM access denied on resource operation \u2014 enable debug logging to surface required permissions",
+        "source": "prebuilt",
+        "reproduction": {
+          "command": "bash -c 'echo \"AccessDenied\" >&2; exit 1'",
+          "trigger_env": {},
+          "expected_stderr_match": "AccessDenied|not authorized",
+          "fix_env": {
+            "TF_LOG": "DEBUG"
+          },
+          "expected_fix_outcome": "different_error_or_success",
+          "fix_command": "bash -c 'echo \"TF_LOG set (simulated)\"; exit 0'"
+        }
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "terraform.permission_denial.002",
+      "ecosystem": "terraform",
+      "error_class": "permission_denial",
+      "description": "AWS UnauthorizedOperation with encoded message \u2014 decode the STS message to find missing permission",
+      "source": "prebuilt",
+      "trigger_signals": {
+        "stderr_regex": [
+          "UnauthorizedOperation|Encoded authorization failure"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "bash -c 'echo \"UnauthorizedOperation\" >&2; exit 1'",
+        "trigger_env": {},
+        "expected_stderr_match": "UnauthorizedOperation|authorization failure",
+        "expected_fix_outcome": "different_error_or_success"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "run_shell",
+            "command": "aws sts decode-authorization-message --encoded-message \"$MSG\" 2>&1 || true"
+          },
+          {
+            "kind": "set_env",
+            "vars": {
+              "TF_LOG": "TRACE"
+            }
+          }
+        ],
+        "fix_command": "bash -c 'echo \"TF_LOG set (simulated)\"; exit 0'",
+        "fix_env": {
+          "TF_LOG": "TRACE"
+        },
+        "description": "AWS UnauthorizedOperation with encoded message \u2014 decode the STS message to find missing permission"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "legacy_v3": {
+        "stderr_pattern": "UnauthorizedOperation|Encoded authorization failure",
+        "avoidance_hints": [
+          {
+            "kind": "run_shell",
+            "command": "aws sts decode-authorization-message --encoded-message \"$MSG\" 2>&1 || true"
+          },
+          {
+            "kind": "set_env",
+            "vars": {
+              "TF_LOG": "TRACE"
+            }
+          }
+        ],
+        "description": "AWS UnauthorizedOperation with encoded message \u2014 decode the STS message to find missing permission",
+        "source": "prebuilt",
+        "reproduction": {
+          "command": "bash -c 'echo \"UnauthorizedOperation\" >&2; exit 1'",
+          "trigger_env": {},
+          "expected_stderr_match": "UnauthorizedOperation|authorization failure",
+          "fix_env": {
+            "TF_LOG": "TRACE"
+          },
+          "expected_fix_outcome": "different_error_or_success",
+          "fix_command": "bash -c 'echo \"TF_LOG set (simulated)\"; exit 0'"
+        }
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    }
+  ]
+}

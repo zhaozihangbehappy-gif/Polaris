@@ -1,0 +1,1 @@
+{"stderr": "context deadline exceeded\ngo: github.com/kubernetes/kubernetes@v1.29.0: module download timed out after 300s\ngo: downloading github.com/kubernetes/kubernetes v1.29.0", "error_class": "timeout", "source": "go mod download timeout for very large module (kubernetes)"}

@@ -1,0 +1,852 @@
+{
+  "artifacts": {
+    "baseline_execution_contract": {
+      "adapter": "file-transform-local",
+      "applied_rule_ids": [
+        "stop-on-nonrepair-denial"
+      ],
+      "args": [
+        "--input-file",
+        "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/deep-file-transform-success/runtime-transform-input.txt",
+        "--output-file",
+        "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/deep-file-transform-success/runtime-transform-output.txt",
+        "--marker",
+        "POLARIS_TRANSFORM::DEEP::file-transform-local",
+        "--mode",
+        "append-marker"
+      ],
+      "execution_profile": "deep",
+      "goal": "Demonstrate Polaris deep file transform flow",
+      "input_file": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/deep-file-transform-success/runtime-transform-input.txt",
+      "kind": "file_transform",
+      "mode": "long",
+      "output_file": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/deep-file-transform-success/runtime-transform-output.txt",
+      "script_path": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/scripts/polaris_file_transform.py",
+      "selected_pattern": null,
+      "selected_pattern_sequence": [],
+      "simulate_error": null,
+      "strategy": {
+        "execution_ordering": [
+          "execute",
+          "validate"
+        ],
+        "fallback_choice": "selected-adapter-only",
+        "retry_policy": "respect-hard-stop-rules",
+        "strategy_trace": {
+          "execution_kind": "file_transform",
+          "execution_profile": "deep",
+          "experimental_rules": [],
+          "hard_rules": [
+            "stop-on-nonrepair-denial"
+          ],
+          "selected_pattern": null,
+          "slot_permissions": {
+            "experimental": [
+              "fallback_choice",
+              "validation_strategy"
+            ],
+            "hard": [
+              "retry_policy"
+            ],
+            "pattern": [
+              "execution_ordering",
+              "fallback_choice",
+              "validation_strategy"
+            ],
+            "soft": [
+              "execution_ordering",
+              "fallback_choice",
+              "retry_policy",
+              "validation_strategy"
+            ]
+          },
+          "slot_resolution": {
+            "execution_ordering": {
+              "candidates": [],
+              "default": [
+                "execute",
+                "validate"
+              ],
+              "ignored": [],
+              "winner": null
+            },
+            "fallback_choice": {
+              "candidates": [],
+              "default": "selected-adapter-only",
+              "ignored": [],
+              "winner": null
+            },
+            "retry_policy": {
+              "candidates": [
+                {
+                  "confidence": 0,
+                  "layer": "hard",
+                  "priority": 100,
+                  "reason": "rule:stop-on-nonrepair-denial",
+                  "source_id": "stop-on-nonrepair-denial",
+                  "value": "respect-hard-stop-rules"
+                }
+              ],
+              "default": "bounded-repair",
+              "ignored": [],
+              "winner": {
+                "layer": "hard",
+                "reason": "rule:stop-on-nonrepair-denial",
+                "source_id": "stop-on-nonrepair-denial",
+                "value": "respect-hard-stop-rules"
+              }
+            },
+            "validation_strategy": {
+              "candidates": [],
+              "default": "exact-output-match",
+              "ignored": [],
+              "winner": null
+            }
+          },
+          "soft_rules": []
+        },
+        "validation_strategy": "exact-output-match"
+      },
+      "validator": {
+        "input_file": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/deep-file-transform-success/runtime-transform-input.txt",
+        "kind": "file_transform_result",
+        "marker": "POLARIS_TRANSFORM::DEEP::file-transform-local",
+        "mode": "append-marker",
+        "output_file": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/deep-file-transform-success/runtime-transform-output.txt",
+        "require_changed": true,
+        "require_exact_output": true
+      }
+    },
+    "baseline_validator": {
+      "input_file": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/deep-file-transform-success/runtime-transform-input.txt",
+      "kind": "file_transform_result",
+      "marker": "POLARIS_TRANSFORM::DEEP::file-transform-local",
+      "mode": "append-marker",
+      "output_file": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/deep-file-transform-success/runtime-transform-output.txt",
+      "require_changed": true,
+      "require_exact_output": true
+    },
+    "efficiency_metrics": {
+      "adapter_selection_cost": 0,
+      "budget_profile": null,
+      "cold_path_cost": 0,
+      "expected_benefit": "bounded local execution",
+      "family_transfer_applied": false,
+      "hot_path_budget_source": null,
+      "learning_hot_path_ops": 1,
+      "max_learning_hot_path_ops": 0,
+      "max_repair_probe_steps": 0,
+      "max_retry_actions": 0,
+      "max_selection_inputs": 0,
+      "max_stage_count": 0,
+      "max_state_writes": 0,
+      "repair_probe_steps": 0,
+      "retry_actions": 0,
+      "selection_inputs": 0,
+      "stage_count": 0,
+      "state_write_count": 49,
+      "validator_directness_rank": 3
+    },
+    "execution_contract": {
+      "adapter": "file-transform-local",
+      "applied_rule_ids": [
+        "stop-on-nonrepair-denial"
+      ],
+      "args": [
+        "--input-file",
+        "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/deep-file-transform-success/runtime-transform-input.txt",
+        "--output-file",
+        "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/deep-file-transform-success/runtime-transform-output.txt",
+        "--marker",
+        "POLARIS_TRANSFORM::DEEP::file-transform-local",
+        "--mode",
+        "append-marker"
+      ],
+      "execution_profile": "deep",
+      "goal": "Demonstrate Polaris deep file transform flow",
+      "input_file": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/deep-file-transform-success/runtime-transform-input.txt",
+      "kind": "file_transform",
+      "mode": "long",
+      "output_file": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/deep-file-transform-success/runtime-transform-output.txt",
+      "script_path": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/scripts/polaris_file_transform.py",
+      "selected_pattern": "bounded-local-repair",
+      "selected_pattern_sequence": [
+        "detect",
+        "branch",
+        "probe",
+        "recover",
+        "record"
+      ],
+      "simulate_error": null,
+      "strategy": {
+        "execution_ordering": [
+          "detect",
+          "branch",
+          "probe",
+          "recover",
+          "record"
+        ],
+        "fallback_choice": "sticky-adapter-first",
+        "retry_policy": "respect-hard-stop-rules",
+        "strategy_trace": {
+          "execution_kind": "file_transform",
+          "execution_profile": "deep",
+          "experimental_rules": [],
+          "hard_rules": [
+            "stop-on-nonrepair-denial"
+          ],
+          "selected_pattern": "bounded-local-repair",
+          "slot_permissions": {
+            "experimental": [
+              "fallback_choice",
+              "validation_strategy"
+            ],
+            "hard": [
+              "retry_policy"
+            ],
+            "pattern": [
+              "execution_ordering",
+              "fallback_choice",
+              "validation_strategy"
+            ],
+            "soft": [
+              "execution_ordering",
+              "fallback_choice",
+              "retry_policy",
+              "validation_strategy"
+            ]
+          },
+          "slot_resolution": {
+            "execution_ordering": {
+              "candidates": [
+                {
+                  "confidence": 72,
+                  "layer": "pattern",
+                  "priority": 1,
+                  "reason": "pattern:bounded-local-repair",
+                  "source_id": "bounded-local-repair",
+                  "value": [
+                    "detect",
+                    "branch",
+                    "probe",
+                    "recover",
+                    "record"
+                  ]
+                }
+              ],
+              "default": [
+                "execute",
+                "validate"
+              ],
+              "ignored": [],
+              "winner": {
+                "layer": "pattern",
+                "reason": "pattern:bounded-local-repair",
+                "source_id": "bounded-local-repair",
+                "value": [
+                  "detect",
+                  "branch",
+                  "probe",
+                  "recover",
+                  "record"
+                ]
+              }
+            },
+            "fallback_choice": {
+              "candidates": [
+                {
+                  "confidence": 72,
+                  "layer": "pattern",
+                  "priority": 1,
+                  "reason": "pattern:bounded-local-repair",
+                  "source_id": "bounded-local-repair",
+                  "value": "sticky-adapter-first"
+                }
+              ],
+              "default": "selected-adapter-only",
+              "ignored": [],
+              "winner": {
+                "layer": "pattern",
+                "reason": "pattern:bounded-local-repair",
+                "source_id": "bounded-local-repair",
+                "value": "sticky-adapter-first"
+              }
+            },
+            "retry_policy": {
+              "candidates": [
+                {
+                  "confidence": 0,
+                  "layer": "hard",
+                  "priority": 100,
+                  "reason": "rule:stop-on-nonrepair-denial",
+                  "source_id": "stop-on-nonrepair-denial",
+                  "value": "respect-hard-stop-rules"
+                }
+              ],
+              "default": "bounded-repair",
+              "ignored": [],
+              "winner": {
+                "layer": "hard",
+                "reason": "rule:stop-on-nonrepair-denial",
+                "source_id": "stop-on-nonrepair-denial",
+                "value": "respect-hard-stop-rules"
+              }
+            },
+            "validation_strategy": {
+              "candidates": [],
+              "default": "exact-output-match",
+              "ignored": [],
+              "winner": null
+            }
+          },
+          "soft_rules": []
+        },
+        "validation_strategy": "exact-output-match"
+      },
+      "validator": {
+        "input_file": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/deep-file-transform-success/runtime-transform-input.txt",
+        "kind": "file_transform_result",
+        "marker": "POLARIS_TRANSFORM::DEEP::file-transform-local",
+        "mode": "append-marker",
+        "output_file": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/deep-file-transform-success/runtime-transform-output.txt",
+        "require_changed": true,
+        "require_exact_output": true
+      }
+    },
+    "execution_contract_diff": {
+      "selected_pattern": {
+        "after": "bounded-local-repair",
+        "before": null
+      },
+      "strategy": {
+        "after": {
+          "execution_ordering": [
+            "detect",
+            "branch",
+            "probe",
+            "recover",
+            "record"
+          ],
+          "fallback_choice": "sticky-adapter-first",
+          "retry_policy": "respect-hard-stop-rules",
+          "strategy_trace": {
+            "execution_kind": "file_transform",
+            "execution_profile": "deep",
+            "experimental_rules": [],
+            "hard_rules": [
+              "stop-on-nonrepair-denial"
+            ],
+            "selected_pattern": "bounded-local-repair",
+            "slot_permissions": {
+              "experimental": [
+                "fallback_choice",
+                "validation_strategy"
+              ],
+              "hard": [
+                "retry_policy"
+              ],
+              "pattern": [
+                "execution_ordering",
+                "fallback_choice",
+                "validation_strategy"
+              ],
+              "soft": [
+                "execution_ordering",
+                "fallback_choice",
+                "retry_policy",
+                "validation_strategy"
+              ]
+            },
+            "slot_resolution": {
+              "execution_ordering": {
+                "candidates": [
+                  {
+                    "confidence": 72,
+                    "layer": "pattern",
+                    "priority": 1,
+                    "reason": "pattern:bounded-local-repair",
+                    "source_id": "bounded-local-repair",
+                    "value": [
+                      "detect",
+                      "branch",
+                      "probe",
+                      "recover",
+                      "record"
+                    ]
+                  }
+                ],
+                "default": [
+                  "execute",
+                  "validate"
+                ],
+                "ignored": [],
+                "winner": {
+                  "layer": "pattern",
+                  "reason": "pattern:bounded-local-repair",
+                  "source_id": "bounded-local-repair",
+                  "value": [
+                    "detect",
+                    "branch",
+                    "probe",
+                    "recover",
+                    "record"
+                  ]
+                }
+              },
+              "fallback_choice": {
+                "candidates": [
+                  {
+                    "confidence": 72,
+                    "layer": "pattern",
+                    "priority": 1,
+                    "reason": "pattern:bounded-local-repair",
+                    "source_id": "bounded-local-repair",
+                    "value": "sticky-adapter-first"
+                  }
+                ],
+                "default": "selected-adapter-only",
+                "ignored": [],
+                "winner": {
+                  "layer": "pattern",
+                  "reason": "pattern:bounded-local-repair",
+                  "source_id": "bounded-local-repair",
+                  "value": "sticky-adapter-first"
+                }
+              },
+              "retry_policy": {
+                "candidates": [
+                  {
+                    "confidence": 0,
+                    "layer": "hard",
+                    "priority": 100,
+                    "reason": "rule:stop-on-nonrepair-denial",
+                    "source_id": "stop-on-nonrepair-denial",
+                    "value": "respect-hard-stop-rules"
+                  }
+                ],
+                "default": "bounded-repair",
+                "ignored": [],
+                "winner": {
+                  "layer": "hard",
+                  "reason": "rule:stop-on-nonrepair-denial",
+                  "source_id": "stop-on-nonrepair-denial",
+                  "value": "respect-hard-stop-rules"
+                }
+              },
+              "validation_strategy": {
+                "candidates": [],
+                "default": "exact-output-match",
+                "ignored": [],
+                "winner": null
+              }
+            },
+            "soft_rules": []
+          },
+          "validation_strategy": "exact-output-match"
+        },
+        "before": {
+          "execution_ordering": [
+            "execute",
+            "validate"
+          ],
+          "fallback_choice": "selected-adapter-only",
+          "retry_policy": "respect-hard-stop-rules",
+          "strategy_trace": {
+            "execution_kind": "file_transform",
+            "execution_profile": "deep",
+            "experimental_rules": [],
+            "hard_rules": [
+              "stop-on-nonrepair-denial"
+            ],
+            "selected_pattern": null,
+            "slot_permissions": {
+              "experimental": [
+                "fallback_choice",
+                "validation_strategy"
+              ],
+              "hard": [
+                "retry_policy"
+              ],
+              "pattern": [
+                "execution_ordering",
+                "fallback_choice",
+                "validation_strategy"
+              ],
+              "soft": [
+                "execution_ordering",
+                "fallback_choice",
+                "retry_policy",
+                "validation_strategy"
+              ]
+            },
+            "slot_resolution": {
+              "execution_ordering": {
+                "candidates": [],
+                "default": [
+                  "execute",
+                  "validate"
+                ],
+                "ignored": [],
+                "winner": null
+              },
+              "fallback_choice": {
+                "candidates": [],
+                "default": "selected-adapter-only",
+                "ignored": [],
+                "winner": null
+              },
+              "retry_policy": {
+                "candidates": [
+                  {
+                    "confidence": 0,
+                    "layer": "hard",
+                    "priority": 100,
+                    "reason": "rule:stop-on-nonrepair-denial",
+                    "source_id": "stop-on-nonrepair-denial",
+                    "value": "respect-hard-stop-rules"
+                  }
+                ],
+                "default": "bounded-repair",
+                "ignored": [],
+                "winner": {
+                  "layer": "hard",
+                  "reason": "rule:stop-on-nonrepair-denial",
+                  "source_id": "stop-on-nonrepair-denial",
+                  "value": "respect-hard-stop-rules"
+                }
+              },
+              "validation_strategy": {
+                "candidates": [],
+                "default": "exact-output-match",
+                "ignored": [],
+                "winner": null
+              }
+            },
+            "soft_rules": []
+          },
+          "validation_strategy": "exact-output-match"
+        }
+      }
+    },
+    "execution_family_trace": {
+      "reason": "explicit-request",
+      "requested_kind": "file_transform"
+    },
+    "execution_kind": "file_transform",
+    "execution_result": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/deep-file-transform-success/runtime-transform-output.txt",
+    "executor_result": "runtime-executor-result.json",
+    "family_transfer_applied": false,
+    "learning_summary": {
+      "failed_patterns": [],
+      "failed_rules": [],
+      "merged_patterns": [],
+      "merged_rules": [],
+      "processed_items": 1,
+      "promoted_patterns": [
+        "layered-local-orchestration"
+      ],
+      "promoted_rules": [],
+      "queued_items": 1,
+      "retained_items": 0,
+      "rule_candidates": 0,
+      "success_markers": 1
+    },
+    "selected_adapter": "file-transform-local",
+    "selected_pattern": "bounded-local-repair",
+    "transfer_contract_diff": {},
+    "transfer_key": "deep:long:file-transform-local:file_transform",
+    "validation_result": "runtime-validation-result.json",
+    "validator_diff": {}
+  },
+  "attempts": [
+    {
+      "branch_id": "execution-main",
+      "evidence": [
+        "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/deep-file-transform-success/runtime-transform-output.txt"
+      ],
+      "status": "passed",
+      "step": "execute_adapter_contract",
+      "summary": "Adapter contract executed successfully",
+      "ts": "2026-03-15T13:35:39.035727+00:00"
+    }
+  ],
+  "checkpoints": [],
+  "compat": {
+    "resumed_count": 0,
+    "runtime_format": 1,
+    "upgraded_at": null,
+    "upgraded_from": null
+  },
+  "current_step": "Completed",
+  "event_budget": "deep",
+  "execution_profile": "deep",
+  "goal": "Demonstrate Polaris deep file transform flow",
+  "learning_backlog": [],
+  "lessons": [],
+  "mode": "long",
+  "next_action": "Review outputs",
+  "phase": "completed",
+  "plan": [
+    {
+      "index": 1,
+      "phase": "planning",
+      "requires": [],
+      "rule_layers": [
+        "hard"
+      ],
+      "status": "completed",
+      "step": "Clarify task scope",
+      "step_id": "planning-1",
+      "success_signal": "scope accepted",
+      "updated_at": "2026-03-15T13:35:38.304204+00:00",
+      "validates_with": null
+    },
+    {
+      "index": 2,
+      "phase": "ready",
+      "requires": [
+        "local-exec"
+      ],
+      "rule_layers": [
+        "hard",
+        "soft"
+      ],
+      "status": "completed",
+      "step": "Choose safe local adapter and rules",
+      "step_id": "ready-2",
+      "success_signal": "execution path chosen",
+      "updated_at": "2026-03-15T13:35:38.421227+00:00",
+      "validates_with": null
+    },
+    {
+      "index": 3,
+      "phase": "executing",
+      "requires": [
+        "local-exec"
+      ],
+      "rule_layers": [
+        "hard",
+        "soft"
+      ],
+      "status": "completed",
+      "step": "Execute the next local step",
+      "step_id": "executing-3",
+      "success_signal": "step completed",
+      "updated_at": "2026-03-15T13:35:39.066461+00:00",
+      "validates_with": "runner_result_contract"
+    },
+    {
+      "index": 4,
+      "phase": "validating",
+      "requires": [
+        "local-exec",
+        "reporting"
+      ],
+      "rule_layers": [
+        "hard",
+        "soft",
+        "experimental"
+      ],
+      "status": "completed",
+      "step": "Verify outcomes and inspect failures",
+      "step_id": "validating-4",
+      "success_signal": "evidence captured",
+      "updated_at": "2026-03-15T13:35:39.293796+00:00",
+      "validates_with": "evidence_check"
+    },
+    {
+      "index": 5,
+      "phase": "completed",
+      "requires": [
+        "reporting"
+      ],
+      "rule_layers": [
+        "soft",
+        "experimental"
+      ],
+      "status": "completed",
+      "step": "Record reusable lessons and next actions",
+      "step_id": "completed-5",
+      "success_signal": "state ready to resume",
+      "updated_at": "2026-03-15T13:35:39.419749+00:00",
+      "validates_with": null
+    }
+  ],
+  "progress_pct": 100,
+  "references": [
+    {
+      "kind": "rules",
+      "label": "layered rules store",
+      "ts": "2026-03-15T13:35:37.816523+00:00",
+      "value": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/deep-file-transform-success/rules.json"
+    },
+    {
+      "kind": "patterns",
+      "label": "success pattern store",
+      "ts": "2026-03-15T13:35:37.846083+00:00",
+      "value": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/deep-file-transform-success/success-patterns.json"
+    },
+    {
+      "kind": "adapters",
+      "label": "adapter registry",
+      "ts": "2026-03-15T13:35:37.875785+00:00",
+      "value": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/deep-file-transform-success/adapters.json"
+    }
+  ],
+  "repair_depth": "deep",
+  "rule_context": {
+    "active_layers": [
+      "hard",
+      "soft",
+      "experimental"
+    ],
+    "applied_rules": [
+      {
+        "action": "Stop and reduce scope instead of retrying the blocked path",
+        "layer": "hard",
+        "priority": 100,
+        "rule_id": "stop-on-nonrepair-denial",
+        "scope": "all Polaris runs",
+        "tags": [
+          "stop",
+          "runtime",
+          "local"
+        ],
+        "trigger": "an explicit non-repair denial appears"
+      }
+    ]
+  },
+  "run_id": "polaris-orchestrated-run",
+  "runtime": {
+    "completed_at": "2026-03-15T13:35:39.450722+00:00",
+    "durable_status_surfaces": {
+      "live_status": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/deep-file-transform-success/runtime-live-status.json"
+    },
+    "last_heartbeat_at": "2026-03-15T13:35:39.636566+00:00",
+    "last_heartbeat_summary": "run completed",
+    "lifecycle_stage": "completed",
+    "metrics": {
+      "learning_hot_path_ops": 1,
+      "state_write_count": 49
+    },
+    "started_at": "2026-03-15T13:35:37.788327+00:00"
+  },
+  "schema_version": 6,
+  "state_density": "full",
+  "state_machine": {
+    "active_branch": null,
+    "allowed_transitions": {
+      "blocked": [
+        "planning",
+        "ready",
+        "executing",
+        "completed"
+      ],
+      "completed": [],
+      "executing": [
+        "validating",
+        "repairing",
+        "blocked"
+      ],
+      "intake": [
+        "planning",
+        "blocked"
+      ],
+      "planning": [
+        "ready",
+        "executing",
+        "blocked"
+      ],
+      "ready": [
+        "executing",
+        "blocked"
+      ],
+      "repairing": [
+        "ready",
+        "executing",
+        "blocked"
+      ],
+      "validating": [
+        "completed",
+        "repairing",
+        "blocked"
+      ]
+    },
+    "blocked": {
+      "is_blocked": false,
+      "reason": null,
+      "references": []
+    },
+    "branches": [
+      {
+        "branch_id": "execution-main",
+        "kind": "primary",
+        "label": "Primary execution path",
+        "opened_at": "2026-03-15T13:35:38.391680+00:00",
+        "origin_node": "ready",
+        "references": [
+          "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/deep-file-transform-success/adapters.json",
+          "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/deep-file-transform-success/rules.json"
+        ],
+        "status": "active",
+        "summary": "Main local execution branch opened"
+      }
+    ],
+    "history": [
+      {
+        "branch_id": null,
+        "from": "intake",
+        "summary": "Run initialized and routed to the deep profile",
+        "to": "planning",
+        "ts": "2026-03-15T13:35:37.903355+00:00"
+      },
+      {
+        "branch_id": null,
+        "from": "planning",
+        "summary": "Plan and adapter routing completed",
+        "to": "ready",
+        "ts": "2026-03-15T13:35:38.332581+00:00"
+      },
+      {
+        "branch_id": "execution-main",
+        "from": "ready",
+        "summary": "Execution branch started",
+        "to": "executing",
+        "ts": "2026-03-15T13:35:38.451894+00:00"
+      },
+      {
+        "branch_id": "execution-main",
+        "from": "executing",
+        "summary": "Execution outputs ready for validation",
+        "to": "validating",
+        "ts": "2026-03-15T13:35:39.096471+00:00"
+      },
+      {
+        "branch_id": "execution-main",
+        "from": "validating",
+        "summary": "Run finished cleanly",
+        "to": "completed",
+        "ts": "2026-03-15T13:35:39.450716+00:00"
+      }
+    ],
+    "history_summary": [],
+    "node": "completed",
+    "recovery": []
+  },
+  "status": "completed",
+  "success_patterns": [
+    {
+      "captured_at": "2026-03-15T13:35:39.264108+00:00",
+      "confidence": 90,
+      "evidence": [
+        "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/deep-file-transform-success/execution-state.json",
+        "runtime-status.json"
+      ],
+      "pattern_id": "layered-local-orchestration",
+      "reusable": true,
+      "summary": "Full run queued a reusable orchestration pattern for deferred consolidation"
+    }
+  ],
+  "summary_outcome": "Run finished cleanly",
+  "updated_at": "2026-03-15T13:35:39.667902+00:00"
+}

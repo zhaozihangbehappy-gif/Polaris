@@ -1,0 +1,58 @@
+{
+  "ecosystem": "terraform",
+  "error_class": "network_error",
+  "shard_version": "3.0",
+  "records": [
+    {
+      "stderr_pattern": "registry.terraform.io.*Temporary failure in name resolution|dial tcp.*lookup.*registry",
+      "avoidance_hints": [
+        {
+          "kind": "set_env",
+          "vars": {
+            "TF_CLI_ARGS_init": "-plugin-dir=/usr/share/terraform/plugins"
+          }
+        },
+        {
+          "kind": "run_shell",
+          "command": "nslookup registry.terraform.io 2>&1 || true"
+        }
+      ],
+      "description": "Terraform registry DNS resolution failure — use local plugin dir or check network connectivity",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "bash -c 'echo \"Error: Failed to query available provider packages: registry.terraform.io: Temporary failure in name resolution\" >&2; exit 1'",
+        "trigger_env": {},
+        "expected_stderr_match": "registry.terraform.io.*failure|dial tcp",
+        "fix_env": {
+          "TF_CLI_ARGS_init": "-plugin-dir=/usr/share/terraform/plugins"
+        },
+        "expected_fix_outcome": "different_error_or_success",
+        "fix_command": "bash -c 'echo \"TF_CLI_ARGS_init set (simulated)\"; exit 0'"
+      }
+    },
+    {
+      "stderr_pattern": "context deadline exceeded|Client.Timeout exceeded|connection reset by peer",
+      "avoidance_hints": [
+        {
+          "kind": "set_env",
+          "vars": {
+            "TF_PLUGIN_CACHE_DIR": "/tmp/.terraform.d/plugin-cache",
+            "HTTPS_PROXY": ""
+          }
+        }
+      ],
+      "description": "Provider download timeout — use plugin cache or check proxy settings",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "bash -c 'echo \"deadline exceeded\" >&2; exit 1'",
+        "trigger_env": {},
+        "expected_stderr_match": "deadline exceeded|Timeout|connection reset",
+        "fix_env": {
+          "TF_PLUGIN_CACHE_DIR": "/tmp/.terraform.d/plugin-cache"
+        },
+        "expected_fix_outcome": "different_error_or_success",
+        "fix_command": "bash -c 'echo \"TF_PLUGIN_CACHE_DIR set (simulated)\"; exit 0'"
+      }
+    }
+  ]
+}

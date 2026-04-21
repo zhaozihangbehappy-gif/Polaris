@@ -1,0 +1,5 @@
+{
+  "stderr": "error: could not compile `diesel` (lib)\n\nCaused by:\n  process didn't exit successfully: `rustc --crate-name diesel ...` (signal: 9, SIGKILL)\n  note: the compiler unexpectedly panicked due to running out of memory.\n  help: consider setting `CARGO_BUILD_JOBS` to a lower value to reduce memory usage",
+  "error_class": "resource_exhaustion",
+  "source": "cargo build on 1GB RAM CI runner compiling diesel with default parallel jobs"
+}

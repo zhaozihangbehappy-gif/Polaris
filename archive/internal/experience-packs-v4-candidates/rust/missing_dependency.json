@@ -1,0 +1,391 @@
+{
+  "ecosystem": "rust",
+  "error_class": "missing_dependency",
+  "schema_version": 4,
+  "records": [
+    {
+      "pattern_id": "candidate.rust.missing_dependency.000",
+      "ecosystem": "rust",
+      "error_class": "missing_dependency",
+      "description": "Rust crate 'tokio' not in Cargo.toml",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "can't find crate for `tokio`",
+          "unresolved import `tokio`"
+        ],
+        "file_markers": [],
+        "package_managers": [
+          "cargo"
+        ],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "cargo tree | grep tokio 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "can't find crate for `tokio`"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "install_package",
+            "manager": "cargo",
+            "name": "tokio"
+          }
+        ],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "cargo add tokio"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.rust.missing_dependency.001",
+      "ecosystem": "rust",
+      "error_class": "missing_dependency",
+      "description": "Rust crate 'serde' not in Cargo.toml",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "can't find crate for `serde`",
+          "unresolved import `serde`"
+        ],
+        "file_markers": [],
+        "package_managers": [
+          "cargo"
+        ],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "cargo tree | grep serde 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "can't find crate for `serde`"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "install_package",
+            "manager": "cargo",
+            "name": "serde"
+          }
+        ],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "cargo add serde"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.rust.missing_dependency.002",
+      "ecosystem": "rust",
+      "error_class": "missing_dependency",
+      "description": "Rust crate 'serde_json' not in Cargo.toml",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "can't find crate for `serde_json`",
+          "unresolved import `serde_json`"
+        ],
+        "file_markers": [],
+        "package_managers": [
+          "cargo"
+        ],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "cargo tree | grep serde_json 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "can't find crate for `serde_json`"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "install_package",
+            "manager": "cargo",
+            "name": "serde_json"
+          }
+        ],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "cargo add serde_json"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.rust.missing_dependency.003",
+      "ecosystem": "rust",
+      "error_class": "missing_dependency",
+      "description": "Rust crate 'reqwest' not in Cargo.toml",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "can't find crate for `reqwest`",
+          "unresolved import `reqwest`"
+        ],
+        "file_markers": [],
+        "package_managers": [
+          "cargo"
+        ],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "cargo tree | grep reqwest 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "can't find crate for `reqwest`"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "install_package",
+            "manager": "cargo",
+            "name": "reqwest"
+          }
+        ],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "cargo add reqwest"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.rust.missing_dependency.004",
+      "ecosystem": "rust",
+      "error_class": "missing_dependency",
+      "description": "Rust crate 'clap' not in Cargo.toml",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "can't find crate for `clap`",
+          "unresolved import `clap`"
+        ],
+        "file_markers": [],
+        "package_managers": [
+          "cargo"
+        ],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "cargo tree | grep clap 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "can't find crate for `clap`"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "install_package",
+            "manager": "cargo",
+            "name": "clap"
+          }
+        ],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "cargo add clap"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.rust.missing_dependency.005",
+      "ecosystem": "rust",
+      "error_class": "missing_dependency",
+      "description": "Rust crate 'anyhow' not in Cargo.toml",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "can't find crate for `anyhow`",
+          "unresolved import `anyhow`"
+        ],
+        "file_markers": [],
+        "package_managers": [
+          "cargo"
+        ],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "cargo tree | grep anyhow 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "can't find crate for `anyhow`"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "install_package",
+            "manager": "cargo",
+            "name": "anyhow"
+          }
+        ],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "cargo add anyhow"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.rust.missing_dependency.006",
+      "ecosystem": "rust",
+      "error_class": "missing_dependency",
+      "description": "Rust crate 'thiserror' not in Cargo.toml",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "can't find crate for `thiserror`",
+          "unresolved import `thiserror`"
+        ],
+        "file_markers": [],
+        "package_managers": [
+          "cargo"
+        ],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "cargo tree | grep thiserror 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "can't find crate for `thiserror`"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "install_package",
+            "manager": "cargo",
+            "name": "thiserror"
+          }
+        ],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "cargo add thiserror"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.rust.missing_dependency.007",
+      "ecosystem": "rust",
+      "error_class": "missing_dependency",
+      "description": "Rust crate 'tracing' not in Cargo.toml",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "can't find crate for `tracing`",
+          "unresolved import `tracing`"
+        ],
+        "file_markers": [],
+        "package_managers": [
+          "cargo"
+        ],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "cargo tree | grep tracing 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "can't find crate for `tracing`"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "install_package",
+            "manager": "cargo",
+            "name": "tracing"
+          }
+        ],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "cargo add tracing"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    }
+  ]
+}

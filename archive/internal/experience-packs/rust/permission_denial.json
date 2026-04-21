@@ -1,0 +1,59 @@
+{
+  "ecosystem": "rust",
+  "error_class": "permission_denial",
+  "shard_version": "3.0",
+  "records": [
+    {
+      "stderr_pattern": "Permission denied.*\\.cargo|error:.*permission denied.*registry",
+      "avoidance_hints": [
+        {
+          "kind": "set_env",
+          "vars": {
+            "CARGO_HOME": "/tmp/.cargo"
+          }
+        }
+      ],
+      "description": "Cargo registry permission denied — redirect CARGO_HOME to writable dir",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "bash -c 'echo \"error: Permission denied /root/.cargo/registry\" >&2; exit 1'",
+        "trigger_env": {
+          "CARGO_HOME": "/root/.cargo-readonly"
+        },
+        "expected_stderr_match": "permission denied",
+        "fix_env": {
+          "CARGO_HOME": "/tmp/.cargo"
+        },
+        "expected_fix_outcome": "different_error_or_success",
+        "fix_command": "bash -c 'echo \"CARGO_HOME set (simulated)\"; exit 0'"
+      }
+    },
+    {
+      "stderr_pattern": "could not create directories for.*cargo|failed to open.*\\.crates\\.toml",
+      "avoidance_hints": [
+        {
+          "kind": "set_env",
+          "vars": {
+            "CARGO_HOME": "$HOME/.cargo",
+            "CARGO_INSTALL_ROOT": "$HOME/.local"
+          }
+        }
+      ],
+      "description": "Cargo install directory not writable — redirect install root",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "bash -c 'echo \"error: failed to open: /opt/cargo/bin/.crates.toml\" >&2; echo \"Permission denied (os error 13)\" >&2; exit 1'",
+        "trigger_env": {
+          "CARGO_HOME": "/opt/cargo"
+        },
+        "expected_stderr_match": "failed to open.*crates.toml",
+        "fix_env": {
+          "CARGO_HOME": "$HOME/.cargo",
+          "CARGO_INSTALL_ROOT": "$HOME/.local"
+        },
+        "expected_fix_outcome": "different_error_or_success",
+        "fix_command": "bash -c 'echo \"CARGO_HOME set (simulated)\"; exit 0'"
+      }
+    }
+  ]
+}

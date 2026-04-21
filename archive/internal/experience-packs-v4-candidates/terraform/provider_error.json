@@ -1,0 +1,163 @@
+{
+  "ecosystem": "terraform",
+  "error_class": "provider_error",
+  "schema_version": 4,
+  "records": [
+    {
+      "pattern_id": "candidate.terraform.provider_error.000",
+      "ecosystem": "terraform",
+      "error_class": "provider_error",
+      "description": "provider aws plan drift from v4 to v5",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "Error: Unsupported argument"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "terraform version 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "Error: Unsupported argument"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Terraform provider_error: provider aws plan drift from v4 to v5"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.terraform.provider_error.001",
+      "ecosystem": "terraform",
+      "error_class": "provider_error",
+      "description": "provider version locked older",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "no available releases.*provider"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "terraform version 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "no available releases.*provider"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Terraform provider_error: provider version locked older"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.terraform.provider_error.002",
+      "ecosystem": "terraform",
+      "error_class": "provider_error",
+      "description": "required_providers block missing",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "Missing required provider"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "terraform version 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "Missing required provider"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Terraform provider_error: required_providers block missing"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.terraform.provider_error.003",
+      "ecosystem": "terraform",
+      "error_class": "provider_error",
+      "description": "registry source mirror auth",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "Failed to query available provider packages.*401"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "terraform version 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "Failed to query available provider packages.*401"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Terraform provider_error: registry source mirror auth"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    }
+  ]
+}

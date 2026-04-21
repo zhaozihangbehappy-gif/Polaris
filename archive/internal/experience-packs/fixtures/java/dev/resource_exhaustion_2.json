@@ -1,0 +1,5 @@
+{
+  "stderr": "[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.11.0:compile (default-compile) on project myapp: Fatal error compiling\n[ERROR] java.lang.OutOfMemoryError: GC overhead limit exceeded\n[ERROR] -> [Help 1]\n[ERROR] \n[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.\n[ERROR] Re-run Maven using the -X switch to enable full debug logging.",
+  "error_class": "resource_exhaustion",
+  "source": "maven compile runs out of memory on large codebase"
+}

@@ -1,0 +1,133 @@
+{
+  "output_file": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/runtime-step2-repair-repeat/runtime-execution-result.json",
+  "payload": {
+    "adapter": "shell-local",
+    "applied_rule_ids": [
+      "stop-on-nonrepair-denial",
+      "repair-rule-1c6e7cc8a952"
+    ],
+    "applied_rule_layers": [
+      "hard",
+      "soft"
+    ],
+    "executed_ordering": [
+      "diagnose",
+      "generic-probes",
+      "record-evidence",
+      "recover"
+    ],
+    "execution_contract": {
+      "kind": "runner",
+      "pattern": "repair-pattern-807fd04b957e",
+      "rule_count": 2,
+      "strategy": {
+        "execution_ordering": [
+          "diagnose",
+          "generic-probes",
+          "record-evidence",
+          "recover"
+        ],
+        "fallback_choice": "sticky-adapter-first",
+        "retry_policy": "respect-hard-stop-rules",
+        "strategy_trace": {
+          "execution_kind": "runner",
+          "execution_profile": "standard",
+          "experimental_rules": [],
+          "hard_rules": [
+            "stop-on-nonrepair-denial"
+          ],
+          "selected_pattern": "repair-pattern-807fd04b957e",
+          "soft_rules": [
+            "repair-rule-1c6e7cc8a952"
+          ]
+        },
+        "validation_strategy": "runner-contract-strict"
+      }
+    },
+    "execution_profile": "standard",
+    "goal": "Demonstrate Polaris local orchestration flow",
+    "mode": "short",
+    "notes": [
+      "task executed through adapter contract",
+      "selected rules and pattern were supplied to the runner"
+    ],
+    "result": {
+      "stage_count": 4,
+      "summary": "Executed local task for goal: Demonstrate Polaris local orchestration flow",
+      "used_pattern_guidance": true,
+      "used_rule_guidance": true
+    },
+    "selected_pattern": "repair-pattern-807fd04b957e",
+    "selected_pattern_sequence": [
+      "diagnose",
+      "generic-probes",
+      "record-evidence",
+      "recover"
+    ],
+    "stage_results": [
+      {
+        "details": {
+          "adapter": "shell-local",
+          "goal": "Demonstrate Polaris local orchestration flow",
+          "rule_count": 2
+        },
+        "status": "ok",
+        "step": "diagnose"
+      },
+      {
+        "details": {
+          "cwd": "/home/administrator/.openclaw/workspace/projects/polaris-skill",
+          "selected_pattern": "repair-pattern-807fd04b957e",
+          "state_file": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/runtime-step2-repair-repeat/execution-state.json"
+        },
+        "status": "ok",
+        "step": "generic-probes"
+      },
+      {
+        "details": {
+          "cwd": "/home/administrator/.openclaw/workspace/projects/polaris-skill",
+          "selected_pattern": "repair-pattern-807fd04b957e",
+          "state_file": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/runtime-step2-repair-repeat/execution-state.json"
+        },
+        "status": "ok",
+        "step": "record-evidence"
+      },
+      {
+        "details": {
+          "recovery_ready": true,
+          "retry_policy": "respect-hard-stop-rules"
+        },
+        "status": "ok",
+        "step": "recover"
+      }
+    ],
+    "state": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/runtime-step2-repair-repeat/execution-state.json",
+    "status": "ok",
+    "strategy": {
+      "execution_ordering": [
+        "diagnose",
+        "generic-probes",
+        "record-evidence",
+        "recover"
+      ],
+      "fallback_choice": "sticky-adapter-first",
+      "retry_policy": "respect-hard-stop-rules",
+      "strategy_trace": {
+        "execution_kind": "runner",
+        "execution_profile": "standard",
+        "experimental_rules": [],
+        "hard_rules": [
+          "stop-on-nonrepair-denial"
+        ],
+        "selected_pattern": "repair-pattern-807fd04b957e",
+        "soft_rules": [
+          "repair-rule-1c6e7cc8a952"
+        ]
+      },
+      "validation_strategy": "runner-contract-strict"
+    },
+    "ts": "2026-03-14T09:39:54.333235+00:00"
+  },
+  "status": "ok",
+  "validator_kind": "runner_result_contract"
+}

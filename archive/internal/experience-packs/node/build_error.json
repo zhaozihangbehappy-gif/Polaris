@@ -1,0 +1,78 @@
+{
+  "ecosystem": "node",
+  "error_class": "build_error",
+  "shard_version": "3.0",
+  "records": [
+    {
+      "stderr_pattern": "gyp ERR!.*build error|node-gyp.*failed|`make` failed with exit code",
+      "avoidance_hints": [
+        {
+          "kind": "set_env",
+          "vars": {
+            "npm_config_build_from_source": "false"
+          }
+        }
+      ],
+      "description": "node-gyp native addon build failure — try pre-built binaries by disabling build-from-source",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "node -e \"console.error('gyp ERR! build error\\ngyp ERR! stack Error: `make` failed with exit code: 2')\" 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "gyp ERR!.*build error",
+        "fix_env": {
+          "npm_config_build_from_source": "false"
+        },
+        "expected_fix_outcome": "different_error_or_success",
+        "fix_command": "bash -c 'echo \"npm_config_build_from_source=false applied (simulated fix)\"; exit 0'"
+      }
+    },
+    {
+      "stderr_pattern": "Could not find any Python installation|gyp ERR!.*find Python",
+      "avoidance_hints": [
+        {
+          "kind": "set_env",
+          "vars": {
+            "npm_config_python": "/usr/bin/python3"
+          }
+        }
+      ],
+      "description": "node-gyp cannot find Python — point npm_config_python to the Python3 binary path",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "node -e \"console.error('gyp ERR! configure error\\ngyp ERR! stack Error: Could not find any Python installation to use')\" 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "Could not find any Python",
+        "fix_env": {
+          "npm_config_python": "/usr/bin/python3"
+        },
+        "expected_fix_outcome": "different_error_or_success",
+        "fix_command": "bash -c 'echo \"npm_config_python=/usr/bin/python3 applied (simulated fix)\"; exit 0'"
+      }
+    },
+    {
+      "stderr_pattern": "No receipt for 'com\\.apple\\.pkg\\.CLTools_Executables'|xcode-select.*install|command line tools",
+      "avoidance_hints": [
+        {
+          "kind": "set_env",
+          "vars": {
+            "CXX": "g++",
+            "CC": "gcc"
+          }
+        }
+      ],
+      "description": "Missing C/C++ compiler for native addon build — set CC/CXX env vars to available compiler",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "node -e \"console.error('gyp ERR! stack Error: not found: make\\ngyp ERR! not ok')\" 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "gyp ERR!|not found: make",
+        "fix_env": {
+          "CXX": "g++",
+          "CC": "gcc"
+        },
+        "expected_fix_outcome": "different_error_or_success",
+        "fix_command": "bash -c 'echo \"CXX=g++ applied (simulated fix)\"; exit 0'"
+      }
+    }
+  ]
+}

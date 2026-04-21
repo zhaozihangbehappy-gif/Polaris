@@ -1,0 +1,17 @@
+{
+  "case_id": "generated_python_version_conflict_001",
+  "source": "authored_fixture",
+  "reverse_from_pattern": "python.version_conflict.001",
+  "pattern_id": "python.version_conflict.001",
+  "source_pool": "official",
+  "ecosystem": "python",
+  "error_class": "version_conflict",
+  "initial_prompt": "In the project at {workdir}, this python version_conflict fails: pip dependency resolution conflict \u2014 cannot resolve automatically; report conflict details to user. Reproduce the failure with `python3 -m pip install --dry-run --user --no-index --no-build-isolation --no-cache-dir --break-system-packages -r requirements.txt`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+  "success_criteria": {
+    "root_cause_regex": ".+",
+    "fix_command_test": "cd {workdir} && python3 -m pip install --dry-run --user --no-index --no-build-isolation --no-cache-dir --break-system-packages -r requirements.txt"
+  },
+  "max_rounds": 6,
+  "fixture_strategy": "authored_files",
+  "promotion_eligible": true
+}

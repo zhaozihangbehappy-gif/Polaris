@@ -1,0 +1,1027 @@
+{
+  "generated_cases": 51,
+  "queue_length_total_variants": 102,
+  "entries": [
+    {
+      "case_id": "generated_node_build_error_000",
+      "pattern_id": "node.build_error.000",
+      "ecosystem": "node",
+      "variant": "baseline",
+      "prompt_template": "In the project at {workdir}, this node build_error fails: node-gyp native addon build failure \u2014 try pre-built binaries by disabling build-from-source. Reproduce the failure with `npm test`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && npm test",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_node_build_error_000__baseline.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_node_build_error_000/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_node_build_error_000",
+      "pattern_id": "node.build_error.000",
+      "ecosystem": "node",
+      "variant": "polaris",
+      "prompt_template": "In the project at {workdir}, this node build_error fails: node-gyp native addon build failure \u2014 try pre-built binaries by disabling build-from-source. Reproduce the failure with `npm test`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && npm test",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_node_build_error_000__polaris.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_node_build_error_000/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_node_build_error_002",
+      "pattern_id": "node.build_error.002",
+      "ecosystem": "node",
+      "variant": "baseline",
+      "prompt_template": "In the project at {workdir}, this node build_error fails: Missing C/C++ compiler for native addon build \u2014 set CC/CXX env vars to available compiler. Reproduce the failure with `env -u CC -u CXX npm test`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && env -u CC -u CXX npm test",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_node_build_error_002__baseline.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_node_build_error_002/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_node_build_error_002",
+      "pattern_id": "node.build_error.002",
+      "ecosystem": "node",
+      "variant": "polaris",
+      "prompt_template": "In the project at {workdir}, this node build_error fails: Missing C/C++ compiler for native addon build \u2014 set CC/CXX env vars to available compiler. Reproduce the failure with `env -u CC -u CXX npm test`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && env -u CC -u CXX npm test",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_node_build_error_002__polaris.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_node_build_error_002/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_node_config_error_000",
+      "pattern_id": "node.config_error.000",
+      "ecosystem": "node",
+      "variant": "baseline",
+      "prompt_template": "In the project at {workdir}, this node config_error fails: Invalid JSON in package.json \u2014 fix syntax errors (trailing commas, missing quotes); rewrite cwd to valid project root. Reproduce the failure with `node verify-package.js`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && node verify-package.js",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_node_config_error_000__baseline.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_node_config_error_000/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_node_config_error_000",
+      "pattern_id": "node.config_error.000",
+      "ecosystem": "node",
+      "variant": "polaris",
+      "prompt_template": "In the project at {workdir}, this node config_error fails: Invalid JSON in package.json \u2014 fix syntax errors (trailing commas, missing quotes); rewrite cwd to valid project root. Reproduce the failure with `node verify-package.js`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && node verify-package.js",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_node_config_error_000__polaris.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_node_config_error_000/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_node_config_error_001",
+      "pattern_id": "node.config_error.001",
+      "ecosystem": "node",
+      "variant": "baseline",
+      "prompt_template": "In the project at {workdir}, this node config_error fails: TypeScript config error \u2014 tsconfig.json missing or malformed; ensure cwd contains valid tsconfig. Reproduce the failure with `node check-tsconfig.js`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && node check-tsconfig.js",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_node_config_error_001__baseline.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_node_config_error_001/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_node_config_error_001",
+      "pattern_id": "node.config_error.001",
+      "ecosystem": "node",
+      "variant": "polaris",
+      "prompt_template": "In the project at {workdir}, this node config_error fails: TypeScript config error \u2014 tsconfig.json missing or malformed; ensure cwd contains valid tsconfig. Reproduce the failure with `node check-tsconfig.js`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && node check-tsconfig.js",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_node_config_error_001__polaris.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_node_config_error_001/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_node_encoding_error_000",
+      "pattern_id": "node.encoding_error.000",
+      "ecosystem": "node",
+      "variant": "baseline",
+      "prompt_template": "In the project at {workdir}, this node encoding_error fails: Invalid character in source file \u2014 ensure files are UTF-8 encoded and locale is set correctly. Reproduce the failure with `node index.js`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && node index.js",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_node_encoding_error_000__baseline.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_node_encoding_error_000/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_node_encoding_error_000",
+      "pattern_id": "node.encoding_error.000",
+      "ecosystem": "node",
+      "variant": "polaris",
+      "prompt_template": "In the project at {workdir}, this node encoding_error fails: Invalid character in source file \u2014 ensure files are UTF-8 encoded and locale is set correctly. Reproduce the failure with `node index.js`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && node index.js",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_node_encoding_error_000__polaris.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_node_encoding_error_000/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_node_file_not_found_000",
+      "pattern_id": "node.file_not_found.000",
+      "ecosystem": "node",
+      "variant": "baseline",
+      "prompt_template": "In the project at {workdir}, this node file_not_found fails: package.json not found \u2014 cwd may be wrong; rewrite to directory containing package.json. Reproduce the failure with `node tools/check-package.js`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && node tools/check-package.js",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_node_file_not_found_000__baseline.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_node_file_not_found_000/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_node_file_not_found_000",
+      "pattern_id": "node.file_not_found.000",
+      "ecosystem": "node",
+      "variant": "polaris",
+      "prompt_template": "In the project at {workdir}, this node file_not_found fails: package.json not found \u2014 cwd may be wrong; rewrite to directory containing package.json. Reproduce the failure with `node tools/check-package.js`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && node tools/check-package.js",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_node_file_not_found_000__polaris.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_node_file_not_found_000/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_node_file_not_found_001",
+      "pattern_id": "node.file_not_found.001",
+      "ecosystem": "node",
+      "variant": "baseline",
+      "prompt_template": "In the project at {workdir}, this node file_not_found fails: File or directory missing for fs operation \u2014 ensure parent directories exist or build output is present. Reproduce the failure with `node reader.js`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && node reader.js",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_node_file_not_found_001__baseline.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_node_file_not_found_001/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_node_file_not_found_001",
+      "pattern_id": "node.file_not_found.001",
+      "ecosystem": "node",
+      "variant": "polaris",
+      "prompt_template": "In the project at {workdir}, this node file_not_found fails: File or directory missing for fs operation \u2014 ensure parent directories exist or build output is present. Reproduce the failure with `node reader.js`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && node reader.js",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_node_file_not_found_001__polaris.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_node_file_not_found_001/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_node_missing_dependency_000",
+      "pattern_id": "node.missing_dependency.000",
+      "ecosystem": "node",
+      "variant": "baseline",
+      "prompt_template": "In the project at {workdir}, this node missing_dependency fails: Node.js CJS module resolution failure \u2014 ensure NODE_PATH includes local node_modules. Reproduce the failure with `npm test`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && npm test",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_node_missing_dependency_000__baseline.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_node_missing_dependency_000/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_node_missing_dependency_000",
+      "pattern_id": "node.missing_dependency.000",
+      "ecosystem": "node",
+      "variant": "polaris",
+      "prompt_template": "In the project at {workdir}, this node missing_dependency fails: Node.js CJS module resolution failure \u2014 ensure NODE_PATH includes local node_modules. Reproduce the failure with `npm test`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && npm test",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_node_missing_dependency_000__polaris.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_node_missing_dependency_000/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_node_missing_dependency_001",
+      "pattern_id": "node.missing_dependency.001",
+      "ecosystem": "node",
+      "variant": "baseline",
+      "prompt_template": "In the project at {workdir}, this node missing_dependency fails: ESM module resolution failure \u2014 set NODE_PATH to directory containing the package. Reproduce the failure with `npm test`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && npm test",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_node_missing_dependency_001__baseline.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_node_missing_dependency_001/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_node_missing_dependency_001",
+      "pattern_id": "node.missing_dependency.001",
+      "ecosystem": "node",
+      "variant": "polaris",
+      "prompt_template": "In the project at {workdir}, this node missing_dependency fails: ESM module resolution failure \u2014 set NODE_PATH to directory containing the package. Reproduce the failure with `npm test`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && npm test",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_node_missing_dependency_001__polaris.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_node_missing_dependency_001/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_node_missing_dependency_002",
+      "pattern_id": "node.missing_dependency.002",
+      "ecosystem": "node",
+      "variant": "baseline",
+      "prompt_template": "In the project at {workdir}, this node missing_dependency fails: Module not found with require stack trace \u2014 NODE_PATH may be missing the install directory. Reproduce the failure with `npm test --silent`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && npm test --silent",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_node_missing_dependency_002__baseline.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_node_missing_dependency_002/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_node_missing_dependency_002",
+      "pattern_id": "node.missing_dependency.002",
+      "ecosystem": "node",
+      "variant": "polaris",
+      "prompt_template": "In the project at {workdir}, this node missing_dependency fails: Module not found with require stack trace \u2014 NODE_PATH may be missing the install directory. Reproduce the failure with `npm test --silent`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && npm test --silent",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_node_missing_dependency_002__polaris.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_node_missing_dependency_002/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_node_missing_dependency_003",
+      "pattern_id": "node.missing_dependency.003",
+      "ecosystem": "node",
+      "variant": "baseline",
+      "prompt_template": "In the project at {workdir}, this node missing_dependency fails: npm peer dependency conflict \u2014 retry with --legacy-peer-deps to bypass strict resolution. Reproduce the failure with `npm run verify`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && npm run verify",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_node_missing_dependency_003__baseline.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_node_missing_dependency_003/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_node_missing_dependency_003",
+      "pattern_id": "node.missing_dependency.003",
+      "ecosystem": "node",
+      "variant": "polaris",
+      "prompt_template": "In the project at {workdir}, this node missing_dependency fails: npm peer dependency conflict \u2014 retry with --legacy-peer-deps to bypass strict resolution. Reproduce the failure with `npm run verify`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && npm run verify",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_node_missing_dependency_003__polaris.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_node_missing_dependency_003/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_node_network_error_000",
+      "pattern_id": "node.network_error.000",
+      "ecosystem": "node",
+      "variant": "baseline",
+      "prompt_template": "In the project at {workdir}, this node network_error fails: npm registry connection refused \u2014 retry with backoff; check proxy settings if behind corporate firewall. Reproduce the failure with `node verify.js`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && node verify.js",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_node_network_error_000__baseline.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_node_network_error_000/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_node_network_error_000",
+      "pattern_id": "node.network_error.000",
+      "ecosystem": "node",
+      "variant": "polaris",
+      "prompt_template": "In the project at {workdir}, this node network_error fails: npm registry connection refused \u2014 retry with backoff; check proxy settings if behind corporate firewall. Reproduce the failure with `node verify.js`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && node verify.js",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_node_network_error_000__polaris.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_node_network_error_000/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_node_network_error_001",
+      "pattern_id": "node.network_error.001",
+      "ecosystem": "node",
+      "variant": "baseline",
+      "prompt_template": "In the project at {workdir}, this node network_error fails: npm registry fetch timeout \u2014 increase fetch timeout and retry. Reproduce the failure with `npm test`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && npm test",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_node_network_error_001__baseline.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_node_network_error_001/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_node_network_error_001",
+      "pattern_id": "node.network_error.001",
+      "ecosystem": "node",
+      "variant": "polaris",
+      "prompt_template": "In the project at {workdir}, this node network_error fails: npm registry fetch timeout \u2014 increase fetch timeout and retry. Reproduce the failure with `npm test`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && npm test",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_node_network_error_001__polaris.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_node_network_error_001/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_node_permission_denial_000",
+      "pattern_id": "node.permission_denial.000",
+      "ecosystem": "node",
+      "variant": "baseline",
+      "prompt_template": "In the project at {workdir}, this node permission_denial fails: npm cache permission error \u2014 redirect npm cache to writable directory. Reproduce the failure with `npm test`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && npm test",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_node_permission_denial_000__baseline.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_node_permission_denial_000/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_node_permission_denial_000",
+      "pattern_id": "node.permission_denial.000",
+      "ecosystem": "node",
+      "variant": "polaris",
+      "prompt_template": "In the project at {workdir}, this node permission_denial fails: npm cache permission error \u2014 redirect npm cache to writable directory. Reproduce the failure with `npm test`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && npm test",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_node_permission_denial_000__polaris.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_node_permission_denial_000/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_node_port_conflict_000",
+      "pattern_id": "node.port_conflict.000",
+      "ecosystem": "node",
+      "variant": "baseline",
+      "prompt_template": "In the project at {workdir}, this node port_conflict fails: TCP port already in use \u2014 set PORT=0 to let the OS assign a free port. Reproduce the failure with `node conflict.js`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && node conflict.js",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_node_port_conflict_000__baseline.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_node_port_conflict_000/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_node_port_conflict_000",
+      "pattern_id": "node.port_conflict.000",
+      "ecosystem": "node",
+      "variant": "polaris",
+      "prompt_template": "In the project at {workdir}, this node port_conflict fails: TCP port already in use \u2014 set PORT=0 to let the OS assign a free port. Reproduce the failure with `node conflict.js`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && node conflict.js",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_node_port_conflict_000__polaris.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_node_port_conflict_000/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_node_resource_exhaustion_000",
+      "pattern_id": "node.resource_exhaustion.000",
+      "ecosystem": "node",
+      "variant": "baseline",
+      "prompt_template": "In the project at {workdir}, this node resource_exhaustion fails: Node.js V8 heap OOM \u2014 increase max old space size via NODE_OPTIONS. Reproduce the failure with `npm test`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && npm test",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_node_resource_exhaustion_000__baseline.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_node_resource_exhaustion_000/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_node_resource_exhaustion_000",
+      "pattern_id": "node.resource_exhaustion.000",
+      "ecosystem": "node",
+      "variant": "polaris",
+      "prompt_template": "In the project at {workdir}, this node resource_exhaustion fails: Node.js V8 heap OOM \u2014 increase max old space size via NODE_OPTIONS. Reproduce the failure with `npm test`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && npm test",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_node_resource_exhaustion_000__polaris.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_node_resource_exhaustion_000/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_node_resource_exhaustion_001",
+      "pattern_id": "node.resource_exhaustion.001",
+      "ecosystem": "node",
+      "variant": "baseline",
+      "prompt_template": "In the project at {workdir}, this node resource_exhaustion fails: File descriptor limit exhausted \u2014 increase ulimit or reduce concurrency; UV_THREADPOOL_SIZE can help with I/O scheduling. Reproduce the failure with `npm test`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && npm test",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_node_resource_exhaustion_001__baseline.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_node_resource_exhaustion_001/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_node_resource_exhaustion_001",
+      "pattern_id": "node.resource_exhaustion.001",
+      "ecosystem": "node",
+      "variant": "polaris",
+      "prompt_template": "In the project at {workdir}, this node resource_exhaustion fails: File descriptor limit exhausted \u2014 increase ulimit or reduce concurrency; UV_THREADPOOL_SIZE can help with I/O scheduling. Reproduce the failure with `npm test`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && npm test",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_node_resource_exhaustion_001__polaris.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_node_resource_exhaustion_001/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_node_timeout_000",
+      "pattern_id": "node.timeout.000",
+      "ecosystem": "node",
+      "variant": "baseline",
+      "prompt_template": "In the project at {workdir}, this node timeout fails: Jest test timeout exceeded \u2014 increase test timeout via --testTimeout flag or set_timeout hint. Reproduce the failure with `npm test`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && npm test",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_node_timeout_000__baseline.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_node_timeout_000/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_node_timeout_000",
+      "pattern_id": "node.timeout.000",
+      "ecosystem": "node",
+      "variant": "polaris",
+      "prompt_template": "In the project at {workdir}, this node timeout fails: Jest test timeout exceeded \u2014 increase test timeout via --testTimeout flag or set_timeout hint. Reproduce the failure with `npm test`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && npm test",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_node_timeout_000__polaris.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_node_timeout_000/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_node_timeout_001",
+      "pattern_id": "node.timeout.001",
+      "ecosystem": "node",
+      "variant": "baseline",
+      "prompt_template": "In the project at {workdir}, this node timeout fails: Generic Node.js operation timeout \u2014 increase timeout for network or I/O bound operations. Reproduce the failure with `node verify.js`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && node verify.js",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_node_timeout_001__baseline.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_node_timeout_001/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_node_timeout_001",
+      "pattern_id": "node.timeout.001",
+      "ecosystem": "node",
+      "variant": "polaris",
+      "prompt_template": "In the project at {workdir}, this node timeout fails: Generic Node.js operation timeout \u2014 increase timeout for network or I/O bound operations. Reproduce the failure with `node verify.js`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && node verify.js",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_node_timeout_001__polaris.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_node_timeout_001/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_node_version_conflict_000",
+      "pattern_id": "node.version_conflict.000",
+      "ecosystem": "node",
+      "variant": "baseline",
+      "prompt_template": "In the project at {workdir}, this node version_conflict fails: npm engine version requirement mismatch \u2014 disable strict engine check to bypass. Reproduce the failure with `npm install --package-lock=false`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && npm install --package-lock=false",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_node_version_conflict_000__baseline.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_node_version_conflict_000/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_node_version_conflict_000",
+      "pattern_id": "node.version_conflict.000",
+      "ecosystem": "node",
+      "variant": "polaris",
+      "prompt_template": "In the project at {workdir}, this node version_conflict fails: npm engine version requirement mismatch \u2014 disable strict engine check to bypass. Reproduce the failure with `npm install --package-lock=false`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && npm install --package-lock=false",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_node_version_conflict_000__polaris.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_node_version_conflict_000/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_python_build_error_000",
+      "pattern_id": "python.build_error.000",
+      "ecosystem": "python",
+      "variant": "baseline",
+      "prompt_template": "In the project at {workdir}, this python build_error fails: Missing Python.h header \u2014 python3-dev package likely not installed; set CFLAGS to include path as workaround. Reproduce the failure with `python3 build_native.py`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && python3 build_native.py",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_python_build_error_000__baseline.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_python_build_error_000/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_python_build_error_000",
+      "pattern_id": "python.build_error.000",
+      "ecosystem": "python",
+      "variant": "polaris",
+      "prompt_template": "In the project at {workdir}, this python build_error fails: Missing Python.h header \u2014 python3-dev package likely not installed; set CFLAGS to include path as workaround. Reproduce the failure with `python3 build_native.py`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && python3 build_native.py",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_python_build_error_000__polaris.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_python_build_error_000/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_python_build_error_001",
+      "pattern_id": "python.build_error.001",
+      "ecosystem": "python",
+      "variant": "baseline",
+      "prompt_template": "In the project at {workdir}, this python build_error fails: C/C++ compiler not found or failed \u2014 ensure CC/CXX env vars point to installed compiler. Reproduce the failure with `python3 build_native.py`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && python3 build_native.py",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_python_build_error_001__baseline.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_python_build_error_001/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_python_build_error_001",
+      "pattern_id": "python.build_error.001",
+      "ecosystem": "python",
+      "variant": "polaris",
+      "prompt_template": "In the project at {workdir}, this python build_error fails: C/C++ compiler not found or failed \u2014 ensure CC/CXX env vars point to installed compiler. Reproduce the failure with `python3 build_native.py`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && python3 build_native.py",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_python_build_error_001__polaris.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_python_build_error_001/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_python_build_error_002",
+      "pattern_id": "python.build_error.002",
+      "ecosystem": "python",
+      "variant": "baseline",
+      "prompt_template": "In the project at {workdir}, this python build_error fails: Wheel build failed \u2014 likely missing system build dependencies; report to user. Reproduce the failure with `rm -r build dist native_broken.egg-info 2>/dev/null; python3 -m pip wheel . --no-build-isolation -w dist`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && rm -r build dist native_broken.egg-info 2>/dev/null; python3 -m pip wheel . --no-build-isolation -w dist",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_python_build_error_002__baseline.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_python_build_error_002/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_python_build_error_002",
+      "pattern_id": "python.build_error.002",
+      "ecosystem": "python",
+      "variant": "polaris",
+      "prompt_template": "In the project at {workdir}, this python build_error fails: Wheel build failed \u2014 likely missing system build dependencies; report to user. Reproduce the failure with `rm -r build dist native_broken.egg-info 2>/dev/null; python3 -m pip wheel . --no-build-isolation -w dist`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && rm -r build dist native_broken.egg-info 2>/dev/null; python3 -m pip wheel . --no-build-isolation -w dist",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_python_build_error_002__polaris.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_python_build_error_002/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_python_config_error_000",
+      "pattern_id": "python.config_error.000",
+      "ecosystem": "python",
+      "variant": "baseline",
+      "prompt_template": "In the project at {workdir}, this python config_error fails: Config file has missing section or parsing error \u2014 ensure config file exists with required sections. Reproduce the failure with `python3 app.py`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && python3 app.py",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_python_config_error_000__baseline.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_python_config_error_000/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_python_config_error_000",
+      "pattern_id": "python.config_error.000",
+      "ecosystem": "python",
+      "variant": "polaris",
+      "prompt_template": "In the project at {workdir}, this python config_error fails: Config file has missing section or parsing error \u2014 ensure config file exists with required sections. Reproduce the failure with `python3 app.py`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && python3 app.py",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_python_config_error_000__polaris.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_python_config_error_000/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_python_config_error_001",
+      "pattern_id": "python.config_error.001",
+      "ecosystem": "python",
+      "variant": "baseline",
+      "prompt_template": "In the project at {workdir}, this python config_error fails: TOML config file has invalid syntax \u2014 check file for syntax errors. Reproduce the failure with `python3 -m unittest`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && python3 -m unittest",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_python_config_error_001__baseline.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_python_config_error_001/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_python_config_error_001",
+      "pattern_id": "python.config_error.001",
+      "ecosystem": "python",
+      "variant": "polaris",
+      "prompt_template": "In the project at {workdir}, this python config_error fails: TOML config file has invalid syntax \u2014 check file for syntax errors. Reproduce the failure with `python3 -m unittest`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && python3 -m unittest",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_python_config_error_001__polaris.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_python_config_error_001/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_python_encoding_error_000",
+      "pattern_id": "python.encoding_error.000",
+      "ecosystem": "python",
+      "variant": "baseline",
+      "prompt_template": "In the project at {workdir}, this python encoding_error fails: Unicode decode error \u2014 force UTF-8 IO encoding and locale. Reproduce the failure with `python3 -m unittest -q`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && python3 -m unittest -q",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_python_encoding_error_000__baseline.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_python_encoding_error_000/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_python_encoding_error_000",
+      "pattern_id": "python.encoding_error.000",
+      "ecosystem": "python",
+      "variant": "polaris",
+      "prompt_template": "In the project at {workdir}, this python encoding_error fails: Unicode decode error \u2014 force UTF-8 IO encoding and locale. Reproduce the failure with `python3 -m unittest -q`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && python3 -m unittest -q",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_python_encoding_error_000__polaris.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_python_encoding_error_000/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_python_encoding_error_001",
+      "pattern_id": "python.encoding_error.001",
+      "ecosystem": "python",
+      "variant": "baseline",
+      "prompt_template": "In the project at {workdir}, this python encoding_error fails: Unicode encode error writing output \u2014 force UTF-8 encoding via PYTHONIOENCODING and locale. Reproduce the failure with `python3 -m unittest -q`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && python3 -m unittest -q",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_python_encoding_error_001__baseline.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_python_encoding_error_001/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_python_encoding_error_001",
+      "pattern_id": "python.encoding_error.001",
+      "ecosystem": "python",
+      "variant": "polaris",
+      "prompt_template": "In the project at {workdir}, this python encoding_error fails: Unicode encode error writing output \u2014 force UTF-8 encoding via PYTHONIOENCODING and locale. Reproduce the failure with `python3 -m unittest -q`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && python3 -m unittest -q",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_python_encoding_error_001__polaris.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_python_encoding_error_001/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_python_encoding_error_002",
+      "pattern_id": "python.encoding_error.002",
+      "ecosystem": "python",
+      "variant": "baseline",
+      "prompt_template": "In the project at {workdir}, this python encoding_error fails: File contains non-UTF-8 bytes \u2014 set locale to C.UTF-8 to ensure consistent encoding handling. Reproduce the failure with `sh run_tests.sh`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && sh run_tests.sh",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_python_encoding_error_002__baseline.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_python_encoding_error_002/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_python_encoding_error_002",
+      "pattern_id": "python.encoding_error.002",
+      "ecosystem": "python",
+      "variant": "polaris",
+      "prompt_template": "In the project at {workdir}, this python encoding_error fails: File contains non-UTF-8 bytes \u2014 set locale to C.UTF-8 to ensure consistent encoding handling. Reproduce the failure with `sh run_tests.sh`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && sh run_tests.sh",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_python_encoding_error_002__polaris.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_python_encoding_error_002/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_python_file_not_found_000",
+      "pattern_id": "python.file_not_found.000",
+      "ecosystem": "python",
+      "variant": "baseline",
+      "prompt_template": "In the project at {workdir}, this python file_not_found fails: File not found \u2014 cwd may be wrong; rewrite to project root. Reproduce the failure with `PYTHONDONTWRITEBYTECODE=1 python3 -m unittest test_reader.py`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && PYTHONDONTWRITEBYTECODE=1 python3 -m unittest test_reader.py",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_python_file_not_found_000__baseline.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_python_file_not_found_000/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_python_file_not_found_000",
+      "pattern_id": "python.file_not_found.000",
+      "ecosystem": "python",
+      "variant": "polaris",
+      "prompt_template": "In the project at {workdir}, this python file_not_found fails: File not found \u2014 cwd may be wrong; rewrite to project root. Reproduce the failure with `PYTHONDONTWRITEBYTECODE=1 python3 -m unittest test_reader.py`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && PYTHONDONTWRITEBYTECODE=1 python3 -m unittest test_reader.py",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_python_file_not_found_000__polaris.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_python_file_not_found_000/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_python_file_not_found_001",
+      "pattern_id": "python.file_not_found.001",
+      "ecosystem": "python",
+      "variant": "baseline",
+      "prompt_template": "In the project at {workdir}, this python file_not_found fails: Python script path not found \u2014 ensure cwd is the project root so relative script paths resolve. Reproduce the failure with `python3 -m unittest discover -s tests`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && python3 -m unittest discover -s tests",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_python_file_not_found_001__baseline.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_python_file_not_found_001/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_python_file_not_found_001",
+      "pattern_id": "python.file_not_found.001",
+      "ecosystem": "python",
+      "variant": "polaris",
+      "prompt_template": "In the project at {workdir}, this python file_not_found fails: Python script path not found \u2014 ensure cwd is the project root so relative script paths resolve. Reproduce the failure with `python3 -m unittest discover -s tests`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && python3 -m unittest discover -s tests",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_python_file_not_found_001__polaris.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_python_file_not_found_001/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_python_missing_dependency_000",
+      "pattern_id": "python.missing_dependency.000",
+      "ecosystem": "python",
+      "variant": "baseline",
+      "prompt_template": "In the project at {workdir}, this python missing_dependency fails: Python cannot import module \u2014 add cwd and src to PYTHONPATH. Reproduce the failure with `python3 run_tests.py`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && python3 run_tests.py",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_python_missing_dependency_000__baseline.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_python_missing_dependency_000/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_python_missing_dependency_000",
+      "pattern_id": "python.missing_dependency.000",
+      "ecosystem": "python",
+      "variant": "polaris",
+      "prompt_template": "In the project at {workdir}, this python missing_dependency fails: Python cannot import module \u2014 add cwd and src to PYTHONPATH. Reproduce the failure with `python3 run_tests.py`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && python3 run_tests.py",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_python_missing_dependency_000__polaris.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_python_missing_dependency_000/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_python_missing_dependency_002",
+      "pattern_id": "python.missing_dependency.002",
+      "ecosystem": "python",
+      "variant": "baseline",
+      "prompt_template": "In the project at {workdir}, this python missing_dependency fails: Cannot import name from package \u2014 likely version mismatch or stale install; ensure PYTHONPATH includes project root. Reproduce the failure with `python3 -m unittest test_renderer`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && python3 -m unittest test_renderer",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_python_missing_dependency_002__baseline.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_python_missing_dependency_002/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_python_missing_dependency_002",
+      "pattern_id": "python.missing_dependency.002",
+      "ecosystem": "python",
+      "variant": "polaris",
+      "prompt_template": "In the project at {workdir}, this python missing_dependency fails: Cannot import name from package \u2014 likely version mismatch or stale install; ensure PYTHONPATH includes project root. Reproduce the failure with `python3 -m unittest test_renderer`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && python3 -m unittest test_renderer",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_python_missing_dependency_002__polaris.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_python_missing_dependency_002/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_python_missing_dependency_003",
+      "pattern_id": "python.missing_dependency.003",
+      "ecosystem": "python",
+      "variant": "baseline",
+      "prompt_template": "In the project at {workdir}, this python missing_dependency fails: pip cannot find package \u2014 ensure pip index URL is set to default PyPI. Reproduce the failure with `python3 verify.py`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && python3 verify.py",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_python_missing_dependency_003__baseline.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_python_missing_dependency_003/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_python_missing_dependency_003",
+      "pattern_id": "python.missing_dependency.003",
+      "ecosystem": "python",
+      "variant": "polaris",
+      "prompt_template": "In the project at {workdir}, this python missing_dependency fails: pip cannot find package \u2014 ensure pip index URL is set to default PyPI. Reproduce the failure with `python3 verify.py`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && python3 verify.py",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_python_missing_dependency_003__polaris.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_python_missing_dependency_003/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_python_missing_dependency_004",
+      "pattern_id": "python.missing_dependency.004",
+      "ecosystem": "python",
+      "variant": "baseline",
+      "prompt_template": "In the project at {workdir}, this python missing_dependency fails: Package directory missing __init__.py or not on path \u2014 extend PYTHONPATH to include common source roots. Reproduce the failure with `python3 -m unittest discover -s tests -t tests`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && python3 -m unittest discover -s tests -t tests",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_python_missing_dependency_004__baseline.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_python_missing_dependency_004/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_python_missing_dependency_004",
+      "pattern_id": "python.missing_dependency.004",
+      "ecosystem": "python",
+      "variant": "polaris",
+      "prompt_template": "In the project at {workdir}, this python missing_dependency fails: Package directory missing __init__.py or not on path \u2014 extend PYTHONPATH to include common source roots. Reproduce the failure with `python3 -m unittest discover -s tests -t tests`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && python3 -m unittest discover -s tests -t tests",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_python_missing_dependency_004__polaris.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_python_missing_dependency_004/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_python_network_error_000",
+      "pattern_id": "python.network_error.000",
+      "ecosystem": "python",
+      "variant": "baseline",
+      "prompt_template": "In the project at {workdir}, this python network_error fails: Connection refused \u2014 retry with backoff in case the service is starting up. Reproduce the failure with `python3 -m unittest -q`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && python3 -m unittest -q",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_python_network_error_000__baseline.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_python_network_error_000/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_python_network_error_000",
+      "pattern_id": "python.network_error.000",
+      "ecosystem": "python",
+      "variant": "polaris",
+      "prompt_template": "In the project at {workdir}, this python network_error fails: Connection refused \u2014 retry with backoff in case the service is starting up. Reproduce the failure with `python3 -m unittest -q`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && python3 -m unittest -q",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_python_network_error_000__polaris.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_python_network_error_000/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_python_network_error_001",
+      "pattern_id": "python.network_error.001",
+      "ecosystem": "python",
+      "variant": "baseline",
+      "prompt_template": "In the project at {workdir}, this python network_error fails: SSL certificate verification failed \u2014 may need to set CA bundle path or use system certs. Reproduce the failure with `python3 -m unittest`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && python3 -m unittest",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_python_network_error_001__baseline.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_python_network_error_001/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_python_network_error_001",
+      "pattern_id": "python.network_error.001",
+      "ecosystem": "python",
+      "variant": "polaris",
+      "prompt_template": "In the project at {workdir}, this python network_error fails: SSL certificate verification failed \u2014 may need to set CA bundle path or use system certs. Reproduce the failure with `python3 -m unittest`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && python3 -m unittest",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_python_network_error_001__polaris.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_python_network_error_001/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_python_permission_denial_000",
+      "pattern_id": "python.permission_denial.000",
+      "ecosystem": "python",
+      "variant": "baseline",
+      "prompt_template": "In the project at {workdir}, this python permission_denial fails: Write permission denied \u2014 rewrite cwd to writable directory. Reproduce the failure with `python3 -m unittest`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && python3 -m unittest",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_python_permission_denial_000__baseline.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_python_permission_denial_000/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_python_permission_denial_000",
+      "pattern_id": "python.permission_denial.000",
+      "ecosystem": "python",
+      "variant": "polaris",
+      "prompt_template": "In the project at {workdir}, this python permission_denial fails: Write permission denied \u2014 rewrite cwd to writable directory. Reproduce the failure with `python3 -m unittest`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && python3 -m unittest",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_python_permission_denial_000__polaris.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_python_permission_denial_000/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_python_permission_denial_001",
+      "pattern_id": "python.permission_denial.001",
+      "ecosystem": "python",
+      "variant": "baseline",
+      "prompt_template": "In the project at {workdir}, this python permission_denial fails: pip install permission denied on system site-packages \u2014 use --user install via PIP_USER env var. Reproduce the failure with `python3 -m unittest -q`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && python3 -m unittest -q",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_python_permission_denial_001__baseline.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_python_permission_denial_001/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_python_permission_denial_001",
+      "pattern_id": "python.permission_denial.001",
+      "ecosystem": "python",
+      "variant": "polaris",
+      "prompt_template": "In the project at {workdir}, this python permission_denial fails: pip install permission denied on system site-packages \u2014 use --user install via PIP_USER env var. Reproduce the failure with `python3 -m unittest -q`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && python3 -m unittest -q",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_python_permission_denial_001__polaris.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_python_permission_denial_001/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_python_port_conflict_000",
+      "pattern_id": "python.port_conflict.000",
+      "ecosystem": "python",
+      "variant": "baseline",
+      "prompt_template": "In the project at {workdir}, this python port_conflict fails: Port already in use \u2014 set PORT=0 to auto-select a free port, or change the port number. Reproduce the failure with `python3 -m unittest -q`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && python3 -m unittest -q",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_python_port_conflict_000__baseline.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_python_port_conflict_000/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_python_port_conflict_000",
+      "pattern_id": "python.port_conflict.000",
+      "ecosystem": "python",
+      "variant": "polaris",
+      "prompt_template": "In the project at {workdir}, this python port_conflict fails: Port already in use \u2014 set PORT=0 to auto-select a free port, or change the port number. Reproduce the failure with `python3 -m unittest -q`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && python3 -m unittest -q",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_python_port_conflict_000__polaris.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_python_port_conflict_000/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_python_resource_exhaustion_000",
+      "pattern_id": "python.resource_exhaustion.000",
+      "ecosystem": "python",
+      "variant": "baseline",
+      "prompt_template": "In the project at {workdir}, this python resource_exhaustion fails: Python ran out of memory \u2014 limit malloc arenas to reduce memory fragmentation. Reproduce the failure with `python3 memory_job.py`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && python3 memory_job.py",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_python_resource_exhaustion_000__baseline.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_python_resource_exhaustion_000/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_python_resource_exhaustion_000",
+      "pattern_id": "python.resource_exhaustion.000",
+      "ecosystem": "python",
+      "variant": "polaris",
+      "prompt_template": "In the project at {workdir}, this python resource_exhaustion fails: Python ran out of memory \u2014 limit malloc arenas to reduce memory fragmentation. Reproduce the failure with `python3 memory_job.py`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && python3 memory_job.py",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_python_resource_exhaustion_000__polaris.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_python_resource_exhaustion_000/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_python_resource_exhaustion_001",
+      "pattern_id": "python.resource_exhaustion.001",
+      "ecosystem": "python",
+      "variant": "baseline",
+      "prompt_template": "In the project at {workdir}, this python resource_exhaustion fails: Recursion limit exceeded \u2014 increase PYTHONRECURSIONLIMIT if the recursion is intentional. Reproduce the failure with `python3 -m unittest -q`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && python3 -m unittest -q",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_python_resource_exhaustion_001__baseline.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_python_resource_exhaustion_001/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_python_resource_exhaustion_001",
+      "pattern_id": "python.resource_exhaustion.001",
+      "ecosystem": "python",
+      "variant": "polaris",
+      "prompt_template": "In the project at {workdir}, this python resource_exhaustion fails: Recursion limit exceeded \u2014 increase PYTHONRECURSIONLIMIT if the recursion is intentional. Reproduce the failure with `python3 -m unittest -q`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && python3 -m unittest -q",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_python_resource_exhaustion_001__polaris.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_python_resource_exhaustion_001/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_python_syntax_error_000",
+      "pattern_id": "python.syntax_error.000",
+      "ecosystem": "python",
+      "variant": "baseline",
+      "prompt_template": "In the project at {workdir}, this python syntax_error fails: Python syntax error \u2014 likely Python version mismatch; disable bytecode cache to avoid stale .pyc. Reproduce the failure with `PYTHONDONTWRITEBYTECODE=1 python3 -B -m unittest discover -s . -p 'test_*.py'`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && PYTHONDONTWRITEBYTECODE=1 python3 -B -m unittest discover -s . -p 'test_*.py'",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_python_syntax_error_000__baseline.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_python_syntax_error_000/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_python_syntax_error_000",
+      "pattern_id": "python.syntax_error.000",
+      "ecosystem": "python",
+      "variant": "polaris",
+      "prompt_template": "In the project at {workdir}, this python syntax_error fails: Python syntax error \u2014 likely Python version mismatch; disable bytecode cache to avoid stale .pyc. Reproduce the failure with `PYTHONDONTWRITEBYTECODE=1 python3 -B -m unittest discover -s . -p 'test_*.py'`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && PYTHONDONTWRITEBYTECODE=1 python3 -B -m unittest discover -s . -p 'test_*.py'",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_python_syntax_error_000__polaris.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_python_syntax_error_000/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_python_syntax_error_001",
+      "pattern_id": "python.syntax_error.001",
+      "ecosystem": "python",
+      "variant": "baseline",
+      "prompt_template": "In the project at {workdir}, this python syntax_error fails: Indentation error \u2014 possibly stale .pyc from prior code version; disable bytecode cache. Reproduce the failure with `PYTHONDONTWRITEBYTECODE=1 python3 -B -m unittest discover -s tests`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && PYTHONDONTWRITEBYTECODE=1 python3 -B -m unittest discover -s tests",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_python_syntax_error_001__baseline.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_python_syntax_error_001/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_python_syntax_error_001",
+      "pattern_id": "python.syntax_error.001",
+      "ecosystem": "python",
+      "variant": "polaris",
+      "prompt_template": "In the project at {workdir}, this python syntax_error fails: Indentation error \u2014 possibly stale .pyc from prior code version; disable bytecode cache. Reproduce the failure with `PYTHONDONTWRITEBYTECODE=1 python3 -B -m unittest discover -s tests`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && PYTHONDONTWRITEBYTECODE=1 python3 -B -m unittest discover -s tests",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_python_syntax_error_001__polaris.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_python_syntax_error_001/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_python_syntax_error_002",
+      "pattern_id": "python.syntax_error.002",
+      "ecosystem": "python",
+      "variant": "baseline",
+      "prompt_template": "In the project at {workdir}, this python syntax_error fails: Mixed tabs and spaces \u2014 disable bytecode cache to prevent stale .pyc masking the fix. Reproduce the failure with `PYTHONDONTWRITEBYTECODE=1 python3 -B -m unittest test_broken_indent.py`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && PYTHONDONTWRITEBYTECODE=1 python3 -B -m unittest test_broken_indent.py",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_python_syntax_error_002__baseline.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_python_syntax_error_002/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_python_syntax_error_002",
+      "pattern_id": "python.syntax_error.002",
+      "ecosystem": "python",
+      "variant": "polaris",
+      "prompt_template": "In the project at {workdir}, this python syntax_error fails: Mixed tabs and spaces \u2014 disable bytecode cache to prevent stale .pyc masking the fix. Reproduce the failure with `PYTHONDONTWRITEBYTECODE=1 python3 -B -m unittest test_broken_indent.py`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && PYTHONDONTWRITEBYTECODE=1 python3 -B -m unittest test_broken_indent.py",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_python_syntax_error_002__polaris.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_python_syntax_error_002/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_python_timeout_000",
+      "pattern_id": "python.timeout.000",
+      "ecosystem": "python",
+      "variant": "baseline",
+      "prompt_template": "In the project at {workdir}, this python timeout fails: Subprocess timed out \u2014 increase timeout to allow longer execution. Reproduce the failure with `python3 runner.py`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && python3 runner.py",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_python_timeout_000__baseline.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_python_timeout_000/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_python_timeout_000",
+      "pattern_id": "python.timeout.000",
+      "ecosystem": "python",
+      "variant": "polaris",
+      "prompt_template": "In the project at {workdir}, this python timeout fails: Subprocess timed out \u2014 increase timeout to allow longer execution. Reproduce the failure with `python3 runner.py`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && python3 runner.py",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_python_timeout_000__polaris.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_python_timeout_000/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_python_version_conflict_000",
+      "pattern_id": "python.version_conflict.000",
+      "ecosystem": "python",
+      "variant": "baseline",
+      "prompt_template": "In the project at {workdir}, this python version_conflict fails: Package requires a newer Python version \u2014 cannot fix via env; report the constraint to the user. Reproduce the failure with `PYTHONDONTWRITEBYTECODE=1 python3 -m unittest -q tests.test_python_requirement`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && PYTHONDONTWRITEBYTECODE=1 python3 -m unittest -q tests.test_python_requirement",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_python_version_conflict_000__baseline.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_python_version_conflict_000/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_python_version_conflict_000",
+      "pattern_id": "python.version_conflict.000",
+      "ecosystem": "python",
+      "variant": "polaris",
+      "prompt_template": "In the project at {workdir}, this python version_conflict fails: Package requires a newer Python version \u2014 cannot fix via env; report the constraint to the user. Reproduce the failure with `PYTHONDONTWRITEBYTECODE=1 python3 -m unittest -q tests.test_python_requirement`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && PYTHONDONTWRITEBYTECODE=1 python3 -m unittest -q tests.test_python_requirement",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_python_version_conflict_000__polaris.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_python_version_conflict_000/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_python_version_conflict_001",
+      "pattern_id": "python.version_conflict.001",
+      "ecosystem": "python",
+      "variant": "baseline",
+      "prompt_template": "In the project at {workdir}, this python version_conflict fails: pip dependency resolution conflict \u2014 cannot resolve automatically; report conflict details to user. Reproduce the failure with `python3 -m pip install --dry-run --user --no-index --no-build-isolation --no-cache-dir --break-system-packages -r requirements.txt`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && python3 -m pip install --dry-run --user --no-index --no-build-isolation --no-cache-dir --break-system-packages -r requirements.txt",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_python_version_conflict_001__baseline.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_python_version_conflict_001/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_python_version_conflict_001",
+      "pattern_id": "python.version_conflict.001",
+      "ecosystem": "python",
+      "variant": "polaris",
+      "prompt_template": "In the project at {workdir}, this python version_conflict fails: pip dependency resolution conflict \u2014 cannot resolve automatically; report conflict details to user. Reproduce the failure with `python3 -m pip install --dry-run --user --no-index --no-build-isolation --no-cache-dir --break-system-packages -r requirements.txt`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && python3 -m pip install --dry-run --user --no-index --no-build-isolation --no-cache-dir --break-system-packages -r requirements.txt",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_python_version_conflict_001__polaris.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_python_version_conflict_001/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_rust_build_error_000",
+      "pattern_id": "rust.build_error.000",
+      "ecosystem": "rust",
+      "variant": "baseline",
+      "prompt_template": "In the project at {workdir}, this rust build_error fails: Rust linker not found \u2014 set CC explicitly. Reproduce the failure with `env PATH=\"$PWD/no_cc_path\" RUSTC=\"$HOME/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/bin/rustc\" \"$HOME/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/bin/cargo\" clean --quiet && env PATH=\"$PWD/no_cc_path\" RUSTC=\"$HOME/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/bin/rustc\" \"$HOME/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/bin/cargo\" test --quiet --lib`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && env PATH=\"$PWD/no_cc_path\" RUSTC=\"$HOME/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/bin/rustc\" \"$HOME/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/bin/cargo\" clean --quiet && env PATH=\"$PWD/no_cc_path\" RUSTC=\"$HOME/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/bin/rustc\" \"$HOME/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/bin/cargo\" test --quiet --lib",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_rust_build_error_000__baseline.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_rust_build_error_000/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_rust_build_error_000",
+      "pattern_id": "rust.build_error.000",
+      "ecosystem": "rust",
+      "variant": "polaris",
+      "prompt_template": "In the project at {workdir}, this rust build_error fails: Rust linker not found \u2014 set CC explicitly. Reproduce the failure with `env PATH=\"$PWD/no_cc_path\" RUSTC=\"$HOME/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/bin/rustc\" \"$HOME/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/bin/cargo\" clean --quiet && env PATH=\"$PWD/no_cc_path\" RUSTC=\"$HOME/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/bin/rustc\" \"$HOME/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/bin/cargo\" test --quiet --lib`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && env PATH=\"$PWD/no_cc_path\" RUSTC=\"$HOME/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/bin/rustc\" \"$HOME/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/bin/cargo\" clean --quiet && env PATH=\"$PWD/no_cc_path\" RUSTC=\"$HOME/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/bin/rustc\" \"$HOME/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/bin/cargo\" test --quiet --lib",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_rust_build_error_000__polaris.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_rust_build_error_000/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_rust_build_error_001",
+      "pattern_id": "rust.build_error.001",
+      "ecosystem": "rust",
+      "variant": "baseline",
+      "prompt_template": "In the project at {workdir}, this rust build_error fails: Cargo compilation failure \u2014 reset incremental builds. Reproduce the failure with `PATH=/home/administrator/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/bin:$PATH cargo check --quiet`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && PATH=/home/administrator/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/bin:$PATH cargo check --quiet",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_rust_build_error_001__baseline.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_rust_build_error_001/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_rust_build_error_001",
+      "pattern_id": "rust.build_error.001",
+      "ecosystem": "rust",
+      "variant": "polaris",
+      "prompt_template": "In the project at {workdir}, this rust build_error fails: Cargo compilation failure \u2014 reset incremental builds. Reproduce the failure with `PATH=/home/administrator/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/bin:$PATH cargo check --quiet`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && PATH=/home/administrator/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/bin:$PATH cargo check --quiet",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_rust_build_error_001__polaris.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_rust_build_error_001/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_rust_build_error_002",
+      "pattern_id": "rust.build_error.002",
+      "ecosystem": "rust",
+      "variant": "baseline",
+      "prompt_template": "In the project at {workdir}, this rust build_error fails: OpenSSL system lib not found \u2014 set OPENSSL_DIR env vars. Reproduce the failure with `PATH=/home/administrator/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/bin:$PATH cargo check`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && PATH=/home/administrator/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/bin:$PATH cargo check",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_rust_build_error_002__baseline.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_rust_build_error_002/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_rust_build_error_002",
+      "pattern_id": "rust.build_error.002",
+      "ecosystem": "rust",
+      "variant": "polaris",
+      "prompt_template": "In the project at {workdir}, this rust build_error fails: OpenSSL system lib not found \u2014 set OPENSSL_DIR env vars. Reproduce the failure with `PATH=/home/administrator/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/bin:$PATH cargo check`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && PATH=/home/administrator/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/bin:$PATH cargo check",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_rust_build_error_002__polaris.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_rust_build_error_002/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_rust_build_error_004",
+      "pattern_id": "rust.build_error.004",
+      "ecosystem": "rust",
+      "variant": "baseline",
+      "prompt_template": "In the project at {workdir}, this rust build_error fails: Rust type/argument errors \u2014 enable backtrace and clean incremental. Reproduce the failure with `CARGO_INCREMENTAL=0 RUST_BACKTRACE=1 RUSTC=\"$(rustup which rustc)\" \"$(rustup which cargo)\" check`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && CARGO_INCREMENTAL=0 RUST_BACKTRACE=1 RUSTC=\"$(rustup which rustc)\" \"$(rustup which cargo)\" check",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_rust_build_error_004__baseline.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_rust_build_error_004/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    },
+    {
+      "case_id": "generated_rust_build_error_004",
+      "pattern_id": "rust.build_error.004",
+      "ecosystem": "rust",
+      "variant": "polaris",
+      "prompt_template": "In the project at {workdir}, this rust build_error fails: Rust type/argument errors \u2014 enable backtrace and clean incremental. Reproduce the failure with `CARGO_INCREMENTAL=0 RUST_BACKTRACE=1 RUSTC=\"$(rustup which rustc)\" \"$(rustup which cargo)\" check`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+      "fix_command_test": "cd {workdir} && CARGO_INCREMENTAL=0 RUST_BACKTRACE=1 RUSTC=\"$(rustup which rustc)\" \"$(rustup which cargo)\" check",
+      "expected_transcript_path": "eval/runs/manual_cursor/generated_rust_build_error_004__polaris.json",
+      "workspace_instruction": "Before running Cursor, copy eval/fixtures/generated_rust_build_error_004/files/ into a fresh workspace and point Cursor at it; substitute {workdir} in the prompt with that workspace's absolute path."
+    }
+  ],
+  "note": "Cursor has no stable headless CLI runner in this environment. Until each entry's expected_transcript_path exists, eval.orchestrator --runner cursor emits blocked_cursor_transcript_missing and evidence_writer refuses to record Cursor verified_live."
+}

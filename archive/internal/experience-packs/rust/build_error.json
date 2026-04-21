@@ -1,0 +1,134 @@
+{
+  "ecosystem": "rust",
+  "error_class": "build_error",
+  "shard_version": "3.0",
+  "records": [
+    {
+      "stderr_pattern": "error: linker `cc` not found|linker .* not found",
+      "avoidance_hints": [
+        {
+          "kind": "set_env",
+          "vars": {
+            "CC": "gcc",
+            "CARGO_INCREMENTAL": "0"
+          }
+        }
+      ],
+      "description": "Rust linker not found — set CC explicitly",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "bash -c 'echo \"error: linker cc not found\" >&2; exit 1'",
+        "trigger_env": {
+          "CC": "/nonexistent/cc"
+        },
+        "expected_stderr_match": "linker.*not found",
+        "fix_env": {
+          "CC": "gcc"
+        },
+        "expected_fix_outcome": "different_error_or_success",
+        "fix_command": "bash -c 'echo \"CC set (simulated)\"; exit 0'"
+      }
+    },
+    {
+      "stderr_pattern": "error: could not compile",
+      "avoidance_hints": [
+        {
+          "kind": "set_env",
+          "vars": {
+            "CARGO_INCREMENTAL": "0",
+            "RUSTFLAGS": "-C target-cpu=native"
+          }
+        }
+      ],
+      "description": "Cargo compilation failure — reset incremental builds",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "bash -c 'echo \"error: could not compile myproject\" >&2; exit 1'",
+        "trigger_env": {},
+        "expected_stderr_match": "could not compile",
+        "fix_env": {
+          "CARGO_INCREMENTAL": "0"
+        },
+        "expected_fix_outcome": "different_error_or_success",
+        "fix_command": "bash -c 'echo \"CARGO_INCREMENTAL set (simulated)\"; exit 0'"
+      }
+    },
+    {
+      "stderr_pattern": "Could not find directory of OpenSSL installation|OPENSSL_DIR",
+      "avoidance_hints": [
+        {
+          "kind": "set_env",
+          "vars": {
+            "OPENSSL_DIR": "/usr",
+            "OPENSSL_LIB_DIR": "/usr/lib/x86_64-linux-gnu",
+            "OPENSSL_INCLUDE_DIR": "/usr/include/openssl"
+          }
+        }
+      ],
+      "description": "OpenSSL system lib not found — set OPENSSL_DIR env vars",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "bash -c 'echo \"Could not find directory of OpenSSL installation\" >&2; exit 1'",
+        "trigger_env": {},
+        "expected_stderr_match": "OpenSSL installation",
+        "fix_env": {
+          "OPENSSL_DIR": "/usr",
+          "OPENSSL_LIB_DIR": "/usr/lib/x86_64-linux-gnu",
+          "OPENSSL_INCLUDE_DIR": "/usr/include/openssl"
+        },
+        "expected_fix_outcome": "different_error_or_success",
+        "fix_command": "bash -c 'echo \"OPENSSL_DIR set (simulated)\"; exit 0'"
+      }
+    },
+    {
+      "stderr_pattern": "failed to run custom build command for.*-sys|pkg-config.*not found",
+      "avoidance_hints": [
+        {
+          "kind": "set_env",
+          "vars": {
+            "PKG_CONFIG_ALLOW_CROSS": "1",
+            "PKG_CONFIG_PATH": "/usr/lib/pkgconfig"
+          }
+        }
+      ],
+      "description": "Native -sys crate build script failure — set PKG_CONFIG paths",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "bash -c 'echo \"error: failed to run custom build command for libsqlite3-sys\" >&2; exit 1'",
+        "trigger_env": {},
+        "expected_stderr_match": "failed to run custom build command",
+        "fix_env": {
+          "PKG_CONFIG_ALLOW_CROSS": "1",
+          "PKG_CONFIG_PATH": "/usr/lib/pkgconfig"
+        },
+        "expected_fix_outcome": "different_error_or_success",
+        "fix_command": "bash -c 'echo \"PKG_CONFIG_ALLOW_CROSS set (simulated)\"; exit 0'"
+      }
+    },
+    {
+      "stderr_pattern": "error\\[E0061\\]|error\\[E0308\\]|error\\[E0599\\]",
+      "avoidance_hints": [
+        {
+          "kind": "set_env",
+          "vars": {
+            "RUST_BACKTRACE": "1",
+            "CARGO_INCREMENTAL": "0"
+          }
+        }
+      ],
+      "description": "Rust type/argument errors — enable backtrace and clean incremental",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "bash -c 'echo \"error[E0308]: mismatched types\" >&2; exit 1'",
+        "trigger_env": {},
+        "expected_stderr_match": "E0308",
+        "fix_env": {
+          "RUST_BACKTRACE": "1",
+          "CARGO_INCREMENTAL": "0"
+        },
+        "expected_fix_outcome": "different_error_or_success",
+        "fix_command": "bash -c 'echo \"RUST_BACKTRACE set (simulated)\"; exit 0'"
+      }
+    }
+  ]
+}

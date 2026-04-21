@@ -1,0 +1,15 @@
+{
+  "case_id": "generated_java_version_conflict_001",
+  "files": [
+    "HelloWorld.java",
+    "build.sh"
+  ],
+  "dependencies": {},
+  "build_commands": [],
+  "expected_failure_command": "cd {workdir} && bash build.sh",
+  "expected_failure_stderr_regex": "source release \\d+ requires target release \\d+",
+  "manifest_schema_version": 1,
+  "bash_self_contained": false,
+  "reverse_from_pattern": "java.version_conflict.001",
+  "source_pool": "official"
+}

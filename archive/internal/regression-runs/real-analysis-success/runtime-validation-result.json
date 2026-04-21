@@ -1,0 +1,23 @@
+{
+  "output_file": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/real-analysis-success/runtime-analysis-result.json",
+  "payload": {
+    "char_count": 4568,
+    "empty": false,
+    "first_line": "#!/usr/bin/env python3",
+    "last_line": "    main()",
+    "line_count": 105,
+    "sha256_bytes": "eb10bf98e179236aca9b05cc5efdf4d5deb91dcae17050a3d4210952723a2015",
+    "size_bytes": 4568,
+    "target": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/scripts/polaris_planner.py",
+    "word_count": 409
+  },
+  "status": "ok",
+  "validator_kind": "independent_file_analysis",
+  "verified_fields": [
+    "size_bytes",
+    "line_count",
+    "word_count",
+    "char_count",
+    "sha256_bytes"
+  ]
+}

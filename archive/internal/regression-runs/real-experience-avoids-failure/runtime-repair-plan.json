@@ -1,0 +1,53 @@
+{
+  "action_tree": {
+    "children": [
+      {
+        "command": "pwd",
+        "kind": "shell",
+        "label": "Capture working directory",
+        "node_id": "pwd",
+        "reversible": true
+      },
+      {
+        "command": "ls -la",
+        "kind": "shell",
+        "label": "List current directory",
+        "node_id": "ls-root",
+        "reversible": true
+      },
+      {
+        "command": "ls -la ..",
+        "kind": "shell",
+        "label": "List parent directory",
+        "node_id": "ls-parent",
+        "reversible": true
+      },
+      {
+        "command": "find . -maxdepth 3 -type f | sed -n '1,20p'",
+        "kind": "shell",
+        "label": "List nearby candidate files",
+        "node_id": "find-targets",
+        "reversible": true
+      }
+    ],
+    "kind": "decision",
+    "label": "Verify local working directory and nearby files",
+    "node_id": "path-root"
+  },
+  "created_at": "2026-03-15T13:36:39.680811+00:00",
+  "error": "cat: /nonexistent/polaris-avoid-test-file.txt: No such file or directory",
+  "execution_order": [
+    "pwd",
+    "ls-root",
+    "ls-parent",
+    "find-targets"
+  ],
+  "failure_type": "path_or_missing_file",
+  "nonrepair_stop": false,
+  "notes": "retry after verifying the target path and the current workdir",
+  "policy": "local-only reversible probes or explicit stop",
+  "probe_budget": 4,
+  "recommended_tree": "path_probe_tree",
+  "repair_depth": "medium",
+  "safe_to_execute": true
+}

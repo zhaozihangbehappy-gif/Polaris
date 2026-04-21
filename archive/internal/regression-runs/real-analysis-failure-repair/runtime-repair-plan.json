@@ -1,0 +1,37 @@
+{
+  "action_tree": {
+    "children": [
+      {
+        "command": "pwd",
+        "kind": "shell",
+        "label": "Capture working directory",
+        "node_id": "pwd",
+        "reversible": true
+      },
+      {
+        "command": "ls -la",
+        "kind": "shell",
+        "label": "List current directory",
+        "node_id": "ls-root",
+        "reversible": true
+      }
+    ],
+    "kind": "decision",
+    "label": "Verify local working directory and nearby files",
+    "node_id": "path-root"
+  },
+  "created_at": "2026-03-15T13:36:04.372261+00:00",
+  "error": "Traceback (most recent call last):\n  File \"/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/scripts/polaris_file_analysis.py\", line 46, in <module>\n    main()\n  File \"/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/scripts/polaris_file_analysis.py\", line 38, in main\n    report = analyze_file(args.target)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/scripts/polaris_file_analysis.py\", line 12, in analyze_file\n    raise FileNotFoundError(f\"No such file or directory: {target}\")\nFileNotFoundError: No such file or directory: /tmp/polaris-step0-nonexistent-target-262345-1773581762.txt",
+  "execution_order": [
+    "pwd",
+    "ls-root"
+  ],
+  "failure_type": "path_or_missing_file",
+  "nonrepair_stop": false,
+  "notes": "retry after verifying the target path and the current workdir",
+  "policy": "local-only reversible probes or explicit stop",
+  "probe_budget": 2,
+  "recommended_tree": "path_probe_tree",
+  "repair_depth": "shallow",
+  "safe_to_execute": true
+}

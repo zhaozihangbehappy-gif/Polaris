@@ -1,0 +1,5 @@
+{
+  "stderr": "error: failed to select a version for `syn`.\n    ... required by package `serde_derive v1.0.193`\n    ... which satisfies dependency `serde_derive = \"^1\"` of package `serde v1.0.193`\nversions that meet the requirements `^2` are: 2.0.43, 2.0.42, 2.0.41\nall possible versions conflict with previously selected packages.\n\n  previously selected package `syn v1.0.109`\n\nfailed to select a version for `syn` which could resolve this conflict",
+  "error_class": "version_conflict",
+  "source": "cargo build with conflicting syn v1 and syn v2 dependency trees"
+}

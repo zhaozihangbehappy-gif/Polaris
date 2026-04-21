@@ -1,0 +1,5 @@
+{
+  "scripts": {
+    "test": "node test.js --testTimeout=20"
+  }
+}

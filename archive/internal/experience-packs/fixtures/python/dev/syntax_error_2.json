@@ -1,0 +1,5 @@
+{
+  "stderr": "  File \"/home/user/project/utils.py\", line 45\n    if result:\n             ^\nIndentationError: expected an indented block after 'for' statement on line 44",
+  "error_class": "syntax_error",
+  "source": "missing indented block after for statement"
+}

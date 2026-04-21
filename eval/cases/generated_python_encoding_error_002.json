@@ -1,0 +1,17 @@
+{
+  "case_id": "generated_python_encoding_error_002",
+  "source": "authored_fixture",
+  "reverse_from_pattern": "python.encoding_error.002",
+  "pattern_id": "python.encoding_error.002",
+  "source_pool": "official",
+  "ecosystem": "python",
+  "error_class": "encoding_error",
+  "initial_prompt": "In the project at {workdir}, this python encoding_error fails: File contains non-UTF-8 bytes \u2014 set locale to C.UTF-8 to ensure consistent encoding handling. Reproduce the failure with `sh run_tests.sh`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+  "success_criteria": {
+    "root_cause_regex": ".+",
+    "fix_command_test": "cd {workdir} && sh run_tests.sh"
+  },
+  "max_rounds": 6,
+  "fixture_strategy": "authored_files",
+  "promotion_eligible": true
+}

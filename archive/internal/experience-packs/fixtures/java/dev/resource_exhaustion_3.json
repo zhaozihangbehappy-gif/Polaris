@@ -1,0 +1,5 @@
+{
+  "stderr": "Exception in thread \"main\" java.lang.OutOfMemoryError: Metaspace\n\tat java.base/java.lang.ClassLoader.defineClass1(Native Method)\n\tat java.base/java.lang.ClassLoader.defineClass(ClassLoader.java:1017)\n\tat java.base/java.security.SecureClassLoader.defineClass(SecureClassLoader.java:150)\n\tat java.base/jdk.internal.loader.BuiltinClassLoader.defineClass(BuiltinClassLoader.java:862)\n\tat java.base/jdk.internal.loader.BuiltinClassLoader.findClassOnClassPathOrNull(BuiltinClassLoader.java:760)",
+  "error_class": "resource_exhaustion",
+  "source": "too many classes loaded exhausting metaspace"
+}

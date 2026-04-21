@@ -1,0 +1,16 @@
+{
+  "case_id": "generated_python_missing_dependency_004",
+  "files": [
+    "app/__init__.py",
+    "app/__init__/helpers.py",
+    "tests/test_app.py"
+  ],
+  "dependencies": {},
+  "build_commands": [],
+  "expected_failure_command": "cd {workdir} && python3 -m unittest discover -s tests -t tests",
+  "expected_failure_stderr_regex": "ModuleNotFoundError: No module named 'app\\.__init__\\.helpers'; 'app\\.__init__' is not a package",
+  "manifest_schema_version": 1,
+  "bash_self_contained": false,
+  "reverse_from_pattern": "python.missing_dependency.004",
+  "source_pool": "official"
+}

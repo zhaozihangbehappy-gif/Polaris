@@ -1,0 +1,17 @@
+{
+  "case_id": "generated_node_port_conflict_000",
+  "source": "authored_fixture",
+  "reverse_from_pattern": "node.port_conflict.000",
+  "pattern_id": "node.port_conflict.000",
+  "source_pool": "official",
+  "ecosystem": "node",
+  "error_class": "port_conflict",
+  "initial_prompt": "In the project at {workdir}, this node port_conflict fails: TCP port already in use \u2014 set PORT=0 to let the OS assign a free port. Reproduce the failure with `node conflict.js`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+  "success_criteria": {
+    "root_cause_regex": ".+",
+    "fix_command_test": "cd {workdir} && node conflict.js"
+  },
+  "max_rounds": 6,
+  "fixture_strategy": "authored_files",
+  "promotion_eligible": true
+}

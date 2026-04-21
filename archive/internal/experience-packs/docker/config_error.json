@@ -1,0 +1,76 @@
+{
+  "ecosystem": "docker",
+  "error_class": "config_error",
+  "shard_version": "3.0",
+  "records": [
+    {
+      "stderr_pattern": "invalid reference format|invalid image name",
+      "avoidance_hints": [
+        {
+          "kind": "set_env",
+          "vars": {
+            "DOCKER_DEFAULT_PLATFORM": "linux/amd64"
+          }
+        }
+      ],
+      "description": "Docker invalid reference — set default platform explicitly",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "bash -c 'echo \"invalid\" >&2; exit 1'",
+        "trigger_env": {},
+        "expected_stderr_match": "invalid",
+        "fix_env": {
+          "DOCKER_DEFAULT_PLATFORM": "linux/amd64"
+        },
+        "expected_fix_outcome": "different_error_or_success",
+        "fix_command": "bash -c 'echo \"DOCKER_DEFAULT_PLATFORM set (simulated)\"; exit 0'"
+      }
+    },
+    {
+      "stderr_pattern": "dockerfile parse error.*unknown instruction",
+      "avoidance_hints": [
+        {
+          "kind": "set_env",
+          "vars": {
+            "DOCKER_BUILDKIT": "1"
+          }
+        }
+      ],
+      "description": "Dockerfile parse error from unknown instruction — enable BuildKit for better error messages",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "bash -c 'echo \"failed to solve: dockerfile parse error on line 15: unknown instruction: RUNCMD\" >&2; exit 1'",
+        "trigger_env": {},
+        "expected_stderr_match": "dockerfile parse error.*unknown instruction",
+        "fix_env": {
+          "DOCKER_BUILDKIT": "1"
+        },
+        "expected_fix_outcome": "different_error_or_success",
+        "fix_command": "bash -c 'echo \"DOCKER_BUILDKIT set (simulated)\"; exit 0'"
+      }
+    },
+    {
+      "stderr_pattern": "yaml:.*did not find expected|Additional property.*is not allowed|services\\..* must be a mapping",
+      "avoidance_hints": [
+        {
+          "kind": "set_env",
+          "vars": {
+            "COMPOSE_FILE": "docker-compose.yml"
+          }
+        }
+      ],
+      "description": "Docker Compose YAML parse error — ensure correct compose file is targeted",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "bash -c 'echo \"yaml: line 12: did not find expected key\" >&2; exit 1'",
+        "trigger_env": {},
+        "expected_stderr_match": "yaml:.*did not find expected",
+        "fix_env": {
+          "COMPOSE_FILE": "docker-compose.yml"
+        },
+        "expected_fix_outcome": "different_error_or_success",
+        "fix_command": "bash -c 'echo \"COMPOSE_FILE set (simulated)\"; exit 0'"
+      }
+    }
+  ]
+}

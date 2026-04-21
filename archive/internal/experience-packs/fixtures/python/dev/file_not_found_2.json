@@ -1,0 +1,5 @@
+{
+  "stderr": "python3: can't open file '/home/user/project/scripts/deploy.py': [Errno 2] No such file or directory",
+  "error_class": "file_not_found",
+  "source": "script path does not exist"
+}

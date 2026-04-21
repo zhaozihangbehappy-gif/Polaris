@@ -1,0 +1,163 @@
+{
+  "ecosystem": "terraform",
+  "error_class": "state_error",
+  "schema_version": 4,
+  "records": [
+    {
+      "pattern_id": "candidate.terraform.state_error.000",
+      "ecosystem": "terraform",
+      "error_class": "state_error",
+      "description": "state lock held by dead CI job",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "Error acquiring the state lock"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "terraform version 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "Error acquiring the state lock"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Terraform state_error: state lock held by dead CI job"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.terraform.state_error.001",
+      "ecosystem": "terraform",
+      "error_class": "state_error",
+      "description": "backend config S3 bucket region mismatch",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "backend.*region"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "terraform version 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "backend.*region"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Terraform state_error: backend config S3 bucket region mismatch"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.terraform.state_error.002",
+      "ecosystem": "terraform",
+      "error_class": "state_error",
+      "description": "state schema version too new",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "state snapshot was created by.*newer"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "terraform version 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "state snapshot was created by.*newer"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Terraform state_error: state schema version too new"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.terraform.state_error.003",
+      "ecosystem": "terraform",
+      "error_class": "state_error",
+      "description": "import address exists in state",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "already managed by Terraform"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "terraform version 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "already managed by Terraform"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Terraform state_error: import address exists in state"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    }
+  ]
+}

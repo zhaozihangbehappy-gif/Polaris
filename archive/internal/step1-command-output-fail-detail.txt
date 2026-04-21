@@ -1,0 +1,1 @@
+execution_result_ptr::/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/command-output-success/runtime-command-output.txt

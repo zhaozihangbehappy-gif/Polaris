@@ -1,0 +1,33 @@
+{
+  "runners": [
+    "cursor"
+  ],
+  "seed": 20260419,
+  "cases_total": 1,
+  "runs_attempted": 2,
+  "runs_completed": 0,
+  "runs_blocked": {
+    "blocked_no_fixture": 0,
+    "blocked_precondition_failed": 0,
+    "blocked_precondition_timeout": 0,
+    "blocked_contaminated_run": 0,
+    "blocked_no_expected_failure": 0,
+    "blocked_cursor_transcript_missing": 2,
+    "blocked_agent_rate_limited": 0
+  },
+  "deltas": [],
+  "hard_gate_passing_pairs": 0,
+  "hard_gate_total_pairs": 0,
+  "launch_verdict": {
+    "status": "fail",
+    "reasons": [
+      "real_issue case share 0% < v0 minimum 30%",
+      "hard-gate pair pass rate 0% < launch minimum 50%",
+      "no real-agent pairs completed; stub runners only"
+    ],
+    "pair_pass_rate": 0.0,
+    "real_case_share": 0.0
+  },
+  "narrative_compliance": "Per NARRATIVE.md \u00a74: token-only gains do NOT count. A runner/case pair passes only if CI pass improves OR rounds_to_root_cause drops >= 30%.",
+  "hermetic_contract": "Every (runner, case, variant) executes in a fresh workdir under /tmp/_polaris_runs/<run_id>/... The fixture's expected_failure_command runs before the agent; if its stderr does not match expected_failure_stderr_regex, the run is blocked and the agent is NOT invoked. Evidence-eligible runs must also have no contamination phrases in the transcript."
+}

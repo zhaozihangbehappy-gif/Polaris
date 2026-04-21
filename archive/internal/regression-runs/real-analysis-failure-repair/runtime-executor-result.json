@@ -1,0 +1,10 @@
+{
+  "adapter": "file-analysis-local",
+  "contract_kind": "file_analysis",
+  "output_file": "/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/real-analysis-failure-repair/runtime-analysis-result.json",
+  "rendered_command": "python3 /home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/scripts/polaris_file_analysis.py --target /tmp/polaris-step0-nonexistent-target-262345-1773581762.txt --output-file /home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/real-analysis-failure-repair/runtime-analysis-result.json",
+  "returncode": 0,
+  "status": "ok",
+  "stderr": "",
+  "stdout": "{\"output\": \"/home/administrator/.openclaw/workspace/projects/polaris-skill/Polaris/regression-runs/real-analysis-failure-repair/runtime-analysis-result.json\", \"status\": \"ok\"}"
+}

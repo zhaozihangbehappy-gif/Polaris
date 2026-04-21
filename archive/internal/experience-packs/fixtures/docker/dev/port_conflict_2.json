@@ -1,0 +1,5 @@
+{
+  "stderr": "Error response from daemon: driver failed programming external connectivity on endpoint web-1 (f7e8d9c0b1a2): Error starting userland proxy: listen tcp4 0.0.0.0:3000: bind: address already in use",
+  "error_class": "port_conflict",
+  "source": "docker compose up when host process already occupies port 3000"
+}

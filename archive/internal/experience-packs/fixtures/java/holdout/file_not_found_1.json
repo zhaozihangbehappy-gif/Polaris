@@ -1,0 +1,5 @@
+{
+  "stderr": "[ERROR] Failed to execute goal org.apache.maven.plugins:maven-resources-plugin:3.3.1:resources (default-resources) on project myapp:\n[ERROR] /home/user/project/src/main/resources/application.yml (No such file or directory)\n[ERROR] -> [Help 1]",
+  "error_class": "file_not_found",
+  "source": "application.yml referenced in pom but not present"
+}

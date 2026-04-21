@@ -1,0 +1,1 @@
+{"stderr": "Error: Missing required argument\n\n  on main.tf line 3, in resource \"aws_instance\" \"web\":\n   3: resource \"aws_instance\" \"web\" {\n\nThe argument \"ami\" is required, but no definition was found.\n", "error_class": "config_error", "source": "terraform-aws-provider-5.40"}

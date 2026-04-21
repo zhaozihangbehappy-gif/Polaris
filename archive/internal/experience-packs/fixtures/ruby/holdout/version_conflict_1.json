@@ -1,0 +1,5 @@
+{
+  "stderr": "Bundler could not find compatible versions for gem \"nokogiri\":\n  In Gemfile:\n    rails (~> 7.0.8) was resolved to 7.0.8, which depends on\n      actionpack (= 7.0.8) was resolved to 7.0.8, which depends on\n        nokogiri (>= 1.8.5)\n\n    some_legacy_gem (~> 1.0) was resolved to 1.0.2, which depends on\n      nokogiri (= 1.13.10)\n\nBundler could not find compatible versions for gem \"nokogiri\".",
+  "error_class": "version_conflict",
+  "source": "Bundler gem version resolution conflict"
+}

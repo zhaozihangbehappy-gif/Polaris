@@ -1,0 +1,17 @@
+{
+  "case_id": "generated_rust_build_error_004",
+  "source": "authored_fixture",
+  "reverse_from_pattern": "rust.build_error.004",
+  "pattern_id": "rust.build_error.004",
+  "source_pool": "official",
+  "ecosystem": "rust",
+  "error_class": "build_error",
+  "initial_prompt": "In the project at {workdir}, this rust build_error fails: Rust type/argument errors \u2014 enable backtrace and clean incremental. Reproduce the failure with `CARGO_INCREMENTAL=0 RUST_BACKTRACE=1 RUSTC=\"$(rustup which rustc)\" \"$(rustup which cargo)\" check`, diagnose the root cause by reading the project files, and apply a fix so that same command exits 0.",
+  "success_criteria": {
+    "root_cause_regex": ".+",
+    "fix_command_test": "cd {workdir} && CARGO_INCREMENTAL=0 RUST_BACKTRACE=1 RUSTC=\"$(rustup which rustc)\" \"$(rustup which cargo)\" check"
+  },
+  "max_rounds": 6,
+  "fixture_strategy": "authored_files",
+  "promotion_eligible": true
+}

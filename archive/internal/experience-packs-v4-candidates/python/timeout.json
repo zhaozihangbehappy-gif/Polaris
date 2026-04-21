@@ -1,0 +1,202 @@
+{
+  "ecosystem": "python",
+  "error_class": "timeout",
+  "schema_version": 4,
+  "records": [
+    {
+      "pattern_id": "candidate.python.timeout.000",
+      "ecosystem": "python",
+      "error_class": "timeout",
+      "description": "pytest timeout plugin fires",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "Failed: Timeout >\\d+\\.\\d+s"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "true",
+        "trigger_env": {},
+        "expected_stderr_match": "Failed: Timeout >\\d+\\.\\d+s"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Increase timeout or optimize: pytest timeout plugin fires"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.timeout.001",
+      "ecosystem": "python",
+      "error_class": "timeout",
+      "description": "asyncio.wait_for timeout",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "asyncio\\.TimeoutError"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "true",
+        "trigger_env": {},
+        "expected_stderr_match": "asyncio\\.TimeoutError"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Increase timeout or optimize: asyncio.wait_for timeout"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.timeout.002",
+      "ecosystem": "python",
+      "error_class": "timeout",
+      "description": "httpx pool timeout",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "httpx\\.PoolTimeout"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "true",
+        "trigger_env": {},
+        "expected_stderr_match": "httpx\\.PoolTimeout"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Increase timeout or optimize: httpx pool timeout"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.timeout.003",
+      "ecosystem": "python",
+      "error_class": "timeout",
+      "description": "sqlalchemy statement_timeout",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "canceling statement due to statement timeout"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "true",
+        "trigger_env": {},
+        "expected_stderr_match": "canceling statement due to statement timeout"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Increase timeout or optimize: sqlalchemy statement_timeout"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.python.timeout.004",
+      "ecosystem": "python",
+      "error_class": "timeout",
+      "description": "CI job overall timeout",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "Timed out after \\d+ minutes"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "true",
+        "trigger_env": {},
+        "expected_stderr_match": "Timed out after \\d+ minutes"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Increase timeout or optimize: CI job overall timeout"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    }
+  ]
+}

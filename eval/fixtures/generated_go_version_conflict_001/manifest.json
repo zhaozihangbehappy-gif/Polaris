@@ -1,0 +1,15 @@
+{
+  "case_id": "generated_go_version_conflict_001",
+  "files": [
+    "go.mod",
+    "main.go"
+  ],
+  "dependencies": {},
+  "build_commands": [],
+  "expected_failure_command": "cd {workdir} && go build",
+  "expected_failure_stderr_regex": "requires (conflicting|ambiguous|incompatible)|incompatible|multiple major versions|version \\\".*\\\" invalid: should be v0 or v1",
+  "manifest_schema_version": 1,
+  "bash_self_contained": false,
+  "reverse_from_pattern": "go.version_conflict.001",
+  "source_pool": "official"
+}

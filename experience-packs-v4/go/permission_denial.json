@@ -1,0 +1,236 @@
+{
+  "ecosystem": "go",
+  "error_class": "permission_denial",
+  "schema_version": 4,
+  "records": [
+    {
+      "pattern_id": "go.permission_denial.000",
+      "ecosystem": "go",
+      "error_class": "permission_denial",
+      "description": "Module cache directory not writable — redirect GOPATH and GOCACHE to /tmp",
+      "source": "prebuilt",
+      "trigger_signals": {
+        "stderr_regex": [
+          "could not create module cache.*permission denied|mkdir .*/go/pkg/mod.*permission denied"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "bash -c 'echo \"go: could not create module cache: mkdir /home/user/go/pkg/mod: permission denied\" >&2; exit 1'",
+        "trigger_env": {
+          "GOPATH": "/root/go"
+        },
+        "expected_stderr_match": "could not create module cache.*permission denied",
+        "expected_fix_outcome": "different_error_or_success"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "GOPATH": "/tmp/go",
+              "GOCACHE": "/tmp/go-cache"
+            }
+          },
+          {
+            "kind": "create_dir",
+            "path": "/tmp/go/pkg/mod"
+          }
+        ],
+        "fix_command": "bash -c 'echo \"GOPATH set (simulated)\"; exit 0'",
+        "fix_env": {
+          "GOPATH": "/tmp/go",
+          "GOCACHE": "/tmp/go-cache"
+        },
+        "description": "Module cache directory not writable — redirect GOPATH and GOCACHE to /tmp"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "legacy_v3": {
+        "stderr_pattern": "could not create module cache.*permission denied|mkdir .*/go/pkg/mod.*permission denied",
+        "avoidance_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "GOPATH": "/tmp/go",
+              "GOCACHE": "/tmp/go-cache"
+            }
+          },
+          {
+            "kind": "create_dir",
+            "path": "/tmp/go/pkg/mod"
+          }
+        ],
+        "description": "Module cache directory not writable — redirect GOPATH and GOCACHE to /tmp",
+        "source": "prebuilt",
+        "reproduction": {
+          "command": "bash -c 'echo \"go: could not create module cache: mkdir /home/user/go/pkg/mod: permission denied\" >&2; exit 1'",
+          "trigger_env": {
+            "GOPATH": "/root/go"
+          },
+          "expected_stderr_match": "could not create module cache.*permission denied",
+          "fix_env": {
+            "GOPATH": "/tmp/go",
+            "GOCACHE": "/tmp/go-cache"
+          },
+          "expected_fix_outcome": "different_error_or_success",
+          "fix_command": "bash -c 'echo \"GOPATH set (simulated)\"; exit 0'"
+        }
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "go.permission_denial.001",
+      "ecosystem": "go",
+      "error_class": "permission_denial",
+      "description": "go install cannot write to GOBIN — redirect GOBIN to writable directory",
+      "source": "prebuilt",
+      "trigger_signals": {
+        "stderr_regex": [
+          "EACCES|go install.*permission denied|writing.*GOBIN.*permission denied"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "bash -c 'echo \"go install: open /usr/local/go/bin/tool: EACCES: permission denied\" >&2; exit 1'",
+        "trigger_env": {
+          "GOBIN": "/usr/local/go/bin"
+        },
+        "expected_stderr_match": "EACCES|permission denied",
+        "expected_fix_outcome": "different_error_or_success"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "GOBIN": "/tmp/go/bin",
+              "GOPATH": "/tmp/go"
+            }
+          }
+        ],
+        "fix_command": "bash -c 'echo \"GOBIN set (simulated)\"; exit 0'",
+        "fix_env": {
+          "GOBIN": "/tmp/go/bin",
+          "GOPATH": "/tmp/go"
+        },
+        "description": "go install cannot write to GOBIN — redirect GOBIN to writable directory"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": [
+          {
+            "agent": "claude_code",
+            "agent_version": "unknown",
+            "date_verified": "2026-04-20T09:45:29+00:00",
+            "status": "verified_live",
+            "artifact_path": "eval/runs/20260420T170630/transcripts/claude_code__generated_go_permission_denial_001__baseline.txt",
+            "transcript_hash": "d3d6f44379468eaab777962f5599030e6cfa35f7bb109b349d9a8d13518b9f3a",
+            "pre_failure_reproduced": true,
+            "workdir_manifest_hash": "112b5428140e535f5dc1c60ab44c8b5e29a4f824d35eb58923d2e0495851f2b8",
+            "notes": "case=generated_go_permission_denial_001 polaris_enabled=False rounds=9 tool_calls=8 tokens=1794",
+            "model": "claude-haiku-4-5-20251001"
+          },
+          {
+            "agent": "claude_code",
+            "agent_version": "unknown",
+            "date_verified": "2026-04-20T09:45:29+00:00",
+            "status": "verified_live",
+            "artifact_path": "eval/runs/20260420T170630/transcripts/claude_code__generated_go_permission_denial_001__polaris.txt",
+            "transcript_hash": "b32007f269a38ab883a2f582e622d2a2539c9d1800fbe1d761afc505b1d65380",
+            "pre_failure_reproduced": true,
+            "workdir_manifest_hash": "6b3e71ea71f449e670aab41362bae21aca532ac4912c2a387aef4328792a1635",
+            "notes": "case=generated_go_permission_denial_001 polaris_enabled=True rounds=8 tool_calls=7 tokens=1678",
+            "model": "claude-haiku-4-5-20251001"
+          }
+        ]
+      },
+      "legacy_v3": {
+        "stderr_pattern": "EACCES|go install.*permission denied|writing.*GOBIN.*permission denied",
+        "avoidance_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "GOBIN": "/tmp/go/bin",
+              "GOPATH": "/tmp/go"
+            }
+          }
+        ],
+        "description": "go install cannot write to GOBIN — redirect GOBIN to writable directory",
+        "source": "prebuilt",
+        "reproduction": {
+          "command": "bash -c 'echo \"go install: open /usr/local/go/bin/tool: EACCES: permission denied\" >&2; exit 1'",
+          "trigger_env": {
+            "GOBIN": "/usr/local/go/bin"
+          },
+          "expected_stderr_match": "EACCES|permission denied",
+          "fix_env": {
+            "GOBIN": "/tmp/go/bin",
+            "GOPATH": "/tmp/go"
+          },
+          "expected_fix_outcome": "different_error_or_success",
+          "fix_command": "bash -c 'echo \"GOBIN set (simulated)\"; exit 0'"
+        }
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds"
+      ],
+      "authored_fixture": {
+        "authored_at": "2026-04-20T05:34:42+00:00",
+        "authored_by": "claude_code",
+        "authored_with_prompt_sha256": "dcb631bd4880a6989d1e11a97bfc44023c4132eea07022668e6745628fbc761b",
+        "verification_command": "bash build.sh",
+        "expected_stderr_regex": "permission denied",
+        "files": [
+          {
+            "path": "go.mod",
+            "content": "module example.com/hello\n\ngo 1.20\n"
+          },
+          {
+            "path": "main.go",
+            "content": "package main\n\nimport \"fmt\"\n\nfunc main() {\n\tfmt.Println(\"Hello, World!\")\n}\n"
+          },
+          {
+            "path": "build.sh",
+            "content": "#!/bin/bash\nset -e\ntmpdir=$(mktemp -d)\ntrap \"rm -rf '$tmpdir'\" EXIT\nchmod 000 \"$tmpdir\"\nGOBIN=\"$tmpdir\" go install .\n"
+          }
+        ],
+        "reference_fix_files": [
+          {
+            "path": "build.sh",
+            "content": "#!/bin/bash\nset -e\ninstall_dir=\"${HOME}/.go/bin\"\nmkdir -p \"$install_dir\"\nGOBIN=\"$install_dir\" go install .\n"
+          }
+        ],
+        "fix_rationale": "Redirect GOBIN from read-only temporary directory to writable user bin directory",
+        "reviewer_record": {
+          "validated_in_sandbox_at": "2026-04-20T05:34:42+00:00",
+          "sandbox_pre_fix_exit_code": 1,
+          "sandbox_pre_fix_stderr_match": true,
+          "sandbox_post_fix_exit_code": 0,
+          "sandbox_workdir_hash_pre": "c26af7d3efb98a0f6fcc85eab96442281e7838195b5a85239704961e9d65ef10",
+          "sandbox_workdir_hash_post": "562f20558d9d0b9e175708594f188a4f65a0a75bf7bf19b80a98b4f2ab1efe66",
+          "notes": "authored by claude_code; pre-fix fails+matches regex, post-fix passes"
+        }
+      }
+    }
+  ]
+}

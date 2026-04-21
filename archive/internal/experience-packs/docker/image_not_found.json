@@ -1,0 +1,53 @@
+{
+  "ecosystem": "docker",
+  "error_class": "image_not_found",
+  "shard_version": "3.0",
+  "records": [
+    {
+      "stderr_pattern": "manifest.*not found: manifest unknown|manifest unknown",
+      "avoidance_hints": [
+        {
+          "kind": "set_env",
+          "vars": {
+            "DOCKER_DEFAULT_PLATFORM": "linux/amd64"
+          }
+        }
+      ],
+      "description": "Docker manifest not found — may be platform-specific; set default platform to linux/amd64",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "bash -c 'echo \"Error response from daemon: manifest for node:19-alpine not found: manifest unknown: manifest unknown.\" >&2; exit 1'",
+        "trigger_env": {},
+        "expected_stderr_match": "manifest.*not found",
+        "fix_env": {
+          "DOCKER_DEFAULT_PLATFORM": "linux/amd64"
+        },
+        "expected_fix_outcome": "different_error_or_success",
+        "fix_command": "bash -c 'echo \"DOCKER_DEFAULT_PLATFORM set (simulated)\"; exit 0'"
+      }
+    },
+    {
+      "stderr_pattern": "pull access denied.*repository does not exist|image.*not found",
+      "avoidance_hints": [
+        {
+          "kind": "set_env",
+          "vars": {
+            "DOCKER_CONFIG": "/tmp/.docker"
+          }
+        }
+      ],
+      "description": "Docker image/repository not found — may need login; ensure DOCKER_CONFIG is set",
+      "source": "prebuilt",
+      "reproduction": {
+        "command": "bash -c 'echo \"Error response from daemon: pull access denied for mycompany/nonexistent, repository does not exist or may require docker login\" >&2; exit 1'",
+        "trigger_env": {},
+        "expected_stderr_match": "pull access denied.*repository does not exist",
+        "fix_env": {
+          "DOCKER_CONFIG": "/tmp/.docker"
+        },
+        "expected_fix_outcome": "different_error_or_success",
+        "fix_command": "bash -c 'echo \"DOCKER_CONFIG set (simulated)\"; exit 0'"
+      }
+    }
+  ]
+}

@@ -1,0 +1,319 @@
+{
+  "ecosystem": "java",
+  "error_class": "classpath_error",
+  "schema_version": 4,
+  "records": [
+    {
+      "pattern_id": "candidate.java.classpath_error.000",
+      "ecosystem": "java",
+      "error_class": "classpath_error",
+      "description": "ClassNotFoundException at runtime only",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "ClassNotFoundException"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "java --version 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "ClassNotFoundException"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Java classpath_error: ClassNotFoundException at runtime only"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.java.classpath_error.001",
+      "ecosystem": "java",
+      "error_class": "classpath_error",
+      "description": "NoClassDefFoundError shaded jar",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "NoClassDefFoundError"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "java --version 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "NoClassDefFoundError"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Java classpath_error: NoClassDefFoundError shaded jar"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.java.classpath_error.002",
+      "ecosystem": "java",
+      "error_class": "classpath_error",
+      "description": "duplicate service loader entry",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "ServiceConfigurationError"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "java --version 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "ServiceConfigurationError"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Java classpath_error: duplicate service loader entry"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.java.classpath_error.003",
+      "ecosystem": "java",
+      "error_class": "classpath_error",
+      "description": "META-INF/services not shaded",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "No provider found"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "java --version 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "No provider found"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Java classpath_error: META-INF/services not shaded"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.java.classpath_error.004",
+      "ecosystem": "java",
+      "error_class": "classpath_error",
+      "description": "war lib conflict with container",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "javax\\\\.servlet.*signer"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "java --version 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "javax\\\\.servlet.*signer"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Java classpath_error: war lib conflict with container"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.java.classpath_error.005",
+      "ecosystem": "java",
+      "error_class": "classpath_error",
+      "description": "spring boot fat jar nested class",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "Unable to find main class"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "java --version 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "Unable to find main class"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Java classpath_error: spring boot fat jar nested class"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.java.classpath_error.006",
+      "ecosystem": "java",
+      "error_class": "classpath_error",
+      "description": "JPMS split package",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "reads package .* from both"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "java --version 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "reads package .* from both"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Java classpath_error: JPMS split package"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "candidate.java.classpath_error.007",
+      "ecosystem": "java",
+      "error_class": "classpath_error",
+      "description": "ClassLoader parent-first order",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "LinkageError.*ClassLoader"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "java --version 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "LinkageError.*ClassLoader"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Java classpath_error: ClassLoader parent-first order"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    }
+  ]
+}

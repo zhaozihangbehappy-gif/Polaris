@@ -1,0 +1,5 @@
+{
+  "stderr": "/home/user/project/worker.rb:2:in `require': cannot load such file -- redis (LoadError)\n\tfrom /home/user/project/worker.rb:2:in `<main>'",
+  "error_class": "missing_dependency",
+  "source": "LoadError for redis gem not in load path"
+}

@@ -1,0 +1,1 @@
+{"stderr": "Error: Unsupported argument\n\n  on main.tf line 5, in resource \"aws_instance\" \"web\":\n   5:   instence_type = \"t3.micro\"\n\nAn argument named \"instence_type\" is not expected here. Did you mean \"instance_type\"?\n", "error_class": "config_error", "source": "terraform-aws-provider-5.40"}

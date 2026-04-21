@@ -1,0 +1,15 @@
+{
+  "case_id": "generated_java_config_error_000",
+  "files": [
+    "Hello.java",
+    "run.sh"
+  ],
+  "dependencies": {},
+  "build_commands": [],
+  "expected_failure_command": "cd {workdir} && bash -c 'unset JAVA_HOME; bash run.sh'",
+  "expected_failure_stderr_regex": "JAVA_HOME is not set",
+  "manifest_schema_version": 1,
+  "bash_self_contained": false,
+  "reverse_from_pattern": "java.config_error.000",
+  "source_pool": "official"
+}

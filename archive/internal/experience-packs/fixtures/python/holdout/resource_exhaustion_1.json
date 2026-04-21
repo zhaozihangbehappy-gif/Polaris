@@ -1,0 +1,5 @@
+{
+  "stderr": "Traceback (most recent call last):\n  File \"/home/user/project/crawler.py\", line 89, in crawl\n    return self.crawl(url, depth+1)\n  File \"/home/user/project/crawler.py\", line 89, in crawl\n    return self.crawl(url, depth+1)\n  File \"/home/user/project/crawler.py\", line 89, in crawl\n    return self.crawl(url, depth+1)\n  [Previous line repeated 993 more times]\nRecursionError: maximum recursion depth exceeded",
+  "error_class": "resource_exhaustion",
+  "source": "unbounded recursive crawler"
+}
