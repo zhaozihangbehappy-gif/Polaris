@@ -1,0 +1,281 @@
+{
+  "ecosystem": "go",
+  "error_class": "version_conflict",
+  "schema_version": 4,
+  "records": [
+    {
+      "pattern_id": "go.version_conflict.000",
+      "ecosystem": "go",
+      "error_class": "version_conflict",
+      "description": "go.mod minimum Go version exceeds installed version — enable auto toolchain download",
+      "source": "prebuilt",
+      "trigger_signals": {
+        "stderr_regex": [
+          "go\\.mod requires go >= \\d|module requires Go \\d+\\.\\d+"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "bash -c 'echo \"go: go.mod requires go >= 1.22 (running go 1.21.5)\" >&2; echo \"note: module requires Go 1.22\" >&2; exit 1'",
+        "trigger_env": {
+          "GOTOOLCHAIN": "local"
+        },
+        "expected_stderr_match": "go.mod requires go",
+        "expected_fix_outcome": "different_error_or_success"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "GOTOOLCHAIN": "auto"
+            }
+          }
+        ],
+        "fix_command": "bash -c 'echo \"GOTOOLCHAIN set (simulated)\"; exit 0'",
+        "fix_env": {
+          "GOTOOLCHAIN": "auto"
+        },
+        "description": "go.mod minimum Go version exceeds installed version — enable auto toolchain download"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": [
+          {
+            "agent": "claude_code",
+            "agent_version": "unknown",
+            "date_verified": "2026-04-20T09:45:29+00:00",
+            "status": "verified_live",
+            "artifact_path": "eval/runs/20260420T170630/transcripts/claude_code__generated_go_version_conflict_000__baseline.txt",
+            "transcript_hash": "b796844546ddb88e11886deccafdd3ea4803b0f0637be953e0097f506a4612fd",
+            "pre_failure_reproduced": true,
+            "workdir_manifest_hash": "095a831a2d63e20ad1f85715fc68dece4ea6521a5c8277646e3ce51a254870eb",
+            "notes": "case=generated_go_version_conflict_000 polaris_enabled=False rounds=11 tool_calls=10 tokens=2082",
+            "model": "claude-haiku-4-5-20251001"
+          },
+          {
+            "agent": "claude_code",
+            "agent_version": "unknown",
+            "date_verified": "2026-04-20T09:45:29+00:00",
+            "status": "verified_live",
+            "artifact_path": "eval/runs/20260420T170630/transcripts/claude_code__generated_go_version_conflict_000__polaris.txt",
+            "transcript_hash": "7cc9326d97211d8095d032c260a7474338e89c0e4db7b188a50871b237436990",
+            "pre_failure_reproduced": true,
+            "workdir_manifest_hash": "604360b34be1c0eff0458026dbc54857fa49345c135f935e7e643b7d362059a8",
+            "notes": "case=generated_go_version_conflict_000 polaris_enabled=True rounds=8 tool_calls=7 tokens=1602",
+            "model": "claude-haiku-4-5-20251001"
+          }
+        ]
+      },
+      "legacy_v3": {
+        "stderr_pattern": "go\\.mod requires go >= \\d|module requires Go \\d+\\.\\d+",
+        "avoidance_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "GOTOOLCHAIN": "auto"
+            }
+          }
+        ],
+        "description": "go.mod minimum Go version exceeds installed version — enable auto toolchain download",
+        "source": "prebuilt",
+        "reproduction": {
+          "command": "bash -c 'echo \"go: go.mod requires go >= 1.22 (running go 1.21.5)\" >&2; echo \"note: module requires Go 1.22\" >&2; exit 1'",
+          "trigger_env": {
+            "GOTOOLCHAIN": "local"
+          },
+          "expected_stderr_match": "go.mod requires go",
+          "fix_env": {
+            "GOTOOLCHAIN": "auto"
+          },
+          "expected_fix_outcome": "different_error_or_success",
+          "fix_command": "bash -c 'echo \"GOTOOLCHAIN set (simulated)\"; exit 0'"
+        }
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds"
+      ],
+      "authored_fixture": {
+        "authored_at": "2026-04-20T08:41:29+00:00",
+        "authored_by": "claude_code",
+        "authored_with_prompt_sha256": "regex_patch",
+        "verification_command": "go build",
+        "expected_stderr_regex": "go\\.mod requires go >= \\d|module requires Go \\d+\\.\\d+|toolchain not available|download go\\d+\\.\\d+",
+        "files": [
+          {
+            "path": "go.mod",
+            "content": "module example\n\ngo 1.25\n"
+          },
+          {
+            "path": "main.go",
+            "content": "package main\n\nimport \"fmt\"\n\nfunc main() {\n\tfmt.Println(\"Hello\")\n}\n"
+          }
+        ],
+        "reference_fix_files": [
+          {
+            "path": "go.mod",
+            "content": "module example\n\ngo 1.21\n"
+          }
+        ],
+        "fix_rationale": "Lower the minimum Go version requirement in go.mod to match the installed version.",
+        "reviewer_record": {
+          "validated_in_sandbox_at": "2026-04-20T08:41:29+00:00",
+          "sandbox_pre_fix_exit_code": 1,
+          "sandbox_pre_fix_stderr_match": true,
+          "sandbox_post_fix_exit_code": 0,
+          "sandbox_workdir_hash_pre": "9edebef51c9a71127137fd897fff9ee63a03b6b94f1165fb023fc9636fbb14d1",
+          "sandbox_workdir_hash_post": "3a5415631280c80bd4dc447cbccbca960063e2fdd406ee7ce7f403d6209f6eea",
+          "notes": "regex broadened post-authoring to match observed stderr"
+        }
+      }
+    },
+    {
+      "pattern_id": "go.version_conflict.001",
+      "ecosystem": "go",
+      "error_class": "version_conflict",
+      "description": "Module version incompatibility or ambiguous import — enable mod=mod to resolve",
+      "source": "prebuilt",
+      "trigger_signals": {
+        "stderr_regex": [
+          "ambiguous import|incompatible|post-v0 module path"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "bash -c 'echo \"go: modules with post-v0 paths must have matching major version suffixes\" >&2; echo \"go.mod has incompatible module path\" >&2; exit 1'",
+        "trigger_env": {},
+        "expected_stderr_match": "incompatible|post-v0",
+        "expected_fix_outcome": "different_error_or_success"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "GOFLAGS": "-mod=mod"
+            }
+          },
+          {
+            "kind": "append_flags",
+            "flags": [
+              "-mod=mod"
+            ]
+          }
+        ],
+        "fix_command": "bash -c 'echo \"GOFLAGS set (simulated)\"; exit 0'",
+        "fix_env": {
+          "GOFLAGS": "-mod=mod"
+        },
+        "description": "Module version incompatibility or ambiguous import — enable mod=mod to resolve"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": [
+          {
+            "agent": "claude_code",
+            "agent_version": "unknown",
+            "date_verified": "2026-04-20T09:45:29+00:00",
+            "status": "verified_live",
+            "artifact_path": "eval/runs/20260420T170630/transcripts/claude_code__generated_go_version_conflict_001__baseline.txt",
+            "transcript_hash": "221ba29a90bba7a555b2b51f7875ebd230ee782be6c8832932a3be288e353c41",
+            "pre_failure_reproduced": true,
+            "workdir_manifest_hash": "26a16f65e6ed70d0ea221cda4247180ba5f81e3448d48d92d3459eba9f781bf0",
+            "notes": "case=generated_go_version_conflict_001 polaris_enabled=False rounds=7 tool_calls=6 tokens=1665",
+            "model": "claude-haiku-4-5-20251001"
+          },
+          {
+            "agent": "claude_code",
+            "agent_version": "unknown",
+            "date_verified": "2026-04-20T09:45:29+00:00",
+            "status": "verified_live",
+            "artifact_path": "eval/runs/20260420T170630/transcripts/claude_code__generated_go_version_conflict_001__polaris.txt",
+            "transcript_hash": "45d2006802b2caded39df66aa1707cc04d70dda5f712a8a6f9de5e1688b706c9",
+            "pre_failure_reproduced": true,
+            "workdir_manifest_hash": "dfe3589f01cdf42b15a492b3c50b4c754879af9a16c3b23ad191fca28a02f93f",
+            "notes": "case=generated_go_version_conflict_001 polaris_enabled=True rounds=7 tool_calls=6 tokens=1497",
+            "model": "claude-haiku-4-5-20251001"
+          }
+        ]
+      },
+      "legacy_v3": {
+        "stderr_pattern": "ambiguous import|incompatible|post-v0 module path",
+        "avoidance_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "GOFLAGS": "-mod=mod"
+            }
+          },
+          {
+            "kind": "append_flags",
+            "flags": [
+              "-mod=mod"
+            ]
+          }
+        ],
+        "description": "Module version incompatibility or ambiguous import — enable mod=mod to resolve",
+        "source": "prebuilt",
+        "reproduction": {
+          "command": "bash -c 'echo \"go: modules with post-v0 paths must have matching major version suffixes\" >&2; echo \"go.mod has incompatible module path\" >&2; exit 1'",
+          "trigger_env": {},
+          "expected_stderr_match": "incompatible|post-v0",
+          "fix_env": {
+            "GOFLAGS": "-mod=mod"
+          },
+          "expected_fix_outcome": "different_error_or_success",
+          "fix_command": "bash -c 'echo \"GOFLAGS set (simulated)\"; exit 0'"
+        }
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds"
+      ],
+      "authored_fixture": {
+        "authored_at": "2026-04-20T08:41:29+00:00",
+        "authored_by": "claude_code",
+        "authored_with_prompt_sha256": "regex_patch",
+        "verification_command": "go build",
+        "expected_stderr_regex": "requires (conflicting|ambiguous|incompatible)|incompatible|multiple major versions|version \\\".*\\\" invalid: should be v0 or v1",
+        "files": [
+          {
+            "path": "go.mod",
+            "content": "module example.com/app\ngo 1.18\n\nrequire (\n\texample.com/helper v1.0.0\n\texample.com/helper v2.0.0\n)\n"
+          },
+          {
+            "path": "main.go",
+            "content": "package main\n\nfunc main() {\n}\n"
+          }
+        ],
+        "reference_fix_files": [
+          {
+            "path": "go.mod",
+            "content": "module example.com/app\ngo 1.18\n\nrequire (\n\texample.com/helper v1.0.0\n\texample.com/helper/v2 v2.0.0\n)\n"
+          }
+        ],
+        "fix_rationale": "Use proper post-v0 major version suffix in module path for v2+ releases per Go semantic versioning.",
+        "reviewer_record": {
+          "validated_in_sandbox_at": "2026-04-20T08:41:29+00:00",
+          "sandbox_pre_fix_exit_code": 1,
+          "sandbox_pre_fix_stderr_match": true,
+          "sandbox_post_fix_exit_code": 0,
+          "sandbox_workdir_hash_pre": "a0af1f3a6e08884e03e9f78586862d71fb9da1e4c292cb917cc721239c43c3ef",
+          "sandbox_workdir_hash_post": "f8281318d5d91b7ca54b517d1e9fe9638ae98824d42a8f9c3c1d7a387685a125",
+          "notes": "regex broadened post-authoring to match observed stderr"
+        }
+      }
+    }
+  ]
+}

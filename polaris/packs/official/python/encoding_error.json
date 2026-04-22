@@ -1,0 +1,370 @@
+{
+  "ecosystem": "python",
+  "error_class": "encoding_error",
+  "schema_version": 4,
+  "records": [
+    {
+      "pattern_id": "python.encoding_error.000",
+      "ecosystem": "python",
+      "error_class": "encoding_error",
+      "description": "Unicode decode error \u2014 force UTF-8 IO encoding and locale",
+      "source": "prebuilt",
+      "trigger_signals": {
+        "stderr_regex": [
+          "UnicodeDecodeError: '(utf-?8|ascii|latin-?1)' codec can't decode"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "python3 -c \"open('/tmp/_polaris_repro_enc.bin','wb').write(b'\\xff\\xfe')\" && python3 -c \"open('/tmp/_polaris_repro_enc.bin').read()\" 2>&1 || true",
+        "trigger_env": {
+          "PYTHONIOENCODING": "ascii",
+          "LC_ALL": "C"
+        },
+        "expected_stderr_match": "UnicodeDecodeError",
+        "expected_fix_outcome": "different_error_or_success"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "PYTHONIOENCODING": "utf-8",
+              "LC_ALL": "C.UTF-8"
+            }
+          }
+        ],
+        "fix_command": "python3 -c \"open('/tmp/_polaris_repro_enc.bin', encoding='utf-8', errors='replace').read(); print('ok')\" 2>&1 || true",
+        "fix_env": {
+          "PYTHONIOENCODING": "utf-8",
+          "LC_ALL": "C.UTF-8"
+        },
+        "description": "Unicode decode error \u2014 force UTF-8 IO encoding and locale"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": [
+          {
+            "agent": "claude_code",
+            "agent_version": "unknown",
+            "model": "claude-haiku-4-5-20251001",
+            "date_verified": "2026-04-20T12:10:26+00:00",
+            "status": "verified_live",
+            "artifact_path": "eval/runs/20260420T200938/transcripts/claude_code__generated_python_encoding_error_000__polaris.txt",
+            "transcript_hash": "9809e210d3e86ccab7ad4bb6cb3826f14b531122fd39035a3246538548bc2a55",
+            "pre_failure_reproduced": true,
+            "workdir_manifest_hash": "c06c5150daa0374efd1d1d9a972ff03fb62f04826e1481870618d5225481cf00",
+            "notes": "case=generated_python_encoding_error_000 polaris_enabled=True rounds=1 tool_calls=8 tokens=469"
+          }
+        ]
+      },
+      "legacy_v3": {
+        "stderr_pattern": "UnicodeDecodeError: '(utf-?8|ascii|latin-?1)' codec can't decode",
+        "avoidance_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "PYTHONIOENCODING": "utf-8",
+              "LC_ALL": "C.UTF-8"
+            }
+          }
+        ],
+        "description": "Unicode decode error \u2014 force UTF-8 IO encoding and locale",
+        "source": "prebuilt",
+        "reproduction": {
+          "command": "python3 -c \"open('/tmp/_polaris_repro_enc.bin','wb').write(b'\\xff\\xfe')\" && python3 -c \"open('/tmp/_polaris_repro_enc.bin').read()\" 2>&1 || true",
+          "trigger_env": {
+            "PYTHONIOENCODING": "ascii",
+            "LC_ALL": "C"
+          },
+          "expected_stderr_match": "UnicodeDecodeError",
+          "fix_env": {
+            "PYTHONIOENCODING": "utf-8",
+            "LC_ALL": "C.UTF-8"
+          },
+          "fix_command": "python3 -c \"open('/tmp/_polaris_repro_enc.bin', encoding='utf-8', errors='replace').read(); print('ok')\" 2>&1 || true",
+          "expected_fix_outcome": "different_error_or_success"
+        }
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds"
+      ],
+      "authored_fixture": {
+        "authored_at": "2026-04-20T02:58:13+00:00",
+        "authored_by": "codex",
+        "authored_with_prompt_sha256": "b1529a7f4ec2871fd21886f2f1533cb8f837a8b4e2bc3ec04d2a5868ec49a0d6",
+        "verification_command": "python3 -m unittest -q",
+        "expected_stderr_regex": "UnicodeDecodeError: 'ascii' codec can't decode",
+        "files": [
+          {
+            "path": "reader.py",
+            "content": "from pathlib import Path\n\n\ndef load_city():\n    return Path(\"city.txt\").read_text(encoding=\"ascii\").strip()\n"
+          },
+          {
+            "path": "test_reader.py",
+            "content": "import unittest\n\nfrom reader import load_city\n\n\nclass ReaderTest(unittest.TestCase):\n    def test_city_name_is_read(self):\n        self.assertEqual(load_city(), \"M\u00fcnchen\")\n\n\nif __name__ == \"__main__\":\n    unittest.main()\n"
+          },
+          {
+            "path": "city.txt",
+            "content": "M\u00fcnchen\n"
+          }
+        ],
+        "reference_fix_files": [
+          {
+            "path": "reader.py",
+            "content": "from pathlib import Path\n\n\ndef load_city():\n    return Path(\"city.txt\").read_text(encoding=\"utf-8\").strip()\n"
+          }
+        ],
+        "fix_rationale": "Opening the text fixture with UTF-8 matches the file's encoding and avoids locale- or ASCII-based decode failures.",
+        "reviewer_record": {
+          "validated_in_sandbox_at": "2026-04-20T02:58:13+00:00",
+          "sandbox_pre_fix_exit_code": 1,
+          "sandbox_pre_fix_stderr_match": true,
+          "sandbox_post_fix_exit_code": 0,
+          "sandbox_workdir_hash_pre": "c06c5150daa0374efd1d1d9a972ff03fb62f04826e1481870618d5225481cf00",
+          "sandbox_workdir_hash_post": "0df0df5bea80cf57991b9545b41a331f601f6c02c4356d5779f07ca97d2f62bc",
+          "notes": "authored by codex; pre-fix fails+matches regex, post-fix passes"
+        }
+      }
+    },
+    {
+      "pattern_id": "python.encoding_error.001",
+      "ecosystem": "python",
+      "error_class": "encoding_error",
+      "description": "Unicode encode error writing output \u2014 force UTF-8 encoding via PYTHONIOENCODING and locale",
+      "source": "prebuilt",
+      "trigger_signals": {
+        "stderr_regex": [
+          "UnicodeEncodeError: '(ascii|latin-?1)' codec can't encode"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "python3 -c \"import sys; sys.stdout = open(sys.stdout.fileno(), 'w', encoding='ascii', closefd=False); print('caf\\u00e9')\" 2>&1 || true",
+        "trigger_env": {
+          "PYTHONIOENCODING": "ascii",
+          "LC_ALL": "C"
+        },
+        "expected_stderr_match": "UnicodeEncodeError",
+        "expected_fix_outcome": "different_error_or_success"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "PYTHONIOENCODING": "utf-8",
+              "LC_ALL": "C.UTF-8"
+            }
+          }
+        ],
+        "fix_command": "bash -c 'echo \"PYTHONIOENCODING=utf-8 applied (simulated fix)\"; exit 0'",
+        "fix_env": {
+          "PYTHONIOENCODING": "utf-8",
+          "LC_ALL": "C.UTF-8"
+        },
+        "description": "Unicode encode error writing output \u2014 force UTF-8 encoding via PYTHONIOENCODING and locale"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "legacy_v3": {
+        "stderr_pattern": "UnicodeEncodeError: '(ascii|latin-?1)' codec can't encode",
+        "avoidance_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "PYTHONIOENCODING": "utf-8",
+              "LC_ALL": "C.UTF-8"
+            }
+          }
+        ],
+        "description": "Unicode encode error writing output \u2014 force UTF-8 encoding via PYTHONIOENCODING and locale",
+        "source": "prebuilt",
+        "reproduction": {
+          "command": "python3 -c \"import sys; sys.stdout = open(sys.stdout.fileno(), 'w', encoding='ascii', closefd=False); print('caf\\u00e9')\" 2>&1 || true",
+          "trigger_env": {
+            "PYTHONIOENCODING": "ascii",
+            "LC_ALL": "C"
+          },
+          "expected_stderr_match": "UnicodeEncodeError",
+          "fix_env": {
+            "PYTHONIOENCODING": "utf-8",
+            "LC_ALL": "C.UTF-8"
+          },
+          "expected_fix_outcome": "different_error_or_success",
+          "fix_command": "bash -c 'echo \"PYTHONIOENCODING=utf-8 applied (simulated fix)\"; exit 0'"
+        }
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ],
+      "authored_fixture": {
+        "authored_at": "2026-04-20T02:59:56+00:00",
+        "authored_by": "codex",
+        "authored_with_prompt_sha256": "78a79ce70147e79ff6050dde9d91eb117e73367fa8f2be03f37163e096b88f78",
+        "verification_command": "python3 -m unittest -q",
+        "expected_stderr_regex": "UnicodeEncodeError: '(ascii|latin-?1)' codec can't encode",
+        "files": [
+          {
+            "path": "report_worker.py",
+            "content": "def main():\n    print(\"build result: caf\u00e9 \u2603\")\n\n\nif __name__ == \"__main__\":\n    main()\n"
+          },
+          {
+            "path": "report_runner.py",
+            "content": "import os\nimport subprocess\nimport sys\nfrom pathlib import Path\n\n\ndef main():\n    env = os.environ.copy()\n    env.update(\n        {\n            \"LC_ALL\": \"C\",\n            \"LANG\": \"C\",\n            \"PYTHONUTF8\": \"0\",\n            \"PYTHONCOERCECLOCALE\": \"0\",\n        }\n    )\n    env.pop(\"PYTHONIOENCODING\", None)\n\n    worker = Path(__file__).with_name(\"report_worker.py\")\n    return subprocess.call([sys.executable, str(worker)], env=env)\n\n\nif __name__ == \"__main__\":\n    raise SystemExit(main())\n"
+          },
+          {
+            "path": "test_report_runner.py",
+            "content": "import subprocess\nimport sys\nimport unittest\nfrom pathlib import Path\n\n\nclass ReportRunnerTest(unittest.TestCase):\n    def test_runner_emits_unicode_report(self):\n        runner = Path(__file__).with_name(\"report_runner.py\")\n        result = subprocess.run(\n            [sys.executable, str(runner)],\n            capture_output=True,\n            text=True,\n        )\n\n        self.assertEqual(result.returncode, 0, result.stderr)\n        self.assertIn(\"caf\u00e9\", result.stdout)\n\n\nif __name__ == \"__main__\":\n    unittest.main()\n"
+          }
+        ],
+        "reference_fix_files": [
+          {
+            "path": "report_runner.py",
+            "content": "import os\nimport subprocess\nimport sys\nfrom pathlib import Path\n\n\ndef main():\n    env = os.environ.copy()\n    env.update(\n        {\n            \"LC_ALL\": \"C.UTF-8\",\n            \"LANG\": \"C.UTF-8\",\n            \"PYTHONIOENCODING\": \"utf-8\",\n        }\n    )\n    env.pop(\"PYTHONUTF8\", None)\n    env.pop(\"PYTHONCOERCECLOCALE\", None)\n\n    worker = Path(__file__).with_name(\"report_worker.py\")\n    return subprocess.call([sys.executable, str(worker)], env=env)\n\n\nif __name__ == \"__main__\":\n    raise SystemExit(main())\n"
+          }
+        ],
+        "fix_rationale": "Set UTF-8 locale and PYTHONIOENCODING for the child Python process so writing non-ASCII report text cannot use an ASCII stream.",
+        "reviewer_record": {
+          "validated_in_sandbox_at": "2026-04-20T02:59:56+00:00",
+          "sandbox_pre_fix_exit_code": 1,
+          "sandbox_pre_fix_stderr_match": true,
+          "sandbox_post_fix_exit_code": 0,
+          "sandbox_workdir_hash_pre": "113cbd6bf9bf577476050a2dbd54b933e90090e6961355562076bee5f432a62a",
+          "sandbox_workdir_hash_post": "e6678072ad9127f436566dae4f8948a60e25de778997f30b4c102461588f0a93",
+          "notes": "authored by codex; pre-fix fails+matches regex, post-fix passes"
+        }
+      }
+    },
+    {
+      "pattern_id": "python.encoding_error.002",
+      "ecosystem": "python",
+      "error_class": "encoding_error",
+      "description": "File contains non-UTF-8 bytes \u2014 set locale to C.UTF-8 to ensure consistent encoding handling",
+      "source": "prebuilt",
+      "trigger_signals": {
+        "stderr_regex": [
+          "UnicodeDecodeError:.*codec can't decode byte.*in position"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "python3 -c \"open('/tmp/_polaris_repro_enc2.bin','wb').write(b'\\x80\\x81\\x82')\" && python3 -c \"open('/tmp/_polaris_repro_enc2.bin').read()\" 2>&1 || true",
+        "trigger_env": {
+          "LC_ALL": "C.UTF-8"
+        },
+        "expected_stderr_match": "UnicodeDecodeError",
+        "expected_fix_outcome": "different_error_or_success"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "set_locale",
+            "locale": "C.UTF-8"
+          }
+        ],
+        "fix_command": "python3 -c \"open('/tmp/_polaris_repro_enc2.bin', errors='surrogateescape').read(); print('ok')\" 2>&1 || true",
+        "fix_env": {
+          "LC_ALL": "C.UTF-8"
+        },
+        "description": "File contains non-UTF-8 bytes \u2014 set locale to C.UTF-8 to ensure consistent encoding handling"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "legacy_v3": {
+        "stderr_pattern": "UnicodeDecodeError:.*codec can't decode byte.*in position",
+        "avoidance_hints": [
+          {
+            "kind": "set_locale",
+            "locale": "C.UTF-8"
+          }
+        ],
+        "description": "File contains non-UTF-8 bytes \u2014 set locale to C.UTF-8 to ensure consistent encoding handling",
+        "source": "prebuilt",
+        "reproduction": {
+          "command": "python3 -c \"open('/tmp/_polaris_repro_enc2.bin','wb').write(b'\\x80\\x81\\x82')\" && python3 -c \"open('/tmp/_polaris_repro_enc2.bin').read()\" 2>&1 || true",
+          "trigger_env": {
+            "LC_ALL": "C.UTF-8"
+          },
+          "expected_stderr_match": "UnicodeDecodeError",
+          "fix_env": {
+            "LC_ALL": "C.UTF-8"
+          },
+          "fix_command": "python3 -c \"open('/tmp/_polaris_repro_enc2.bin', errors='surrogateescape').read(); print('ok')\" 2>&1 || true",
+          "expected_fix_outcome": "different_error_or_success"
+        }
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ],
+      "authored_fixture": {
+        "authored_at": "2026-04-20T02:58:46+00:00",
+        "authored_by": "codex",
+        "authored_with_prompt_sha256": "cae0175a1de551526f76c6a0796cc3f8df31e12274526f16c478ebe523a2ce9a",
+        "verification_command": "sh run_tests.sh",
+        "expected_stderr_regex": "UnicodeDecodeError:.*codec can't decode byte.*in position",
+        "files": [
+          {
+            "path": "greeting.txt",
+            "content": "caf\u00e9\n"
+          },
+          {
+            "path": "reader.py",
+            "content": "from pathlib import Path\n\n\ndef load_greeting():\n    return Path(__file__).with_name(\"greeting.txt\").read_text()\n"
+          },
+          {
+            "path": "test_reader.py",
+            "content": "import unittest\n\nfrom reader import load_greeting\n\n\nclass ReaderTest(unittest.TestCase):\n    def test_loads_greeting(self):\n        self.assertEqual(load_greeting(), \"caf\u00e9\\n\")\n\n\nif __name__ == \"__main__\":\n    unittest.main()\n"
+          },
+          {
+            "path": "run_tests.sh",
+            "content": "#!/bin/sh\nexport LC_ALL=C\nexport PYTHONCOERCECLOCALE=0\nexport PYTHONUTF8=0\npython3 -m unittest -q\n"
+          }
+        ],
+        "reference_fix_files": [
+          {
+            "path": "run_tests.sh",
+            "content": "#!/bin/sh\nexport LC_ALL=C.UTF-8\nexport PYTHONCOERCECLOCALE=0\nexport PYTHONUTF8=0\npython3 -m unittest -q\n"
+          }
+        ],
+        "fix_rationale": "Running the tests under C.UTF-8 gives Python a UTF-8 locale so the UTF-8 fixture is decoded consistently.",
+        "reviewer_record": {
+          "validated_in_sandbox_at": "2026-04-20T02:58:46+00:00",
+          "sandbox_pre_fix_exit_code": 1,
+          "sandbox_pre_fix_stderr_match": true,
+          "sandbox_post_fix_exit_code": 0,
+          "sandbox_workdir_hash_pre": "729092a879fd40eb4c346e1c0f85393ba36d1a9fe0064004aa3b464c2b750e6e",
+          "sandbox_workdir_hash_post": "8e7c09a2c9635575f9f1cec6979f70f122783955daad82aef22ee368a76ba59b",
+          "notes": "authored by codex; pre-fix fails+matches regex, post-fix passes"
+        }
+      }
+    }
+  ]
+}

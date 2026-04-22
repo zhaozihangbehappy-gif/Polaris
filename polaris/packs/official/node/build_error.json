@@ -1,0 +1,342 @@
+{
+  "ecosystem": "node",
+  "error_class": "build_error",
+  "schema_version": 4,
+  "records": [
+    {
+      "pattern_id": "node.build_error.000",
+      "ecosystem": "node",
+      "error_class": "build_error",
+      "description": "node-gyp native addon build failure \u2014 try pre-built binaries by disabling build-from-source",
+      "source": "prebuilt",
+      "trigger_signals": {
+        "stderr_regex": [
+          "gyp ERR!.*build error|node-gyp.*failed|`make` failed with exit code"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "node -e \"console.error('gyp ERR! build error\\ngyp ERR! stack Error: `make` failed with exit code: 2')\" 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "gyp ERR!.*build error",
+        "expected_fix_outcome": "different_error_or_success"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "npm_config_build_from_source": "false"
+            }
+          }
+        ],
+        "fix_command": "bash -c 'echo \"npm_config_build_from_source=false applied (simulated fix)\"; exit 0'",
+        "fix_env": {
+          "npm_config_build_from_source": "false"
+        },
+        "description": "node-gyp native addon build failure \u2014 try pre-built binaries by disabling build-from-source"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": [
+          {
+            "agent": "claude_code",
+            "agent_version": "unknown",
+            "model": "claude-opus-4-7",
+            "date_verified": "2026-04-20T11:25:54+00:00",
+            "status": "verified_live",
+            "artifact_path": "eval/runs/20260420T192521/transcripts/claude_code__generated_node_build_error_000__polaris.txt",
+            "transcript_hash": "5807c4f8016f99c897725168a0c6c5e3942ee3c7977fd37b1a378354e886f322",
+            "pre_failure_reproduced": true,
+            "workdir_manifest_hash": "3b95ee726658cd58cbb7bac9ae1a77e98186bd13e009222d6a9d22eb24e4fa32",
+            "notes": "case=generated_node_build_error_000 polaris_enabled=True rounds=1 tool_calls=6 tokens=426"
+          }
+        ]
+      },
+      "legacy_v3": {
+        "stderr_pattern": "gyp ERR!.*build error|node-gyp.*failed|`make` failed with exit code",
+        "avoidance_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "npm_config_build_from_source": "false"
+            }
+          }
+        ],
+        "description": "node-gyp native addon build failure \u2014 try pre-built binaries by disabling build-from-source",
+        "source": "prebuilt",
+        "reproduction": {
+          "command": "node -e \"console.error('gyp ERR! build error\\ngyp ERR! stack Error: `make` failed with exit code: 2')\" 2>&1 || true",
+          "trigger_env": {},
+          "expected_stderr_match": "gyp ERR!.*build error",
+          "fix_env": {
+            "npm_config_build_from_source": "false"
+          },
+          "expected_fix_outcome": "different_error_or_success",
+          "fix_command": "bash -c 'echo \"npm_config_build_from_source=false applied (simulated fix)\"; exit 0'"
+        }
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds"
+      ],
+      "authored_fixture": {
+        "authored_at": "2026-04-20T02:49:56+00:00",
+        "authored_by": "codex",
+        "authored_with_prompt_sha256": "851a5d99af5aea0a2d6c81fb4942add1a6a3e8ab9ebe0022af18bc6ff87a222a",
+        "verification_command": "npm test",
+        "expected_stderr_regex": "`make` failed with exit code",
+        "files": [
+          {
+            "path": "package.json",
+            "content": "{\n  \"name\": \"polaris-node-gyp-build-from-source\",\n  \"version\": \"1.0.0\",\n  \"private\": true,\n  \"scripts\": {\n    \"test\": \"node scripts/install-or-build.js\"\n  },\n  \"config\": {\n    \"build_from_source\": true\n  }\n}\n"
+          },
+          {
+            "path": "binding.gyp",
+            "content": "{\n  \"targets\": [\n    {\n      \"target_name\": \"tiny_native\",\n      \"sources\": [\"src/missing.cc\"]\n    }\n  ]\n}\n"
+          },
+          {
+            "path": "scripts/install-or-build.js",
+            "content": "'use strict';\n\nconst { existsSync } = require('node:fs');\nconst path = require('node:path');\nconst { spawnSync } = require('node:child_process');\n\nconst root = path.resolve(__dirname, '..');\nconst pkg = require(path.join(root, 'package.json'));\n\nif (pkg.config && pkg.config.build_from_source === false) {\n  console.log('using prebuilt native binary');\n  process.exit(0);\n}\n\nconst npmExecPath = process.env.npm_execpath;\nif (!npmExecPath) {\n  throw new Error('run this verifier through npm so npm-bundled node-gyp is available');\n}\n\nconst nodeGyp = path.resolve(\n  path.dirname(npmExecPath),\n  '..',\n  'node_modules',\n  'node-gyp',\n  'bin',\n  'node-gyp.js'\n);\n\nif (!existsSync(nodeGyp)) {\n  throw new Error(`node-gyp not found at ${nodeGyp}`);\n}\n\nconst result = spawnSync(process.execPath, [nodeGyp, 'rebuild', '--nodedir=/usr'], {\n  cwd: root,\n  stdio: 'inherit'\n});\n\nprocess.exit(result.status === null ? 1 : result.status);\n"
+          }
+        ],
+        "reference_fix_files": [
+          {
+            "path": "package.json",
+            "content": "{\n  \"name\": \"polaris-node-gyp-build-from-source\",\n  \"version\": \"1.0.0\",\n  \"private\": true,\n  \"scripts\": {\n    \"test\": \"node scripts/install-or-build.js\"\n  },\n  \"config\": {\n    \"build_from_source\": false\n  }\n}\n"
+          }
+        ],
+        "fix_rationale": "Disabling build_from_source selects the prebuilt native binary path and avoids invoking node-gyp.",
+        "reviewer_record": {
+          "validated_in_sandbox_at": "2026-04-20T02:49:56+00:00",
+          "sandbox_pre_fix_exit_code": 1,
+          "sandbox_pre_fix_stderr_match": true,
+          "sandbox_post_fix_exit_code": 0,
+          "sandbox_workdir_hash_pre": "3b95ee726658cd58cbb7bac9ae1a77e98186bd13e009222d6a9d22eb24e4fa32",
+          "sandbox_workdir_hash_post": "a0a3c95d5c672d95375697ef83a43d933a29392ac0aa54f8261e0f093d6ab601",
+          "notes": "authored by codex; pre-fix fails+matches regex, post-fix passes"
+        }
+      }
+    },
+    {
+      "pattern_id": "node.build_error.001",
+      "ecosystem": "node",
+      "error_class": "build_error",
+      "description": "node-gyp cannot find Python \u2014 point npm_config_python to the Python3 binary path",
+      "source": "prebuilt",
+      "trigger_signals": {
+        "stderr_regex": [
+          "Could not find any Python installation|gyp ERR!.*find Python"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "node -e \"console.error('gyp ERR! configure error\\ngyp ERR! stack Error: Could not find any Python installation to use')\" 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "Could not find any Python",
+        "expected_fix_outcome": "different_error_or_success"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "npm_config_python": "/usr/bin/python3"
+            }
+          }
+        ],
+        "fix_command": "bash -c 'echo \"npm_config_python=/usr/bin/python3 applied (simulated fix)\"; exit 0'",
+        "fix_env": {
+          "npm_config_python": "/usr/bin/python3"
+        },
+        "description": "node-gyp cannot find Python \u2014 point npm_config_python to the Python3 binary path"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "legacy_v3": {
+        "stderr_pattern": "Could not find any Python installation|gyp ERR!.*find Python",
+        "avoidance_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "npm_config_python": "/usr/bin/python3"
+            }
+          }
+        ],
+        "description": "node-gyp cannot find Python \u2014 point npm_config_python to the Python3 binary path",
+        "source": "prebuilt",
+        "reproduction": {
+          "command": "node -e \"console.error('gyp ERR! configure error\\ngyp ERR! stack Error: Could not find any Python installation to use')\" 2>&1 || true",
+          "trigger_env": {},
+          "expected_stderr_match": "Could not find any Python",
+          "fix_env": {
+            "npm_config_python": "/usr/bin/python3"
+          },
+          "expected_fix_outcome": "different_error_or_success",
+          "fix_command": "bash -c 'echo \"npm_config_python=/usr/bin/python3 applied (simulated fix)\"; exit 0'"
+        }
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ],
+      "authored_fixture": {
+        "authored_at": "2026-04-20T09:55:34+00:00",
+        "authored_by": "codex",
+        "authored_with_prompt_sha256": "554f0e60c2013dc04d46a035d21bd24b3198f5fc5bc0cf3f7370cf1b3bb2770d",
+        "verification_command": "npm test 1>&2",
+        "expected_stderr_regex": "Could not find any Python installation|gyp ERR!.*find Python",
+        "files": [
+          {
+            "path": "package.json",
+            "content": "{\n  \"name\": \"node-gyp-python-fixture\",\n  \"version\": \"1.0.0\",\n  \"private\": true,\n  \"scripts\": {\n    \"test\": \"PATH=/tmp/no-python npm_config_python=./missing-python /usr/bin/node /usr/lib/node_modules/npm/node_modules/node-gyp/bin/node-gyp.js configure\"\n  },\n  \"gypfile\": true\n}\n"
+          },
+          {
+            "path": "binding.gyp",
+            "content": "{\n  \"targets\": [\n    {\n      \"target_name\": \"empty_addon\",\n      \"sources\": []\n    }\n  ]\n}\n"
+          }
+        ],
+        "reference_fix_files": [
+          {
+            "path": "package.json",
+            "content": "{\n  \"name\": \"node-gyp-python-fixture\",\n  \"version\": \"1.0.0\",\n  \"private\": true,\n  \"scripts\": {\n    \"test\": \"PATH=/tmp/no-python npm_config_python=/usr/bin/python3 /usr/bin/node /usr/lib/node_modules/npm/node_modules/node-gyp/bin/node-gyp.js configure\"\n  },\n  \"gypfile\": true\n}\n"
+          }
+        ],
+        "fix_rationale": "Point npm_config_python at the Python 3 binary so node-gyp can run its configure step instead of searching an empty PATH.",
+        "reviewer_record": {
+          "validated_in_sandbox_at": "2026-04-20T09:55:34+00:00",
+          "sandbox_pre_fix_exit_code": 1,
+          "sandbox_pre_fix_stderr_match": true,
+          "sandbox_post_fix_exit_code": 0,
+          "sandbox_workdir_hash_pre": "3caa043b8d877db17e3f2491787d61bd50ca9dc9afeb1bb8bb56fb50fa31f101",
+          "sandbox_workdir_hash_post": "3f0b10382b791d29aad7ee0acc6b38e55fcc8606612b18626f56aa690670f2d2",
+          "notes": "authored by codex; pre-fix fails+matches regex, post-fix passes"
+        }
+      }
+    },
+    {
+      "pattern_id": "node.build_error.002",
+      "ecosystem": "node",
+      "error_class": "build_error",
+      "description": "Missing C/C++ compiler for native addon build \u2014 set CC/CXX env vars to available compiler",
+      "source": "prebuilt",
+      "trigger_signals": {
+        "stderr_regex": [
+          "No receipt for 'com\\.apple\\.pkg\\.CLTools_Executables'|xcode-select.*install|command line tools"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "node -e \"console.error('gyp ERR! stack Error: not found: make\\ngyp ERR! not ok')\" 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "gyp ERR!|not found: make",
+        "expected_fix_outcome": "different_error_or_success"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "CXX": "g++",
+              "CC": "gcc"
+            }
+          }
+        ],
+        "fix_command": "bash -c 'echo \"CXX=g++ applied (simulated fix)\"; exit 0'",
+        "fix_env": {
+          "CXX": "g++",
+          "CC": "gcc"
+        },
+        "description": "Missing C/C++ compiler for native addon build \u2014 set CC/CXX env vars to available compiler"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "legacy_v3": {
+        "stderr_pattern": "No receipt for 'com\\.apple\\.pkg\\.CLTools_Executables'|xcode-select.*install|command line tools",
+        "avoidance_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "CXX": "g++",
+              "CC": "gcc"
+            }
+          }
+        ],
+        "description": "Missing C/C++ compiler for native addon build \u2014 set CC/CXX env vars to available compiler",
+        "source": "prebuilt",
+        "reproduction": {
+          "command": "node -e \"console.error('gyp ERR! stack Error: not found: make\\ngyp ERR! not ok')\" 2>&1 || true",
+          "trigger_env": {},
+          "expected_stderr_match": "gyp ERR!|not found: make",
+          "fix_env": {
+            "CXX": "g++",
+            "CC": "gcc"
+          },
+          "expected_fix_outcome": "different_error_or_success",
+          "fix_command": "bash -c 'echo \"CXX=g++ applied (simulated fix)\"; exit 0'"
+        }
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ],
+      "authored_fixture": {
+        "authored_at": "2026-04-20T02:47:35+00:00",
+        "authored_by": "codex",
+        "authored_with_prompt_sha256": "8c5bd48df11c1a993439cecc31b89f6877057b45ade41ce0fa706420a2399c8c",
+        "verification_command": "env -u CC -u CXX npm test",
+        "expected_stderr_regex": "xcode-select.*install|command line tools",
+        "files": [
+          {
+            "path": "package.json",
+            "content": "{\n  \"name\": \"native-toolchain-probe\",\n  \"version\": \"1.0.0\",\n  \"private\": true,\n  \"type\": \"module\",\n  \"scripts\": {\n    \"test\": \"node build.js\"\n  }\n}\n"
+          },
+          {
+            "path": "build.js",
+            "content": "import { execFileSync } from \"node:child_process\";\n\nfunction requireCompiler(name) {\n  const command = process.env[name];\n  if (!command) {\n    throw new Error(\n      `${name} is not set; native addon builds need an explicit compiler.\\n` +\n        \"xcode-select: error: command line tools are required, use xcode-select --install\"\n    );\n  }\n  return command;\n}\n\nconst cc = requireCompiler(\"CC\");\nconst cxx = requireCompiler(\"CXX\");\n\nexecFileSync(cc, [\"--version\"], { stdio: \"ignore\" });\nexecFileSync(cxx, [\"--version\"], { stdio: \"ignore\" });\nconsole.log(\"compiler probe passed\");\n"
+          }
+        ],
+        "reference_fix_files": [
+          {
+            "path": "package.json",
+            "content": "{\n  \"name\": \"native-toolchain-probe\",\n  \"version\": \"1.0.0\",\n  \"private\": true,\n  \"type\": \"module\",\n  \"scripts\": {\n    \"test\": \"CC=cc CXX=c++ node build.js\"\n  }\n}\n"
+          }
+        ],
+        "fix_rationale": "Setting CC and CXX to available compiler commands lets the native build probe run without the command line tools error.",
+        "reviewer_record": {
+          "validated_in_sandbox_at": "2026-04-20T02:47:35+00:00",
+          "sandbox_pre_fix_exit_code": 1,
+          "sandbox_pre_fix_stderr_match": true,
+          "sandbox_post_fix_exit_code": 0,
+          "sandbox_workdir_hash_pre": "bf8aa1f98cee8b8de89ce8679ccfad642ed379e1a00e0c43e1bf5bf9bedafca3",
+          "sandbox_workdir_hash_post": "0e42d8ddc8ca9c5138487ea46be0ec41886c40461c728551d16f722d685ca422",
+          "notes": "authored by codex; pre-fix fails+matches regex, post-fix passes"
+        }
+      }
+    }
+  ]
+}

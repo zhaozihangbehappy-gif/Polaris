@@ -1,0 +1,68 @@
+name: release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Polaris
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install .
+
+      - name: Validate patterns
+        run: python scripts/pattern_validator_v4.py
+
+      - name: Build release assets
+        env:
+          TAG_NAME: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          mkdir -p dist
+          tar -czf "dist/polaris-packs-fresh-${TAG_NAME}.tar.gz" -C polaris packs
+          sha256sum "dist/polaris-packs-fresh-${TAG_NAME}.tar.gz" > "dist/polaris-packs-fresh-${TAG_NAME}.sha256"
+          python - <<'PY'
+          import datetime as dt
+          import subprocess
+          from pathlib import Path
+
+          now = dt.datetime.now(dt.timezone.utc)
+          cutoff = now - dt.timedelta(days=7)
+          current = subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip()
+          tags = subprocess.check_output(
+              ["git", "for-each-ref", "--format=%(refname:short)", "--sort=-creatordate", "refs/tags"],
+              text=True,
+          ).splitlines()
+          chosen = current
+          for tag in tags:
+              when = subprocess.check_output(["git", "log", "-1", "--format=%cI", tag], text=True).strip()
+              if dt.datetime.fromisoformat(when) <= cutoff:
+                  chosen = tag
+                  break
+          Path("dist/STABLE_REF").write_text(chosen + "\n")
+          PY
+          STABLE_REF="$(cat dist/STABLE_REF)"
+          git worktree add /tmp/polaris-stable "$STABLE_REF"
+          tar -czf "dist/polaris-packs-stable-${TAG_NAME}.tar.gz" -C /tmp/polaris-stable/polaris packs
+          sha256sum "dist/polaris-packs-stable-${TAG_NAME}.tar.gz" > "dist/polaris-packs-stable-${TAG_NAME}.sha256"
+
+      - name: Publish release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/polaris-packs-fresh-${{ github.ref_name }}.tar.gz
+            dist/polaris-packs-fresh-${{ github.ref_name }}.sha256
+            dist/polaris-packs-stable-${{ github.ref_name }}.tar.gz
+            dist/polaris-packs-stable-${{ github.ref_name }}.sha256

@@ -1,2 +1,7 @@
 __pycache__/
 *.py[cod]
+build/
+dist/
+*.egg-info/
+*.bak
+validator-report-v4.json

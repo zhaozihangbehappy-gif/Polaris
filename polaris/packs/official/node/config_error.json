@@ -1,0 +1,209 @@
+{
+  "ecosystem": "node",
+  "error_class": "config_error",
+  "schema_version": 4,
+  "records": [
+    {
+      "pattern_id": "node.config_error.000",
+      "ecosystem": "node",
+      "error_class": "config_error",
+      "description": "Invalid JSON in package.json \u2014 fix syntax errors (trailing commas, missing quotes); rewrite cwd to valid project root",
+      "source": "prebuilt",
+      "trigger_signals": {
+        "stderr_regex": [
+          "EJSONPARSE|JSON\\.parse.*Unexpected token|package\\.json.*parse"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "mkdir -p /tmp/_polaris_repro_json && echo '{\"name\":\"x\",}' > /tmp/_polaris_repro_json/package.json && cd /tmp/_polaris_repro_json && node -e \"JSON.parse(require('fs').readFileSync('package.json','utf8'))\" 2>&1; rm -rf /tmp/_polaris_repro_json || true",
+        "trigger_env": {},
+        "expected_stderr_match": "Unexpected token|JSON",
+        "expected_fix_outcome": "different_error_or_success"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "rewrite_cwd",
+            "target": "."
+          }
+        ],
+        "fix_command": "bash -c 'echo \"cwd corrected (simulated fix)\"; exit 0'",
+        "fix_env": {},
+        "description": "Invalid JSON in package.json \u2014 fix syntax errors (trailing commas, missing quotes); rewrite cwd to valid project root"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": [
+          {
+            "agent": "claude_code",
+            "agent_version": "unknown",
+            "model": "claude-opus-4-7",
+            "date_verified": "2026-04-20T11:26:27+00:00",
+            "status": "verified_live",
+            "artifact_path": "eval/runs/20260420T192554/transcripts/claude_code__generated_node_config_error_000__polaris.txt",
+            "transcript_hash": "c2768b76370fcd46265715159622668db9dd5502db42d4e0a43ba16d5581ac1f",
+            "pre_failure_reproduced": true,
+            "workdir_manifest_hash": "f6260d24c1b26338c17482b24a631f6ff9d3f4e92f6e63516b25c2e28431b470",
+            "notes": "case=generated_node_config_error_000 polaris_enabled=True rounds=1 tool_calls=6 tokens=328"
+          }
+        ]
+      },
+      "legacy_v3": {
+        "stderr_pattern": "EJSONPARSE|JSON\\.parse.*Unexpected token|package\\.json.*parse",
+        "avoidance_hints": [
+          {
+            "kind": "rewrite_cwd",
+            "target": "."
+          }
+        ],
+        "description": "Invalid JSON in package.json \u2014 fix syntax errors (trailing commas, missing quotes); rewrite cwd to valid project root",
+        "source": "prebuilt",
+        "reproduction": {
+          "command": "mkdir -p /tmp/_polaris_repro_json && echo '{\"name\":\"x\",}' > /tmp/_polaris_repro_json/package.json && cd /tmp/_polaris_repro_json && node -e \"JSON.parse(require('fs').readFileSync('package.json','utf8'))\" 2>&1; rm -rf /tmp/_polaris_repro_json || true",
+          "trigger_env": {},
+          "expected_stderr_match": "Unexpected token|JSON",
+          "fix_env": {},
+          "expected_fix_outcome": "different_error_or_success",
+          "fix_command": "bash -c 'echo \"cwd corrected (simulated fix)\"; exit 0'"
+        }
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds"
+      ],
+      "authored_fixture": {
+        "authored_at": "2026-04-20T02:47:46+00:00",
+        "authored_by": "codex",
+        "authored_with_prompt_sha256": "3afb5279ac043da082c1bccc788b2bec61055ecef9e38ff40907be837f5d2e8c",
+        "verification_command": "node verify-package.js",
+        "expected_stderr_regex": "package\\.json.*parse",
+        "files": [
+          {
+            "path": "package.json",
+            "content": "{\n  \"name\": \"config-error-repro\",\n  \"version\": \"1.0.0\",\n  \"scripts\": {\n    \"test\": \"node verify-package.js\",\n  }\n}\n"
+          },
+          {
+            "path": "verify-package.js",
+            "content": "const fs = require(\"node:fs\");\n\ntry {\n  JSON.parse(fs.readFileSync(\"package.json\", \"utf8\"));\n} catch (error) {\n  throw new Error(`package.json parse failed: ${error.message}`);\n}\n"
+          }
+        ],
+        "reference_fix_files": [
+          {
+            "path": "package.json",
+            "content": "{\n  \"name\": \"config-error-repro\",\n  \"version\": \"1.0.0\",\n  \"scripts\": {\n    \"test\": \"node verify-package.js\"\n  }\n}\n"
+          }
+        ],
+        "fix_rationale": "Removing the trailing comma from package.json makes the manifest valid JSON so the verification script can parse it.",
+        "reviewer_record": {
+          "validated_in_sandbox_at": "2026-04-20T02:47:46+00:00",
+          "sandbox_pre_fix_exit_code": 1,
+          "sandbox_pre_fix_stderr_match": true,
+          "sandbox_post_fix_exit_code": 0,
+          "sandbox_workdir_hash_pre": "f6260d24c1b26338c17482b24a631f6ff9d3f4e92f6e63516b25c2e28431b470",
+          "sandbox_workdir_hash_post": "c61a3f90e65e2fd2434bd62528d901218fa905fa15bc38e2eb5fd8a68fdc9f89",
+          "notes": "authored by codex; pre-fix fails+matches regex, post-fix passes"
+        }
+      }
+    },
+    {
+      "pattern_id": "node.config_error.001",
+      "ecosystem": "node",
+      "error_class": "config_error",
+      "description": "TypeScript config error \u2014 tsconfig.json missing or malformed; ensure cwd contains valid tsconfig",
+      "source": "prebuilt",
+      "trigger_signals": {
+        "stderr_regex": [
+          "tsconfig\\.json.*error TS|Cannot read file.*tsconfig"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "mkdir -p /tmp/_polaris_repro_tsconf && echo '{invalid' > /tmp/_polaris_repro_tsconf/tsconfig.json && cd /tmp/_polaris_repro_tsconf && node -e \"JSON.parse(require('fs').readFileSync('tsconfig.json','utf8'))\" 2>&1; rm -rf /tmp/_polaris_repro_tsconf || true",
+        "trigger_env": {},
+        "expected_stderr_match": "Unexpected token|JSON",
+        "expected_fix_outcome": "different_error_or_success"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "rewrite_cwd",
+            "target": "."
+          }
+        ],
+        "fix_command": "bash -c 'echo \"cwd corrected (simulated fix)\"; exit 0'",
+        "fix_env": {},
+        "description": "TypeScript config error \u2014 tsconfig.json missing or malformed; ensure cwd contains valid tsconfig"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "legacy_v3": {
+        "stderr_pattern": "tsconfig\\.json.*error TS|Cannot read file.*tsconfig",
+        "avoidance_hints": [
+          {
+            "kind": "rewrite_cwd",
+            "target": "."
+          }
+        ],
+        "description": "TypeScript config error \u2014 tsconfig.json missing or malformed; ensure cwd contains valid tsconfig",
+        "source": "prebuilt",
+        "reproduction": {
+          "command": "mkdir -p /tmp/_polaris_repro_tsconf && echo '{invalid' > /tmp/_polaris_repro_tsconf/tsconfig.json && cd /tmp/_polaris_repro_tsconf && node -e \"JSON.parse(require('fs').readFileSync('tsconfig.json','utf8'))\" 2>&1; rm -rf /tmp/_polaris_repro_tsconf || true",
+          "trigger_env": {},
+          "expected_stderr_match": "Unexpected token|JSON",
+          "fix_env": {},
+          "expected_fix_outcome": "different_error_or_success",
+          "fix_command": "bash -c 'echo \"cwd corrected (simulated fix)\"; exit 0'"
+        }
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ],
+      "authored_fixture": {
+        "authored_at": "2026-04-20T02:47:00+00:00",
+        "authored_by": "codex",
+        "authored_with_prompt_sha256": "1ca93e8df36223111a4bceb63955f260dbb8e897e7f377a1bfb0e853ad2cf21e",
+        "verification_command": "node check-tsconfig.js",
+        "expected_stderr_regex": "Cannot read file.*tsconfig",
+        "files": [
+          {
+            "path": "check-tsconfig.js",
+            "content": "const fs = require(\"node:fs\");\n\nconst path = \"tsconfig.json\";\n\nlet raw;\ntry {\n  raw = fs.readFileSync(path, \"utf8\");\n} catch (err) {\n  process.stderr.write(`Cannot read file '${path}': ${err.message}\\n`);\n  process.exit(1);\n}\n\nlet config;\ntry {\n  config = JSON.parse(raw);\n} catch (err) {\n  process.stderr.write(`${path}: error TS5083: ${err.message}\\n`);\n  process.exit(1);\n}\n\nif (!config || typeof config !== \"object\" || Array.isArray(config)) {\n  process.stderr.write(`${path}: error TS5024: Compiler option root must be an object.\\n`);\n  process.exit(1);\n}\n\nprocess.exit(0);\n"
+          }
+        ],
+        "reference_fix_files": [
+          {
+            "path": "tsconfig.json",
+            "content": "{\n  \"compilerOptions\": {\n    \"target\": \"ES2022\",\n    \"module\": \"CommonJS\",\n    \"strict\": true\n  }\n}\n"
+          }
+        ],
+        "fix_rationale": "Adding a valid tsconfig.json satisfies the project's configuration check so the Node verification script exits successfully.",
+        "reviewer_record": {
+          "validated_in_sandbox_at": "2026-04-20T02:47:00+00:00",
+          "sandbox_pre_fix_exit_code": 1,
+          "sandbox_pre_fix_stderr_match": true,
+          "sandbox_post_fix_exit_code": 0,
+          "sandbox_workdir_hash_pre": "0ef9aad81adee9ae736091c1ee76e24e84b11e40af2122680035793472d7d7f8",
+          "sandbox_workdir_hash_post": "99e836bd7b5bf497734561ce7a0037a6d7ecfafa1750f9ddd465c8026a32a252",
+          "notes": "authored by codex; pre-fix fails+matches regex, post-fix passes"
+        }
+      }
+    }
+  ]
+}

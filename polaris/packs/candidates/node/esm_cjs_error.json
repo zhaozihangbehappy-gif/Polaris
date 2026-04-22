@@ -1,0 +1,299 @@
+{
+  "ecosystem": "node",
+  "error_class": "esm_cjs_error",
+  "schema_version": 4,
+  "records": [
+    {
+      "pattern_id": "candidate.node.esm_cjs_error.000",
+      "ecosystem": "node",
+      "error_class": "esm_cjs_error",
+      "description": "ESM require() of .mjs",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "Must use import to load ES Module"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "node --version 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "Must use import to load ES Module"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "ESM/CJS: ESM require() of .mjs"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ],
+      "authored_fixture": {
+        "authored_at": "2026-04-20T10:14:59+00:00",
+        "authored_by": "codex",
+        "authored_with_prompt_sha256": "c7bafa468fc29541077d11cca0e61fb8a0eb4d35f564da5ce54361de7e44f000",
+        "verification_command": "node --no-experimental-require-module index.js",
+        "expected_stderr_regex": "Must use import to load ES Module",
+        "files": [
+          {
+            "path": "package.json",
+            "content": "{\n  \"name\": \"esm-cjs-require-mjs-repro\",\n  \"version\": \"1.0.0\",\n  \"private\": true,\n  \"scripts\": {\n    \"test\": \"node --no-experimental-require-module index.js\"\n  }\n}\n"
+          },
+          {
+            "path": "index.js",
+            "content": "let message;\n\ntry {\n  message = require(\"./message.mjs\");\n} catch (error) {\n  if (error && error.code === \"ERR_REQUIRE_ESM\") {\n    throw new Error(\"Must use import to load ES Module: ./message.mjs\");\n  }\n  throw error;\n}\n\nif (message.default !== \"loaded from esm\") {\n  throw new Error(\"unexpected message\");\n}\n\nconsole.log(message.default);\n"
+          },
+          {
+            "path": "message.mjs",
+            "content": "export default \"loaded from esm\";\n"
+          }
+        ],
+        "reference_fix_files": [
+          {
+            "path": "index.js",
+            "content": "(async () => {\n  const message = await import(\"./message.mjs\");\n\n  if (message.default !== \"loaded from esm\") {\n    throw new Error(\"unexpected message\");\n  }\n\n  console.log(message.default);\n})();\n"
+          }
+        ],
+        "fix_rationale": "Use dynamic import() from the CommonJS entrypoint because .mjs files are ES modules and cannot be loaded with require().",
+        "reviewer_record": {
+          "validated_in_sandbox_at": "2026-04-20T10:14:59+00:00",
+          "sandbox_pre_fix_exit_code": 1,
+          "sandbox_pre_fix_stderr_match": true,
+          "sandbox_post_fix_exit_code": 0,
+          "sandbox_workdir_hash_pre": "5b7bcfb014562d99b2e61e5a950d0db26167ee6eb64f939ae86d3027f16b8fb5",
+          "sandbox_workdir_hash_post": "348e46ed7aa5e9d2d4e3fb63e94a1dfaba7e2a14df6f7deb5c26b883142df834",
+          "notes": "authored by codex; pre-fix fails+matches regex, post-fix passes"
+        }
+      },
+      "contributor_fingerprint": "upstream_authored"
+    },
+    {
+      "pattern_id": "candidate.node.esm_cjs_error.001",
+      "ecosystem": "node",
+      "error_class": "esm_cjs_error",
+      "description": "CJS dynamic require in ESM",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "require is not defined in ES module scope"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "node --version 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "require is not defined in ES module scope"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "ESM/CJS: CJS dynamic require in ESM"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ],
+      "authored_fixture": {
+        "authored_at": "2026-04-20T11:21:46+00:00",
+        "authored_by": "codex",
+        "authored_with_prompt_sha256": "6b1843c7766b716c20094cb5d148b9eac4046759308decf2f28f6ed2c00dd6e1",
+        "verification_command": "node app.mjs",
+        "expected_stderr_regex": "require is not defined in ES module scope",
+        "files": [
+          {
+            "path": "app.mjs",
+            "content": "function readSelf() {\n  const { readFileSync } = require(\"node:fs\");\n  return readFileSync(new URL(import.meta.url), \"utf8\");\n}\n\nconst source = readSelf();\n\nif (!source.includes(\"readSelf\")) {\n  throw new Error(\"unexpected source contents\");\n}\n\nconsole.log(\"loaded\");\n"
+          }
+        ],
+        "reference_fix_files": [
+          {
+            "path": "app.mjs",
+            "content": "import { readFileSync } from \"node:fs\";\n\nfunction readSelf() {\n  return readFileSync(new URL(import.meta.url), \"utf8\");\n}\n\nconst source = readSelf();\n\nif (!source.includes(\"readSelf\")) {\n  throw new Error(\"unexpected source contents\");\n}\n\nconsole.log(\"loaded\");\n"
+          }
+        ],
+        "fix_rationale": "Use an ESM static import for node:fs instead of calling CommonJS require inside an ES module.",
+        "reviewer_record": {
+          "validated_in_sandbox_at": "2026-04-20T11:21:46+00:00",
+          "sandbox_pre_fix_exit_code": 1,
+          "sandbox_pre_fix_stderr_match": true,
+          "sandbox_post_fix_exit_code": 0,
+          "sandbox_workdir_hash_pre": "0ded9205c31fb68ff1cada557b3a6f6db351e313644da9e1d0bb538d6709aa51",
+          "sandbox_workdir_hash_post": "27ffe3ab28aacdbe59db59c875a5e1c0f6dd35d7e27619871506fde348e821eb",
+          "notes": "authored by codex; pre-fix fails+matches regex, post-fix passes"
+        }
+      },
+      "contributor_fingerprint": "upstream_authored"
+    },
+    {
+      "pattern_id": "candidate.node.esm_cjs_error.002",
+      "ecosystem": "node",
+      "error_class": "esm_cjs_error",
+      "description": "top-level await in CJS",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "SyntaxError.*await is only valid"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "node --version 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "SyntaxError.*await is only valid"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "ESM/CJS: top-level await in CJS"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ],
+      "authored_fixture": {
+        "authored_at": "2026-04-20T11:23:07+00:00",
+        "authored_by": "codex",
+        "authored_with_prompt_sha256": "7f6a1d97b77f74dbc36c58ed8a0197ffd1256f7d93abb3d620d3f0d5b31551cf",
+        "verification_command": "node index.cjs",
+        "expected_stderr_regex": "SyntaxError.*await is only valid",
+        "files": [
+          {
+            "path": "index.cjs",
+            "content": "const message = await Promise.resolve(\"loaded from CommonJS\");\nconsole.log(message);\n"
+          }
+        ],
+        "reference_fix_files": [
+          {
+            "path": "index.cjs",
+            "content": "(async () => {\n  const message = await Promise.resolve(\"loaded from CommonJS\");\n  console.log(message);\n})();\n"
+          }
+        ],
+        "fix_rationale": "Wrap the await in an async function so the CommonJS file no longer uses top-level await.",
+        "reviewer_record": {
+          "validated_in_sandbox_at": "2026-04-20T11:23:07+00:00",
+          "sandbox_pre_fix_exit_code": 1,
+          "sandbox_pre_fix_stderr_match": true,
+          "sandbox_post_fix_exit_code": 0,
+          "sandbox_workdir_hash_pre": "efeaeaf2cdbbe399d62220c8974bf1fce5081198169d8c2661531089f50ee190",
+          "sandbox_workdir_hash_post": "de78a5d102fa5054b9ede9dd5e5caaf18019b9139366c87a18a8342331db669d",
+          "notes": "authored by codex; pre-fix fails+matches regex, post-fix passes"
+        }
+      },
+      "contributor_fingerprint": "upstream_authored"
+    },
+    {
+      "pattern_id": "candidate.node.esm_cjs_error.003",
+      "ecosystem": "node",
+      "error_class": "esm_cjs_error",
+      "description": "default export interop missing",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "Cannot use import statement outside a module"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "node --version 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "Cannot use import statement outside a module"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "ESM/CJS: default export interop missing"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ],
+      "authored_fixture": {
+        "authored_at": "2026-04-20T11:24:56+00:00",
+        "authored_by": "codex",
+        "authored_with_prompt_sha256": "a65ad822c21cbbcfe6a1a0dab06bfb7e226d0ba07660690b91ed6441c4c68724",
+        "verification_command": "node test/greeter.test.js",
+        "expected_stderr_regex": "Cannot use import statement outside a module",
+        "files": [
+          {
+            "path": "package.json",
+            "content": "{\n  \"name\": \"esm-cjs-default-interop-missing\",\n  \"version\": \"1.0.0\",\n  \"type\": \"commonjs\",\n  \"scripts\": {\n    \"test\": \"node --test\"\n  }\n}\n"
+          },
+          {
+            "path": "src/greeter.js",
+            "content": "import path from 'node:path';\n\nexport default function greet(name) {\n  return `Hello, ${path.basename(name)}!`;\n}\n"
+          },
+          {
+            "path": "test/greeter.test.js",
+            "content": "const test = require('node:test');\nconst assert = require('node:assert/strict');\nconst greet = require('../src/greeter.js');\n\ntest('greets the basename of a path', () => {\n  assert.equal(greet('/tmp/Ada'), 'Hello, Ada!');\n});\n"
+          }
+        ],
+        "reference_fix_files": [
+          {
+            "path": "src/greeter.js",
+            "content": "const path = require('node:path');\n\nmodule.exports = function greet(name) {\n  return `Hello, ${path.basename(name)}!`;\n};\n"
+          }
+        ],
+        "fix_rationale": "The package is CommonJS by default, so the module must use require and module.exports instead of ESM import/export syntax.",
+        "reviewer_record": {
+          "validated_in_sandbox_at": "2026-04-20T11:24:56+00:00",
+          "sandbox_pre_fix_exit_code": 1,
+          "sandbox_pre_fix_stderr_match": true,
+          "sandbox_post_fix_exit_code": 0,
+          "sandbox_workdir_hash_pre": "32bcafd45a70f5b4e24efff135e633ea2dd70cd13a1dc89948861bf5ee0cd2db",
+          "sandbox_workdir_hash_post": "03504d4e8a4f8fbcdd2c5775c443bbbf61c910142214e76a96a84c701d3a55aa",
+          "notes": "authored by codex; pre-fix fails+matches regex, post-fix passes"
+        }
+      },
+      "contributor_fingerprint": "upstream_authored"
+    }
+  ]
+}

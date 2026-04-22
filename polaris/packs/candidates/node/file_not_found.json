@@ -1,0 +1,299 @@
+{
+  "ecosystem": "node",
+  "error_class": "file_not_found",
+  "schema_version": 4,
+  "records": [
+    {
+      "pattern_id": "candidate.node.file_not_found.000",
+      "ecosystem": "node",
+      "error_class": "file_not_found",
+      "description": "tsconfig.json not found",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "error TS5057.*Cannot find a tsconfig\\.json"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "ls -la 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "error TS5057.*Cannot find a tsconfig\\.json"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Path: tsconfig.json not found"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ],
+      "authored_fixture": {
+        "authored_at": "2026-04-20T10:16:21+00:00",
+        "authored_by": "codex",
+        "authored_with_prompt_sha256": "13456a689e868b29a57da0f01a76ac170844d589f3ddbe3a74ff58b760998a63",
+        "verification_command": "node check-tsconfig.js",
+        "expected_stderr_regex": "error TS5057.*Cannot find a tsconfig\\.json",
+        "files": [
+          {
+            "path": "package.json",
+            "content": "{\n  \"name\": \"tsconfig-missing-repro\",\n  \"version\": \"1.0.0\",\n  \"private\": true,\n  \"type\": \"commonjs\",\n  \"scripts\": {\n    \"test\": \"node check-tsconfig.js\"\n  }\n}\n"
+          },
+          {
+            "path": "check-tsconfig.js",
+            "content": "const { existsSync } = require(\"node:fs\");\nconst { resolve } = require(\"node:path\");\n\nconst configPath = resolve(process.cwd(), \"tsconfig.json\");\n\nif (!existsSync(configPath)) {\n  const error = new Error(\n    \"error TS5057: Cannot find a tsconfig.json file at the specified directory: '.'.\"\n  );\n  error.name = \"TypeScriptConfigError\";\n  throw error;\n}\n"
+          }
+        ],
+        "reference_fix_files": [
+          {
+            "path": "tsconfig.json",
+            "content": "{\n  \"compilerOptions\": {\n    \"target\": \"ES2022\"\n  }\n}\n"
+          }
+        ],
+        "fix_rationale": "Adding tsconfig.json satisfies the configuration lookup so the Node verification script exits successfully.",
+        "reviewer_record": {
+          "validated_in_sandbox_at": "2026-04-20T10:16:21+00:00",
+          "sandbox_pre_fix_exit_code": 1,
+          "sandbox_pre_fix_stderr_match": true,
+          "sandbox_post_fix_exit_code": 0,
+          "sandbox_workdir_hash_pre": "3c62446206aec889b717159becb54ae874ac2d2618fff01230d4a82215b5ce76",
+          "sandbox_workdir_hash_post": "60d9e944c99a18a5e9e2d1cab4e4ee47f8ffe41197fc582cea2720230f004cb7",
+          "notes": "authored by codex; pre-fix fails+matches regex, post-fix passes"
+        }
+      },
+      "contributor_fingerprint": "upstream_authored"
+    },
+    {
+      "pattern_id": "candidate.node.file_not_found.001",
+      "ecosystem": "node",
+      "error_class": "file_not_found",
+      "description": "missing package.json in workspace",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "ENOENT.*package\\.json"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "ls -la 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "ENOENT.*package\\.json"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Path: missing package.json in workspace"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ],
+      "authored_fixture": {
+        "authored_at": "2026-04-20T11:26:18+00:00",
+        "authored_by": "codex",
+        "authored_with_prompt_sha256": "d039e51d05157f854150a8bc6277838101bbaf21bfb056cb9422e26df9e0b983",
+        "verification_command": "npm test",
+        "expected_stderr_regex": "ENOENT.*package\\.json",
+        "files": [
+          {
+            "path": "test/smoke.test.js",
+            "content": "const test = require(\"node:test\");\nconst assert = require(\"node:assert/strict\");\n\ntest(\"standard library works\", () => {\n  assert.equal(2 + 2, 4);\n});\n"
+          }
+        ],
+        "reference_fix_files": [
+          {
+            "path": "package.json",
+            "content": "{\n  \"scripts\": {\n    \"test\": \"node --test\"\n  }\n}\n"
+          }
+        ],
+        "fix_rationale": "Adding package.json gives npm the workspace metadata and test script needed to run the existing Node test.",
+        "reviewer_record": {
+          "validated_in_sandbox_at": "2026-04-20T11:26:18+00:00",
+          "sandbox_pre_fix_exit_code": 254,
+          "sandbox_pre_fix_stderr_match": true,
+          "sandbox_post_fix_exit_code": 0,
+          "sandbox_workdir_hash_pre": "eb7d5b1c80cb4df2620d52ca38c7cac17b9c5390f37bdb2a81a3c15060dd9e8c",
+          "sandbox_workdir_hash_post": "32bed00d15502933ef06e7863fbd396a37070535d5ffbec65ff0e7352d6beaf5",
+          "notes": "authored by codex; pre-fix fails+matches regex, post-fix passes"
+        }
+      },
+      "contributor_fingerprint": "upstream_authored"
+    },
+    {
+      "pattern_id": "candidate.node.file_not_found.002",
+      "ecosystem": "node",
+      "error_class": "file_not_found",
+      "description": "lockfile not found in CI",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "ERR_PNPM_NO_LOCKFILE|npm.*No lockfile found"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "ls -la 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "ERR_PNPM_NO_LOCKFILE|npm.*No lockfile found"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Path: lockfile not found in CI"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ],
+      "authored_fixture": {
+        "authored_at": "2026-04-20T11:28:56+00:00",
+        "authored_by": "codex",
+        "authored_with_prompt_sha256": "5010722c287ffb9c01d2957cb01f4902fd2cc0506396216ddaff5bc4a2b8f3e4",
+        "verification_command": "pnpm install --frozen-lockfile 1>&2",
+        "expected_stderr_regex": "ERR_PNPM_NO_LOCKFILE",
+        "files": [
+          {
+            "path": "package.json",
+            "content": "{\n  \"name\": \"lockfile-not-found-fixture\",\n  \"version\": \"1.0.0\",\n  \"private\": true,\n  \"packageManager\": \"pnpm@9.15.9\",\n  \"scripts\": {\n    \"verify\": \"pnpm install --frozen-lockfile 1>&2\"\n  },\n  \"dependencies\": {\n    \"local-helper\": \"file:local-helper\"\n  }\n}\n"
+          },
+          {
+            "path": "local-helper/package.json",
+            "content": "{\n  \"name\": \"local-helper\",\n  \"version\": \"1.0.0\",\n  \"main\": \"index.js\"\n}\n"
+          },
+          {
+            "path": "local-helper/index.js",
+            "content": "module.exports = function answer() {\n  return 42;\n};\n"
+          }
+        ],
+        "reference_fix_files": [
+          {
+            "path": "pnpm-lock.yaml",
+            "content": "lockfileVersion: '9.0'\n\nsettings:\n  autoInstallPeers: true\n  excludeLinksFromLockfile: false\n\nimporters:\n\n  .:\n    dependencies:\n      local-helper:\n        specifier: file:local-helper\n        version: file:local-helper\n\npackages:\n\n  local-helper@file:local-helper:\n    resolution: {directory: local-helper, type: directory}\n\nsnapshots:\n\n  local-helper@file:local-helper: {}\n"
+          }
+        ],
+        "fix_rationale": "Commit the generated pnpm-lock.yaml so frozen-lockfile installs in CI have the required lockfile.",
+        "reviewer_record": {
+          "validated_in_sandbox_at": "2026-04-20T11:28:56+00:00",
+          "sandbox_pre_fix_exit_code": 1,
+          "sandbox_pre_fix_stderr_match": true,
+          "sandbox_post_fix_exit_code": 0,
+          "sandbox_workdir_hash_pre": "0a8ed14cc843ec8419144c88e7a546548460126ad43aa283974759a9d4ef7ca8",
+          "sandbox_workdir_hash_post": "3f1e828be326a8c74fafe7a2e946bc0e6776b3f5d801e0f6c0afe1d5fa64b796",
+          "notes": "authored by codex; pre-fix fails+matches regex, post-fix passes"
+        }
+      },
+      "contributor_fingerprint": "upstream_authored"
+    },
+    {
+      "pattern_id": "candidate.node.file_not_found.003",
+      "ecosystem": "node",
+      "error_class": "file_not_found",
+      "description": "entry file path in package.json wrong",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "Cannot find module.*main"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "ls -la 2>&1",
+        "trigger_env": {},
+        "expected_stderr_match": "Cannot find module.*main"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Path: entry file path in package.json wrong"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ],
+      "authored_fixture": {
+        "authored_at": "2026-04-20T11:30:09+00:00",
+        "authored_by": "codex",
+        "authored_with_prompt_sha256": "0b502fd3520c13c825c9d0fafa03ad9352ca494e86668882f0a64c9a03d14ece",
+        "verification_command": "node .",
+        "expected_stderr_regex": "Cannot find module.*main",
+        "files": [
+          {
+            "path": "package.json",
+            "content": "{\n  \"name\": \"bad-main-entry\",\n  \"version\": \"1.0.0\",\n  \"main\": \"main\",\n  \"scripts\": {\n    \"start\": \"node .\"\n  }\n}\n"
+          },
+          {
+            "path": "app.js",
+            "content": "console.log(\"application started\");\n"
+          }
+        ],
+        "reference_fix_files": [
+          {
+            "path": "package.json",
+            "content": "{\n  \"name\": \"bad-main-entry\",\n  \"version\": \"1.0.0\",\n  \"main\": \"app.js\",\n  \"scripts\": {\n    \"start\": \"node .\"\n  }\n}\n"
+          }
+        ],
+        "fix_rationale": "The package entry point should reference the existing app.js file instead of the missing main file.",
+        "reviewer_record": {
+          "validated_in_sandbox_at": "2026-04-20T11:30:09+00:00",
+          "sandbox_pre_fix_exit_code": 1,
+          "sandbox_pre_fix_stderr_match": true,
+          "sandbox_post_fix_exit_code": 0,
+          "sandbox_workdir_hash_pre": "f2c19f5d418fb4d48b60e9ad94246ab825162e44480de20ac6a32a53543ef12f",
+          "sandbox_workdir_hash_post": "2c1ef27cdec14f80289227468afc5a730e7083664b8f9806d5109ef835b4728d",
+          "notes": "authored by codex; pre-fix fails+matches regex, post-fix passes"
+        }
+      },
+      "contributor_fingerprint": "upstream_authored"
+    }
+  ]
+}

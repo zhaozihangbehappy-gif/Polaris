@@ -1,0 +1,233 @@
+{
+  "ecosystem": "node",
+  "error_class": "timeout",
+  "schema_version": 4,
+  "records": [
+    {
+      "pattern_id": "node.timeout.000",
+      "ecosystem": "node",
+      "error_class": "timeout",
+      "description": "Jest test timeout exceeded \u2014 increase test timeout via --testTimeout flag or set_timeout hint",
+      "source": "prebuilt",
+      "trigger_signals": {
+        "stderr_regex": [
+          "Exceeded timeout of \\d+ ms for a test|jest\\.setTimeout|--testTimeout"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "node -e \"console.error('thrown: \\\"Exceeded timeout of 5000 ms for a test.\\nUse jest.setTimeout(newTimeout) to increase the timeout value, if this is a long-running test.\\\"')\" 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "Exceeded timeout of \\d+ ms",
+        "expected_fix_outcome": "different_error_or_success"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "set_timeout",
+            "timeout_ms": 30000
+          },
+          {
+            "kind": "append_flags",
+            "flags": "--testTimeout=30000"
+          }
+        ],
+        "fix_command": "bash -c 'echo \"timeout increased (simulated fix)\"; exit 0'",
+        "fix_env": {},
+        "description": "Jest test timeout exceeded \u2014 increase test timeout via --testTimeout flag or set_timeout hint"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": [
+          {
+            "agent": "claude_code",
+            "agent_version": "unknown",
+            "model": "claude-haiku-4-5-20251001",
+            "date_verified": "2026-04-20T12:07:26+00:00",
+            "status": "verified_live",
+            "artifact_path": "eval/runs/20260420T200629/transcripts/claude_code__generated_node_timeout_000__polaris.txt",
+            "transcript_hash": "2f524a08e4bb058c0c124a44f352d8deec79aff2ff89eb04bb291fedceb09a19",
+            "pre_failure_reproduced": true,
+            "workdir_manifest_hash": "a1504a4180f1b8848dd98be0590aee5287f2e54268fc3dcaa19434aeadd98e36",
+            "notes": "case=generated_node_timeout_000 polaris_enabled=True rounds=1 tool_calls=8 tokens=186"
+          }
+        ]
+      },
+      "legacy_v3": {
+        "stderr_pattern": "Exceeded timeout of \\d+ ms for a test|jest\\.setTimeout|--testTimeout",
+        "avoidance_hints": [
+          {
+            "kind": "set_timeout",
+            "timeout_ms": 30000
+          },
+          {
+            "kind": "append_flags",
+            "flags": "--testTimeout=30000"
+          }
+        ],
+        "description": "Jest test timeout exceeded \u2014 increase test timeout via --testTimeout flag or set_timeout hint",
+        "source": "prebuilt",
+        "reproduction": {
+          "command": "node -e \"console.error('thrown: \\\"Exceeded timeout of 5000 ms for a test.\\nUse jest.setTimeout(newTimeout) to increase the timeout value, if this is a long-running test.\\\"')\" 2>&1 || true",
+          "trigger_env": {},
+          "expected_stderr_match": "Exceeded timeout of \\d+ ms",
+          "fix_env": {},
+          "expected_fix_outcome": "different_error_or_success",
+          "fix_command": "bash -c 'echo \"timeout increased (simulated fix)\"; exit 0'"
+        }
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds"
+      ],
+      "authored_fixture": {
+        "authored_at": "2026-04-20T02:56:39+00:00",
+        "authored_by": "codex",
+        "authored_with_prompt_sha256": "95feec4a01838c5419474536aeb95d9928a1e0aeac30fa27eddeadd21d84ec46",
+        "verification_command": "npm test",
+        "expected_stderr_regex": "Exceeded timeout of \\d+ ms for a test|jest\\.setTimeout|--testTimeout",
+        "files": [
+          {
+            "path": "package.json",
+            "content": "{\n  \"scripts\": {\n    \"test\": \"node test.js --testTimeout=20\"\n  }\n}\n"
+          },
+          {
+            "path": "test.js",
+            "content": "const assert = require(\"node:assert/strict\");\n\nconst timeoutArg = process.argv.find((arg) => arg.startsWith(\"--testTimeout=\"));\nconst timeoutMs = timeoutArg ? Number(timeoutArg.split(\"=\")[1]) : 50;\n\nfunction slowOperation() {\n  return new Promise((resolve) => setTimeout(() => resolve(\"done\"), 60));\n}\n\nasync function runTest(name, fn) {\n  let timer;\n  const timeout = new Promise((_, reject) => {\n    timer = setTimeout(() => {\n      reject(\n        new Error(\n          `Exceeded timeout of ${timeoutMs} ms for a test. Use jest.setTimeout(newTimeout) or run with --testTimeout=<ms>.`\n        )\n      );\n    }, timeoutMs);\n  });\n\n  try {\n    await Promise.race([fn(), timeout]);\n    clearTimeout(timer);\n    console.log(`ok - ${name}`);\n  } catch (error) {\n    clearTimeout(timer);\n    console.error(error.message);\n    process.exitCode = 1;\n  }\n}\n\nrunTest(\"slow operation finishes\", async () => {\n  assert.equal(await slowOperation(), \"done\");\n});\n"
+          }
+        ],
+        "reference_fix_files": [
+          {
+            "path": "package.json",
+            "content": "{\n  \"scripts\": {\n    \"test\": \"node test.js --testTimeout=100\"\n  }\n}\n"
+          }
+        ],
+        "fix_rationale": "The asynchronous operation needs roughly 60 ms, so increasing the configured --testTimeout above that duration lets the test finish normally.",
+        "reviewer_record": {
+          "validated_in_sandbox_at": "2026-04-20T02:56:39+00:00",
+          "sandbox_pre_fix_exit_code": 1,
+          "sandbox_pre_fix_stderr_match": true,
+          "sandbox_post_fix_exit_code": 0,
+          "sandbox_workdir_hash_pre": "a1504a4180f1b8848dd98be0590aee5287f2e54268fc3dcaa19434aeadd98e36",
+          "sandbox_workdir_hash_post": "eb62f0246ea06601cd1f16594900a4c0a082560ec0c70c6f67adf136a8f27f42",
+          "notes": "authored by codex; pre-fix fails+matches regex, post-fix passes"
+        }
+      }
+    },
+    {
+      "pattern_id": "node.timeout.001",
+      "ecosystem": "node",
+      "error_class": "timeout",
+      "description": "Generic Node.js operation timeout \u2014 increase timeout for network or I/O bound operations",
+      "source": "prebuilt",
+      "trigger_signals": {
+        "stderr_regex": [
+          "operation timed out|ETIMEDOUT|timeout of \\d+ms exceeded"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "node -e \"const ac=new AbortController(); setTimeout(()=>ac.abort(),50); const {setTimeout:st}=require('timers/promises'); st(10000,null,{signal:ac.signal}).catch(e=>console.error(e.message))\" 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "abort|timeout",
+        "expected_fix_outcome": "different_error_or_success"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "set_timeout",
+            "timeout_ms": 60000
+          }
+        ],
+        "fix_command": "bash -c 'echo \"timeout increased (simulated fix)\"; exit 0'",
+        "fix_env": {},
+        "description": "Generic Node.js operation timeout \u2014 increase timeout for network or I/O bound operations"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": [
+          {
+            "agent": "claude_code",
+            "agent_version": "unknown",
+            "model": "claude-opus-4-7",
+            "date_verified": "2026-04-20T11:30:27+00:00",
+            "status": "verified_live",
+            "artifact_path": "eval/runs/20260420T193001/transcripts/claude_code__generated_node_timeout_001__polaris.txt",
+            "transcript_hash": "42a59e124fc7fd43f96fc12fe677b49020ed41e25203312930b29fbb6402b3b6",
+            "pre_failure_reproduced": true,
+            "workdir_manifest_hash": "881ccc2bd495984fce8f376381c83b19bf25474ab23725343bdfbfb4868ddfa6",
+            "notes": "case=generated_node_timeout_001 polaris_enabled=True rounds=1 tool_calls=6 tokens=522"
+          }
+        ]
+      },
+      "legacy_v3": {
+        "stderr_pattern": "operation timed out|ETIMEDOUT|timeout of \\d+ms exceeded",
+        "avoidance_hints": [
+          {
+            "kind": "set_timeout",
+            "timeout_ms": 60000
+          }
+        ],
+        "description": "Generic Node.js operation timeout \u2014 increase timeout for network or I/O bound operations",
+        "source": "prebuilt",
+        "reproduction": {
+          "command": "node -e \"const ac=new AbortController(); setTimeout(()=>ac.abort(),50); const {setTimeout:st}=require('timers/promises'); st(10000,null,{signal:ac.signal}).catch(e=>console.error(e.message))\" 2>&1 || true",
+          "trigger_env": {},
+          "expected_stderr_match": "abort|timeout",
+          "fix_env": {},
+          "expected_fix_outcome": "different_error_or_success",
+          "fix_command": "bash -c 'echo \"timeout increased (simulated fix)\"; exit 0'"
+        }
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds"
+      ],
+      "authored_fixture": {
+        "authored_at": "2026-04-20T02:59:00+00:00",
+        "authored_by": "codex",
+        "authored_with_prompt_sha256": "0ebb28f88c1a90b272a4eb074d454b5d82cbf46a43f157205e872971afb3b973",
+        "verification_command": "node verify.js",
+        "expected_stderr_regex": "operation timed out after 50ms",
+        "files": [
+          {
+            "path": "runner.js",
+            "content": "const { Readable, Writable } = require('node:stream');\nconst { pipeline } = require('node:stream/promises');\n\nconst DEFAULT_TIMEOUT_MS = 50;\nconst STREAM_DELAY_MS = 120;\n\nfunction delayedReadable(delayMs) {\n  let started = false;\n  return new Readable({\n    read() {\n      if (started) {\n        return;\n      }\n\n      started = true;\n      setTimeout(() => {\n        this.push('ok');\n        this.push(null);\n      }, delayMs);\n    },\n  });\n}\n\nasync function readSlowStream(timeoutMs = DEFAULT_TIMEOUT_MS) {\n  let output = '';\n  const sink = new Writable({\n    write(chunk, encoding, callback) {\n      output += chunk.toString();\n      callback();\n    },\n  });\n\n  try {\n    await pipeline(delayedReadable(STREAM_DELAY_MS), sink, {\n      signal: AbortSignal.timeout(timeoutMs),\n    });\n  } catch (error) {\n    if (error.name === 'AbortError') {\n      throw new Error(`operation timed out after ${timeoutMs}ms`, {\n        cause: error,\n      });\n    }\n\n    throw error;\n  }\n\n  return output;\n}\n\nmodule.exports = { readSlowStream };\n"
+          },
+          {
+            "path": "verify.js",
+            "content": "const assert = require('node:assert/strict');\nconst { readSlowStream } = require('./runner');\n\n(async () => {\n  const output = await readSlowStream();\n  assert.equal(output, 'ok');\n})();\n"
+          }
+        ],
+        "reference_fix_files": [
+          {
+            "path": "runner.js",
+            "content": "const { Readable, Writable } = require('node:stream');\nconst { pipeline } = require('node:stream/promises');\n\nconst DEFAULT_TIMEOUT_MS = 250;\nconst STREAM_DELAY_MS = 120;\n\nfunction delayedReadable(delayMs) {\n  let started = false;\n  return new Readable({\n    read() {\n      if (started) {\n        return;\n      }\n\n      started = true;\n      setTimeout(() => {\n        this.push('ok');\n        this.push(null);\n      }, delayMs);\n    },\n  });\n}\n\nasync function readSlowStream(timeoutMs = DEFAULT_TIMEOUT_MS) {\n  let output = '';\n  const sink = new Writable({\n    write(chunk, encoding, callback) {\n      output += chunk.toString();\n      callback();\n    },\n  });\n\n  try {\n    await pipeline(delayedReadable(STREAM_DELAY_MS), sink, {\n      signal: AbortSignal.timeout(timeoutMs),\n    });\n  } catch (error) {\n    if (error.name === 'AbortError') {\n      throw new Error(`operation timed out after ${timeoutMs}ms`, {\n        cause: error,\n      });\n    }\n\n    throw error;\n  }\n\n  return output;\n}\n\nmodule.exports = { readSlowStream };\n"
+          }
+        ],
+        "fix_rationale": "The stream pipeline timeout must be longer than the deterministic 120ms read delay so the operation can complete.",
+        "reviewer_record": {
+          "validated_in_sandbox_at": "2026-04-20T02:59:00+00:00",
+          "sandbox_pre_fix_exit_code": 1,
+          "sandbox_pre_fix_stderr_match": true,
+          "sandbox_post_fix_exit_code": 0,
+          "sandbox_workdir_hash_pre": "881ccc2bd495984fce8f376381c83b19bf25474ab23725343bdfbfb4868ddfa6",
+          "sandbox_workdir_hash_post": "33c2d0f7c9d7cde715261a999db6d6c1f86de891dad75cf0612a952cee77771a",
+          "notes": "authored by codex; pre-fix fails+matches regex, post-fix passes"
+        }
+      }
+    }
+  ]
+}

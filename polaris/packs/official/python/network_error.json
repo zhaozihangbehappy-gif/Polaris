@@ -1,0 +1,217 @@
+{
+  "ecosystem": "python",
+  "error_class": "network_error",
+  "schema_version": 4,
+  "records": [
+    {
+      "pattern_id": "python.network_error.000",
+      "ecosystem": "python",
+      "error_class": "network_error",
+      "description": "Connection refused — retry with backoff in case the service is starting up",
+      "source": "prebuilt",
+      "trigger_signals": {
+        "stderr_regex": [
+          "ConnectionRefusedError: \\[Errno 111\\]|Failed to establish a new connection.*Connection refused"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "python3 -c \"import urllib.request; urllib.request.urlopen('http://127.0.0.1:19876/')\" 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "ConnectionRefusedError|Connection refused",
+        "expected_fix_outcome": "different_error_or_success"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "retry_with_backoff",
+            "max_retries": 3,
+            "base_delay_ms": 2000
+          }
+        ],
+        "fix_command": "bash -c 'echo \"retried with backoff (simulated fix)\"; exit 0'",
+        "fix_env": {},
+        "description": "Connection refused — retry with backoff in case the service is starting up"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "legacy_v3": {
+        "stderr_pattern": "ConnectionRefusedError: \\[Errno 111\\]|Failed to establish a new connection.*Connection refused",
+        "avoidance_hints": [
+          {
+            "kind": "retry_with_backoff",
+            "max_retries": 3,
+            "base_delay_ms": 2000
+          }
+        ],
+        "description": "Connection refused — retry with backoff in case the service is starting up",
+        "source": "prebuilt",
+        "reproduction": {
+          "command": "python3 -c \"import urllib.request; urllib.request.urlopen('http://127.0.0.1:19876/')\" 2>&1 || true",
+          "trigger_env": {},
+          "expected_stderr_match": "ConnectionRefusedError|Connection refused",
+          "fix_env": {},
+          "expected_fix_outcome": "different_error_or_success",
+          "fix_command": "bash -c 'echo \"retried with backoff (simulated fix)\"; exit 0'"
+        }
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ],
+      "authored_fixture": {
+        "authored_at": "2026-04-20T03:02:38+00:00",
+        "authored_by": "codex",
+        "authored_with_prompt_sha256": "ad3893a89335a92ec7874601ef5337add47f0b986deb3c631223c90d580476f0",
+        "verification_command": "python3 -m unittest -q",
+        "expected_stderr_regex": "ConnectionRefusedError: \\[Errno 111\\]",
+        "files": [
+          {
+            "path": "client.py",
+            "content": "import socket\n\n\ndef fetch_banner(host, port):\n    with socket.create_connection((host, port), timeout=0.2) as sock:\n        return sock.recv(64).decode(\"ascii\")\n"
+          },
+          {
+            "path": "test_client.py",
+            "content": "import unittest\nfrom unittest import mock\n\nfrom client import fetch_banner\n\n\nclass ReadySocket:\n    def __enter__(self):\n        return self\n\n    def __exit__(self, exc_type, exc, tb):\n        return False\n\n    def recv(self, size):\n        return b\"ready\"\n\n\nclass StartingService:\n    def __init__(self):\n        self.attempts = 0\n\n    def connect(self, address, timeout):\n        self.attempts += 1\n        if self.attempts < 3:\n            raise ConnectionRefusedError(111, \"Connection refused\")\n        return ReadySocket()\n\n\nclass ClientTest(unittest.TestCase):\n    def test_client_waits_for_service_startup(self):\n        service = StartingService()\n\n        with mock.patch(\"socket.create_connection\", side_effect=service.connect):\n            self.assertEqual(fetch_banner(\"127.0.0.1\", 8080), \"ready\")\n"
+          }
+        ],
+        "reference_fix_files": [
+          {
+            "path": "client.py",
+            "content": "import socket\nimport time\n\n\ndef fetch_banner(host, port):\n    delay = 0.02\n    last_error = None\n    for _ in range(6):\n        try:\n            with socket.create_connection((host, port), timeout=0.2) as sock:\n                return sock.recv(64).decode(\"ascii\")\n        except ConnectionRefusedError as exc:\n            last_error = exc\n            time.sleep(delay)\n            delay *= 2\n    raise last_error\n"
+          }
+        ],
+        "fix_rationale": "Retrying refused connections with a short exponential backoff lets the client tolerate a service that is still starting.",
+        "reviewer_record": {
+          "validated_in_sandbox_at": "2026-04-20T03:02:38+00:00",
+          "sandbox_pre_fix_exit_code": 1,
+          "sandbox_pre_fix_stderr_match": true,
+          "sandbox_post_fix_exit_code": 0,
+          "sandbox_workdir_hash_pre": "4a81ebba61821f365071e69aac5e10a72985713b87525d3ff644a51f5fc6b813",
+          "sandbox_workdir_hash_post": "1bf860541f311f483a6fddf7af1b962cd31e7c14998b233dc8a53fe054e2f656",
+          "notes": "authored by codex; pre-fix fails+matches regex, post-fix passes"
+        }
+      }
+    },
+    {
+      "pattern_id": "python.network_error.001",
+      "ecosystem": "python",
+      "error_class": "network_error",
+      "description": "SSL certificate verification failed — may need to set CA bundle path or use system certs",
+      "source": "prebuilt",
+      "trigger_signals": {
+        "stderr_regex": [
+          "ssl\\.SSLCertVerificationError|CERTIFICATE_VERIFY_FAILED|SSL: CERTIFICATE_VERIFY_FAILED"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "python3 -c \"import ssl,urllib.request; ctx=ssl.create_default_context(); ctx.load_verify_locations('/tmp/_polaris_nonexistent_ca.pem')\" 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "SSL|certificate|FileNotFoundError",
+        "expected_fix_outcome": "different_error_or_success"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "REQUESTS_CA_BUNDLE": "",
+              "CURL_CA_BUNDLE": ""
+            }
+          }
+        ],
+        "fix_command": "bash -c 'echo \"REQUESTS_CA_BUNDLE= applied (simulated fix)\"; exit 0'",
+        "fix_env": {},
+        "description": "SSL certificate verification failed — may need to set CA bundle path or use system certs"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "legacy_v3": {
+        "stderr_pattern": "ssl\\.SSLCertVerificationError|CERTIFICATE_VERIFY_FAILED|SSL: CERTIFICATE_VERIFY_FAILED",
+        "avoidance_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "REQUESTS_CA_BUNDLE": "",
+              "CURL_CA_BUNDLE": ""
+            }
+          }
+        ],
+        "description": "SSL certificate verification failed — may need to set CA bundle path or use system certs",
+        "source": "prebuilt",
+        "reproduction": {
+          "command": "python3 -c \"import ssl,urllib.request; ctx=ssl.create_default_context(); ctx.load_verify_locations('/tmp/_polaris_nonexistent_ca.pem')\" 2>&1 || true",
+          "trigger_env": {},
+          "expected_stderr_match": "SSL|certificate|FileNotFoundError",
+          "fix_env": {},
+          "expected_fix_outcome": "different_error_or_success",
+          "fix_command": "bash -c 'echo \"REQUESTS_CA_BUNDLE= applied (simulated fix)\"; exit 0'"
+        }
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ],
+      "authored_fixture": {
+        "authored_at": "2026-04-20T03:04:06+00:00",
+        "authored_by": "codex",
+        "authored_with_prompt_sha256": "2a8e8da95a8eef6f66b98fa315857d6ec166fd05c78d725537ca2d503a0acb74",
+        "verification_command": "python3 -m unittest",
+        "expected_stderr_regex": "ssl\\.SSLCertVerificationError: \\[SSL: CERTIFICATE_VERIFY_FAILED\\]",
+        "files": [
+          {
+            "path": "ssl_client.py",
+            "content": "import ssl\n\n\ndef make_client_context():\n    return ssl.create_default_context()\n"
+          },
+          {
+            "path": "test_ssl_client.py",
+            "content": "import ssl\nimport unittest\nfrom pathlib import Path\n\nimport ssl_client\n\nCERT = Path(__file__).with_name(\"server_cert.pem\")\nKEY = Path(__file__).with_name(\"server_key.pem\")\n\n\ndef complete_memory_tls_handshake(client_context):\n    server_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)\n    server_context.load_cert_chain(CERT, KEY)\n\n    client_in = ssl.MemoryBIO()\n    client_out = ssl.MemoryBIO()\n    server_in = ssl.MemoryBIO()\n    server_out = ssl.MemoryBIO()\n\n    client = client_context.wrap_bio(\n        client_in, client_out, server_side=False, server_hostname=\"localhost\"\n    )\n    server = server_context.wrap_bio(server_in, server_out, server_side=True)\n\n    client_done = False\n    server_done = False\n    for _ in range(10):\n        if not client_done:\n            try:\n                client.do_handshake()\n                client_done = True\n            except ssl.SSLWantReadError:\n                pass\n\n        data = client_out.read()\n        if data:\n            server_in.write(data)\n\n        if not server_done:\n            try:\n                server.do_handshake()\n                server_done = True\n            except ssl.SSLWantReadError:\n                pass\n\n        data = server_out.read()\n        if data:\n            client_in.write(data)\n\n        if client_done and server_done:\n            return True\n\n    return False\n\n\nclass TestSSLClient(unittest.TestCase):\n    def test_client_context_trusts_local_server_certificate(self):\n        context = ssl_client.make_client_context()\n        self.assertTrue(complete_memory_tls_handshake(context))\n\n\nif __name__ == \"__main__\":\n    unittest.main()\n"
+          },
+          {
+            "path": "server_cert.pem",
+            "content": "-----BEGIN CERTIFICATE-----\nMIIDJTCCAg2gAwIBAgIUcNsth7lDXvlCffogLLZdt73AMHAwDQYJKoZIhvcNAQEL\nBQAwFDESMBAGA1UEAwwJbG9jYWxob3N0MB4XDTI2MDQyMDAzMDEyMloXDTM2MDQx\nNzAzMDEyMlowFDESMBAGA1UEAwwJbG9jYWxob3N0MIIBIjANBgkqhkiG9w0BAQEF\nAAOCAQ8AMIIBCgKCAQEAtq7nbXa+MDSN0WFU4fD+Hi0xe97eUAFMlsk/S65OgPrM\nM2rT0JmhQmr0hQ4myn7HjffiXo0Xj9ilW4qBp73IZ/bYwRqxgZ8dCLnc9ySgZuek\ntxuSl36LuXT52ryecPC2EvT5uOSDAcZM7cW0w0nj9DJTp6K0V/fz3SO3OayrsPxy\nbkw9/yfOSB7/HMT8yMrZ54vXI9XjgTs47L64n/hZckDbiecoKn0qPSSTamrAtIAJ\nVdfnZAkZGtvIC+Rx12EmrJVue5l3CH6hxmBjt47y6cIC+krVvYeDNDwyRtizRC4c\nYEFeRKmY8z0n8XfxOOgvSQ6OVXDeOyE09Q8ws9LIfwIDAQABo28wbTAdBgNVHQ4E\nFgQUWTDm6rTLXaM4ljr9Gs3uWkyZokIwHwYDVR0jBBgwFoAUWTDm6rTLXaM4ljr9\nGs3uWkyZokIwGgYDVR0RBBMwEYIJbG9jYWxob3N0hwR/AAABMA8GA1UdEwEB/wQF\nMAMBAf8wDQYJKoZIhvcNAQELBQADggEBAJOTmGAize7z746SaItmw1nFKNQypo3A\nFuVEzDE/Gn4zbPCDs0LDZiMUqiBnnKDm0g1Xvk4fTZYcmEWa/lOWU9uJNxRTaWD6\ncVtwbiuEq4OVUFwizbOyILrub1a1YuyQ02/X4BnOLbVPBUD9xFC6qG6ZWSROjHk3\nvj8aPCH5GXDSeq26rVYOHr/b+s176rULCdGvNZopYhHHKMjIhQakyqMyGOEpNoh3\nwtUm24e2VbD+wcOGFs4/a3y2xzSACe7xphmdoxVGBd3+qbYZTwFs5MQ4yFqdpx0O\ntN27QZuOsSViVo/7RHD1Nv3ji5rltFXEu8+ErSuBF3XPOqpFcvxtLmQ=\n-----END CERTIFICATE-----\n"
+          },
+          {
+            "path": "server_key.pem",
+            "content": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC2rudtdr4wNI3R\nYVTh8P4eLTF73t5QAUyWyT9Lrk6A+swzatPQmaFCavSFDibKfseN9+JejReP2KVb\nioGnvchn9tjBGrGBnx0Iudz3JKBm56S3G5KXfou5dPnavJ5w8LYS9Pm45IMBxkzt\nxbTDSeP0MlOnorRX9/PdI7c5rKuw/HJuTD3/J85IHv8cxPzIytnni9cj1eOBOzjs\nvrif+FlyQNuJ5ygqfSo9JJNqasC0gAlV1+dkCRka28gL5HHXYSaslW57mXcIfqHG\nYGO3jvLpwgL6StW9h4M0PDJG2LNELhxgQV5EqZjzPSfxd/E46C9JDo5VcN47ITT1\nDzCz0sh/AgMBAAECggEABSBflMyBWTRbitwkRMDkCLAnYTzN8hXPP4Eyc9FWf6Hj\nsa+v3DAFFl2OmUTeS5sG+fg4uhy6Fz3McIcXACbAJUOILdPhCYYP2Dfxa15z2xKc\nczNklJ7AlTnWOlBGHyo9TPpJH1CktbVWx4QsTR/ZZ0SZ4PlP/hLFttdy1vBkn9Wx\newRgajZRA16fPl6kSJKA9hV72iWb8KthFF+Z1OutsMhHnEvbMsATluJkjUpagL2V\nEmWXG98gncVqIJVJk9y5gvAnwB0+TdeP/9AtGGiDc4way0M0Kg+01bbedQ0ukoWd\nXfoqgtpjUB8Md2j1nFr4qkMdluFa/dBONzSH4jxd0QKBgQD5QlpUN/d9n/Iam5hW\ndNd+ZAeiKAe1nqE2G9+t7lym2Hr0ClGLblhoiTfwZ2VL29oqmYR4Bth7okcO5aw+\n4GYqSRyQm5+pbqEP4myi41HLaB2pfrvCLMastEs/YBy+97HqFNWVJ8epHoks7lRv\nbtivYbCsHwt2J+nQPn06kqbqjwKBgQC7n6OKO9i941DfokABPI2ZQ4/211OsJCXC\nbePQyMFnrPHgytb7CoB/MwBM63tqCAh9kGZvUEuJrVxZGkY1Og9TkuNFilBarkbT\neGIJ/nThkIrXtmJuhcnbxcM9cHOmuQ/Rad+AwThwhMREuT+fSI1/0MqavA/tvN84\nkmLRAo37EQKBgQCW7IhJKkIevLQZTFEnOEQq8WJ12wsf+1bdrm73n7ZWCAoargzG\nAiBh24QVemWpUwt8c8vz6SE3awDfkk2DHNh/jhlPrgs0yhmXxp/E2SNzqC0drfD+\nF6KMe/Z7/zQopU4C0G6qi5WnXyfsHrrdZh6pwtr4vStxdaVrRAsLZjTPHQKBgCvx\n6iYYel2PfoPCxucDPc8mCfQw3wI0vTta7b8bJmGYGlcia1QFU693TJy3kwJ0uzhd\nuABeeDLZDgY4pzUUUj6q6tyA1u1GYIRrb9sTZGDor/xyVX+5ilwVZ/NeAViNg+zy\ntUy89PE1x5qpIQO3xJypVKsFXV27nTTs5IQ76vFhAoGAZjhZLMD0aB66YLiYqlSJ\ndUH12GDcYPoRj5hz8kUJ7no5Sypl8hBNA4wLzEvK5GckPBqo3i+HUGbzv1A2s6Sp\n0QamoKCpP1TCWQCRe6h8c2iNaZKmUMsH2uktYkQ+X7V2SC5iQoxFuHKThEE+Qr0i\nd0gOqv6FZZQkGf5bI35fVlE=\n-----END PRIVATE KEY-----\n"
+          }
+        ],
+        "reference_fix_files": [
+          {
+            "path": "ssl_client.py",
+            "content": "import ssl\nfrom pathlib import Path\n\nCA_BUNDLE = Path(__file__).with_name(\"server_cert.pem\")\n\n\ndef make_client_context():\n    return ssl.create_default_context(cafile=str(CA_BUNDLE))\n"
+          }
+        ],
+        "fix_rationale": "Load the bundled certificate as a trusted CA so Python can verify the local TLS peer instead of rejecting the self-signed certificate.",
+        "reviewer_record": {
+          "validated_in_sandbox_at": "2026-04-20T03:04:06+00:00",
+          "sandbox_pre_fix_exit_code": 1,
+          "sandbox_pre_fix_stderr_match": true,
+          "sandbox_post_fix_exit_code": 0,
+          "sandbox_workdir_hash_pre": "cba34b00e04513d73eb3ea9c1c234bfbfeedb62becfdc30b9bd8b070b7a2cb1e",
+          "sandbox_workdir_hash_post": "0ad8443c05be815fa50a642326e40c5a008d0012ae1df81fa32a8a8c9c558c43",
+          "notes": "authored by codex; pre-fix fails+matches regex, post-fix passes"
+        }
+      }
+    }
+  ]
+}

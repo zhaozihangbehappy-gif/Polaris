@@ -1,0 +1,253 @@
+{
+  "ecosystem": "java",
+  "error_class": "version_conflict",
+  "schema_version": 4,
+  "records": [
+    {
+      "pattern_id": "java.version_conflict.000",
+      "ecosystem": "java",
+      "error_class": "version_conflict",
+      "description": "UnsupportedClassVersionError \u2014 upgrade JDK to match compiled class version",
+      "source": "prebuilt",
+      "trigger_signals": {
+        "stderr_regex": [
+          "UnsupportedClassVersionError.*class file version \\d+\\.0"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "bash -c 'echo \"java.lang.UnsupportedClassVersionError: com/myapp/Main has been compiled by a more recent version of the Java Runtime (class file version 65.0), this version only recognizes up to 61.0\" >&2; exit 1'",
+        "trigger_env": {},
+        "expected_stderr_match": "UnsupportedClassVersionError",
+        "expected_fix_outcome": "different_error_or_success"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "JAVA_HOME": "/usr/lib/jvm/java-21-openjdk-amd64"
+            }
+          }
+        ],
+        "fix_command": "bash -c 'echo \"JAVA_HOME set (simulated)\"; exit 0'",
+        "fix_env": {
+          "JAVA_HOME": "/usr/lib/jvm/java-21-openjdk-amd64"
+        },
+        "description": "UnsupportedClassVersionError \u2014 upgrade JDK to match compiled class version"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": [
+          {
+            "agent": "claude_code",
+            "agent_version": "unknown",
+            "date_verified": "2026-04-20T10:59:13+00:00",
+            "status": "verified_live",
+            "artifact_path": "eval/runs/20260420T184924/transcripts/claude_code__generated_java_version_conflict_000__baseline.txt",
+            "transcript_hash": "e29cd6d3b3fede40d38195b8e9261085e964184447ee7628e78a7a33e62788a3",
+            "pre_failure_reproduced": true,
+            "workdir_manifest_hash": "f58db29fc355c559d374f618dde8e9b83bc642c12816da449802496c5c29db9e",
+            "notes": "case=generated_java_version_conflict_000 polaris_enabled=False rounds=1 tool_calls=7 tokens=382",
+            "model": "claude-haiku-4-5-20251001"
+          },
+          {
+            "agent": "claude_code",
+            "agent_version": "unknown",
+            "date_verified": "2026-04-20T10:59:13+00:00",
+            "status": "verified_live",
+            "artifact_path": "eval/runs/20260420T184924/transcripts/claude_code__generated_java_version_conflict_000__polaris.txt",
+            "transcript_hash": "8dc200d6ad558d175164c170058fccc8077438bbc4f6b217129dc5d812ce5bd0",
+            "pre_failure_reproduced": true,
+            "workdir_manifest_hash": "f58db29fc355c559d374f618dde8e9b83bc642c12816da449802496c5c29db9e",
+            "notes": "case=generated_java_version_conflict_000 polaris_enabled=True rounds=1 tool_calls=8 tokens=433",
+            "model": "claude-haiku-4-5-20251001"
+          },
+          {
+            "agent": "claude_code",
+            "agent_version": "unknown",
+            "model": "claude-haiku-4-5-20251001",
+            "date_verified": "2026-04-20T11:06:48+00:00",
+            "status": "verified_live",
+            "artifact_path": "eval/runs/20260420T190303/transcripts/claude_code__generated_java_version_conflict_000__polaris.txt",
+            "transcript_hash": "e323ee20515f6d356950f08073bc76e9df14511049c63b302d33c6ec9d424cbc",
+            "pre_failure_reproduced": true,
+            "workdir_manifest_hash": "f58db29fc355c559d374f618dde8e9b83bc642c12816da449802496c5c29db9e",
+            "notes": "case=generated_java_version_conflict_000 polaris_enabled=True rounds=1 tool_calls=7 tokens=209"
+          }
+        ]
+      },
+      "legacy_v3": {
+        "stderr_pattern": "UnsupportedClassVersionError.*class file version \\d+\\.0",
+        "avoidance_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "JAVA_HOME": "/usr/lib/jvm/java-21-openjdk-amd64"
+            }
+          }
+        ],
+        "description": "UnsupportedClassVersionError \u2014 upgrade JDK to match compiled class version",
+        "source": "prebuilt",
+        "reproduction": {
+          "command": "bash -c 'echo \"java.lang.UnsupportedClassVersionError: com/myapp/Main has been compiled by a more recent version of the Java Runtime (class file version 65.0), this version only recognizes up to 61.0\" >&2; exit 1'",
+          "trigger_env": {},
+          "expected_stderr_match": "UnsupportedClassVersionError",
+          "fix_env": {
+            "JAVA_HOME": "/usr/lib/jvm/java-21-openjdk-amd64"
+          },
+          "expected_fix_outcome": "different_error_or_success",
+          "fix_command": "bash -c 'echo \"JAVA_HOME set (simulated)\"; exit 0'"
+        }
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds"
+      ],
+      "authored_fixture": {
+        "authored_at": "2026-04-20T08:13:59+00:00",
+        "authored_by": "claude_code",
+        "authored_with_prompt_sha256": "6c747386b7494821074a480621b1557dc2d7cef23f9c8d86477d5f51b069fc0a",
+        "verification_command": "bash build.sh && java Main",
+        "expected_stderr_regex": "UnsupportedClassVersionError.*class file version \\d+\\.0",
+        "files": [
+          {
+            "path": "Main.java",
+            "content": "public class Main {\n    public static void main(String[] args) {\n        System.out.println(\"Hello, World!\");\n    }\n}\n"
+          },
+          {
+            "path": "build.sh",
+            "content": "#!/bin/bash\njavac Main.java\n# Patch class version to trigger UnsupportedClassVersionError\nprintf '\\x00\\x99' | dd of=Main.class bs=1 seek=6 count=2 conv=notrunc\n"
+          }
+        ],
+        "reference_fix_files": [
+          {
+            "path": "build.sh",
+            "content": "#!/bin/bash\njavac Main.java\n"
+          }
+        ],
+        "fix_rationale": "Remove the class version patching to allow the compiled class to run on the current JVM.",
+        "reviewer_record": {
+          "validated_in_sandbox_at": "2026-04-20T08:13:59+00:00",
+          "sandbox_pre_fix_exit_code": 1,
+          "sandbox_pre_fix_stderr_match": true,
+          "sandbox_post_fix_exit_code": 0,
+          "sandbox_workdir_hash_pre": "f58db29fc355c559d374f618dde8e9b83bc642c12816da449802496c5c29db9e",
+          "sandbox_workdir_hash_post": "10601db1f22f4239f96e190606aeba7069233b75c8de01e4454a1080fb7e168e",
+          "notes": "authored by claude_code; pre-fix fails+matches regex, post-fix passes"
+        }
+      }
+    },
+    {
+      "pattern_id": "java.version_conflict.001",
+      "ecosystem": "java",
+      "error_class": "version_conflict",
+      "description": "Source/target version mismatch \u2014 set JAVA_HOME to JDK matching project target version",
+      "source": "prebuilt",
+      "trigger_signals": {
+        "stderr_regex": [
+          "source release \\d+ requires target release \\d+|release version \\d+ not supported"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "bash -c 'echo \"error: release version 21 not supported\" >&2; exit 1'",
+        "trigger_env": {},
+        "expected_stderr_match": "release version \\d+ not supported",
+        "expected_fix_outcome": "different_error_or_success"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "JAVA_HOME": "/usr/lib/jvm/java-21-openjdk-amd64"
+            }
+          }
+        ],
+        "fix_command": "bash -c 'echo \"JAVA_HOME set (simulated)\"; exit 0'",
+        "fix_env": {
+          "JAVA_HOME": "/usr/lib/jvm/java-21-openjdk-amd64"
+        },
+        "description": "Source/target version mismatch \u2014 set JAVA_HOME to JDK matching project target version"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "legacy_v3": {
+        "stderr_pattern": "source release \\d+ requires target release \\d+|release version \\d+ not supported",
+        "avoidance_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "JAVA_HOME": "/usr/lib/jvm/java-21-openjdk-amd64"
+            }
+          }
+        ],
+        "description": "Source/target version mismatch \u2014 set JAVA_HOME to JDK matching project target version",
+        "source": "prebuilt",
+        "reproduction": {
+          "command": "bash -c 'echo \"error: release version 21 not supported\" >&2; exit 1'",
+          "trigger_env": {},
+          "expected_stderr_match": "release version \\d+ not supported",
+          "fix_env": {
+            "JAVA_HOME": "/usr/lib/jvm/java-21-openjdk-amd64"
+          },
+          "expected_fix_outcome": "different_error_or_success",
+          "fix_command": "bash -c 'echo \"JAVA_HOME set (simulated)\"; exit 0'"
+        }
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ],
+      "authored_fixture": {
+        "authored_at": "2026-04-20T08:14:54+00:00",
+        "authored_by": "claude_code",
+        "authored_with_prompt_sha256": "d3738ed02f5862b001046a4a9b843ae06b994796d5054874a452a22574fe338c",
+        "verification_command": "bash build.sh",
+        "expected_stderr_regex": "source release \\d+ requires target release \\d+",
+        "files": [
+          {
+            "path": "HelloWorld.java",
+            "content": "public class HelloWorld {\n    public static void main(String[] args) {\n        System.out.println(\"Hello, World!\");\n    }\n}\n"
+          },
+          {
+            "path": "build.sh",
+            "content": "#!/bin/bash\nmkdir -p classes\njavac -source 11 -target 8 -d classes HelloWorld.java\njava -cp classes HelloWorld\n"
+          }
+        ],
+        "reference_fix_files": [
+          {
+            "path": "build.sh",
+            "content": "#!/bin/bash\nmkdir -p classes\njavac -d classes HelloWorld.java\njava -cp classes HelloWorld\n"
+          }
+        ],
+        "fix_rationale": "Remove the mismatched -source and -target flags to allow javac to use compatible default versions.",
+        "reviewer_record": {
+          "validated_in_sandbox_at": "2026-04-20T08:14:54+00:00",
+          "sandbox_pre_fix_exit_code": 1,
+          "sandbox_pre_fix_stderr_match": true,
+          "sandbox_post_fix_exit_code": 0,
+          "sandbox_workdir_hash_pre": "64ee75d37eec96d94bbb648e8efbd173299cc8374a18ddf353414728f5f5cbb3",
+          "sandbox_workdir_hash_post": "9ef706342b1f07f3c7a142d81df0c5acf6481ba8e5eef3ff45ac0c923faef0ed",
+          "notes": "authored by claude_code; pre-fix fails+matches regex, post-fix passes"
+        }
+      }
+    }
+  ]
+}

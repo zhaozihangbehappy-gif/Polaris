@@ -1,0 +1,263 @@
+{
+  "ecosystem": "java",
+  "error_class": "config_error",
+  "schema_version": 4,
+  "records": [
+    {
+      "pattern_id": "java.config_error.000",
+      "ecosystem": "java",
+      "error_class": "config_error",
+      "description": "JAVA_HOME not set — point to system JDK installation",
+      "source": "prebuilt",
+      "trigger_signals": {
+        "stderr_regex": [
+          "JAVA_HOME is not defined correctly|JAVA_HOME is not set|no 'java' command could be found"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "bash -c 'echo \"Error: JAVA_HOME is not set and no java command could be found in your PATH.\" >&2; exit 1'",
+        "trigger_env": {},
+        "expected_stderr_match": "JAVA_HOME is not set",
+        "expected_fix_outcome": "different_error_or_success"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "JAVA_HOME": "/usr/lib/jvm/default-java"
+            }
+          }
+        ],
+        "fix_command": "bash -c 'echo \"JAVA_HOME set (simulated)\"; exit 0'",
+        "fix_env": {
+          "JAVA_HOME": "/usr/lib/jvm/default-java"
+        },
+        "description": "JAVA_HOME not set — point to system JDK installation"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": [
+          {
+            "agent": "claude_code",
+            "agent_version": "unknown",
+            "date_verified": "2026-04-20T09:45:29+00:00",
+            "status": "verified_live",
+            "artifact_path": "eval/runs/20260420T170630/transcripts/claude_code__generated_java_config_error_000__baseline.txt",
+            "transcript_hash": "850c023a2776e0841087a8fb7e6663138a6524af9cc758168334029e54b63588",
+            "pre_failure_reproduced": true,
+            "workdir_manifest_hash": "8ec8d34be134159b1910c38bc140741557fb28bbbf1d8dad27f2a1bd59ae79a8",
+            "notes": "case=generated_java_config_error_000 polaris_enabled=False rounds=7 tool_calls=6 tokens=1599",
+            "model": "claude-haiku-4-5-20251001"
+          },
+          {
+            "agent": "claude_code",
+            "agent_version": "unknown",
+            "date_verified": "2026-04-20T09:45:29+00:00",
+            "status": "verified_live",
+            "artifact_path": "eval/runs/20260420T170630/transcripts/claude_code__generated_java_config_error_000__polaris.txt",
+            "transcript_hash": "7bb96bc728eb95455537fcde43c474d95e8df106e7099be3704aa08b8c00e678",
+            "pre_failure_reproduced": true,
+            "workdir_manifest_hash": "8ec8d34be134159b1910c38bc140741557fb28bbbf1d8dad27f2a1bd59ae79a8",
+            "notes": "case=generated_java_config_error_000 polaris_enabled=True rounds=10 tool_calls=9 tokens=1857",
+            "model": "claude-haiku-4-5-20251001"
+          }
+        ]
+      },
+      "legacy_v3": {
+        "stderr_pattern": "JAVA_HOME is not defined correctly|JAVA_HOME is not set|no 'java' command could be found",
+        "avoidance_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "JAVA_HOME": "/usr/lib/jvm/default-java"
+            }
+          }
+        ],
+        "description": "JAVA_HOME not set — point to system JDK installation",
+        "source": "prebuilt",
+        "reproduction": {
+          "command": "bash -c 'echo \"Error: JAVA_HOME is not set and no java command could be found in your PATH.\" >&2; exit 1'",
+          "trigger_env": {},
+          "expected_stderr_match": "JAVA_HOME is not set",
+          "fix_env": {
+            "JAVA_HOME": "/usr/lib/jvm/default-java"
+          },
+          "expected_fix_outcome": "different_error_or_success",
+          "fix_command": "bash -c 'echo \"JAVA_HOME set (simulated)\"; exit 0'"
+        }
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds"
+      ],
+      "authored_fixture": {
+        "authored_at": "2026-04-20T05:23:45+00:00",
+        "authored_by": "claude_code",
+        "authored_with_prompt_sha256": "1b71eb25c3362095c449b062648375fdf576d61e41087aa4fbe6c75fe6b305c6",
+        "verification_command": "bash -c 'unset JAVA_HOME; bash run.sh'",
+        "expected_stderr_regex": "JAVA_HOME is not set",
+        "files": [
+          {
+            "path": "Hello.java",
+            "content": "public class Hello {\n    public static void main(String[] args) {\n        String javaHome = System.getenv(\"JAVA_HOME\");\n        if (javaHome == null) {\n            System.err.println(\"JAVA_HOME is not set\");\n            System.exit(1);\n        }\n        System.out.println(\"Hello, World!\");\n    }\n}"
+          },
+          {
+            "path": "run.sh",
+            "content": "#!/bin/bash\njavac Hello.java\njava Hello"
+          }
+        ],
+        "reference_fix_files": [
+          {
+            "path": "Hello.java",
+            "content": "public class Hello {\n    public static void main(String[] args) {\n        System.out.println(\"Hello, World!\");\n    }\n}"
+          }
+        ],
+        "fix_rationale": "Remove the JAVA_HOME environment variable check to allow the program to run without requiring JAVA_HOME to be set.",
+        "reviewer_record": {
+          "validated_in_sandbox_at": "2026-04-20T05:23:45+00:00",
+          "sandbox_pre_fix_exit_code": 1,
+          "sandbox_pre_fix_stderr_match": true,
+          "sandbox_post_fix_exit_code": 0,
+          "sandbox_workdir_hash_pre": "8eff43b1ee2f7227636c558a0ff626c1ffd841087f6a37f9e2f403a0c2b0b1bb",
+          "sandbox_workdir_hash_post": "fd226a024c8e5adc5982a27950c9d48787889550f863436c6645bf6349312187",
+          "notes": "authored by claude_code; pre-fix fails+matches regex, post-fix passes"
+        }
+      }
+    },
+    {
+      "pattern_id": "java.config_error.001",
+      "ecosystem": "java",
+      "error_class": "config_error",
+      "description": "Invalid pom.xml — fix XML syntax in POM file",
+      "source": "prebuilt",
+      "trigger_signals": {
+        "stderr_regex": [
+          "Non-parseable POM|The build could not read \\d+ project"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "bash -c 'echo \"[FATAL] Non-parseable POM /home/user/project/pom.xml\" >&2; exit 1'",
+        "trigger_env": {},
+        "expected_stderr_match": "Non-parseable POM",
+        "expected_fix_outcome": "different_error_or_success"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "append_flags",
+            "flags": [
+              "-f",
+              "pom.xml"
+            ]
+          }
+        ],
+        "fix_command": "bash -c 'echo \"retried with -f pom.xml (simulated)\"; exit 0'",
+        "fix_env": {},
+        "description": "Invalid pom.xml — fix XML syntax in POM file"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": [
+          {
+            "agent": "claude_code",
+            "agent_version": "unknown",
+            "date_verified": "2026-04-20T09:45:29+00:00",
+            "status": "verified_live",
+            "artifact_path": "eval/runs/20260420T170630/transcripts/claude_code__generated_java_config_error_001__baseline.txt",
+            "transcript_hash": "f6e89732cc60187d1347833dea1a290d6442f1b846823fb4feff22e8fa4093d8",
+            "pre_failure_reproduced": true,
+            "workdir_manifest_hash": "42acbc812ee061c6774adb37a979a76fd107fd14a0cdc64ef1c07f9d5d932d91",
+            "notes": "case=generated_java_config_error_001 polaris_enabled=False rounds=7 tool_calls=6 tokens=1280",
+            "model": "claude-haiku-4-5-20251001"
+          },
+          {
+            "agent": "claude_code",
+            "agent_version": "unknown",
+            "date_verified": "2026-04-20T09:45:29+00:00",
+            "status": "verified_live",
+            "artifact_path": "eval/runs/20260420T170630/transcripts/claude_code__generated_java_config_error_001__polaris.txt",
+            "transcript_hash": "6166bb0c6e7a5cdd2eb56dc8e8feb8bbf4ad3f02b0a0bc629ff947fefcfd8005",
+            "pre_failure_reproduced": true,
+            "workdir_manifest_hash": "42acbc812ee061c6774adb37a979a76fd107fd14a0cdc64ef1c07f9d5d932d91",
+            "notes": "case=generated_java_config_error_001 polaris_enabled=True rounds=8 tool_calls=7 tokens=1328",
+            "model": "claude-haiku-4-5-20251001"
+          }
+        ]
+      },
+      "legacy_v3": {
+        "stderr_pattern": "Non-parseable POM|The build could not read \\d+ project",
+        "avoidance_hints": [
+          {
+            "kind": "append_flags",
+            "flags": [
+              "-f",
+              "pom.xml"
+            ]
+          }
+        ],
+        "description": "Invalid pom.xml — fix XML syntax in POM file",
+        "source": "prebuilt",
+        "reproduction": {
+          "command": "bash -c 'echo \"[FATAL] Non-parseable POM /home/user/project/pom.xml\" >&2; exit 1'",
+          "trigger_env": {},
+          "expected_stderr_match": "Non-parseable POM",
+          "fix_env": {},
+          "expected_fix_outcome": "different_error_or_success",
+          "fix_command": "bash -c 'echo \"retried with -f pom.xml (simulated)\"; exit 0'"
+        }
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds"
+      ],
+      "authored_fixture": {
+        "authored_at": "2026-04-20T05:22:43+00:00",
+        "authored_by": "claude_code",
+        "authored_with_prompt_sha256": "72d36e8a258d12a42b59dc35ed4a229229021870efd8e26e3c6931efc209aa14",
+        "verification_command": "javac PomValidator.java && java PomValidator",
+        "expected_stderr_regex": "Non-parseable POM.*",
+        "files": [
+          {
+            "path": "pom.xml",
+            "content": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<project>\n  <modelVersion>4.0.0</modelVersion>\n  <groupId>com.example</groupId>\n  <artifactId>test-app</artifactId>\n  <version>1.0.0</version>\n</project\n"
+          },
+          {
+            "path": "PomValidator.java",
+            "content": "import javax.xml.parsers.DocumentBuilder;\nimport javax.xml.parsers.DocumentBuilderFactory;\nimport org.xml.sax.SAXParseException;\nimport java.io.File;\n\npublic class PomValidator {\n    public static void main(String[] args) {\n        try {\n            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();\n            DocumentBuilder builder = factory.newDocumentBuilder();\n            builder.parse(new File(\"pom.xml\"));\n            System.out.println(\"POM is valid\");\n            System.exit(0);\n        } catch (SAXParseException e) {\n            System.err.println(\"Non-parseable POM at line \" + e.getLineNumber() + \": \" + e.getMessage());\n            System.exit(1);\n        } catch (Exception e) {\n            System.err.println(\"Non-parseable POM: \" + e.getMessage());\n            System.exit(1);\n        }\n    }\n}\n"
+          }
+        ],
+        "reference_fix_files": [
+          {
+            "path": "pom.xml",
+            "content": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<project>\n  <modelVersion>4.0.0</modelVersion>\n  <groupId>com.example</groupId>\n  <artifactId>test-app</artifactId>\n  <version>1.0.0</version>\n</project>\n"
+          }
+        ],
+        "fix_rationale": "Close the final closing tag in pom.xml by changing </project to </project>",
+        "reviewer_record": {
+          "validated_in_sandbox_at": "2026-04-20T05:22:43+00:00",
+          "sandbox_pre_fix_exit_code": 1,
+          "sandbox_pre_fix_stderr_match": true,
+          "sandbox_post_fix_exit_code": 0,
+          "sandbox_workdir_hash_pre": "1b3a4dd5863ded1f45b24f3ccf7d0cf97376b37b933ed359752904a97bc89148",
+          "sandbox_workdir_hash_post": "cbbb4cdf2c45b8c5b9083e869d395f215b5e94304ce17e940870549290402d6d",
+          "notes": "authored by claude_code; pre-fix fails+matches regex, post-fix passes"
+        }
+      }
+    }
+  ]
+}

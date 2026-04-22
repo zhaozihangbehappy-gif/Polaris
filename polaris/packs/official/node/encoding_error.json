@@ -1,0 +1,116 @@
+{
+  "ecosystem": "node",
+  "error_class": "encoding_error",
+  "schema_version": 4,
+  "records": [
+    {
+      "pattern_id": "node.encoding_error.000",
+      "ecosystem": "node",
+      "error_class": "encoding_error",
+      "description": "Invalid character in source file \u2014 ensure files are UTF-8 encoded and locale is set correctly",
+      "source": "prebuilt",
+      "trigger_signals": {
+        "stderr_regex": [
+          "Invalid or unexpected token|ERR_INVALID_CHAR|Invalid character"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "python3 -c \"open('/tmp/_polaris_repro_enc.js','wb').write(b'var x = \\x00\\x01;')\" && node /tmp/_polaris_repro_enc.js 2>&1; rm -f /tmp/_polaris_repro_enc.js || true",
+        "trigger_env": {},
+        "expected_stderr_match": "Invalid or unexpected token|SyntaxError",
+        "expected_fix_outcome": "different_error_or_success"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "set_locale",
+            "locale": "en_US.UTF-8"
+          }
+        ],
+        "fix_command": "echo 'var x = 1;' > /tmp/_polaris_repro_enc.js && node /tmp/_polaris_repro_enc.js 2>&1; rm -f /tmp/_polaris_repro_enc.js || true",
+        "fix_env": {},
+        "description": "Invalid character in source file \u2014 ensure files are UTF-8 encoded and locale is set correctly"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": [
+          {
+            "agent": "claude_code",
+            "agent_version": "unknown",
+            "model": "claude-opus-4-7",
+            "date_verified": "2026-04-20T11:26:51+00:00",
+            "status": "verified_live",
+            "artifact_path": "eval/runs/20260420T192627/transcripts/claude_code__generated_node_encoding_error_000__polaris.txt",
+            "transcript_hash": "bf4a257407a3225d347bcd2929b6e2a287e2143aceccac58f406535424c533c4",
+            "pre_failure_reproduced": true,
+            "workdir_manifest_hash": "ecf65d2d3c10eabe5f444bf08ddf932f29a399afa440b63640298886266d86cd",
+            "notes": "case=generated_node_encoding_error_000 polaris_enabled=True rounds=1 tool_calls=5 tokens=257"
+          }
+        ]
+      },
+      "legacy_v3": {
+        "stderr_pattern": "Invalid or unexpected token|ERR_INVALID_CHAR|Invalid character",
+        "avoidance_hints": [
+          {
+            "kind": "set_locale",
+            "locale": "en_US.UTF-8"
+          }
+        ],
+        "description": "Invalid character in source file \u2014 ensure files are UTF-8 encoded and locale is set correctly",
+        "source": "prebuilt",
+        "reproduction": {
+          "command": "python3 -c \"open('/tmp/_polaris_repro_enc.js','wb').write(b'var x = \\x00\\x01;')\" && node /tmp/_polaris_repro_enc.js 2>&1; rm -f /tmp/_polaris_repro_enc.js || true",
+          "trigger_env": {},
+          "expected_stderr_match": "Invalid or unexpected token|SyntaxError",
+          "fix_command": "echo 'var x = 1;' > /tmp/_polaris_repro_enc.js && node /tmp/_polaris_repro_enc.js 2>&1; rm -f /tmp/_polaris_repro_enc.js || true",
+          "fix_env": {},
+          "expected_fix_outcome": "different_error_or_success"
+        }
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds"
+      ],
+      "authored_fixture": {
+        "authored_at": "2026-04-20T02:48:29+00:00",
+        "authored_by": "codex",
+        "authored_with_prompt_sha256": "9e10129b90e291ae69104d4b4100721216f086fef50fd2566da1d02f2d6b896b",
+        "verification_command": "node index.js",
+        "expected_stderr_regex": "Invalid or unexpected token",
+        "files": [
+          {
+            "path": "package.json",
+            "content": "{\n  \"name\": \"node-encoding-error-repro\",\n  \"version\": \"1.0.0\",\n  \"private\": true,\n  \"type\": \"commonjs\",\n  \"scripts\": {\n    \"test\": \"node index.js\"\n  }\n}\n"
+          },
+          {
+            "path": "index.js",
+            "content": "const message = \u201chello from utf-8 source\u201d;\n\nconsole.log(message);\n"
+          }
+        ],
+        "reference_fix_files": [
+          {
+            "path": "index.js",
+            "content": "const message = \"hello from utf-8 source\";\n\nconsole.log(message);\n"
+          }
+        ],
+        "fix_rationale": "Replacing the curly quote characters with standard ASCII double quotes restores valid JavaScript syntax while preserving the program behavior.",
+        "reviewer_record": {
+          "validated_in_sandbox_at": "2026-04-20T02:48:29+00:00",
+          "sandbox_pre_fix_exit_code": 1,
+          "sandbox_pre_fix_stderr_match": true,
+          "sandbox_post_fix_exit_code": 0,
+          "sandbox_workdir_hash_pre": "ecf65d2d3c10eabe5f444bf08ddf932f29a399afa440b63640298886266d86cd",
+          "sandbox_workdir_hash_post": "3211a8c15fcc5e280541bdb76cece315a43032dcedc696fbab5354cf6ab6d30e",
+          "notes": "authored by codex; pre-fix fails+matches regex, post-fix passes"
+        }
+      }
+    }
+  ]
+}

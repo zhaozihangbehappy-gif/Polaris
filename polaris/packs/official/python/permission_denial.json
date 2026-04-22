@@ -1,0 +1,221 @@
+{
+  "ecosystem": "python",
+  "error_class": "permission_denial",
+  "schema_version": 4,
+  "records": [
+    {
+      "pattern_id": "python.permission_denial.000",
+      "ecosystem": "python",
+      "error_class": "permission_denial",
+      "description": "Write permission denied — rewrite cwd to writable directory",
+      "source": "prebuilt",
+      "trigger_signals": {
+        "stderr_regex": [
+          "PermissionError: \\[Errno 13\\]"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "python3 -c \"open('/root/test_polaris_repro.txt','w')\" 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "PermissionError",
+        "expected_fix_outcome": "different_error_or_success"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "rewrite_cwd",
+            "target": "/tmp"
+          }
+        ],
+        "fix_command": "python3 -c \"open('/tmp/test_polaris_repro.txt','w'); print('ok')\" 2>&1 || true",
+        "fix_env": {},
+        "description": "Write permission denied — rewrite cwd to writable directory"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "legacy_v3": {
+        "stderr_pattern": "PermissionError: \\[Errno 13\\]",
+        "avoidance_hints": [
+          {
+            "kind": "rewrite_cwd",
+            "target": "/tmp"
+          }
+        ],
+        "description": "Write permission denied — rewrite cwd to writable directory",
+        "source": "prebuilt",
+        "reproduction": {
+          "command": "python3 -c \"open('/root/test_polaris_repro.txt','w')\" 2>&1 || true",
+          "trigger_env": {},
+          "expected_stderr_match": "PermissionError",
+          "fix_command": "python3 -c \"open('/tmp/test_polaris_repro.txt','w'); print('ok')\" 2>&1 || true",
+          "fix_env": {},
+          "expected_fix_outcome": "different_error_or_success"
+        }
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ],
+      "authored_fixture": {
+        "authored_at": "2026-04-20T03:03:01+00:00",
+        "authored_by": "codex",
+        "authored_with_prompt_sha256": "3b7db1574b6590bf5a7560ff39e9e99f6fbcac5ffc207c13970677d3843842a1",
+        "verification_command": "python3 -m unittest",
+        "expected_stderr_regex": "PermissionError: \\[Errno 13\\]",
+        "files": [
+          {
+            "path": "writer.py",
+            "content": "from pathlib import Path\n\n\ndef write_status(message: str) -> Path:\n    output = Path.cwd() / \"status.txt\"\n    output.write_text(message + \"\\n\", encoding=\"utf-8\")\n    return output\n"
+          },
+          {
+            "path": "test_writer.py",
+            "content": "import os\nimport stat\nimport tempfile\nimport unittest\nfrom pathlib import Path\n\nfrom writer import write_status\n\n\nclass WriterTests(unittest.TestCase):\n    def test_status_can_be_written_from_read_only_cwd(self):\n        original_cwd = Path.cwd()\n        with tempfile.TemporaryDirectory() as tmp:\n            sealed = Path(tmp) / \"sealed\"\n            sealed.mkdir()\n            sealed.chmod(stat.S_IREAD | stat.S_IEXEC)\n            try:\n                os.chdir(sealed)\n                write_status(\"ready\")\n            finally:\n                os.chdir(original_cwd)\n                sealed.chmod(stat.S_IREAD | stat.S_IWRITE | stat.S_IEXEC)\n"
+          }
+        ],
+        "reference_fix_files": [
+          {
+            "path": "writer.py",
+            "content": "from pathlib import Path\nfrom tempfile import gettempdir\n\n\ndef write_status(message: str) -> Path:\n    output = Path(gettempdir()) / \"status.txt\"\n    output.write_text(message + \"\\n\", encoding=\"utf-8\")\n    return output\n"
+          }
+        ],
+        "fix_rationale": "Write generated status output to the system temporary directory instead of assuming the current working directory is writable.",
+        "reviewer_record": {
+          "validated_in_sandbox_at": "2026-04-20T03:03:01+00:00",
+          "sandbox_pre_fix_exit_code": 1,
+          "sandbox_pre_fix_stderr_match": true,
+          "sandbox_post_fix_exit_code": 0,
+          "sandbox_workdir_hash_pre": "74ae2f6ac3e6d4f51077457cd711b4fd450c421867cbafe7f00b0adaf3d0a80e",
+          "sandbox_workdir_hash_post": "68b2d54958d3efa3d81085bc2b474122006d06b4ca18f70ee09c0bc0ca67fee4",
+          "notes": "authored by codex; pre-fix fails+matches regex, post-fix passes"
+        }
+      }
+    },
+    {
+      "pattern_id": "python.permission_denial.001",
+      "ecosystem": "python",
+      "error_class": "permission_denial",
+      "description": "pip install permission denied on system site-packages — use --user install via PIP_USER env var",
+      "source": "prebuilt",
+      "trigger_signals": {
+        "stderr_regex": [
+          "OSError: \\[Errno 13\\] Permission denied.*pip|Permission denied.*site-packages"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "python3 -c \"import os; os.makedirs('/usr/lib/python3/_polaris_test_pkg', exist_ok=True)\" 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "PermissionError|Permission denied",
+        "expected_fix_outcome": "different_error_or_success"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "PIP_USER": "1",
+              "PYTHONUSERBASE": "/tmp/_polaris_pip_user"
+            }
+          }
+        ],
+        "fix_command": "python3 -c \"import os; os.makedirs('/tmp/_polaris_test_pkg', exist_ok=True); print('ok')\" 2>&1 || true",
+        "fix_env": {
+          "PIP_USER": "1",
+          "PYTHONUSERBASE": "/tmp/_polaris_pip_user"
+        },
+        "description": "pip install permission denied on system site-packages — use --user install via PIP_USER env var"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "legacy_v3": {
+        "stderr_pattern": "OSError: \\[Errno 13\\] Permission denied.*pip|Permission denied.*site-packages",
+        "avoidance_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "PIP_USER": "1",
+              "PYTHONUSERBASE": "/tmp/_polaris_pip_user"
+            }
+          }
+        ],
+        "description": "pip install permission denied on system site-packages — use --user install via PIP_USER env var",
+        "source": "prebuilt",
+        "reproduction": {
+          "command": "python3 -c \"import os; os.makedirs('/usr/lib/python3/_polaris_test_pkg', exist_ok=True)\" 2>&1 || true",
+          "trigger_env": {},
+          "expected_stderr_match": "PermissionError|Permission denied",
+          "fix_command": "python3 -c \"import os; os.makedirs('/tmp/_polaris_test_pkg', exist_ok=True); print('ok')\" 2>&1 || true",
+          "fix_env": {
+            "PIP_USER": "1",
+            "PYTHONUSERBASE": "/tmp/_polaris_pip_user"
+          },
+          "expected_fix_outcome": "different_error_or_success"
+        }
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ],
+      "authored_fixture": {
+        "authored_at": "2026-04-20T03:06:52+00:00",
+        "authored_by": "codex",
+        "authored_with_prompt_sha256": "6449c84f4c958d65bf3f6b68fce633e46d34e7fb50ffaad908e87b89740c2c38",
+        "verification_command": "python3 -m unittest -q",
+        "expected_stderr_regex": "PermissionError: \\[Errno 13\\] Permission denied.*site-packages",
+        "files": [
+          {
+            "path": ".codex",
+            "content": ""
+          },
+          {
+            "path": "pip_env.py",
+            "content": "import os\n\n\ndef configure_install_environment():\n    os.environ.pop(\"PIP_USER\", None)\n"
+          },
+          {
+            "path": "installer.py",
+            "content": "import os\nimport pathlib\nimport shutil\n\n\ndef _enabled(value):\n    return value.lower() in {\"1\", \"true\", \"yes\"}\n\n\ndef install_marker():\n    if _enabled(os.environ.get(\"PIP_USER\", \"\")):\n        target = pathlib.Path(\".user-site-packages\")\n        target.mkdir(exist_ok=True)\n        marker = target / \"pip-marker.txt\"\n        marker.write_text(\"installed with --user\\n\", encoding=\"utf-8\")\n        return marker\n\n    target = pathlib.Path(\".system-site-packages\")\n    if target.exists():\n        target.chmod(0o755)\n        shutil.rmtree(target)\n    target.mkdir()\n    target.chmod(0o555)\n    marker = target / \"pip-marker.txt\"\n    marker.write_text(\"installed without --user\\n\", encoding=\"utf-8\")\n    return marker\n"
+          },
+          {
+            "path": "test_install.py",
+            "content": "import unittest\n\nimport pip_env\nfrom installer import install_marker\n\n\nclass InstallModeTest(unittest.TestCase):\n    def test_install_uses_user_site_packages(self):\n        pip_env.configure_install_environment()\n        marker = install_marker()\n        self.assertIn(\"user-site-packages\", str(marker))\n\n\nif __name__ == \"__main__\":\n    unittest.main()\n"
+          }
+        ],
+        "reference_fix_files": [
+          {
+            "path": "pip_env.py",
+            "content": "import os\n\n\ndef configure_install_environment():\n    os.environ[\"PIP_USER\"] = \"1\"\n"
+          }
+        ],
+        "fix_rationale": "Setting PIP_USER makes the install use the writable user site-packages path instead of the protected system site-packages path.",
+        "reviewer_record": {
+          "validated_in_sandbox_at": "2026-04-20T03:06:52+00:00",
+          "sandbox_pre_fix_exit_code": 1,
+          "sandbox_pre_fix_stderr_match": true,
+          "sandbox_post_fix_exit_code": 0,
+          "sandbox_workdir_hash_pre": "e189541bbbc7f05c4d620961e0c5b1dbcc71a6e6cc68beb0990e6d6154a06af7",
+          "sandbox_workdir_hash_post": "7ec5311b92b96edecdb8b7d7bb03ed0b0e751119176ba5d4534180bb7df118c2",
+          "notes": "authored by codex; pre-fix fails+matches regex, post-fix passes"
+        }
+      }
+    }
+  ]
+}

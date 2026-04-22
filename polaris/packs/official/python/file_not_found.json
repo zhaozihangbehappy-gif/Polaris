@@ -1,0 +1,281 @@
+{
+  "ecosystem": "python",
+  "error_class": "file_not_found",
+  "schema_version": 4,
+  "records": [
+    {
+      "pattern_id": "python.file_not_found.000",
+      "ecosystem": "python",
+      "error_class": "file_not_found",
+      "description": "File not found — cwd may be wrong; rewrite to project root",
+      "source": "prebuilt",
+      "trigger_signals": {
+        "stderr_regex": [
+          "FileNotFoundError: \\[Errno 2\\]"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "rm -rf /tmp/_polaris_repro_fnf && python3 -c \"open('/tmp/_polaris_repro_fnf/file.txt')\" 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "FileNotFoundError",
+        "expected_fix_outcome": "different_error_or_success"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "rewrite_cwd",
+            "target": "."
+          }
+        ],
+        "fix_command": "mkdir -p /tmp/_polaris_repro_fnf && echo 'x' > /tmp/_polaris_repro_fnf/file.txt && python3 -c \"open('/tmp/_polaris_repro_fnf/file.txt'); print('ok')\" 2>&1 || true",
+        "fix_env": {},
+        "description": "File not found — cwd may be wrong; rewrite to project root"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": [
+          {
+            "agent": "claude_code",
+            "agent_version": "unknown",
+            "date_verified": "2026-04-20T09:45:28+00:00",
+            "status": "verified_live",
+            "artifact_path": "eval/runs/20260420T170630/transcripts/claude_code__case_005_python_file_path__baseline.txt",
+            "transcript_hash": "670336d90bad63e076000e8f01f663540d5db151e6c23964e9dce7d93d8899ba",
+            "pre_failure_reproduced": true,
+            "workdir_manifest_hash": "a74a4c481b2fc6d28586fed66ebd1e8cda4ba53037be550fc7df90d33f6fd67c",
+            "notes": "case=case_005_python_file_path polaris_enabled=False rounds=6 tool_calls=5 tokens=1870",
+            "model": "claude-haiku-4-5-20251001"
+          },
+          {
+            "agent": "claude_code",
+            "agent_version": "unknown",
+            "date_verified": "2026-04-20T09:45:28+00:00",
+            "status": "verified_live",
+            "artifact_path": "eval/runs/20260420T170630/transcripts/claude_code__case_005_python_file_path__polaris.txt",
+            "transcript_hash": "ff1416214b994d3930d8bb8a85a5dabf060e92237b115f9645007dbcc2199bce",
+            "pre_failure_reproduced": true,
+            "workdir_manifest_hash": "a74a4c481b2fc6d28586fed66ebd1e8cda4ba53037be550fc7df90d33f6fd67c",
+            "notes": "case=case_005_python_file_path polaris_enabled=True rounds=6 tool_calls=5 tokens=1505",
+            "model": "claude-haiku-4-5-20251001"
+          }
+        ],
+        "invalidated_evidence": [
+          {
+            "agent": "codex",
+            "agent_version": "unknown",
+            "date_verified": "2026-04-19T10:56:10+00:00",
+            "status": "invalidated_synthetic_recipe",
+            "artifact_path": "eval/runs/20260419T185014/transcripts/codex__case_005_python_file_path__baseline.txt",
+            "transcript_hash": "ed96760ce33fd6452013c8fc675da040fea3fa52b38772d0d2fea91ab6ed21ac",
+            "pre_failure_reproduced": true,
+            "workdir_manifest_hash": "384bfe0f0ef8e7d59d4683fac1c28e106bddbf9557898ec425c2c32b2821a691",
+            "notes": "case=case_005_python_file_path polaris_enabled=False rounds=2 tool_calls=9 tokens=129040",
+            "invalidation_reason": "Evidence produced against a synthetic bash-echo recipe (pre-failure or fix_command that always succeeds/fails irrespective of agent action). Promotion to verified_live requires a pattern-level authored_fixture with a sandbox-validated reviewer_record. See VERIFIED_PROMOTION_REPORT.md and scripts/pattern_schema._is_synthetic_recipe.",
+            "invalidated_at": "2026-04-19T19:30:00+00:00"
+          },
+          {
+            "agent": "codex",
+            "agent_version": "unknown",
+            "date_verified": "2026-04-19T10:56:10+00:00",
+            "status": "invalidated_synthetic_recipe",
+            "artifact_path": "eval/runs/20260419T185014/transcripts/codex__case_005_python_file_path__polaris.txt",
+            "transcript_hash": "230c412838051c3d9f9e350eae3c456e10e46b1aeea1c8a1bbb6253cfd8ad81e",
+            "pre_failure_reproduced": true,
+            "workdir_manifest_hash": "384bfe0f0ef8e7d59d4683fac1c28e106bddbf9557898ec425c2c32b2821a691",
+            "notes": "case=case_005_python_file_path polaris_enabled=True rounds=4 tool_calls=7 tokens=84480",
+            "invalidation_reason": "Evidence produced against a synthetic bash-echo recipe (pre-failure or fix_command that always succeeds/fails irrespective of agent action). Promotion to verified_live requires a pattern-level authored_fixture with a sandbox-validated reviewer_record. See VERIFIED_PROMOTION_REPORT.md and scripts/pattern_schema._is_synthetic_recipe.",
+            "invalidated_at": "2026-04-19T19:30:00+00:00"
+          }
+        ]
+      },
+      "legacy_v3": {
+        "stderr_pattern": "FileNotFoundError: \\[Errno 2\\]",
+        "avoidance_hints": [
+          {
+            "kind": "rewrite_cwd",
+            "target": "."
+          }
+        ],
+        "description": "File not found — cwd may be wrong; rewrite to project root",
+        "source": "prebuilt",
+        "reproduction": {
+          "command": "rm -rf /tmp/_polaris_repro_fnf && python3 -c \"open('/tmp/_polaris_repro_fnf/file.txt')\" 2>&1 || true",
+          "trigger_env": {},
+          "expected_stderr_match": "FileNotFoundError",
+          "fix_command": "mkdir -p /tmp/_polaris_repro_fnf && echo 'x' > /tmp/_polaris_repro_fnf/file.txt && python3 -c \"open('/tmp/_polaris_repro_fnf/file.txt'); print('ok')\" 2>&1 || true",
+          "fix_env": {},
+          "expected_fix_outcome": "different_error_or_success"
+        }
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds"
+      ],
+      "authored_fixture": {
+        "authored_at": "2026-04-20T03:00:07+00:00",
+        "authored_by": "codex",
+        "authored_with_prompt_sha256": "1306c44c5cb129f4435f4d16b89099a652108b92eef157158e847922cf94233d",
+        "verification_command": "PYTHONDONTWRITEBYTECODE=1 python3 -m unittest test_reader.py",
+        "expected_stderr_regex": "FileNotFoundError: \\[Errno 2\\]",
+        "files": [
+          {
+            "path": "reader.py",
+            "content": "def read_message():\n    with open(\"data/message.txt\", encoding=\"utf-8\") as handle:\n        return handle.read().strip()\n"
+          },
+          {
+            "path": "data/message.txt",
+            "content": "hello from the project\n"
+          },
+          {
+            "path": "test_reader.py",
+            "content": "import os\nimport tempfile\nimport unittest\n\nfrom reader import read_message\n\n\nclass ReadMessageTests(unittest.TestCase):\n    def test_reads_message_when_called_from_another_directory(self):\n        original_cwd = os.getcwd()\n        with tempfile.TemporaryDirectory() as other_dir:\n            os.chdir(other_dir)\n            try:\n                self.assertEqual(read_message(), \"hello from the project\")\n            finally:\n                os.chdir(original_cwd)\n\n\nif __name__ == \"__main__\":\n    unittest.main()\n"
+          }
+        ],
+        "reference_fix_files": [
+          {
+            "path": "reader.py",
+            "content": "from pathlib import Path\n\n\nPROJECT_ROOT = Path(__file__).resolve().parent\n\n\ndef read_message():\n    message_path = PROJECT_ROOT / \"data\" / \"message.txt\"\n    with message_path.open(encoding=\"utf-8\") as handle:\n        return handle.read().strip()\n"
+          }
+        ],
+        "fix_rationale": "Resolve the data file from the module's project root instead of the caller's current working directory.",
+        "reviewer_record": {
+          "validated_in_sandbox_at": "2026-04-20T03:00:07+00:00",
+          "sandbox_pre_fix_exit_code": 1,
+          "sandbox_pre_fix_stderr_match": true,
+          "sandbox_post_fix_exit_code": 0,
+          "sandbox_workdir_hash_pre": "f1789abecfaeae4c1fa7b0a7c4a0adb26f1dc6e5da42ca0da860154864ced107",
+          "sandbox_workdir_hash_post": "7797d3de199b1b9ff57fb866c6c23ad6bd0da85285e56e83f6fe0dcaf09f1551",
+          "notes": "authored by codex; pre-fix fails+matches regex, post-fix passes"
+        }
+      }
+    },
+    {
+      "pattern_id": "python.file_not_found.001",
+      "ecosystem": "python",
+      "error_class": "file_not_found",
+      "description": "Python script path not found — ensure cwd is the project root so relative script paths resolve",
+      "source": "prebuilt",
+      "trigger_signals": {
+        "stderr_regex": [
+          "can't open file '([^']+)': \\[Errno 2\\] No such file or directory"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "rm -f /tmp/_polaris_repro_nosuch_script_xyz.py && python3 /tmp/_polaris_repro_nosuch_script_xyz.py 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "can't open file|No such file or directory",
+        "expected_fix_outcome": "different_error_or_success"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "rewrite_cwd",
+            "target": "."
+          }
+        ],
+        "fix_command": "echo 'print(\"ok\")' > /tmp/_polaris_repro_nosuch_script_xyz.py && python3 /tmp/_polaris_repro_nosuch_script_xyz.py 2>&1 || true",
+        "fix_env": {},
+        "description": "Python script path not found — ensure cwd is the project root so relative script paths resolve"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": [
+          {
+            "agent": "claude_code",
+            "agent_version": "unknown",
+            "date_verified": "2026-04-20T09:45:29+00:00",
+            "status": "verified_live",
+            "artifact_path": "eval/runs/20260420T170630/transcripts/claude_code__generated_python_file_not_found_001__baseline.txt",
+            "transcript_hash": "e82d834f6555ec11578c241ce9b2e0160c0c31fc4c6b7467b193acaf364017c7",
+            "pre_failure_reproduced": true,
+            "workdir_manifest_hash": "b00790a3b69f3d28938181941a609f48b4d45d7e37125bbb2eac6e126d8b7d31",
+            "notes": "case=generated_python_file_not_found_001 polaris_enabled=False rounds=9 tool_calls=8 tokens=1920",
+            "model": "claude-haiku-4-5-20251001"
+          },
+          {
+            "agent": "claude_code",
+            "agent_version": "unknown",
+            "date_verified": "2026-04-20T09:45:29+00:00",
+            "status": "verified_live",
+            "artifact_path": "eval/runs/20260420T170630/transcripts/claude_code__generated_python_file_not_found_001__polaris.txt",
+            "transcript_hash": "ceb8c12a68bf70f72fd28accd9d1a5c231878df830d99aa468e5933752f80310",
+            "pre_failure_reproduced": true,
+            "workdir_manifest_hash": "bb64e55713608cb91cc14388210d6235bf9abb78ac12f926e920b8441970ebd4",
+            "notes": "case=generated_python_file_not_found_001 polaris_enabled=True rounds=9 tool_calls=8 tokens=2045",
+            "model": "claude-haiku-4-5-20251001"
+          }
+        ]
+      },
+      "legacy_v3": {
+        "stderr_pattern": "can't open file '([^']+)': \\[Errno 2\\] No such file or directory",
+        "avoidance_hints": [
+          {
+            "kind": "rewrite_cwd",
+            "target": "."
+          }
+        ],
+        "description": "Python script path not found — ensure cwd is the project root so relative script paths resolve",
+        "source": "prebuilt",
+        "reproduction": {
+          "command": "rm -f /tmp/_polaris_repro_nosuch_script_xyz.py && python3 /tmp/_polaris_repro_nosuch_script_xyz.py 2>&1 || true",
+          "trigger_env": {},
+          "expected_stderr_match": "can't open file|No such file or directory",
+          "fix_command": "echo 'print(\"ok\")' > /tmp/_polaris_repro_nosuch_script_xyz.py && python3 /tmp/_polaris_repro_nosuch_script_xyz.py 2>&1 || true",
+          "fix_env": {},
+          "expected_fix_outcome": "different_error_or_success"
+        }
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds"
+      ],
+      "authored_fixture": {
+        "authored_at": "2026-04-20T03:00:03+00:00",
+        "authored_by": "codex",
+        "authored_with_prompt_sha256": "8cf97e6b09bf42d94b7d6c61b0e4ea0406d52952c9bb1791f37da88347f6c5c6",
+        "verification_command": "python3 -m unittest discover -s tests",
+        "expected_stderr_regex": "can't open file '([^']+)': \\[Errno 2\\] No such file or directory",
+        "files": [
+          {
+            "path": "scripts/report.py",
+            "content": "def main():\n    print(\"daily report ready\")\n\n\nif __name__ == \"__main__\":\n    main()\n"
+          },
+          {
+            "path": "tests/test_report_launch.py",
+            "content": "import subprocess\nimport sys\nimport unittest\nfrom pathlib import Path\n\n\nclass ReportLaunchTest(unittest.TestCase):\n    def test_report_script_runs_from_project_root(self):\n        project_root = Path(__file__).resolve().parents[1]\n        tests_dir = project_root / \"tests\"\n\n        result = subprocess.run(\n            [sys.executable, \"scripts/report.py\"],\n            cwd=tests_dir,\n        )\n\n        self.assertEqual(result.returncode, 0)\n\n\nif __name__ == \"__main__\":\n    unittest.main()\n"
+          }
+        ],
+        "reference_fix_files": [
+          {
+            "path": "tests/test_report_launch.py",
+            "content": "import subprocess\nimport sys\nimport unittest\nfrom pathlib import Path\n\n\nclass ReportLaunchTest(unittest.TestCase):\n    def test_report_script_runs_from_project_root(self):\n        project_root = Path(__file__).resolve().parents[1]\n\n        result = subprocess.run(\n            [sys.executable, \"scripts/report.py\"],\n            cwd=project_root,\n        )\n\n        self.assertEqual(result.returncode, 0)\n\n\nif __name__ == \"__main__\":\n    unittest.main()\n"
+          }
+        ],
+        "fix_rationale": "Run the relative script path from the project root so scripts/report.py resolves correctly.",
+        "reviewer_record": {
+          "validated_in_sandbox_at": "2026-04-20T03:00:03+00:00",
+          "sandbox_pre_fix_exit_code": 1,
+          "sandbox_pre_fix_stderr_match": true,
+          "sandbox_post_fix_exit_code": 0,
+          "sandbox_workdir_hash_pre": "3396ed854c36a5ad81db10e0c58881fb560c539b6b41ce62db9544703f2dc406",
+          "sandbox_workdir_hash_post": "5bb4cb49c69247643490f2b4da83ce4ae244c3d3625280e479c6747390c5a4dd",
+          "notes": "authored by codex; pre-fix fails+matches regex, post-fix passes"
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,323 @@
+{
+  "ecosystem": "node",
+  "error_class": "config_error",
+  "schema_version": 4,
+  "records": [
+    {
+      "pattern_id": "candidate.node.config_error.000",
+      "ecosystem": "node",
+      "error_class": "config_error",
+      "description": "package.json type=module breaks require",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "require\\(\\) of ES Module"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "cat package.json 2>&1 | head -20",
+        "trigger_env": {},
+        "expected_stderr_match": "require\\(\\) of ES Module"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Config: package.json type=module breaks require"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ],
+      "authored_fixture": {
+        "authored_at": "2026-04-20T10:12:59+00:00",
+        "authored_by": "codex",
+        "authored_with_prompt_sha256": "10cdfeba8500cb0233cf5db4884c2dfe6a1fe90879245eb586abdabe59f3f52e",
+        "verification_command": "npm test",
+        "expected_stderr_regex": "require\\(\\) of ES Module",
+        "files": [
+          {
+            "path": "package.json",
+            "content": "{\n  \"name\": \"config-error-require-esm\",\n  \"version\": \"1.0.0\",\n  \"type\": \"module\",\n  \"scripts\": {\n    \"test\": \"node --no-experimental-require-module app.cjs\"\n  }\n}\n"
+          },
+          {
+            "path": "app.cjs",
+            "content": "const config = require(\"./settings.js\");\n\nif (config.port !== 3000) {\n  throw new Error(\"unexpected port\");\n}\n\nconsole.log(`configured port ${config.port}`);\n"
+          },
+          {
+            "path": "settings.js",
+            "content": "module.exports = {\n  port: 3000\n};\n"
+          }
+        ],
+        "reference_fix_files": [
+          {
+            "path": "package.json",
+            "content": "{\n  \"name\": \"config-error-require-esm\",\n  \"version\": \"1.0.0\",\n  \"scripts\": {\n    \"test\": \"node --no-experimental-require-module app.cjs\"\n  }\n}\n"
+          }
+        ],
+        "fix_rationale": "Removing type=module lets Node treat settings.js as CommonJS so it can be loaded by require().",
+        "reviewer_record": {
+          "validated_in_sandbox_at": "2026-04-20T10:12:59+00:00",
+          "sandbox_pre_fix_exit_code": 1,
+          "sandbox_pre_fix_stderr_match": true,
+          "sandbox_post_fix_exit_code": 0,
+          "sandbox_workdir_hash_pre": "fd220251f0004bc7537002594f0d6845f22ea1cd94cf05e543c8e101312bf4d4",
+          "sandbox_workdir_hash_post": "0012dd6ccc42923d7f6c8e476130294629722e6520990c350eb274701397cd6e",
+          "notes": "authored by codex; pre-fix fails+matches regex, post-fix passes"
+        }
+      },
+      "contributor_fingerprint": "upstream_authored"
+    },
+    {
+      "pattern_id": "candidate.node.config_error.001",
+      "ecosystem": "node",
+      "error_class": "config_error",
+      "description": "tsconfig moduleResolution mismatch",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "TS1084|moduleResolution"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "cat package.json 2>&1 | head -20",
+        "trigger_env": {},
+        "expected_stderr_match": "TS1084|moduleResolution"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Config: tsconfig moduleResolution mismatch"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ],
+      "authored_fixture": {
+        "authored_at": "2026-04-20T11:16:49+00:00",
+        "authored_by": "codex",
+        "authored_with_prompt_sha256": "7b88b6c538454c9b34b0a8564327178fe2822427c34461edfef0e4f6a08da39a",
+        "verification_command": "node check-tsconfig.js",
+        "expected_stderr_regex": "moduleResolution",
+        "files": [
+          {
+            "path": "package.json",
+            "content": "{\"type\":\"commonjs\",\"scripts\":{\"test\":\"node check-tsconfig.js\"}}\n"
+          },
+          {
+            "path": "tsconfig.json",
+            "content": "{\n  \"compilerOptions\": {\n    \"module\": \"ESNext\",\n    \"moduleResolution\": \"NodeNext\"\n  }\n}\n"
+          },
+          {
+            "path": "check-tsconfig.js",
+            "content": "const { readFileSync } = require(\"node:fs\");\n\nconst config = JSON.parse(readFileSync(\"tsconfig.json\", \"utf8\"));\nconst options = config.compilerOptions || {};\n\nif (options.moduleResolution === \"NodeNext\" && options.module !== \"NodeNext\") {\n  throw new Error(\n    `tsconfig moduleResolution mismatch: module must be \"NodeNext\" when moduleResolution is \"NodeNext\", got \"${options.module}\"`\n  );\n}\n"
+          }
+        ],
+        "reference_fix_files": [
+          {
+            "path": "tsconfig.json",
+            "content": "{\n  \"compilerOptions\": {\n    \"module\": \"NodeNext\",\n    \"moduleResolution\": \"NodeNext\"\n  }\n}\n"
+          }
+        ],
+        "fix_rationale": "TypeScript requires module to be NodeNext when moduleResolution is NodeNext, so the config options must agree.",
+        "reviewer_record": {
+          "validated_in_sandbox_at": "2026-04-20T11:16:49+00:00",
+          "sandbox_pre_fix_exit_code": 1,
+          "sandbox_pre_fix_stderr_match": true,
+          "sandbox_post_fix_exit_code": 0,
+          "sandbox_workdir_hash_pre": "bd0fc40055abd018c9d8c217ac4c003162e773d23a7bcd8d49e041b03ebf0ca8",
+          "sandbox_workdir_hash_post": "8a7fe9a69fb36253a71eff86eacee88f667d504784f7b218d191b79f2b5d3b6f",
+          "notes": "authored by codex; pre-fix fails+matches regex, post-fix passes"
+        }
+      },
+      "contributor_fingerprint": "upstream_authored"
+    },
+    {
+      "pattern_id": "candidate.node.config_error.002",
+      "ecosystem": "node",
+      "error_class": "config_error",
+      "description": "jest.config.js vs .ts conflict",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "jest.*config.*Could not load"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "cat package.json 2>&1 | head -20",
+        "trigger_env": {},
+        "expected_stderr_match": "jest.*config.*Could not load"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Config: jest.config.js vs .ts conflict"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ],
+      "authored_fixture": {
+        "authored_at": "2026-04-20T11:19:05+00:00",
+        "authored_by": "codex",
+        "authored_with_prompt_sha256": "d357bf52a250bdb660a8b554315248e3a03f0557951cc0002ff2e178c660a846",
+        "verification_command": "node check-jest-config.js",
+        "expected_stderr_regex": "jest.*config.*Could not load",
+        "files": [
+          {
+            "path": "package.json",
+            "content": "{\n  \"name\": \"jest-config-js-ts-conflict-fixture\",\n  \"version\": \"1.0.0\",\n  \"private\": true,\n  \"scripts\": {\n    \"test\": \"node check-jest-config.js\"\n  }\n}\n"
+          },
+          {
+            "path": "check-jest-config.js",
+            "content": "'use strict';\n\ntry {\n  const config = require('./jest.config.js');\n\n  if (!config || config.testEnvironment !== 'node') {\n    throw new Error('jest config did not export testEnvironment: \"node\"');\n  }\n\n  console.log('jest config loaded');\n} catch (error) {\n  const message = error && error.message ? error.message : String(error);\n  console.error(`jest config error: Could not load jest.config.js: ${message}`);\n  process.exitCode = 1;\n}\n"
+          },
+          {
+            "path": "jest.config.js",
+            "content": "'use strict';\n\nmodule.exports = require('./jest.config.ts').default;\n"
+          },
+          {
+            "path": "jest.config.ts",
+            "content": "enum TestEnvironment {\n  Node = 'node',\n}\n\nexport default {\n  testEnvironment: TestEnvironment.Node,\n};\n"
+          }
+        ],
+        "reference_fix_files": [
+          {
+            "path": "jest.config.js",
+            "content": "'use strict';\n\nmodule.exports = {\n  testEnvironment: 'node',\n};\n"
+          }
+        ],
+        "fix_rationale": "Keep Jest's JavaScript config self-contained so Node does not try to load the conflicting TypeScript config file.",
+        "reviewer_record": {
+          "validated_in_sandbox_at": "2026-04-20T11:19:05+00:00",
+          "sandbox_pre_fix_exit_code": 1,
+          "sandbox_pre_fix_stderr_match": true,
+          "sandbox_post_fix_exit_code": 0,
+          "sandbox_workdir_hash_pre": "b38b56584b316c9875166b98b07eb23beb55124166feadf09773d0afcf24d0f4",
+          "sandbox_workdir_hash_post": "81f3b00704416645bbf8fe21ebc304c09bb39500e2d77f7d975697b42f687d13",
+          "notes": "authored by codex; pre-fix fails+matches regex, post-fix passes"
+        }
+      },
+      "contributor_fingerprint": "upstream_authored"
+    },
+    {
+      "pattern_id": "candidate.node.config_error.003",
+      "ecosystem": "node",
+      "error_class": "config_error",
+      "description": "eslintrc vs eslint.config.js both present",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "eslint.*Both .*config.*detected"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "cat package.json 2>&1 | head -20",
+        "trigger_env": {},
+        "expected_stderr_match": "eslint.*Both .*config.*detected"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Config: eslintrc vs eslint.config.js both present"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ],
+      "authored_fixture": {
+        "authored_at": "2026-04-20T11:20:47+00:00",
+        "authored_by": "codex",
+        "authored_with_prompt_sha256": "5df2c21441ce49ef983f3b50ecf0c2f37001c231c874d5a346d6757714de0e06",
+        "verification_command": "node check-config.js",
+        "expected_stderr_regex": "eslint.*Both .*config.*detected",
+        "files": [
+          {
+            "path": "package.json",
+            "content": "{\n  \"name\": \"eslint-dual-config-failure\",\n  \"version\": \"1.0.0\",\n  \"private\": true,\n  \"scripts\": {\n    \"test\": \"node check-config.js\"\n  }\n}\n"
+          },
+          {
+            "path": "check-config.js",
+            "content": "const fs = require(\"node:fs\");\nconst path = require(\"node:path\");\n\nconst root = process.cwd();\n\nfunction readIfPresent(file) {\n  const fullPath = path.join(root, file);\n  return fs.existsSync(fullPath) ? fs.readFileSync(fullPath, \"utf8\") : \"\";\n}\n\nfunction hasLegacyConfig() {\n  const source = readIfPresent(\".eslintrc.json\").trim();\n  if (!source) return false;\n  const parsed = JSON.parse(source);\n  return parsed && typeof parsed === \"object\" && Object.keys(parsed).length > 0;\n}\n\nfunction hasFlatConfig() {\n  return /\\b(module\\.exports|export\\s+default)\\b/.test(readIfPresent(\"eslint.config.js\"));\n}\n\nif (hasLegacyConfig() && hasFlatConfig()) {\n  throw new Error(\"eslint: Both legacy eslintrc config and flat eslint.config.js detected\");\n}\n\nconsole.log(\"eslint config ok\");\n"
+          },
+          {
+            "path": ".eslintrc.json",
+            "content": "{\n  \"root\": true,\n  \"env\": {\n    \"node\": true\n  },\n  \"rules\": {\n    \"semi\": \"error\"\n  }\n}\n"
+          },
+          {
+            "path": "eslint.config.js",
+            "content": "module.exports = [\n  {\n    files: [\"**/*.js\"],\n    rules: {\n      semi: \"error\"\n    }\n  }\n];\n"
+          }
+        ],
+        "reference_fix_files": [
+          {
+            "path": "eslint.config.js",
+            "content": "// Flat config removed; the project uses .eslintrc.json.\n"
+          }
+        ],
+        "fix_rationale": "Deactivate one ESLint configuration format so the project no longer has both legacy and flat configs active.",
+        "reviewer_record": {
+          "validated_in_sandbox_at": "2026-04-20T11:20:47+00:00",
+          "sandbox_pre_fix_exit_code": 1,
+          "sandbox_pre_fix_stderr_match": true,
+          "sandbox_post_fix_exit_code": 0,
+          "sandbox_workdir_hash_pre": "587b1b037ecd9337aa34e40d3a3fd3fad872a16e5a8d3bab55593d620a02bc50",
+          "sandbox_workdir_hash_post": "0cb17423512b5476f08182af7eaa4b4755d0e24115692118b12a318ce5f434c4",
+          "notes": "authored by codex; pre-fix fails+matches regex, post-fix passes"
+        }
+      },
+      "contributor_fingerprint": "upstream_authored"
+    }
+  ]
+}

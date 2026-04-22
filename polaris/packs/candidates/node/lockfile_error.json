@@ -1,0 +1,84 @@
+{
+  "ecosystem": "node",
+  "error_class": "lockfile_error",
+  "schema_version": 4,
+  "records": [
+    {
+      "pattern_id": "candidate.node.lockfile_error.000",
+      "ecosystem": "node",
+      "error_class": "lockfile_error",
+      "description": "pnpm-lock outdated ERR_PNPM_OUTDATED_LOCKFILE",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "ERR_PNPM_OUTDATED_LOCKFILE"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "ls *lock* 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "ERR_PNPM_OUTDATED_LOCKFILE"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Lockfile: pnpm-lock outdated ERR_PNPM_OUTDATED_LOCKFILE"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ],
+      "authored_fixture": {
+        "authored_at": "2026-04-20T10:19:03+00:00",
+        "authored_by": "codex",
+        "authored_with_prompt_sha256": "2d8a710b412a77a12e8fe996a9ac4506a9fc4006fcf230686ca2f1e02cd9c6c6",
+        "verification_command": "pnpm install --frozen-lockfile --offline --lockfile-only 1>&2",
+        "expected_stderr_regex": "ERR_PNPM_OUTDATED_LOCKFILE",
+        "files": [
+          {
+            "path": "package.json",
+            "content": "{\n  \"name\": \"pnpm-lockfile-error-repro\",\n  \"version\": \"1.0.0\",\n  \"private\": true,\n  \"dependencies\": {\n    \"local-lib\": \"file:lib\"\n  }\n}\n"
+          },
+          {
+            "path": "lib/package.json",
+            "content": "{\n  \"name\": \"local-lib\",\n  \"version\": \"1.0.0\"\n}\n"
+          },
+          {
+            "path": "pnpm-lock.yaml",
+            "content": "lockfileVersion: '9.0'\n\nsettings:\n  autoInstallPeers: true\n  excludeLinksFromLockfile: false\n\nimporters:\n\n  .:\n    dependencies:\n      local-lib:\n        specifier: file:./lib\n        version: file:lib\n\npackages:\n\n  local-lib@file:lib:\n    resolution: {directory: lib, type: directory}\n\nsnapshots:\n\n  local-lib@file:lib: {}\n"
+          }
+        ],
+        "reference_fix_files": [
+          {
+            "path": "pnpm-lock.yaml",
+            "content": "lockfileVersion: '9.0'\n\nsettings:\n  autoInstallPeers: true\n  excludeLinksFromLockfile: false\n\nimporters:\n\n  .:\n    dependencies:\n      local-lib:\n        specifier: file:lib\n        version: file:lib\n\npackages:\n\n  local-lib@file:lib:\n    resolution: {directory: lib, type: directory}\n\nsnapshots:\n\n  local-lib@file:lib: {}\n"
+          }
+        ],
+        "fix_rationale": "Update pnpm-lock.yaml so the locked dependency specifier matches package.json.",
+        "reviewer_record": {
+          "validated_in_sandbox_at": "2026-04-20T10:19:03+00:00",
+          "sandbox_pre_fix_exit_code": 1,
+          "sandbox_pre_fix_stderr_match": true,
+          "sandbox_post_fix_exit_code": 0,
+          "sandbox_workdir_hash_pre": "5fdba1a0927dd4c265c9a553d460938418a02dac4f6697e0162fc75570ea4ae4",
+          "sandbox_workdir_hash_post": "78a448d495f2590d00bfde76d77e64dccc045160cf2e0e857703f289453ec1a4",
+          "notes": "authored by codex; pre-fix fails+matches regex, post-fix passes"
+        }
+      },
+      "contributor_fingerprint": "upstream_authored"
+    }
+  ]
+}

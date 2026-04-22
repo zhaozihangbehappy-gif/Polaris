@@ -1,0 +1,273 @@
+{
+  "ecosystem": "go",
+  "error_class": "config_error",
+  "schema_version": 4,
+  "records": [
+    {
+      "pattern_id": "go.config_error.000",
+      "ecosystem": "go",
+      "error_class": "config_error",
+      "description": "go.mod has syntax errors — likely needs regeneration via go mod init/tidy",
+      "source": "prebuilt",
+      "trigger_signals": {
+        "stderr_regex": [
+          "errors parsing go\\.mod|go\\.mod:.*unknown directive|usage: require module"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "bash -c 'echo \"go: errors parsing go.mod:\" >&2; echo \"go.mod:3: unknown directive: requir\" >&2; exit 1'",
+        "trigger_env": {},
+        "expected_stderr_match": "errors parsing go.mod|unknown directive",
+        "expected_fix_outcome": "different_error_or_success"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "GOFLAGS": "-mod=mod"
+            }
+          }
+        ],
+        "fix_command": "bash -c 'echo \"GOFLAGS set (simulated)\"; exit 0'",
+        "fix_env": {
+          "GOFLAGS": "-mod=mod"
+        },
+        "description": "go.mod has syntax errors — likely needs regeneration via go mod init/tidy"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": [
+          {
+            "agent": "claude_code",
+            "agent_version": "unknown",
+            "date_verified": "2026-04-20T09:45:29+00:00",
+            "status": "verified_live",
+            "artifact_path": "eval/runs/20260420T170630/transcripts/claude_code__generated_go_config_error_000__baseline.txt",
+            "transcript_hash": "79cc00cd06adf4322fca8a9ac564aeb49d0cf371d667d30941f4158141aa6791",
+            "pre_failure_reproduced": true,
+            "workdir_manifest_hash": "384525778f424c6d302f427e01e81065539e50d50e5d867138f5037c36f981d4",
+            "notes": "case=generated_go_config_error_000 polaris_enabled=False rounds=7 tool_calls=6 tokens=1226",
+            "model": "claude-haiku-4-5-20251001"
+          },
+          {
+            "agent": "claude_code",
+            "agent_version": "unknown",
+            "date_verified": "2026-04-20T09:45:29+00:00",
+            "status": "verified_live",
+            "artifact_path": "eval/runs/20260420T170630/transcripts/claude_code__generated_go_config_error_000__polaris.txt",
+            "transcript_hash": "964df733965c9180afb408539b7fdbb4fa98f4ea918e04e392a00407d362151b",
+            "pre_failure_reproduced": true,
+            "workdir_manifest_hash": "14d41435f3c1d58097ae100ed8dcb975cbe399b5c1a1adc9cac9a295ed797c71",
+            "notes": "case=generated_go_config_error_000 polaris_enabled=True rounds=8 tool_calls=7 tokens=1547",
+            "model": "claude-haiku-4-5-20251001"
+          }
+        ]
+      },
+      "legacy_v3": {
+        "stderr_pattern": "errors parsing go\\.mod|go\\.mod:.*unknown directive|usage: require module",
+        "avoidance_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "GOFLAGS": "-mod=mod"
+            }
+          }
+        ],
+        "description": "go.mod has syntax errors — likely needs regeneration via go mod init/tidy",
+        "source": "prebuilt",
+        "reproduction": {
+          "command": "bash -c 'echo \"go: errors parsing go.mod:\" >&2; echo \"go.mod:3: unknown directive: requir\" >&2; exit 1'",
+          "trigger_env": {},
+          "expected_stderr_match": "errors parsing go.mod|unknown directive",
+          "fix_env": {
+            "GOFLAGS": "-mod=mod"
+          },
+          "expected_fix_outcome": "different_error_or_success",
+          "fix_command": "bash -c 'echo \"GOFLAGS set (simulated)\"; exit 0'"
+        }
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds"
+      ],
+      "authored_fixture": {
+        "authored_at": "2026-04-20T05:20:40+00:00",
+        "authored_by": "claude_code",
+        "authored_with_prompt_sha256": "2b5b5f9d54df2ffd4acb6279bc5929e34d079b5e43916a1236dc676f67c2e4a7",
+        "verification_command": "go build",
+        "expected_stderr_regex": "errors parsing go\\.mod|unknown directive",
+        "files": [
+          {
+            "path": "go.mod",
+            "content": "module example.com/hello\n\nbaddir\n"
+          },
+          {
+            "path": "main.go",
+            "content": "package main\n\nfunc main() {\n\tprintln(\"Hello, world!\")\n}\n"
+          }
+        ],
+        "reference_fix_files": [
+          {
+            "path": "go.mod",
+            "content": "module example.com/hello\n"
+          }
+        ],
+        "fix_rationale": "Removed invalid directive from go.mod that caused parsing error.",
+        "reviewer_record": {
+          "validated_in_sandbox_at": "2026-04-20T05:20:40+00:00",
+          "sandbox_pre_fix_exit_code": 1,
+          "sandbox_pre_fix_stderr_match": true,
+          "sandbox_post_fix_exit_code": 0,
+          "sandbox_workdir_hash_pre": "30e169e6e382df22b8bf1ac178e43fcb872ebbce406d812e05597f76cce43026",
+          "sandbox_workdir_hash_post": "a4da02a98360ce230c721ea656d29ccd18f32d3113fe13dfd9657f7659d6ac25",
+          "notes": "authored by claude_code; pre-fix fails+matches regex, post-fix passes"
+        }
+      }
+    },
+    {
+      "pattern_id": "go.config_error.001",
+      "ecosystem": "go",
+      "error_class": "config_error",
+      "description": "GOPATH set to relative path — override with absolute path",
+      "source": "prebuilt",
+      "trigger_signals": {
+        "stderr_regex": [
+          "GOPATH entry is relative|must be absolute path"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "bash -c 'echo \"go: GOPATH entry is relative; must be absolute path: \\\"gopath\\\".\" >&2; exit 1'",
+        "trigger_env": {
+          "GOPATH": "gopath"
+        },
+        "expected_stderr_match": "GOPATH entry is relative",
+        "expected_fix_outcome": "different_error_or_success"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "GOPATH": "/tmp/go"
+            }
+          }
+        ],
+        "fix_command": "bash -c 'echo \"GOPATH set (simulated)\"; exit 0'",
+        "fix_env": {
+          "GOPATH": "/tmp/go"
+        },
+        "description": "GOPATH set to relative path — override with absolute path"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": [
+          {
+            "agent": "claude_code",
+            "agent_version": "unknown",
+            "date_verified": "2026-04-20T09:45:29+00:00",
+            "status": "verified_live",
+            "artifact_path": "eval/runs/20260420T170630/transcripts/claude_code__generated_go_config_error_001__baseline.txt",
+            "transcript_hash": "c4f22ba068069a66bf3fc19e430071733cb9e00702ae32c3b594abdbfc62cff5",
+            "pre_failure_reproduced": true,
+            "workdir_manifest_hash": "ffa3d4a500aa606aaeacc7703ac5a54737a0ca3a6cd65d8b67900de107b26328",
+            "notes": "case=generated_go_config_error_001 polaris_enabled=False rounds=9 tool_calls=8 tokens=1727",
+            "model": "claude-haiku-4-5-20251001"
+          },
+          {
+            "agent": "claude_code",
+            "agent_version": "unknown",
+            "date_verified": "2026-04-20T09:45:29+00:00",
+            "status": "verified_live",
+            "artifact_path": "eval/runs/20260420T170630/transcripts/claude_code__generated_go_config_error_001__polaris.txt",
+            "transcript_hash": "90e9027f98a16519edf65f0312e7969d5912e0ee5bd94101b21522dcb2dcf32a",
+            "pre_failure_reproduced": true,
+            "workdir_manifest_hash": "5c38364cc236fbc70ee0c0d628b6c5a407771b0cf0e313beee495e4bd3ed2bb7",
+            "notes": "case=generated_go_config_error_001 polaris_enabled=True rounds=10 tool_calls=9 tokens=2035",
+            "model": "claude-haiku-4-5-20251001"
+          }
+        ]
+      },
+      "legacy_v3": {
+        "stderr_pattern": "GOPATH entry is relative|must be absolute path",
+        "avoidance_hints": [
+          {
+            "kind": "set_env",
+            "vars": {
+              "GOPATH": "/tmp/go"
+            }
+          }
+        ],
+        "description": "GOPATH set to relative path — override with absolute path",
+        "source": "prebuilt",
+        "reproduction": {
+          "command": "bash -c 'echo \"go: GOPATH entry is relative; must be absolute path: \\\"gopath\\\".\" >&2; exit 1'",
+          "trigger_env": {
+            "GOPATH": "gopath"
+          },
+          "expected_stderr_match": "GOPATH entry is relative",
+          "fix_env": {
+            "GOPATH": "/tmp/go"
+          },
+          "expected_fix_outcome": "different_error_or_success",
+          "fix_command": "bash -c 'echo \"GOPATH set (simulated)\"; exit 0'"
+        }
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds"
+      ],
+      "authored_fixture": {
+        "authored_at": "2026-04-20T05:20:42+00:00",
+        "authored_by": "claude_code",
+        "authored_with_prompt_sha256": "b036af61d8bfee1e4dc0f703f08827de9ee4c8de91da28f2aa6d0de38b169c58",
+        "verification_command": "bash build.sh",
+        "expected_stderr_regex": "GOPATH entry is relative|must be absolute path",
+        "files": [
+          {
+            "path": "go.mod",
+            "content": "module example.com/app\ngo 1.21\n"
+          },
+          {
+            "path": "main.go",
+            "content": "package main\n\nfunc main() {\n\tprintln(\"Hello, world!\")\n}\n"
+          },
+          {
+            "path": "build.sh",
+            "content": "#!/bin/bash\nset -e\nGOPATH=./gopath go build ./main.go\n"
+          }
+        ],
+        "reference_fix_files": [
+          {
+            "path": "build.sh",
+            "content": "#!/bin/bash\nset -e\nGOPATH=$(pwd)/gopath go build ./main.go\n"
+          }
+        ],
+        "fix_rationale": "Convert GOPATH from relative to absolute path using $(pwd)",
+        "reviewer_record": {
+          "validated_in_sandbox_at": "2026-04-20T05:20:42+00:00",
+          "sandbox_pre_fix_exit_code": 2,
+          "sandbox_pre_fix_stderr_match": true,
+          "sandbox_post_fix_exit_code": 0,
+          "sandbox_workdir_hash_pre": "914d8890210cdb2ea6794fb4dcfc12c55f3ee266ffcdc4a69c05a5fd5206fa7c",
+          "sandbox_workdir_hash_post": "fdb44bfdf037f7dc778891dd96f244e183f64a0dfbddf522750b0b05f2457a52",
+          "notes": "authored by claude_code; pre-fix fails+matches regex, post-fix passes"
+        }
+      }
+    }
+  ]
+}
