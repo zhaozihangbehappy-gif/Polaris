@@ -61,16 +61,20 @@ def _toml_value(value: Any) -> str:
 def _dump_toml(data: dict[str, Any]) -> str:
     if tomli_w is not None:
         return tomli_w.dumps(data)
+    # Minimal fallback: write top-level scalars + a single [mcp_servers.<name>]
+    # block per key. Only used in dev (tomli_w is a hard dep in pyproject).
     lines: list[str] = []
+    nested: dict[str, dict[str, Any]] = {}
     for key, value in data.items():
-        if key == "mcp_servers" and isinstance(value, list):
-            for item in value:
-                lines.append("[[mcp_servers]]")
-                for subkey, subval in item.items():
-                    lines.append(f"{subkey} = {_toml_value(subval)}")
-                lines.append("")
-        else:
-            lines.append(f"{key} = {_toml_value(value)}")
+        if key == "mcp_servers" and isinstance(value, dict):
+            nested = value
+            continue
+        lines.append(f"{key} = {_toml_value(value)}")
+    for srv_name, srv_cfg in nested.items():
+        lines.append(f"[mcp_servers.{srv_name}]")
+        for subkey, subval in srv_cfg.items():
+            lines.append(f"{subkey} = {_toml_value(subval)}")
+        lines.append("")
     return "\n".join(lines).rstrip() + "\n"
 
 
@@ -133,6 +137,10 @@ def _install_json_agent(agent: str, dry_run: bool) -> str:
 
 
 def _install_codex_agent(dry_run: bool) -> str:
+    # Codex CLI expects mcp_servers as a TOML map: [mcp_servers.<name>] with
+    # command/args. Older releases accepted [[mcp_servers]] with a `name`
+    # key; current versions reject that with "expected a map" and refuse
+    # to load the entire config. We migrate any legacy list form on write.
     path = _codex_config_path()
     data: dict[str, Any] = {}
     if path.exists():
@@ -143,12 +151,18 @@ def _install_codex_agent(dry_run: bool) -> str:
         except tomllib.TOMLDecodeError:
             data = {}
     servers = data.get("mcp_servers")
-    if not isinstance(servers, list):
-        servers = []
-    servers = [srv for srv in servers if not (isinstance(srv, dict) and srv.get("name") == "polaris")]
-    servers.append({"name": "polaris", **_config_spec()})
+    if isinstance(servers, list):
+        migrated: dict[str, dict[str, Any]] = {}
+        for srv in servers:
+            if isinstance(srv, dict) and isinstance(srv.get("name"), str):
+                name = srv["name"]
+                migrated[name] = {k: v for k, v in srv.items() if k != "name"}
+        servers = migrated
+    elif not isinstance(servers, dict):
+        servers = {}
+    servers["polaris"] = _config_spec()
     data["mcp_servers"] = servers
-    preview = _dump_toml({"mcp_servers": [servers[-1]]})
+    preview = _dump_toml({"mcp_servers": {"polaris": servers["polaris"]}})
     if dry_run:
         return f"[dry-run] would merge {path}\n{preview}"
     path.parent.mkdir(parents=True, exist_ok=True)

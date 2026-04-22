@@ -39,8 +39,7 @@ Restart Claude Code.
 Append to `~/.codex/config.toml`:
 
 ```toml
-[[mcp_servers]]
-name = "polaris"
+[mcp_servers.polaris]
 command = "python3"
 args = ["-m", "adapters.mcp_polaris.server"]
 cwd = "/absolute/path/to/Polaris"
