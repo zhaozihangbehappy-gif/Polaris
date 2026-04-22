@@ -82,10 +82,56 @@ def _config_spec() -> dict[str, Any]:
     return {"command": "polaris", "args": ["serve-mcp"]}
 
 
+def _wsl_bridge_spec() -> dict[str, Any]:
+    # Windows-side agent (Cursor/Claude Desktop) calls into the WSL install
+    # via the `wsl` shim. Requires polaris on PATH inside the default WSL
+    # distro. Zero setup beyond that.
+    return {"command": "wsl", "args": ["polaris", "serve-mcp"]}
+
+
+def _is_wsl() -> bool:
+    try:
+        return "microsoft" in Path("/proc/version").read_text().lower()
+    except OSError:
+        return False
+
+
+def _wsl_windows_home() -> Path | None:
+    # Return /mnt/c/Users/<name> if resolvable; else None.
+    if not _is_wsl():
+        return None
+    winuser = os.environ.get("WINUSER") or os.environ.get("USER") or ""
+    candidates = []
+    if winuser:
+        candidates.append(Path(f"/mnt/c/Users/{winuser}"))
+    users_root = Path("/mnt/c/Users")
+    if users_root.exists():
+        for entry in users_root.iterdir():
+            if entry.is_dir() and entry.name not in ("Public", "Default", "All Users"):
+                candidates.append(entry)
+    for candidate in candidates:
+        if candidate.exists():
+            return candidate
+    return None
+
+
 def _json_config_path(agent: str) -> Path | None:
     mapping = {
         "claude-code": Path.home() / ".config" / "claude" / "mcp.json",
         "cursor": Path.home() / ".cursor" / "mcp.json",
+    }
+    return mapping.get(agent)
+
+
+def _windows_json_config_path(agent: str) -> Path | None:
+    # Windows-side config path reachable from WSL via /mnt/c. Only
+    # meaningful for GUI agents whose Windows install reads C:\Users\<user>.
+    home = _wsl_windows_home()
+    if home is None:
+        return None
+    mapping = {
+        "cursor": home / ".cursor" / "mcp.json",
+        "claude-code": home / ".claude.json",
     }
     return mapping.get(agent)
 
@@ -118,22 +164,34 @@ def _load_json(path: Path) -> dict[str, Any]:
     return data if isinstance(data, dict) else {}
 
 
-def _install_json_agent(agent: str, dry_run: bool) -> str:
-    path = _json_config_path(agent)
-    assert path is not None
+def _write_json_mcp(path: Path, spec: dict[str, Any], dry_run: bool) -> str:
     data = _load_json(path)
     servers = data.get("mcpServers")
     if not isinstance(servers, dict):
         servers = {}
         data["mcpServers"] = servers
-    servers["polaris"] = _config_spec()
-    preview = json.dumps({"mcpServers": {"polaris": servers["polaris"]}}, indent=2)
+    servers["polaris"] = spec
+    preview = json.dumps({"mcpServers": {"polaris": spec}}, indent=2)
     if dry_run:
         return f"[dry-run] would merge {path}\n{preview}"
     path.parent.mkdir(parents=True, exist_ok=True)
     _backup(path)
     path.write_text(json.dumps(data, indent=2) + "\n")
     return f"merged {path}\n{preview}"
+
+
+def _install_json_agent(agent: str, dry_run: bool) -> str:
+    outputs: list[str] = []
+    linux_path = _json_config_path(agent)
+    assert linux_path is not None
+    outputs.append(_write_json_mcp(linux_path, _config_spec(), dry_run))
+    win_path = _windows_json_config_path(agent)
+    if win_path is not None:
+        outputs.append(
+            _write_json_mcp(win_path, _wsl_bridge_spec(), dry_run)
+            + f"\n(windows-side via wsl bridge — agent running on Windows will call `wsl polaris serve-mcp`)"
+        )
+    return "\n\n".join(outputs)
 
 
 def _install_codex_agent(dry_run: bool) -> str:
@@ -174,20 +232,29 @@ def _install_codex_agent(dry_run: bool) -> str:
 def _configured_agents() -> dict[str, str]:
     found: dict[str, str] = {}
     for agent in ("claude-code", "cursor"):
-        path = _json_config_path(agent)
-        if path and path.exists():
+        for path in filter(None, (_json_config_path(agent), _windows_json_config_path(agent))):
+            if not path.exists():
+                continue
             data = _load_json(path)
             servers = data.get("mcpServers")
             if isinstance(servers, dict) and "polaris" in servers:
-                found[agent] = str(path)
+                key = agent if path == _json_config_path(agent) else f"{agent}-windows"
+                found[key] = str(path)
     codex = _codex_config_path()
     if codex.exists():
         try:
             data = tomllib.loads(codex.read_text())
         except tomllib.TOMLDecodeError:
             data = {}
-        servers = data.get("mcp_servers", [])
-        if isinstance(servers, list) and any(isinstance(srv, dict) and srv.get("name") == "polaris" for srv in servers):
+        servers = data.get("mcp_servers")
+        has_polaris = False
+        if isinstance(servers, dict) and "polaris" in servers:
+            has_polaris = True
+        elif isinstance(servers, list) and any(
+            isinstance(srv, dict) and srv.get("name") == "polaris" for srv in servers
+        ):
+            has_polaris = True
+        if has_polaris:
             found["codex"] = str(codex)
     return found
 
