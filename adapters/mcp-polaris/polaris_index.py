@@ -20,7 +20,15 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Optional
 
-PACKS_DIR = Path(__file__).resolve().parent.parent.parent / "experience-packs-v4"
+_REPO = Path(__file__).resolve().parent.parent.parent
+PACKS_DIR = _REPO / "experience-packs-v4"
+COMMUNITY_DIR = _REPO / "experience-packs-v4-community"
+CANDIDATE_DIR = _REPO / "experience-packs-v4-candidates"
+TIER_BY_ROOT = {
+    PACKS_DIR: "official",
+    COMMUNITY_DIR: "community",
+    CANDIDATE_DIR: "candidate",
+}
 CONTEXT_TOKEN_BUDGET = 300
 CONSTANT_CONTEXT_TOKEN_BUDGET = 100
 CONSTANT_MAX_PATTERNS = 1
@@ -55,6 +63,7 @@ class IndexedPattern:
     applicability_bounds: dict
     shortest_verification: dict
     keyword_hints: frozenset
+    tier: str = "official"
 
 
 def _compile_regexes(raws: list[str]) -> tuple:
@@ -67,7 +76,7 @@ def _compile_regexes(raws: list[str]) -> tuple:
     return tuple(out)
 
 
-def _build_pattern(rec: dict) -> IndexedPattern:
+def _build_pattern(rec: dict, tier: str = "official") -> IndexedPattern:
     sigs = rec.get("trigger_signals", {}) or {}
     raws = sigs.get("stderr_regex", []) or []
     regexes = _compile_regexes(raws)
@@ -88,10 +97,11 @@ def _build_pattern(rec: dict) -> IndexedPattern:
         applicability_bounds=rec.get("applicability_bounds", {}) or {},
         shortest_verification=rec.get("shortest_verification", {}) or {},
         keyword_hints=frozenset(hints),
+        tier=tier,
     )
 
 
-def _load_from_dir(root: Path) -> list[IndexedPattern]:
+def _load_from_dir(root: Path, tier: str = "official") -> list[IndexedPattern]:
     out: list[IndexedPattern] = []
     if not root.exists():
         return out
@@ -102,9 +112,16 @@ def _load_from_dir(root: Path) -> list[IndexedPattern]:
             continue
         for rec in data.get("records", []):
             try:
-                out.append(_build_pattern(rec))
+                out.append(_build_pattern(rec, tier=tier))
             except KeyError:
                 continue
+    return out
+
+
+def _load_all() -> list[IndexedPattern]:
+    out: list[IndexedPattern] = []
+    for root, tier in TIER_BY_ROOT.items():
+        out.extend(_load_from_dir(root, tier=tier))
     return out
 
 
@@ -141,7 +158,7 @@ class IndexState:
 
 @lru_cache(maxsize=1)
 def _default_state() -> IndexState:
-    return IndexState.build(_load_from_dir(PACKS_DIR))
+    return IndexState.build(_load_all())
 
 
 def load_index() -> list[IndexedPattern]:
@@ -206,6 +223,7 @@ def format_for_injection(
     for p in patterns[:max_patterns] if max_patterns else patterns:
         entry = {
             "id": p.pattern_id,
+            "tier": p.tier,
             "fix": p.fix_path.get("description") or p.fix_path.get("fix_command") or "",
             "verify": p.shortest_verification.get("command", ""),
             "avoid": [fp.get("wrong_guess", "") for fp in p.false_paths[:2]],
@@ -216,14 +234,14 @@ def format_for_injection(
             over_budget += 1
             if payload["patterns"]:
                 break
-            # Very first entry already over — trim to id+fix only.
-            entry = {"id": entry["id"], "fix": entry["fix"][:140]}
+            # Very first entry already over — trim to id+tier+fix only.
+            entry = {"id": entry["id"], "tier": entry["tier"], "fix": entry["fix"][:140]}
             projected = used + _tokenize_len(json.dumps(entry))
             while projected > token_budget and entry["fix"]:
                 entry["fix"] = entry["fix"][: max(0, len(entry["fix"]) - 40)]
                 projected = used + _tokenize_len(json.dumps(entry))
             if projected > token_budget:
-                entry = {"id": entry["id"]}
+                entry = {"id": entry["id"], "tier": entry["tier"]}
                 projected = used + _tokenize_len(json.dumps(entry))
                 if projected > token_budget:
                     break

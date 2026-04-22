@@ -18,6 +18,10 @@ Polaris was built against recurring engineering failure, not demo-friendly promp
 - 66.2% holdout: accuracy on unseen failure samples during internal evaluation.
 - 44/44 gates: internal release checks. Historical. Not a promise about your repo.
 
+## How it grows
+
+Polaris has a community channel. Users can submit new candidate patterns and confirm or reject existing candidates. A candidate enters the community-verified tier after at least 2 independent users confirm it helped them on real cases, with zero rejects. The shared library Polaris loads is three-tiered: `official` (internal verified-live — the 167), `community` (community-verified through this channel), and `candidate` (unconfirmed but available to try). Each lookup result carries its tier. This is how Polaris grows — not just from a central team, from the people who use it.
+
 ## What it is not
 
 - Not a coding agent.

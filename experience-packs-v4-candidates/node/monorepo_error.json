@@ -1,0 +1,88 @@
+{
+  "ecosystem": "node",
+  "error_class": "monorepo_error",
+  "schema_version": 4,
+  "records": [
+    {
+      "pattern_id": "candidate.node.monorepo_error.000",
+      "ecosystem": "node",
+      "error_class": "monorepo_error",
+      "description": "pnpm workspace pkg not linked",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "ERR_PNPM_WORKSPACE_PKG_NOT_FOUND"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "cat pnpm-workspace.yaml 2>&1 || cat turbo.json 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "ERR_PNPM_WORKSPACE_PKG_NOT_FOUND"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Monorepo: pnpm workspace pkg not linked"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ],
+      "authored_fixture": {
+        "authored_at": "2026-04-20T10:22:15+00:00",
+        "authored_by": "codex",
+        "authored_with_prompt_sha256": "71c366e3c2228d1baf3e36a4e412baf47a7e6dd4335e4061eb6dd7890cbf7fe6",
+        "verification_command": "pnpm install --offline --lockfile-only",
+        "expected_stderr_regex": "ERR_PNPM_WORKSPACE_PKG_NOT_FOUND",
+        "files": [
+          {
+            "path": "package.json",
+            "content": "{\n  \"name\": \"workspace-package-missing-demo\",\n  \"version\": \"1.0.0\",\n  \"private\": true,\n  \"scripts\": {\n    \"verify\": \"pnpm install --offline --lockfile-only\"\n  }\n}\n"
+          },
+          {
+            "path": "pnpm-workspace.yaml",
+            "content": "packages:\n  - \"packages/*\"\n"
+          },
+          {
+            "path": "packages/app/package.json",
+            "content": "{\n  \"name\": \"@demo/app\",\n  \"version\": \"1.0.0\",\n  \"private\": true,\n  \"dependencies\": {\n    \"@demo/missing\": \"workspace:*\"\n  }\n}\n"
+          },
+          {
+            "path": "packages/util/package.json",
+            "content": "{\n  \"name\": \"@demo/util\",\n  \"version\": \"1.0.0\",\n  \"private\": true\n}\n"
+          }
+        ],
+        "reference_fix_files": [
+          {
+            "path": "packages/app/package.json",
+            "content": "{\n  \"name\": \"@demo/app\",\n  \"version\": \"1.0.0\",\n  \"private\": true,\n  \"dependencies\": {\n    \"@demo/util\": \"workspace:*\"\n  }\n}\n"
+          }
+        ],
+        "fix_rationale": "The app must depend on a workspace package that is actually declared in the workspace.",
+        "reviewer_record": {
+          "validated_in_sandbox_at": "2026-04-20T10:22:15+00:00",
+          "sandbox_pre_fix_exit_code": 1,
+          "sandbox_pre_fix_stderr_match": true,
+          "sandbox_post_fix_exit_code": 0,
+          "sandbox_workdir_hash_pre": "d4a5394c1166ac7e7229058b372c38c443cd3b6c307f28d7335633641be1b1aa",
+          "sandbox_workdir_hash_post": "845291dfe222772038313891a5291c30eb4753832e3f5f158feade1713327414",
+          "notes": "authored by codex; pre-fix fails+matches regex, post-fix passes"
+        }
+      },
+      "contributor_fingerprint": "upstream_authored"
+    }
+  ]
+}

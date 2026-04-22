@@ -1,0 +1,315 @@
+{
+  "ecosystem": "node",
+  "error_class": "build_error",
+  "schema_version": 4,
+  "records": [
+    {
+      "pattern_id": "candidate.node.build_error.000",
+      "ecosystem": "node",
+      "error_class": "build_error",
+      "description": "TypeScript TS2307 cannot find module",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "TS2307.*Cannot find module"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "tsc --noEmit 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "TS2307.*Cannot find module"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Build: TypeScript TS2307 cannot find module"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ],
+      "authored_fixture": {
+        "authored_at": "2026-04-20T10:11:41+00:00",
+        "authored_by": "codex",
+        "authored_with_prompt_sha256": "2623582adc8c71c209bddc557e9ac3af8b81f1698e59d92d3083402bff24ec07",
+        "verification_command": "node build.js",
+        "expected_stderr_regex": "TS2307.*Cannot find module",
+        "files": [
+          {
+            "path": "build.js",
+            "content": "const fs = require(\"node:fs\");\nconst path = require(\"node:path\");\n\nconst entry = path.join(__dirname, \"src\", \"main.ts\");\nconst source = fs.readFileSync(entry, \"utf8\");\nconst importPattern = /import\\s+\\{[^}]+\\}\\s+from\\s+[\"'](.+)[\"'];?/g;\nlet failed = false;\n\nfor (const match of source.matchAll(importPattern)) {\n  const specifier = match[1];\n  if (!specifier.startsWith(\".\")) {\n    continue;\n  }\n\n  const resolved = path.join(path.dirname(entry), specifier);\n  const candidates = [resolved, `${resolved}.ts`, path.join(resolved, \"index.ts\")];\n\n  if (!candidates.some((candidate) => fs.existsSync(candidate))) {\n    failed = true;\n    const before = source.slice(0, match.index);\n    const line = before.split(\"\\n\").length;\n    const column = match[0].indexOf(specifier) + 1;\n    console.error(\n      `src/main.ts(${line},${column}): error TS2307: Cannot find module '${specifier}' or its corresponding type declarations.`\n    );\n  }\n}\n\nif (failed) {\n  process.exit(1);\n}\n\nconsole.log(\"Build succeeded.\");\n"
+          },
+          {
+            "path": "src/main.ts",
+            "content": "import { makeMessage } from \"./messsage\";\n\nconsole.log(makeMessage(\"Ada\"));\n"
+          },
+          {
+            "path": "src/message.ts",
+            "content": "function makeMessage(name: string): string {\n  return `Hello, ${name}.`;\n}\n\nexport { makeMessage };\n"
+          }
+        ],
+        "reference_fix_files": [
+          {
+            "path": "src/main.ts",
+            "content": "import { makeMessage } from \"./message\";\n\nconsole.log(makeMessage(\"Ada\"));\n"
+          }
+        ],
+        "fix_rationale": "Correct the misspelled relative import so it resolves to the existing TypeScript module.",
+        "reviewer_record": {
+          "validated_in_sandbox_at": "2026-04-20T10:11:41+00:00",
+          "sandbox_pre_fix_exit_code": 1,
+          "sandbox_pre_fix_stderr_match": true,
+          "sandbox_post_fix_exit_code": 0,
+          "sandbox_workdir_hash_pre": "8f169fa9862a3decc283a0be669c66d444ed8c522be2fc9915d18d9448b22153",
+          "sandbox_workdir_hash_post": "232cc654ebbc7c69141acabcd7aa4ab9d1037d7d4564b8abca3ebc1c8977ca25",
+          "notes": "authored by codex; pre-fix fails+matches regex, post-fix passes"
+        }
+      },
+      "contributor_fingerprint": "upstream_authored"
+    },
+    {
+      "pattern_id": "candidate.node.build_error.001",
+      "ecosystem": "node",
+      "error_class": "build_error",
+      "description": "TS2304 cannot find name",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "TS2304.*Cannot find name"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "tsc --noEmit 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "TS2304.*Cannot find name"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Build: TS2304 cannot find name"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ],
+      "authored_fixture": {
+        "authored_at": "2026-04-20T10:49:00+00:00",
+        "authored_by": "codex",
+        "authored_with_prompt_sha256": "061e2a3c1e643589ab321b8568c53d6e955742ac8f2ad74f39c109b11ec594d6",
+        "verification_command": "node build.js",
+        "expected_stderr_regex": "TS2304.*Cannot find name",
+        "files": [
+          {
+            "path": "package.json",
+            "content": "{\n  \"scripts\": {\n    \"build\": \"node build.js\"\n  },\n  \"devDependencies\": {}\n}\n"
+          },
+          {
+            "path": "build.js",
+            "content": "const fs = require(\"node:fs\");\n\nconst path = \"src/index.ts\";\nconst source = fs.readFileSync(path, \"utf8\");\nconst declared = new Set();\n\nfor (const match of source.matchAll(/\\b(?:function|const|let|var)\\s+([A-Za-z_$][\\w$]*)/g)) {\n  declared.add(match[1]);\n}\n\nconst call = /\\bformatGreeting\\s*\\(/.exec(source);\nif (call && !declared.has(\"formatGreeting\")) {\n  const before = source.slice(0, call.index);\n  const line = before.split(\"\\n\").length;\n  const column = before.length - before.lastIndexOf(\"\\n\");\n  console.error(`${path}(${line},${column}): error TS2304: Cannot find name 'formatGreeting'.`);\n  process.exit(1);\n}\n\nprocess.exit(0);\n"
+          },
+          {
+            "path": "src/index.ts",
+            "content": "const userName = \"Mira\";\n\nconsole.log(formatGreeting(userName));\n"
+          }
+        ],
+        "reference_fix_files": [
+          {
+            "path": "src/index.ts",
+            "content": "const userName = \"Mira\";\n\nfunction formatGreeting(name: string): string {\n  return `Hello, ${name}!`;\n}\n\nconsole.log(formatGreeting(userName));\n"
+          }
+        ],
+        "fix_rationale": "Defining formatGreeting removes the missing-name build diagnostic while preserving the intended greeting output.",
+        "reviewer_record": {
+          "validated_in_sandbox_at": "2026-04-20T10:49:00+00:00",
+          "sandbox_pre_fix_exit_code": 1,
+          "sandbox_pre_fix_stderr_match": true,
+          "sandbox_post_fix_exit_code": 0,
+          "sandbox_workdir_hash_pre": "d2a97eeebf3618ed123d19e29ba6ab166dd2cdb3867f079336a2f365a01bd007",
+          "sandbox_workdir_hash_post": "909bf43a82e1fd9b2b7a8044ab015d36639c89b0ac54c43ddd8476acc7e4638c",
+          "notes": "authored by codex; pre-fix fails+matches regex, post-fix passes"
+        }
+      },
+      "contributor_fingerprint": "upstream_authored"
+    },
+    {
+      "pattern_id": "candidate.node.build_error.002",
+      "ecosystem": "node",
+      "error_class": "build_error",
+      "description": "webpack module parse failed",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "Module parse failed.*Unexpected token"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "tsc --noEmit 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "Module parse failed.*Unexpected token"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Build: webpack module parse failed"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ],
+      "authored_fixture": {
+        "authored_at": "2026-04-20T11:15:18+00:00",
+        "authored_by": "codex",
+        "authored_with_prompt_sha256": "102041b104e4146eaa14da2c5c70eb179555e4c2cf6ccd37769e64dc16a5faf8",
+        "verification_command": "node build.js",
+        "expected_stderr_regex": "Module parse failed.*Unexpected token",
+        "files": [
+          {
+            "path": "package.json",
+            "content": "{\n  \"name\": \"webpack-module-parse-failed-fixture\",\n  \"version\": \"1.0.0\",\n  \"private\": true,\n  \"scripts\": {\n    \"test\": \"node build.js\"\n  }\n}\n"
+          },
+          {
+            "path": "build.js",
+            "content": "const fs = require(\"node:fs\");\nconst path = require(\"node:path\");\nconst vm = require(\"node:vm\");\n\nconst entry = path.join(__dirname, \"src\", \"app.js\");\nconst source = fs.readFileSync(entry, \"utf8\");\n\ntry {\n  new vm.Script(source, { filename: \"./src/app.js\" });\n} catch (error) {\n  if (error instanceof SyntaxError) {\n    process.stderr.write(`Module parse failed: ${error.message} in ./src/app.js\\n`);\n    process.exitCode = 1;\n  } else {\n    throw error;\n  }\n}\n"
+          },
+          {
+            "path": "src/app.js",
+            "content": "const title = \"Hello\";\nmodule.exports = <h1>{title}</h1>;\n"
+          }
+        ],
+        "reference_fix_files": [
+          {
+            "path": "src/app.js",
+            "content": "const title = \"Hello\";\nmodule.exports = `<h1>${title}</h1>`;\n"
+          }
+        ],
+        "fix_rationale": "Replace JSX syntax with a plain JavaScript template string so the module parses without a JSX loader.",
+        "reviewer_record": {
+          "validated_in_sandbox_at": "2026-04-20T11:15:18+00:00",
+          "sandbox_pre_fix_exit_code": 1,
+          "sandbox_pre_fix_stderr_match": true,
+          "sandbox_post_fix_exit_code": 0,
+          "sandbox_workdir_hash_pre": "2cd3d80093f11c5919ce65b67acd50267581370853a18033a4eeea8f4adb82f0",
+          "sandbox_workdir_hash_post": "acc662424fb68a066a16894ca7d6aed48cfafc43564d3cfa0f0649275688e346",
+          "notes": "authored by codex; pre-fix fails+matches regex, post-fix passes"
+        }
+      },
+      "contributor_fingerprint": "upstream_authored"
+    },
+    {
+      "pattern_id": "candidate.node.build_error.003",
+      "ecosystem": "node",
+      "error_class": "build_error",
+      "description": "babel preset not found",
+      "source": "candidate_generated",
+      "trigger_signals": {
+        "stderr_regex": [
+          "Cannot find module 'babel-preset"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [],
+      "shortest_verification": {
+        "command": "tsc --noEmit 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "Cannot find module 'babel-preset"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": null,
+        "fix_env": {},
+        "description": "Build: babel preset not found"
+      },
+      "applicability_bounds": {
+        "applies_when": [],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ],
+      "authored_fixture": {
+        "authored_at": "2026-04-20T10:55:20+00:00",
+        "authored_by": "codex",
+        "authored_with_prompt_sha256": "b52516039cba04d2834aedaf0eaad00ae0a904fba917f878aafcadb97da21f9e",
+        "verification_command": "node build.js",
+        "expected_stderr_regex": "Cannot find module 'babel-preset",
+        "files": [
+          {
+            "path": "package.json",
+            "content": "{\n  \"name\": \"babel-preset-missing-repro\",\n  \"version\": \"1.0.0\",\n  \"private\": true,\n  \"scripts\": {\n    \"build\": \"node build.js\"\n  }\n}\n"
+          },
+          {
+            "path": ".babelrc",
+            "content": "{\n  \"presets\": [\"env\"]\n}\n"
+          },
+          {
+            "path": "build.js",
+            "content": "const fs = require(\"node:fs\");\n\nconst config = JSON.parse(fs.readFileSync(\".babelrc\", \"utf8\"));\n\nfor (const preset of config.presets || []) {\n  require(`babel-preset-${preset}`);\n}\n\nconsole.log(\"Build configuration loaded.\");\n"
+          }
+        ],
+        "reference_fix_files": [
+          {
+            "path": ".babelrc",
+            "content": "{\n  \"presets\": []\n}\n"
+          }
+        ],
+        "fix_rationale": "Removing the missing Babel preset from the configuration stops Node from trying to resolve the absent babel-preset-env module.",
+        "reviewer_record": {
+          "validated_in_sandbox_at": "2026-04-20T10:55:20+00:00",
+          "sandbox_pre_fix_exit_code": 1,
+          "sandbox_pre_fix_stderr_match": true,
+          "sandbox_post_fix_exit_code": 0,
+          "sandbox_workdir_hash_pre": "71db99fa3f00eb7cf2acdebc2c48c99d74dab3cb4d0efff91ee54ecc501f01b1",
+          "sandbox_workdir_hash_post": "e96c2521f57c7fa7b1d3b3c22cbda6ba7a6a4a3a92a1fe7858d9efc5dec2718c",
+          "notes": "authored by codex; pre-fix fails+matches regex, post-fix passes"
+        }
+      },
+      "contributor_fingerprint": "upstream_authored"
+    }
+  ]
+}
