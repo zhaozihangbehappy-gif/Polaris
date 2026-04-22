@@ -77,6 +77,13 @@ def _load_candidate_index() -> dict[str, Path]:
     return idx
 
 
+def _bump_stamp(root: Path) -> None:
+    # Touch `<root>/.version` so the adapter index sees a new signature on
+    # the next match() call. O(1); avoids rescanning the shard tree.
+    root.mkdir(parents=True, exist_ok=True)
+    (root / ".version").write_text(str(time.time_ns()))
+
+
 def _append_jsonl(path: Path, row: dict) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("a") as f:
@@ -173,6 +180,7 @@ def cmd_submit(args: argparse.Namespace) -> int:
     dst_dir.mkdir(parents=True, exist_ok=True)
     dst = dst_dir / f"{ts}-{fp[:8]}-{sid}.json"
     dst.write_text(json.dumps(payload, indent=2) + "\n")
+    _bump_stamp(CANDIDATE_DIR)
     print(f"ingested: {dst.relative_to(REPO)}")
     if converted_from_v1:
         print("note: converted from schema_version=1 (polaris_cli experience contribute) to v4 candidate shape")
@@ -279,6 +287,9 @@ def cmd_promote(args: argparse.Namespace) -> int:
         (PROMOTED / f"{pid}.json").parent.mkdir(parents=True, exist_ok=True)
         (PROMOTED / f"{pid}.json").write_text(json.dumps(log, indent=2) + "\n")
         promoted.append(pid)
+    if promoted:
+        _bump_stamp(CANDIDATE_DIR)
+        _bump_stamp(COMMUNITY_PACK_DIR)
     print(f"promoted {len(promoted)} candidate(s)")
     for pid in promoted:
         print(f"  {pid}")

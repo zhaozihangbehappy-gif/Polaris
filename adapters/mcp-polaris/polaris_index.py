@@ -125,17 +125,23 @@ def _load_all() -> list[IndexedPattern]:
     return out
 
 
-def _root_signature(root: Path) -> tuple[tuple[str, int, int], ...]:
+def _root_signature(root: Path) -> tuple:
+    # O(1) per root. Prefer a `.version` stamp file bumped by writers
+    # (polaris_community.py on submit/promote). If absent, fall back to root
+    # dir mtime, which moves on git pull / file add / file remove. In-place
+    # edits to existing shards by a maintainer require touching the stamp
+    # file or restarting the server.
     if not root.exists():
         return ()
-    signature = []
-    for shard in sorted(root.rglob("*.json")):
-        stat = shard.stat()
-        signature.append((str(shard.relative_to(root)), stat.st_mtime_ns, stat.st_size))
-    return tuple(signature)
+    stamp = root / ".version"
+    if stamp.exists():
+        st = stamp.stat()
+        return ("stamp", st.st_mtime_ns, st.st_size)
+    st = root.stat()
+    return ("dir", st.st_mtime_ns)
 
 
-def _library_signature() -> tuple[tuple[str, tuple[tuple[str, int, int], ...]], ...]:
+def _library_signature() -> tuple[tuple[str, tuple], ...]:
     return tuple((tier, _root_signature(root)) for root, tier in TIER_BY_ROOT.items())
 
 
@@ -172,7 +178,7 @@ class IndexState:
 
 @lru_cache(maxsize=4)
 def _state_for_signature(
-    signature: tuple[tuple[str, tuple[tuple[str, int, int], ...]], ...],
+    signature: tuple[tuple[str, tuple], ...],
 ) -> IndexState:
     del signature
     return IndexState.build(_load_all())
