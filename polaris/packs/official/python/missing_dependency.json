@@ -7,7 +7,7 @@
       "pattern_id": "python.missing_dependency.000",
       "ecosystem": "python",
       "error_class": "missing_dependency",
-      "description": "Python cannot import module — add cwd and src to PYTHONPATH",
+      "description": "Python third-party package not installed",
       "source": "prebuilt",
       "trigger_signals": {
         "stderr_regex": [
@@ -17,7 +17,86 @@
         "package_managers": [],
         "ci_env": []
       },
-      "false_paths": [],
+      "false_paths": [
+        {
+          "wrong_guess": "Adding project root or src to PYTHONPATH",
+          "why_agents_try_it": "The same ModuleNotFoundError also appears when a local module is missing from sys.path."
+        }
+      ],
+      "shortest_verification": {
+        "command": "python3 -c 'import requests' 2>&1 || true",
+        "trigger_env": {},
+        "expected_stderr_match": "ModuleNotFoundError",
+        "expected_fix_outcome": "different_error_or_success"
+      },
+      "fix_path": {
+        "structured_hints": [],
+        "fix_command": "python3 -m pip install <captured-module>",
+        "fix_env": {},
+        "description": "Install missing third-party package: python3 -m pip install <captured-module>"
+      },
+      "applicability_bounds": {
+        "applies_when": [
+          "requests",
+          "numpy",
+          "pandas",
+          "flask",
+          "django",
+          "fastapi",
+          "sqlalchemy",
+          "pytest",
+          "pillow",
+          "pil",
+          "boto3",
+          "scikit-learn",
+          "sklearn",
+          "matplotlib"
+        ],
+        "do_not_apply_when": []
+      },
+      "agent_reproducibility": {
+        "evidence": []
+      },
+      "legacy_v3": {
+        "stderr_pattern": "ModuleNotFoundError: No module named '([^']+)'",
+        "avoidance_hints": [],
+        "description": "Install missing third-party package: python3 -m pip install <captured-module>",
+        "source": "prebuilt",
+        "reproduction": {
+          "command": "python3 -c 'import requests' 2>&1 || true",
+          "trigger_env": {},
+          "expected_stderr_match": "ModuleNotFoundError",
+          "fix_env": {},
+          "expected_fix_outcome": "different_error_or_success",
+          "fix_command": "python3 -m pip install <captured-module>"
+        }
+      },
+      "needs_human_review": [
+        "false_paths",
+        "applicability_bounds",
+        "agent_reproducibility"
+      ]
+    },
+    {
+      "pattern_id": "python.missing_local_module.000",
+      "ecosystem": "python",
+      "error_class": "missing_dependency",
+      "description": "Local module not on sys.path — add project root / src to PYTHONPATH",
+      "source": "prebuilt",
+      "trigger_signals": {
+        "stderr_regex": [
+          "ModuleNotFoundError: No module named '([^']+)'"
+        ],
+        "file_markers": [],
+        "package_managers": [],
+        "ci_env": []
+      },
+      "false_paths": [
+        {
+          "wrong_guess": "Installing the missing name with pip",
+          "why_agents_try_it": "The same ModuleNotFoundError also appears when a third-party package is not installed."
+        }
+      ],
       "shortest_verification": {
         "command": "mkdir -p /tmp/_polaris_repro_pymod && echo 'X=1' > /tmp/_polaris_repro_pymod/_polaris_test_mod.py && python3 -c 'import _polaris_test_mod' 2>&1 || true",
         "trigger_env": {
@@ -39,11 +118,26 @@
         "fix_env": {
           "PYTHONPATH": "/tmp/_polaris_repro_pymod"
         },
-        "description": "Python cannot import module — add cwd and src to PYTHONPATH"
+        "description": "Local module not on sys.path — add project root / src to PYTHONPATH"
       },
       "applicability_bounds": {
         "applies_when": [],
-        "do_not_apply_when": []
+        "do_not_apply_when": [
+          "requests",
+          "numpy",
+          "pandas",
+          "flask",
+          "django",
+          "fastapi",
+          "sqlalchemy",
+          "pytest",
+          "pillow",
+          "pil",
+          "boto3",
+          "scikit-learn",
+          "sklearn",
+          "matplotlib"
+        ]
       },
       "agent_reproducibility": {
         "evidence": [
@@ -155,7 +249,7 @@
             }
           }
         ],
-        "description": "Python cannot import module — add cwd and src to PYTHONPATH",
+        "description": "Local module not on sys.path — add project root / src to PYTHONPATH",
         "source": "prebuilt",
         "reproduction": {
           "command": "mkdir -p /tmp/_polaris_repro_pymod && echo 'X=1' > /tmp/_polaris_repro_pymod/_polaris_test_mod.py && python3 -c 'import _polaris_test_mod' 2>&1 || true",

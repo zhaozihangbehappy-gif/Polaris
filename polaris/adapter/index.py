@@ -34,6 +34,41 @@ def _keywords(text: str) -> set[str]:
     return {m.group(0).lower() for m in _WORD_RE.finditer(text or "")}
 
 
+def _applicability_terms(pattern: "IndexedPattern", error_text: str) -> set[str]:
+    terms = set(_keywords(error_text))
+    for rx in pattern.stderr_regexes:
+        match = rx.search(error_text)
+        if not match:
+            continue
+        terms.update(_keywords(match.group(0)))
+        for raw in list(match.groups()) + list(match.groupdict().values()):
+            if not raw:
+                continue
+            value = str(raw).strip().lower()
+            if not value:
+                continue
+            terms.add(value)
+            terms.add(value.replace("-", "_"))
+            if "." in value:
+                terms.add(value.split(".", 1)[0])
+        break
+    return terms
+
+
+def _applicability_allows(pattern: "IndexedPattern", error_text: str) -> bool:
+    bounds = pattern.applicability_bounds or {}
+    applies = {str(item).strip().lower() for item in bounds.get("applies_when", []) if str(item).strip()}
+    excludes = {str(item).strip().lower() for item in bounds.get("do_not_apply_when", []) if str(item).strip()}
+    if not applies and not excludes:
+        return True
+    terms = _applicability_terms(pattern, error_text)
+    if applies and not any(term in terms for term in applies):
+        return False
+    if excludes and any(term in terms for term in excludes):
+        return False
+    return True
+
+
 @dataclass(frozen=True)
 class IndexedPattern:
     pattern_id: str
@@ -181,8 +216,11 @@ def match(
         pattern = state.patterns[idx]
         if ecosystem and pattern.ecosystem != ecosystem:
             continue
-        if any(rx.search(error_text) for rx in pattern.stderr_regexes):
-            hits.append(pattern)
+        if not any(rx.search(error_text) for rx in pattern.stderr_regexes):
+            continue
+        if not _applicability_allows(pattern, error_text):
+            continue
+        hits.append(pattern)
         if len(hits) >= limit:
             break
     return hits
