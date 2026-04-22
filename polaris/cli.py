@@ -304,17 +304,30 @@ def _release_assets() -> list[dict[str, Any]]:
 
 
 def _matching_assets(channel: str) -> tuple[dict[str, Any] | None, dict[str, Any] | None, list[dict[str, Any]]]:
+    # Pick the newest release that has BOTH a tarball and checksum for
+    # this channel. GitHub /releases returns newest-first; group by tag
+    # to preserve that order rather than flattening and letting the
+    # final overwrite-iteration land on the oldest release.
     assets = _release_assets()
-    tarball = None
-    checksum = None
-    matches = [asset for asset in assets if f"polaris-packs-{channel}-" in str(asset.get("name", ""))]
+    prefix = f"polaris-packs-{channel}-"
+    matches = [asset for asset in assets if prefix in str(asset.get("name", ""))]
+    by_tag: dict[str, dict[str, dict[str, Any]]] = {}
+    tag_order: list[str] = []
     for asset in matches:
+        tag = str(asset.get("_tag_name", ""))
+        if tag not in by_tag:
+            by_tag[tag] = {}
+            tag_order.append(tag)
         name = str(asset.get("name", ""))
         if name.endswith(".tar.gz"):
-            tarball = asset
+            by_tag[tag]["tarball"] = asset
         elif name.endswith(".sha256"):
-            checksum = asset
-    return tarball, checksum, matches
+            by_tag[tag]["checksum"] = asset
+    for tag in tag_order:
+        pair = by_tag[tag]
+        if "tarball" in pair and "checksum" in pair:
+            return pair["tarball"], pair["checksum"], matches
+    return None, None, matches
 
 
 def _download(url: str, target: Path) -> None:
@@ -517,7 +530,10 @@ def cmd_serve_mcp(args: argparse.Namespace) -> int:
 
 
 def build_parser() -> argparse.ArgumentParser:
+    from polaris import __version__
+
     parser = argparse.ArgumentParser(prog="polaris")
+    parser.add_argument("--version", action="version", version=f"polaris {__version__}")
     sub = parser.add_subparsers(dest="cmd", required=True)
 
     install = sub.add_parser("install")
