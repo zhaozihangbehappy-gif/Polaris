@@ -84,9 +84,12 @@ def _config_spec() -> dict[str, Any]:
 
 def _wsl_bridge_spec() -> dict[str, Any]:
     # Windows-side agent (Cursor/Claude Desktop) calls into the WSL install
-    # via the `wsl` shim. Requires polaris on PATH inside the default WSL
-    # distro. Zero setup beyond that.
-    return {"command": "wsl", "args": ["polaris", "serve-mcp"]}
+    # via the `wsl` shim. When `wsl` runs a command non-interactively, the
+    # default PATH does NOT include ~/.local/bin (where pipx installs
+    # polaris), so resolve the absolute path at install time and pass it
+    # through -e so wsl treats it as an exec target, not shell input.
+    polaris_abs = shutil.which("polaris") or "polaris"
+    return {"command": "wsl", "args": ["-e", polaris_abs, "serve-mcp"]}
 
 
 def _is_wsl() -> bool:
