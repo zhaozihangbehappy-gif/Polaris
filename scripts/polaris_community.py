@@ -2,13 +2,13 @@
 """Polaris community promotion channel.
 
 Subcommands:
-  submit    — user contributes a new candidate pattern (lands in community/inbox/)
+  submit    — user contributes a new candidate pattern
   confirm   — user reports a candidate helped them avoid a loop (validation hit)
   reject    — user reports a candidate is wrong / harmful
-  promote   — check promotion rules and move eligible candidates to official
+  promote   — check promotion rules and move eligible candidates to community
   status    — show counts and per-candidate tallies
 
-Promotion rule: a candidate is eligible for official only if
+Promotion rule: a candidate is eligible for community only if
   (a) it currently lives in experience-packs-v4-candidates/
   (b) >=2 confirmations from DISTINCT validator_fingerprints,
       none of which equals the original contributor_fingerprint

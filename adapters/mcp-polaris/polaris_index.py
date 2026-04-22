@@ -125,6 +125,20 @@ def _load_all() -> list[IndexedPattern]:
     return out
 
 
+def _root_signature(root: Path) -> tuple[tuple[str, int, int], ...]:
+    if not root.exists():
+        return ()
+    signature = []
+    for shard in sorted(root.rglob("*.json")):
+        stat = shard.stat()
+        signature.append((str(shard.relative_to(root)), stat.st_mtime_ns, stat.st_size))
+    return tuple(signature)
+
+
+def _library_signature() -> tuple[tuple[str, tuple[tuple[str, int, int], ...]], ...]:
+    return tuple((tier, _root_signature(root)) for root, tier in TIER_BY_ROOT.items())
+
+
 @dataclass
 class IndexState:
     patterns: tuple
@@ -156,9 +170,16 @@ class IndexState:
         )
 
 
-@lru_cache(maxsize=1)
-def _default_state() -> IndexState:
+@lru_cache(maxsize=4)
+def _state_for_signature(
+    signature: tuple[tuple[str, tuple[tuple[str, int, int], ...]], ...],
+) -> IndexState:
+    del signature
     return IndexState.build(_load_all())
+
+
+def _default_state() -> IndexState:
+    return _state_for_signature(_library_signature())
 
 
 def load_index() -> list[IndexedPattern]:

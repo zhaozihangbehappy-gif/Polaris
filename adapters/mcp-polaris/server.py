@@ -30,7 +30,7 @@ except ImportError:
     )
     raise
 
-from adapters.mcp_polaris.polaris_index import format_for_constant_budget, match
+from adapters.mcp_polaris.polaris_index import CONTEXT_TOKEN_BUDGET, format_for_injection, match
 
 server = Server("polaris")
 
@@ -80,7 +80,11 @@ async def call_tool(name: str, arguments: dict[str, Any]) -> list[TextContent]:
         ecosystem=arguments.get("ecosystem"),
         limit=arguments.get("limit", 3),
     )
-    payload = format_for_constant_budget(hits)
+    payload = format_for_injection(
+        hits,
+        token_budget=CONTEXT_TOKEN_BUDGET,
+        max_patterns=arguments.get("limit", 3),
+    )
     payload["_latency_ms"] = round((time.perf_counter() - t0) * 1000, 2)
     return [TextContent(type="text", text=json.dumps(payload))]
 

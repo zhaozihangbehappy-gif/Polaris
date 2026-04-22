@@ -22,6 +22,8 @@ Polaris was built against recurring engineering failure, not demo-friendly promp
 
 Polaris has a community channel. Users can submit new candidate patterns and confirm or reject existing candidates. A candidate enters the community-verified tier after at least 2 independent users confirm it helped them on real cases, with zero rejects. The shared library Polaris loads is three-tiered: `official` (internal verified-live — the 167), `community` (community-verified through this channel), and `candidate` (unconfirmed but available to try). Each lookup result carries its tier. This is how Polaris grows — not just from a central team, from the people who use it.
 
+In this release, the shipped `candidate` tier is Node-only (21 patterns). The `official` tier remains the broad 8-ecosystem library.
+
 ## What it is not
 
 - Not a coding agent.
@@ -31,4 +33,4 @@ Polaris has a community channel. Users can submit new candidate patterns and con
 
 ## Older material
 
-Audit reports, release gates, and evaluation logs live under `archive/`. Public, frozen, not part of the product.
+Audit reports, release gates, and evaluation logs live under `archive/` and `eval/`. Public, frozen, not part of the product.

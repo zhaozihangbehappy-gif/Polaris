@@ -22,6 +22,8 @@ Polaris grows through the people who use it. If Polaris saved you a loop — or 
 
 A candidate joins Polaris's shared library after **≥ 2 independent users** confirm it helped them and no one rejected it. The shared library has three tiers — `official` (internal verified-live), `community` (community-verified through this channel), and `candidate` (unconfirmed but shipped so users can try them). All three are loaded at lookup time; each match carries its tier. Nobody's agent runs through a central server; confirmations are opt-in. See `community/README.md` for how trust and promotion work.
 
+Right now the shipped `candidate` tier only contains Node patterns. The `official` tier still covers all 8 ecosystems; more candidate ecosystems can be added over time through later releases and community submissions.
+
 ## Read these, not the rest
 
 - START_HERE.md
@@ -29,6 +31,8 @@ A candidate joins Polaris's shared library after **≥ 2 independent users** con
 - INSTALL.md
 
 There's an `archive/` folder too. It's old audit work I kept public so anyone can check it. Don't read it to learn how Polaris works — the three files above are the whole product.
+
+There's also an `eval/` folder with historical evaluation fixtures and logs. Public, useful for auditing, not required for install or everyday use.
 
 ## License
 
