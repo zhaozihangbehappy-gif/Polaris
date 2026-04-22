@@ -35,7 +35,7 @@ jobs:
           set -euo pipefail
           mkdir -p dist
           tar -czf "dist/polaris-packs-fresh-${TAG_NAME}.tar.gz" -C polaris packs
-          sha256sum "dist/polaris-packs-fresh-${TAG_NAME}.tar.gz" > "dist/polaris-packs-fresh-${TAG_NAME}.sha256"
+          (cd dist && sha256sum "polaris-packs-fresh-${TAG_NAME}.tar.gz" > "polaris-packs-fresh-${TAG_NAME}.sha256")
           python - <<'PY'
           import datetime as dt
           import subprocess
@@ -59,7 +59,7 @@ jobs:
           STABLE_REF="$(cat dist/STABLE_REF)"
           git worktree add /tmp/polaris-stable "$STABLE_REF"
           tar -czf "dist/polaris-packs-stable-${TAG_NAME}.tar.gz" -C /tmp/polaris-stable/polaris packs
-          sha256sum "dist/polaris-packs-stable-${TAG_NAME}.tar.gz" > "dist/polaris-packs-stable-${TAG_NAME}.sha256"
+          (cd dist && sha256sum "polaris-packs-stable-${TAG_NAME}.tar.gz" > "polaris-packs-stable-${TAG_NAME}.sha256")
 
       - name: Publish release
         uses: softprops/action-gh-release@v2
