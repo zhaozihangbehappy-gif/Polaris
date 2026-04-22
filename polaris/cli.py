@@ -192,7 +192,7 @@ def _install_json_agent(agent: str, dry_run: bool) -> str:
     if win_path is not None:
         outputs.append(
             _write_json_mcp(win_path, _wsl_bridge_spec(), dry_run)
-            + f"\n(windows-side via wsl bridge — agent running on Windows will call `wsl polaris serve-mcp`)"
+            + f"\n(windows-side via wsl bridge — agent running on Windows will call `wsl -e <polaris-abs-path> serve-mcp`)"
         )
     return "\n\n".join(outputs)
 
