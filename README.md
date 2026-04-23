@@ -4,7 +4,10 @@ Polaris stops your AI coding agent from repeating the same mistakes. Open source
 
 ## Install
 
-git clone https://github.com/zhaozihangbehappy-gif/Polaris.git && cd Polaris && python3 -m pip install -r adapters/mcp-polaris/requirements.txt
+git clone https://github.com/zhaozihangbehappy-gif/Polaris.git && cd Polaris && python -m pip install -r adapters/mcp-polaris/requirements.txt
+
+Windows: if `python` is not registered, use `py -m pip install -r adapters/mcp-polaris/requirements.txt`.
+Linux/macOS: if your system also has Python 2, use `python3 -m pip`.
 
 ## Pay
 
