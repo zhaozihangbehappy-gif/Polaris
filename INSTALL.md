@@ -83,7 +83,7 @@ Requires cwd at repo root; not recommended for production use.
 Before touching an agent, run the adapter by itself:
 
 ```
-python3 -c "from adapters.mcp_polaris.polaris_index import match, format_for_injection; print(format_for_injection(match(\"ModuleNotFoundError: No module named 'requests'\", ecosystem='python')))"
+python -c "from polaris.adapter.index import match, format_for_injection; print(format_for_injection(match(\"ModuleNotFoundError: No module named 'requests'\", ecosystem='python')))"
 ```
 
 You should see JSON with a `patterns` list and a `_budget` field. If that prints, the index loads and the matcher works.
