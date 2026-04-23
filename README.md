@@ -77,7 +77,7 @@ Solo-maintained, best-effort response. Issues and PRs typically get a reply with
 
 ## Sponsor
 
-If Polaris saved you time and you want to chip in, pay what you want (minimum $1) at https://<YOUR_HANDLE>.gumroad.com/l/polaris. It's optional — the full library and tooling are MIT-licensed and will stay that way.
+If Polaris saved you time and you want to chip in, pay what you want (minimum $3) at https://zhaozihang.gumroad.com/l/polaris. It's optional — the full library and tooling are MIT-licensed and will stay that way.
 
 ## License
 
