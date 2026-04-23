@@ -24,6 +24,19 @@ Promotion through this channel moves a pattern from `candidates/` to `community/
 5. Run `scripts/polaris_community.py promote`. Promoted candidates are moved out of the candidate pool into the community pool and logged in `community/promoted/`.
 6. A promoted pattern can be demoted back to candidate by a maintainer by deleting its record from `experience-packs-v4-community/` and restoring it to the candidate shard; accumulated rejects persist.
 
+## Conflict resolution
+
+- If the same `pattern_id` has both confirm and reject records, the zero-rejects rule blocks promotion forever.
+- Fix by submitting a revised pattern with a new `pattern_id` and `supersedes` pointing to the old id.
+- Keep the old id in the candidate pool; do not delete it.
+
+## Privacy note
+
+- `fingerprint` is the first 16 hex chars of sha256(local random salt + error summary).
+- Contribution files contain only `pattern_id`, `fingerprint`, `timestamp`, and platform labels.
+- They do not contain raw error logs, file paths, usernames, or environment variables.
+- Users can `cat` the file before submitting it.
+
 ## Identity and trust
 
 `contributor_fingerprint` and `validator_fingerprint` are sha256 prefixes of a per-host salt file at `~/.polaris/contributor_salt`. This is a light sybil deterrent, not a strong one. A determined attacker with multiple machines or VMs can produce multiple fingerprints. The intent is to make accidental self-confirmation impossible and casual farming annoying, not to resist a motivated adversary. Promotion is human-reviewable (`promote --verbose`), not an automatic merge.
