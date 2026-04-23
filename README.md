@@ -9,6 +9,37 @@ git clone https://github.com/zhaozihangbehappy-gif/Polaris.git && cd Polaris && 
 Windows: if `python` is not registered, use `py -m pip install -r adapters/mcp-polaris/requirements.txt`.
 Linux/macOS: if your system also has Python 2, use `python3 -m pip`.
 
+## MCP client config
+
+Use the installed `polaris` command as the stable MCP entrypoint:
+
+```json
+{
+  "mcpServers": {
+    "polaris": {
+      "command": "polaris",
+      "args": ["serve-mcp"]
+    }
+  }
+}
+```
+
+### Legacy / dev mode
+
+Requires cwd at repo root; not recommended for production use.
+
+```json
+{
+  "mcpServers": {
+    "polaris": {
+      "command": "python3",
+      "args": ["-m", "adapters.mcp_polaris.server"],
+      "cwd": "/absolute/path/to/Polaris"
+    }
+  }
+}
+```
+
 ## Pay
 
 https://<YOUR_HANDLE>.gumroad.com/l/polaris

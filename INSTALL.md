@@ -16,7 +16,7 @@ Linux/macOS: if your system also has Python 2, use `python3 -m pip`.
 
 ## 2. Wire it to your agent
 
-Replace `/absolute/path/to/Polaris` with wherever you cloned.
+Use the installed `polaris` command as the stable MCP entrypoint.
 
 ### Claude Code
 
@@ -26,9 +26,8 @@ Edit `~/.config/claude/mcp.json` (or `.claude/mcp.json` in your project):
 {
   "mcpServers": {
     "polaris": {
-      "command": "python3",
-      "args": ["-m", "adapters.mcp_polaris.server"],
-      "cwd": "/absolute/path/to/Polaris"
+      "command": "polaris",
+      "args": ["serve-mcp"]
     }
   }
 }
@@ -42,14 +41,30 @@ Append to `~/.codex/config.toml`:
 
 ```toml
 [mcp_servers.polaris]
-command = "python3"
-args = ["-m", "adapters.mcp_polaris.server"]
-cwd = "/absolute/path/to/Polaris"
+command = "polaris"
+args = ["serve-mcp"]
 ```
 
 ### Cursor
 
 Edit `~/.cursor/mcp.json` (create it if missing):
+
+```json
+{
+  "mcpServers": {
+    "polaris": {
+      "command": "polaris",
+      "args": ["serve-mcp"]
+    }
+  }
+}
+```
+
+Restart Cursor.
+
+### Legacy / dev mode
+
+Requires cwd at repo root; not recommended for production use.
 
 ```json
 {
@@ -62,8 +77,6 @@ Edit `~/.cursor/mcp.json` (create it if missing):
   }
 }
 ```
-
-Restart Cursor.
 
 ## 3. Confirm it's alive
 
@@ -79,7 +92,7 @@ Now try it through your agent:
 
 > I'm getting `ModuleNotFoundError: No module named 'requests'` in a Python project. Check Polaris before you guess.
 
-If the agent calls `polaris_lookup` and a matching pattern comes back, you're done. If it doesn't call the tool, the agent hasn't picked up the MCP config — recheck the path, the `cwd`, and restart the agent.
+If the agent calls `polaris_lookup` and a matching pattern comes back, you're done. If it doesn't call the tool, the agent hasn't picked up the MCP config — recheck the config and restart the agent.
 
 ## Uninstall
 
