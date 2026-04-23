@@ -16,6 +16,6 @@ It doesn't think for your agent. It keeps it from burning twenty minutes on a mi
 
 Don't hand it a clean demo. Hand it the error you wasted your last coffee break on.
 
-That's the one that tells you whether this is worth $2.49.
+That's the one that tells you whether Polaris is worth keeping wired up.
 
 `INSTALL.md` for setup. `FACTS.md` if you want the numbers.
