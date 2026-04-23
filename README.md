@@ -1,6 +1,6 @@
 # Polaris
 
-Polaris stops your AI coding agent from repeating the same mistakes. Open source. Pay $2.49 once if it saves you a loop.
+Polaris stops your AI coding agent from repeating the same mistakes. Open source, local-first, MIT-licensed. A growing library of verified failure patterns, reviewed by the people who use them.
 
 ## Install
 
@@ -40,15 +40,9 @@ Requires cwd at repo root; not recommended for production use.
 }
 ```
 
-## Pay
-
-https://<YOUR_HANDLE>.gumroad.com/l/polaris
-
-One payment. Forever. The receipt email is your proof of support. No account, no login.
-
 ## Contribute
 
-Polaris grows through the people who use it. If Polaris saved you a loop — or if you hit a failure it didn't know about — you can add it:
+Polaris gets better every time someone catches a failure it didn't know about. If Polaris saved you a loop, or you hit a failure that belongs in the library, you can help the next person skip it:
 
 - `polaris submit <your-pattern.json>` — propose a new candidate. Accepts either a full v4 pattern record or a `schema_version: 1` contribution file exported by `polaris_cli.py experience contribute` (auto-converted).
 - `polaris confirm <pattern_id>` — tell the project a candidate actually helped you on a real case.
@@ -70,6 +64,14 @@ The shipped `candidate` tier now covers all 8 ecosystems. The `official` tier re
 There's an `archive/` folder too. It's old audit work I kept public so anyone can check it. Don't read it to learn how Polaris works — the three files above are the whole product.
 
 There's also an `eval/` folder with historical evaluation fixtures and logs. Public, useful for auditing, not required for install or everyday use.
+
+## Maintenance
+
+Solo-maintained, best-effort response. Issues and PRs typically get a reply within a week. If something is blocking you, say so in the issue and it gets looked at sooner.
+
+## Sponsor
+
+If Polaris saved you time and you want to chip in, pay what you want (minimum $1) at https://<YOUR_HANDLE>.gumroad.com/l/polaris. It's optional — the full library and tooling are MIT-licensed and will stay that way.
 
 ## License
 
