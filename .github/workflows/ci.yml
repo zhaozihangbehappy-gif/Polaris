@@ -1,0 +1,36 @@
+name: ci
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version:
+          - "3.11"
+          - "3.12"
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install Polaris
+        run: python -m pip install -e .
+
+      - name: Compile Python sources
+        run: python -m compileall polaris adapters scripts
+
+      - name: Validate patterns
+        run: python scripts/pattern_validator_v4.py
+
+      - name: Run tests
+        run: python -m pytest tests/ -x || [ $? = 5 ]
