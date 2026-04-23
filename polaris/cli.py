@@ -349,7 +349,30 @@ def _sha256(path: Path) -> str:
 
 def _extract_packs(tarball: Path, target: Path) -> Path:
     with tarfile.open(tarball, "r:gz") as archive:
-        archive.extractall(target)
+        try:
+            archive.extractall(target, filter="data")
+        except TypeError:
+            from pathlib import PurePosixPath, PureWindowsPath
+
+            target_root = target.resolve()
+            safe_members = []
+            for member in archive.getmembers():
+                posix_name = PurePosixPath(member.name)
+                windows_name = PureWindowsPath(member.name)
+                destination = (target / member.name).resolve()
+                if (
+                    posix_name.is_absolute()
+                    or windows_name.is_absolute()
+                    or ".." in posix_name.parts
+                    or ".." in windows_name.parts
+                    or not (member.isfile() or member.isdir())
+                    or (destination != target_root and target_root not in destination.parents)
+                ):
+                    raise ValueError(f"unsafe tar member: {member.name}")
+                safe_members.append(member)
+            archive.extractall(target, members=safe_members)
+        except getattr(tarfile, "FilterError", tarfile.TarError) as exc:
+            raise ValueError(f"unsafe tar member: {exc}") from exc
     if (target / "packs").exists():
         return target / "packs"
     candidates = list(target.rglob("packs"))
