@@ -9,6 +9,7 @@ warnings.warn(
 )
 
 from polaris.adapter.server import *  # noqa: F401,F403
+from polaris.adapter.server import main  # explicit re-export for __main__
 
 
 if __name__ == "__main__":
