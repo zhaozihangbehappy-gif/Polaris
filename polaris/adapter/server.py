@@ -15,9 +15,10 @@ except ImportError:
     print("polaris-mcp: 'mcp' package not installed. Run: pip install mcp", file=sys.stderr)
     raise
 
+from polaris import __version__ as POLARIS_VERSION
 from polaris.adapter.index import CONTEXT_TOKEN_BUDGET, format_for_injection, match
 
-server = Server("polaris")
+server = Server("polaris", version=POLARIS_VERSION)
 
 
 @server.list_tools()

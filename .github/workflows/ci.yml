@@ -27,7 +27,7 @@ jobs:
         run: python -m pip install -e .
 
       - name: Install test tooling
-        run: python -m pip install pytest
+        run: python -m pip install pytest mcp
 
       - name: Compile Python sources
         run: python -m compileall polaris adapters scripts
@@ -37,6 +37,9 @@ jobs:
 
       - name: Run tests
         run: python -m pytest tests/ -x || [ $? = 5 ]
+
+      - name: MCP stdio smoke
+        run: python -m pytest tests/test_mcp_smoke.py -v
 
   windows-smoke:
     runs-on: windows-latest
