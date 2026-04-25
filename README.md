@@ -32,6 +32,8 @@ Use the installed `polaris` command as the stable MCP entrypoint:
 }
 ```
 
+If your agent supports Skills, also give it [SKILL.md](SKILL.md). The Skill tells the agent when to call Polaris, how to treat matches as hypotheses, and how to avoid over-trusting weak hints.
+
 ### Legacy / dev mode
 
 Requires cwd at repo root; not recommended for production use.
