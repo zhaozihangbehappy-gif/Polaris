@@ -26,7 +26,7 @@ Do not call `polaris_lookup` for:
 - ordinary code review without a failing command or error signal
 - failures already resolved in the current session
 
-## Core Rule
+## Request Format
 
 Before guessing at an engineering failure, call:
 
@@ -51,6 +51,7 @@ Before guessing at an engineering failure, call:
 A wrong hint can be as damaging as no hint because it steers the agent's search path and pollutes context. Keep usage conservative:
 
 - Use raw error text when possible.
+- If the client truncated the original error output, request the full output before calling `polaris_lookup`; truncated `error_text` degrades match precision more than a missed call.
 - Pass `ecosystem` when known.
 - Do not apply a match that only shares generic words like "failed", "build", or "error".
 - If the match is plausible but weak, inspect files and run the shortest verification before editing broadly.
