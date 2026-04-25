@@ -1,3 +1,7 @@
+# Polaris - pattern-based code review tool
+# Copyright (C) 2026 Zihang Zhao
+# Licensed under AGPL-3.0-only. See LICENSE for details.
+
 """Invalidate evidence rows produced against synthetic bash-echo recipes.
 
 Applies the same quarantine logic as invalidate_contaminated_evidence.py, but

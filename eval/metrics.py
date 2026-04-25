@@ -1,3 +1,7 @@
+# Polaris - pattern-based code review tool
+# Copyright (C) 2026 Zihang Zhao
+# Licensed under AGPL-3.0-only. See LICENSE for details.
+
 """Codex's five metrics, strictly collected — no "hit rate" smuggling.
 
 A run produces a RunMetrics. Comparison between baseline and with_polaris

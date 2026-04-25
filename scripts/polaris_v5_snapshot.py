@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+# Polaris - pattern-based code review tool
+# Copyright (C) 2026 Zihang Zhao
+# Licensed under AGPL-3.0-only. See LICENSE for details.
+
 """Frozen v5 state functions — test fixture extracted from commit 22e5758.
 
 This file is a self-contained snapshot of the v5 polaris_state.py functions

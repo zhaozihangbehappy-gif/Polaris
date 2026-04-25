@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+# Polaris - pattern-based code review tool
+# Copyright (C) 2026 Zihang Zhao
+# Licensed under AGPL-3.0-only. See LICENSE for details.
+
 """Task fingerprint contract for Polaris experience stores.
 
 Every fingerprint preserves four layers:

@@ -1,3 +1,7 @@
+# Polaris - pattern-based code review tool
+# Copyright (C) 2026 Zihang Zhao
+# Licensed under AGPL-3.0-only. See LICENSE for details.
+
 """Unified runner contract — 木桶 equal across all three ends.
 
 Every end-runner (codex, claude_code, cursor) implements the same .run()

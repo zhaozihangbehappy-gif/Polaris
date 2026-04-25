@@ -1,4 +1,8 @@
 #!/usr/bin/env bash
+# Polaris - pattern-based code review tool
+# Copyright (C) 2026 Zihang Zhao
+# Licensed under AGPL-3.0-only. See LICENSE for details.
+
 # regression-all.sh — Run ALL Platform 2 + Platform 3 gate regressions.
 # Reports per-phase results and a final total gate count.
 set -euo pipefail

@@ -8,7 +8,7 @@ Polaris was built against recurring engineering failure, not demo-friendly promp
 
 - 167 failure patterns
 - 8 language ecosystems
-- Open source (MIT)
+- Open source (AGPL-3.0-only)
 - Runs locally as an MCP tool
 
 ## What the numbers mean

@@ -1,3 +1,7 @@
+# Polaris - pattern-based code review tool
+# Copyright (C) 2026 Zihang Zhao
+# Licensed under AGPL-3.0-only. See LICENSE for details.
+
 """Author real failing-project fixtures for every v4 pattern using Codex.
 
 For each schema-valid pattern:

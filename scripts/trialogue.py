@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+# Polaris - pattern-based code review tool
+# Copyright (C) 2026 Zihang Zhao
+# Licensed under AGPL-3.0-only. See LICENSE for details.
+
 """
 Polaris Trialogue — 三方群聊 TUI (CLI 模式，走订阅不花额外钱)
 

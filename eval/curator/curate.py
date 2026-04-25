@@ -1,3 +1,7 @@
+# Polaris - pattern-based code review tool
+# Copyright (C) 2026 Zihang Zhao
+# Licensed under AGPL-3.0-only. See LICENSE for details.
+
 """Turn eval/curator/sources.yaml into eval/cases/real_*.json.
 
 No HTTP. No scraping. User curates sources.yaml by hand (or by pasting from a

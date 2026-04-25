@@ -1,3 +1,7 @@
+# Polaris - pattern-based code review tool
+# Copyright (C) 2026 Zihang Zhao
+# Licensed under AGPL-3.0-only. See LICENSE for details.
+
 """Generate eval/runs/manual_cursor_required.json — the queue of cases that
 require a manual Cursor transcript before any Cursor evidence can be written.
 

@@ -1,3 +1,7 @@
+# Polaris - pattern-based code review tool
+# Copyright (C) 2026 Zihang Zhao
+# Licensed under AGPL-3.0-only. See LICENSE for details.
+
 """Sample 10 random v4 patterns and dump their state for human review.
 
 This is the Gate 1 close-out artifact. Codex's pass criterion was "false_paths

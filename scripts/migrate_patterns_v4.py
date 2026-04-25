@@ -1,3 +1,7 @@
+# Polaris - pattern-based code review tool
+# Copyright (C) 2026 Zihang Zhao
+# Licensed under AGPL-3.0-only. See LICENSE for details.
+
 """Migrate v3 experience-packs/*.json into v4 schema.
 
 Auto-fills what can be mechanically derived. Never fabricates false_paths or

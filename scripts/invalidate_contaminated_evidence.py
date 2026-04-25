@@ -1,3 +1,7 @@
+# Polaris - pattern-based code review tool
+# Copyright (C) 2026 Zihang Zhao
+# Licensed under AGPL-3.0-only. See LICENSE for details.
+
 """One-shot: move existing evidence on two patterns into invalidated_evidence[].
 
 Rationale (2026-04-19 Codex review): transcripts for run 20260419T171919 show

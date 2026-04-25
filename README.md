@@ -1,6 +1,8 @@
 # Polaris
 
-Polaris stops your AI coding agent from repeating the same mistakes. Open source, local-first, MIT-licensed. A growing library of verified failure patterns, reviewed by the people who use them.
+Polaris stops your AI coding agent from repeating the same mistakes. Open source, local-first, **AGPL-3.0-only licensed**. A growing library of verified failure patterns, reviewed by the people who use them.
+
+Commercial licensing is available by request: zhaozihang.behappy@gmail.com.
 
 ## Install
 
@@ -77,8 +79,12 @@ Solo-maintained, best-effort response. Issues and PRs typically get a reply with
 
 ## Sponsor
 
-If Polaris saved you time and you want to chip in, pay what you want (minimum $3) at https://zhaozihang.gumroad.com/l/polaris. It's optional — the full library and tooling are MIT-licensed and will stay that way.
+If Polaris saved you time and you want to chip in, pay what you want (minimum $3) at https://zhaozihang.gumroad.com/l/polaris. It's optional — the full library and tooling are available under AGPL-3.0-only.
 
 ## License
 
-MIT
+This project is licensed under the GNU Affero General Public License v3.0 only (AGPL-3.0-only). See [LICENSE](LICENSE) for the full text.
+
+Versions released before this license change remain under the license terms that applied to those releases.
+
+For commercial licensing (closed-source integration, OEM, etc.), contact zhaozihang.behappy@gmail.com.

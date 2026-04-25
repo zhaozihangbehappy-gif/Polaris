@@ -1,3 +1,7 @@
+# Polaris - pattern-based code review tool
+# Copyright (C) 2026 Zihang Zhao
+# Licensed under AGPL-3.0-only. See LICENSE for details.
+
 """In-memory index over Polaris packs with a 300-token injection budget."""
 from __future__ import annotations
 

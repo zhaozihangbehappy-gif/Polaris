@@ -1,3 +1,7 @@
+# Polaris - pattern-based code review tool
+# Copyright (C) 2026 Zihang Zhao
+# Licensed under AGPL-3.0-only. See LICENSE for details.
+
 """Hermetic per-variant workdir preparation for the Polaris evaluation harness.
 
 For every (runner, case, variant) tuple the orchestrator allocates a fresh

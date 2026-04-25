@@ -1,4 +1,8 @@
 #!/usr/bin/env bash
+# Polaris - pattern-based code review tool
+# Copyright (C) 2026 Zihang Zhao
+# Licensed under AGPL-3.0-only. See LICENSE for details.
+
 # verify-firsthit.sh — Measure first-hit recall on fixture sets
 # Usage: bash verify-firsthit.sh [dev|holdout|both]
 # Default: both (prints dev for reference, holdout for release judgment)

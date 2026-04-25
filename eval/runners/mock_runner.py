@@ -1,3 +1,7 @@
+# Polaris - pattern-based code review tool
+# Copyright (C) 2026 Zihang Zhao
+# Licensed under AGPL-3.0-only. See LICENSE for details.
+
 """Mock runner — deterministic synthetic metrics for plumbing validation.
 
 PURPOSE: prove the orchestrator, metrics comparison, and reporting pipeline

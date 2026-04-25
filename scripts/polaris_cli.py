@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+# Polaris - pattern-based code review tool
+# Copyright (C) 2026 Zihang Zhao
+# Licensed under AGPL-3.0-only. See LICENSE for details.
+
 """Polaris CLI — single-command entry point for the Polaris orchestration skill.
 
 Platform 2 APPROVED by Codex audit 2026-03-17.

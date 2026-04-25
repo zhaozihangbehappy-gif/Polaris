@@ -1,3 +1,7 @@
+# Polaris - pattern-based code review tool
+# Copyright (C) 2026 Zihang Zhao
+# Licensed under AGPL-3.0-only. See LICENSE for details.
+
 """Shared runner helpers — no fabrication, honest None on missing signal.
 
 Used by codex_runner, claude_code_runner, cursor_runner. Keeps each runner file

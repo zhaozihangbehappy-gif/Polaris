@@ -1,3 +1,7 @@
+# Polaris - pattern-based code review tool
+# Copyright (C) 2026 Zihang Zhao
+# Licensed under AGPL-3.0-only. See LICENSE for details.
+
 """Scale-invariance benchmark for the polaris index.
 
 Per NARRATIVE §3, the contract is:
