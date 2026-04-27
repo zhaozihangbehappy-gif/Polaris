@@ -1,0 +1,72 @@
+{
+  "ecosystem": "node",
+  "error_class": "install_conflict",
+  "schema_version": 4,
+  "records": [
+    {
+      "pattern_id": "node.install_conflict.000",
+      "ecosystem": "node",
+      "error_class": "install_conflict",
+      "description": "npm global install EEXIST on bin path — prior install (often from a local node_modules/.bin) left a stale symlink; remove it before reinstalling, do not use --force",
+      "source": "field-observed",
+      "trigger_signals": {
+        "stderr_regex": [
+          "npm error code EEXIST|EEXIST: file already exists.*\\.(local|npm-global|nvm)/.*bin/"
+        ],
+        "file_markers": [],
+        "package_managers": ["npm"],
+        "ci_env": []
+      },
+      "false_paths": [
+        "running with --force overwrites whichever symlink target was there, including links owned by an unrelated project under node_modules/.bin"
+      ],
+      "shortest_verification": {
+        "command": "ls -l \"$BIN_PATH\" && readlink -f \"$BIN_PATH\" || true",
+        "trigger_env": {},
+        "expected_stderr_match": "EEXIST|already exists",
+        "expected_fix_outcome": "different_error_or_success"
+      },
+      "fix_path": {
+        "structured_hints": [
+          {
+            "kind": "shell",
+            "command": "rm \"$BIN_PATH\" && npm install -g <package>"
+          }
+        ],
+        "fix_command": "bash -c 'rm -f \"$BIN_PATH\" && echo removed'",
+        "fix_env": {},
+        "description": "Inspect the conflicting path with ls -l / readlink -f. If it is a symlink into another project's node_modules/.bin (a leftover from a local install), rm it then re-run npm install -g. Only fall back to --force after confirming nothing depends on the existing link."
+      },
+      "applicability_bounds": {
+        "applies_when": [
+          "npm install -g (or equivalent) where the target bin path already exists",
+          "target path lives under a user-writable bin dir like ~/.local/bin, ~/.npm-global/bin, or an nvm prefix"
+        ],
+        "do_not_apply_when": [
+          "EEXIST raised during package extraction inside node_modules (different root cause: cache or concurrent install)",
+          "the existing file is a real binary not managed by npm — investigate provenance first"
+        ]
+      },
+      "agent_reproducibility": {
+        "evidence": [
+          "observed 2026-04-27: codex 0.124 upgrade via `npm install -g @openai/codex@latest` failed with EEXIST on ~/.local/bin/codex; readlink showed it pointed into ~/.openclaw/acpx-home/node_modules/.bin/codex (leftover from a prior local install). `rm` + reinstall succeeded."
+        ]
+      },
+      "legacy_v3": {
+        "stderr_pattern": "npm error code EEXIST|EEXIST: file already exists",
+        "avoidance_hints": [
+          {
+            "kind": "shell",
+            "command": "rm \"$BIN_PATH\" && npm install -g <package>"
+          }
+        ],
+        "description": "npm global install EEXIST on bin path — remove stale symlink (often from a prior local install) before reinstalling; avoid --force",
+        "source": "field-observed"
+      },
+      "needs_human_review": [
+        "shortest_verification",
+        "authored_fixture"
+      ]
+    }
+  ]
+}
